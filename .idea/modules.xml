@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.api/cos.cos.api.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.api/cos.cos.api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.api/cos.cos.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.api/cos.cos.api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.api/cos.cos.api.test.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.api/cos.cos.api.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.map/cos.cos.map.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.map/cos.cos.map.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.map/cos.cos.map.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.map/cos.cos.map.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.map/cos.cos.map.test.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.map/cos.cos.map.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.olympus/cos.cos.olympus.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.olympus/cos.cos.olympus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.olympus/cos.cos.olympus.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.olympus/cos.cos.olympus.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.olympus/cos.cos.olympus.test.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.olympus/cos.cos.olympus.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cos.test.iml" filepath="$PROJECT_DIR$/.idea/modules/cos.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resources/resources.iml" filepath="$PROJECT_DIR$/resources/resources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
+    </modules>
+  </component>
+</project>

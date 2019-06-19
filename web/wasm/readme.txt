@@ -1,0 +1,1 @@
+emcc hello6.c -s ONLY_MY_CODE=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS="['_grayscale', '_sum']"  -o hello6.wasm

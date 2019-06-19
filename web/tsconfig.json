@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./static/js",
+    "noImplicitAny": true,
+    "strict": true,
+    "module": "esnext",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "baseUrl": "./src",
+    "target": "es2018",
+    "lib": [ "es6", "dom"]
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules"]
+}
