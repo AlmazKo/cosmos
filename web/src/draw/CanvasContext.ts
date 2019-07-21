@@ -123,6 +123,7 @@ export class CanvasContext {
   clearArea(width: px, height: px) {
     this.ctx.clearRect(0, 0, width, height);
   }
+
   clear() {
     this.ctx.clearRect(0, 0, this.width, this.height);
   }
@@ -213,6 +214,11 @@ export class CanvasContext {
     this.ctx.stroke();
   }
 
-  ellipse(x: px, y: px, radiusX: px, radiusY: px, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void {
+  ellipse(x: px, y: px, radiusX: px, radiusY: px, rotation: number, startAngle: number, endAngle: number, anticlockwise: boolean = false, style: StringStokeStyle): void {
+    this.stroke(style);
+    this.ctx.beginPath();
+    this.ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+    this.ctx.stroke();
   }
+
 }

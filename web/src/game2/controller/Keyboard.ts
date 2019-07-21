@@ -1,5 +1,6 @@
 import { HotKey } from '../../game/Slot';
 import { Traits, TraitStep } from '../../game/Trait';
+import { Dir } from '../constants';
 import { MovingListener } from '../engine/MovingListener';
 import { MovingAggregator } from './MovingAggregator';
 
@@ -54,27 +55,36 @@ export class Keyboard {
     private readonly moving: MovingAggregator,
     private readonly listener: MovingListener
   ) {
-    // window.addEventListener('keypress', e => this.onKeypress(e));
     window.addEventListener('keydown', e => this.onKeydown(e));
     window.addEventListener('keyup', e => this.onKeyup(e));
   }
 
-  // private onKeypress(e: KeyboardEvent) {
-  //   console.log('PRESS', e.key, e.keyCode)
-  // }
+  private onKeypress(e: KeyboardEvent) {
+    console.log('PRESS', e.key, e.keyCode)
+  }
+
+  private lastKeyDowns: Dir[] = [];
 
 
   private onKeydown(e: KeyboardEvent) {
     const btn = Buttons[e.keyCode];
     if (btn == undefined) return;
+
+
     // console.log('DOWN ', e.key, e.keyCode);
 
     // if (MovingButtons.contains(btn.code)) {
 
     const t = hotKeys.get(btn)!!.trait;
     if (t instanceof TraitStep) {
-      this.moving.press(t.dir);
+
+      if (!this.lastKeyDowns.contains(t.dir)) {
+        this.lastKeyDowns.push(t.dir);
+        this.moving.press(t.dir);
+      }
     }
+
+
     //fixme return the code
     // this.moving.press(btn.code);
 
@@ -84,10 +94,11 @@ export class Keyboard {
 
     const btn = Buttons[e.keyCode];
     if (btn == undefined) return;
-    console.log('onKeyup   ', e.keyCode, btn);
+    // console.log('onKeyup   ', e.keyCode, btn);
 
     const t = hotKeys.get(btn)!!.trait;
     if (t instanceof TraitStep) {
+      this.lastKeyDowns.remove(t.dir);
       this.moving.release(t.dir);
     }
   }

@@ -9,7 +9,7 @@ import { Game } from '../engine/Game';
 import { Images } from '../Images';
 import { DrawableCreature } from './BaseCreature';
 import { Camera } from './Camera';
-import { CELL } from './constants';
+import { CELL, HCELL, QCELL } from './constants';
 import { LandsLayer } from './LandsLayer';
 
 
@@ -88,18 +88,21 @@ export class Render {
 
 
     const p = this.player!!;
+    this.drawLifeLine();
     p.draw2(time, this.tp, camera);
 
 
     const x = camera.toX(p.orientation.x);
     const y = camera.toY(p.orientation.y);
 
-    this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
-    // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
-    this.p!!.text(`${p.orientation.shift.toFixed(3)}`, 10, 100, {style: 'black'});
-
-
     this.drawFog(this.tp, camera);
+    this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
+
+    // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
+
+
+    this.p!!.text(`${p.orientation.shift.toFixed(3)}`, 3, 3, {style: 'white'});
+    this.p!!.text(`${p.orientation.x};${p.orientation.y}`, 3, 13, {style: 'white'});
     //draw lands
     //draw creatures
     //draw effects
@@ -133,5 +136,17 @@ export class Render {
     p.fillRect(xL, yD, radius + radius + CELL, p.height - yD, style.fog);//BOTTOM
 
   }
+
+  drawLifeLine() {
+    const s  = 1.0;
+    const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
+
+    const x = this.camera.absoluteX;
+    const y = this.camera.absoluteY;
+
+    this.p!!.ellipse(x + HCELL, y + HCELL + QCELL, HCELL, HCELL-QCELL, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
+    // p.text(c.metrics.life + "", HCELL, CELL + 2, style.lifeText);
+  }
+
 
 }

@@ -3,9 +3,9 @@ export const NOPE = 0;
 export enum Dir {
   // NOPE = 0,
   NORTH = 1,
-  SOUTH = 2,
-  WEST  = 3,
-  EAST  = 4
+  EAST  = 2,
+  SOUTH = 3,
+  WEST  = 4
 }
 
 
@@ -21,6 +21,22 @@ export const debugDir = (d: Dir) => {
       return "EAST";
     default:
       return "NOPE";
+  }
+};
+
+
+export const dirToArrow = (d: Dir) => {
+  switch (d) {
+    case Dir.NORTH:
+      return "↑";
+    case Dir.SOUTH:
+      return "↓";
+    case Dir.WEST:
+      return "←";
+    case Dir.EAST:
+      return "→";
+    default:
+      return "•";
   }
 };
 

@@ -2,7 +2,7 @@ import { Package } from '../../game/actions/Package';
 import { ApiArrival } from '../../game/api/ApiArrival';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Dir, NOPE } from '../constants';
+import { Dir, dirToArrow, NOPE } from '../constants';
 import { Api } from '../server/Api';
 import { World } from '../world/World';
 import { Act } from './Act';
@@ -84,7 +84,7 @@ export class Game implements MovingListener {
     return c;
   }
 
-  onStartMoving(f: Focus) {
+  sonStartMoving(f: Focus) {
     const p              = this.proto!!;
     p.orientation.moving = f.moving;
     p.orientation.sight  = f.sight;
@@ -96,12 +96,35 @@ export class Game implements MovingListener {
 
   }
 
-  onChangeSight(dir: Dir): void {
+  private readonly stop: Focus = {moving: 0, sight: 0, stoper: 222} as Focus;
+
+  onStartMoving(moving: Dir): void {
+    const o  = this.proto!!.orientation;
+    o.moving = moving;
+    o.sight  = moving;
+    o.next   = undefined;
+  }
+
+  onChangeSight(sight: Dir): void {
+    const o = this.proto!!.orientation;
+
+    if (o.next === undefined) {
+      o.next = {moving: o.moving, sight: sight};
+    } else {
+      o.next!!.sight = sight;
+    }
+  }
+
+  onChangeMoving(moving: Dir): void {
+    const o = this.proto!!.orientation;
+    o.next  = {moving: moving, sight: moving};
+    console.log("Set next moving: " + dirToArrow(o.next.moving))
   }
 
   onStopMoving(): void {
-    console.log("Stop moving");
-    const p                   = this.proto!!;
-    p.orientation.requestStop = true;
+    const p            = this.proto!!;
+    p.orientation.next = this.stop;
   }
+
+
 }

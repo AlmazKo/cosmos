@@ -36,15 +36,15 @@ export class TilePainter {
     this.ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
   }
 
-  closure(tileSet: string, sx: px, sy: px, sw: px, sh: px): Closure {
-    return (sx: px, sy: px, x: px, y: coord) => {
-      const img = this.images.get(tileSet);
-      if (!img) return;
-
-      this.ctx.drawImage(img, sx, sy, sw, sh, x, y, sw, sh)
-    }
-
-  }
+  // closure(tileSet: string, sx: px, sy: px, sw: px, sh: px): Closure {
+  //   return (sx: px, sy: px, x: px, y: coord) => {
+  //     const img = this.images.get(tileSet);
+  //     if (!img) return;
+  //
+  //     this.ctx.drawImage(img, sx, sy, sw, sh, x, y, sw, sh)
+  //   }
+  //
+  // }
 
   //
   //

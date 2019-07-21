@@ -2,11 +2,11 @@ import { Animator, Delay, LoopAnimator } from '../../anim/Animator';
 import { Animators } from '../../anim/Animators';
 import { TileDrawable } from '../../game/TileDrawable';
 import { TilePainter } from '../../game/TilePainter';
-import { debugDir, Dir, NOPE } from '../constants';
+import { Dir, NOPE } from '../constants';
 import { Creature } from '../engine/Creature';
 import { Orientation } from '../engine/Orientation';
 import { Camera } from './Camera';
-import { CELL, HCELL, QCELL } from './constants';
+import { CELL } from './constants';
 
 
 const map: px[] = [];
@@ -15,6 +15,7 @@ map[Dir.NORTH] = 0;
 map[Dir.SOUTH] = 128;
 map[Dir.EAST]  = 196;
 map[Dir.WEST]  = 64;
+
 
 export class DrawableCreature implements TileDrawable {
 
@@ -54,7 +55,7 @@ export class DrawableCreature implements TileDrawable {
     const x = camera.absoluteX;
     const y = camera.absoluteY;
     let sy  = map[o.sight];
-    let sx  = Math.floor(this.f *9) * 64;
+    let sx  = Math.floor(this.f * 9) * 64;
     // drawLifeLine(bp.toInDirect(x, y), this);
 
     let sw = 64, sh = 64;
@@ -70,45 +71,83 @@ export class DrawableCreature implements TileDrawable {
   }
 
   startMoving() {
-    console.log("startMoving", debugDir(this.orientation.moving));
+    // console.log("startMoving", debugDir(this.orientation.moving));
     this.animators.interrupt("step");
-    const dr       = this.orientation.moving;
-    const o        = this.orientation;
-    o.moving       = dr;
-    const movement = new LoopAnimator(250, (f, i, isNew) => {
+    const o = this.orientation;
+
+    const defDuration = 250;
+    let dur           = defDuration;
+
+    const movement = new LoopAnimator(dur, (f, i, isNewCycle) => {
 
       this.f = f;
 
-      if (isNew && o.requestStop) {
-        o.requestStop = false;
-        o.moving      = NOPE;
+      let dr = o.moving;
 
-        switch (dr) {
-          case Dir.WEST:
-            o.x -= i;
-            break;
-          case Dir.EAST:
-            o.x += i;
-            break;
-          case Dir.NORTH:
-            o.y -= i;
-            break;
-          case Dir.SOUTH:
-            o.y += i;
-            break;
+
+      // console.log("Anim " + o, dur);
+
+      if (!isNewCycle) {
+        if (dr === Dir.NORTH || dr === Dir.EAST) {
+          o.shift = f;
+        } else {
+          o.shift = -f;
         }
+        return dur;
+      }
+      console.log("New cycle")
 
-        o.shift = 0;
-        return true
+      switch (dr) {
+        case Dir.WEST:
+          o.x--;
+          break;
+        case Dir.EAST:
+          o.x++;
+          break;
+        case Dir.NORTH:
+          o.y--;
+          break;
+        case Dir.SOUTH:
+          o.y++;
+          break;
+      }
+
+
+      if (o.next !== undefined && o.next.moving == 0) {
+        console.log(o);
+        o.next   = undefined;
+        o.moving = NOPE;
+        o.shift  = 0;
+        return 0
+      }
+
+
+      if (o.next !== undefined) {
+        dr       = o.next.moving;
+        o.sight  = o.next.sight;
+        o.moving = o.next.moving;
+        o.shift  = 0;
+        if (o.moving === o.sight) {
+          dur = defDuration;
+        } else if (o.isBackwards()) {
+          dur = defDuration * 4;
+        } else {
+          dur = defDuration * 1.5;
+        }
+        console.log("Change orientation " + o);
+        console.log("set duration", dur);
+
+
+        o.next = undefined;
       }
 
       if (dr === Dir.NORTH || dr === Dir.EAST) {
-        o.shift = i + f;
+        o.shift = f;
       } else {
-        o.shift = -i - f;
+        o.shift = -f;
       }
 
-      return false;
+      return dur;
     });
 
     this.animators.set("step", movement);
@@ -141,5 +180,4 @@ export class DrawableCreature implements TileDrawable {
       new Delay(100),
       () => this.showInstantSpell = false);
   }
-
 }

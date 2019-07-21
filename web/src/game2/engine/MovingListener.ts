@@ -1,10 +1,11 @@
-import { Focus } from './Moving';
+import { Dir } from '../constants';
 
 export interface MovingListener {
-  onStartMoving(f: Focus): void;
+  onStartMoving(moving: Dir): void;
 
-  // onChangeSight(dir: Dir): void;
+  onChangeSight(sight: Dir): void;
+
+  onChangeMoving(moving: Dir): void;
+
   onStopMoving(): void;
-
-  // onAction(f: any): void;
 }

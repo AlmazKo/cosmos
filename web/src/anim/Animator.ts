@@ -127,15 +127,15 @@ export class Delay implements Animated {
 
 export class LoopAnimator implements Animated {
   private readonly interpolator: Interpolator;
-  private readonly callback: (f: float, i: index, isNew: Boolean) => boolean;
-  private readonly duration: number;
+  private readonly callback: (f: float, i: index, isNew: Boolean) => uint;
+  private duration: number;
   private finished = false;
 
   private start: DOMHighResTimeStamp = 0;
   private times: index               = 0;
 
 
-  constructor(duration: ms, callback: (f: float, i: index, isNew: Boolean) => boolean, interpolator: Interpolator = linear) {
+  constructor(duration: ms, callback: (f: float, i: index, isNew: Boolean) => uint, interpolator: Interpolator = linear) {
     this.duration     = duration;
     this.callback     = callback;
     this.interpolator = interpolator;
@@ -156,8 +156,13 @@ export class LoopAnimator implements Animated {
       fraction -= 1;
     }
 
-
-    this.finished = this.callback(fraction, this.times, isNew);
+    const newDuration = this.callback(fraction, this.times, isNew);
+    if (this.duration !== newDuration) {
+      this.times    = 0;
+      this.start    = 0;//fixme: may be need exclude overrun
+      this.duration = newDuration;
+    }
+    this.finished = this.duration === 0;
 
     return this.finished;
   }
