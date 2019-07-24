@@ -99,10 +99,14 @@ export class Game implements MovingListener {
   private readonly stop: Focus = {moving: 0, sight: 0, stoper: 222} as Focus;
 
   onStartMoving(moving: Dir): void {
-    const o  = this.proto!!.orientation;
-    o.moving = moving;
-    o.sight  = moving;
-    o.next   = undefined;
+    const o = this.proto!!.orientation;
+
+    if (o.next === undefined) {
+      o.moving = moving;
+      o.sight  = moving;
+    } else {
+      o.next = {moving: moving, sight: moving};
+    }
   }
 
   onChangeSight(sight: Dir): void {

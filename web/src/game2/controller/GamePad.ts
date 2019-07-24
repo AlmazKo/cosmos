@@ -20,7 +20,7 @@ export class GamePad {
     private readonly moving: MovingAggregator,
   ) {
 
-    console.log("Start Gamapad");
+    console.log("Start Gamepad");
 
     setInterval(() => {
       const g = navigator.getGamepads()[0];

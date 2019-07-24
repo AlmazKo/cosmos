@@ -71,11 +71,11 @@ export class DrawableCreature implements TileDrawable {
   }
 
   startMoving() {
-    // console.log("startMoving", debugDir(this.orientation.moving));
+    // console.log("startMoving" + this.orientation);
     this.animators.interrupt("step");
     const o = this.orientation;
 
-    const defDuration = 250;
+    const defDuration = 300;
     let dur           = defDuration;
 
     const movement = new LoopAnimator(dur, (f, i, isNewCycle) => {
