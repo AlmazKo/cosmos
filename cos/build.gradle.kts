@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    kotlin("jvm") version "1.3.40" apply false
+    kotlin("jvm") version "1.3.41" apply false
     id("org.javamodularity.moduleplugin") version "1.5.0" apply false
-    id("kotlinx-serialization") version "1.3.30" apply false
+    id("kotlinx-serialization") version "1.3.40" apply false
 //    id("kotlin-multiplatform") version "1.3.30" apply false
 }
 
