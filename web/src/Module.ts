@@ -1,4 +1,5 @@
 import { HOST } from '.';
+import { GamePad } from './game2/controller/GamePad';
 import { Keyboard } from './game2/controller/Keyboard';
 import { Game } from './game2/engine/Game';
 import { Moving } from './game2/engine/Moving';
@@ -48,7 +49,8 @@ setCached('map', () => new ResourcesServer());
 setCached('images', () => new ImageAssets(HOST));
 // setCached(LocalServer, () => new LocalServer());
 setCached(Moving, () => new Moving());
-setCached(Keyboard, () => new Keyboard(get(Moving), get(Game)));
+setCached(Keyboard, () => new Keyboard(get(Moving)));
+setCached(GamePad, () => new GamePad(get(Moving)));
 setCached(World, () => new World(get('map')));
 setCached(Game, () => new Game(get('api'), get(World), get(Moving)));
 setCached(LandsLayer, () => new LandsLayer(get(World), get('images')));

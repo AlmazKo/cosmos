@@ -38,7 +38,7 @@ hotKeys.set(BTN_2, new HotKey(BTN_2, Traits.fireball));
 hotKeys.set(BTN_3, new HotKey(BTN_3, Traits.fireshock));
 
 
-export const Buttons: { [index: number]: Key } = {
+const Buttons: { [index: number]: Key } = {
   49: BTN_1,
   50: BTN_2,
   51: BTN_3,
@@ -51,10 +51,7 @@ export const Buttons: { [index: number]: Key } = {
 
 export class Keyboard {
 
-  constructor(
-    private readonly moving: MovingAggregator,
-    private readonly listener: MovingListener
-  ) {
+  constructor(private readonly moving: MovingAggregator) {
     window.addEventListener('keydown', e => this.onKeydown(e));
     window.addEventListener('keyup', e => this.onKeyup(e));
   }

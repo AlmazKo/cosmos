@@ -1,6 +1,7 @@
 import { Ballad } from './canvas/Ballad';
 import './ext/array/ext';
 import './ext/promiser/ext';
+import { GamePad } from './game2/controller/GamePad';
 import { Keyboard } from './game2/controller/Keyboard';
 import { GameCanvas } from './game2/render/GameCanvas';
 import { get } from './Module';
@@ -15,4 +16,10 @@ window.onload = () => {
   const gc  = get(GameCanvas);
   const kbd = get(Keyboard);
   p.start(gc);
+
+  window.addEventListener('gamepadconnected', e => get(GamePad));
 };
+
+
+
+
