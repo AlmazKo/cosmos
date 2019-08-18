@@ -32,7 +32,7 @@
 //   private lastRequestedAction?: Trait;
 //   private slotAnimatedFraction       = 0;
 //
-//   constructor(private map: Lands, private moving: KeyboardMoving) {
+//   constructor(private map: Lands, private move: KeyboardMoving) {
 //
 //   }
 //
@@ -41,8 +41,8 @@
 //   //   this.animators.run(time);
 //   //   if (this.session) {
 //   //
-//   //     if (!this.proto.orientation.moving) {
-//   //       const nextOrientation = this.moving.next2();
+//   //     if (!this.proto.orientation.move) {
+//   //       const nextOrientation = this.move.next2();
 //   //       if (nextOrientation) {
 //   //         this.session.sendOrientation(nextOrientation)
 //   //       }
@@ -68,7 +68,7 @@
 //     this.animators.interrupt("step_" + c.id);
 //     const dr = step.direction;
 //     const o  = c.orientation;
-//     o.moving = dr;
+//     o.move = dr;
 //
 //     let moved      = false;
 //     const movement = new Animator(step.duration, f => {
@@ -157,7 +157,7 @@
 //   //   const idx = MovingButtons.indexOf(btn.code);
 //   //
 //   //   if (idx !== -1) {
-//   //     this.moving.remove(btn.code);
+//   //     this.move.remove(btn.code);
 //   //   }
 //   //
 //   // }
@@ -170,7 +170,7 @@
 //   //   const idx = MovingButtons.indexOf(btn.code);
 //   //   console.log(`Activate  `, hk.trait);
 //   //   if (idx !== -1) {
-//   //     this.moving.add((hk.trait as TraitStep).dir);
+//   //     this.move.add((hk.trait as TraitStep).dir);
 //   //   } else if (this.session!!.sendAction(hk.trait)) {
 //   //     this.lastRequestedAction = hk.trait;
 //   //     this.animators.set("slot_activate", new Animator(200, f => this.slotAnimatedFraction = f), () => this.slotAnimatedFraction = 0);

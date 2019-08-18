@@ -1,7 +1,7 @@
-export const NOPE = 0;
+export const NO = 0;
 
 export enum Dir {
-  // NOPE = 0,
+  // NO = 0,
   NORTH = 1,
   EAST  = 2,
   SOUTH = 3,
@@ -9,7 +9,7 @@ export enum Dir {
 }
 
 
-export const debugDir = (d: Dir) => {
+export const dirToString = (d: Dir) => {
   switch (d) {
     case Dir.NORTH:
       return "NORTH";
@@ -20,7 +20,7 @@ export const debugDir = (d: Dir) => {
     case Dir.EAST:
       return "EAST";
     default:
-      return "NOPE";
+      return "NO";
   }
 };
 
@@ -51,6 +51,18 @@ export enum TileType {
   SNOW       = 7,
   ROAD       = 8
 }
+
+export const stringTiles = [
+  'NOTHING',
+  'GRASS',
+  'SAND',
+  'LAVA',
+  'SHALLOW',
+  'DEEP_WATER',
+  'ICE',
+  'SNOW',
+  'ROAD'
+];
 
 
 export function debugTile(t: TileType): string {

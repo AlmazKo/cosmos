@@ -1,8 +1,5 @@
-import { Action } from '../../game/actions/Action';
 import { Package } from '../../game/actions/Package';
-import { MapPiece } from '../../game/api/MapPiece';
-import { Tiles } from '../../game/api/Tiles';
-import { HOST } from '../../index';
+import { Action } from './actions/Action';
 import { Api } from './Api';
 
 

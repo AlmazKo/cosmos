@@ -1,4 +1,4 @@
-import { Action } from '../../game/actions/Action';
+import { Action } from './actions/Action';
 import { ApiMessage } from '../../game/actions/ApiMessage';
 import { Package } from '../../game/actions/Package';
 import { MapPiece } from '../../game/api/MapPiece';

@@ -1,27 +1,26 @@
-import { Dir } from '../constants';
+import { Dir, NO } from '../constants';
 import { Orientation } from '../engine/Orientation';
 import { CELL } from './constants';
 
 export class Camera {
-  absoluteX: px = 100;
-  absoluteY: px = 100;
+  absoluteX: px = 0;
+  absoluteY: px = 0;
   target: Orientation;
 
   constructor(
     public offset: floatShare,
     public x: pos,
     public y: pos) {
-    this.target = new Orientation(0, 0, offset, x, y)
-
+    this.target = new Orientation(NO, NO, 0, offset, x, y)
   }
 
   setTarget(orientation: Orientation) {
-    this.target   = orientation;
-    this.target.x = 1;
+    this.target = orientation;
+    this.target.setPosition(1, 1);
   }
 
   toX(pos: pos): px {
-    const m    = this.target.moving;
+    const m    = this.target.move;
     const base = (pos - this.target.x) * CELL + this.absoluteX;
 
     if (m === Dir.WEST || m === Dir.EAST) {
@@ -32,7 +31,7 @@ export class Camera {
   }
 
   toY(pos: pos): px {
-    const m    = this.target.moving;
+    const m    = this.target.move;
     const base = (pos - this.target.y) * CELL + this.absoluteY;
 
     if (m === Dir.SOUTH || m === Dir.NORTH) {

@@ -10,7 +10,7 @@
 // import { Buttons } from '../Slot';
 //
 // export const IMG = new Resources();
-// const moving     = new KeyboardMoving();
+// const move     = new KeyboardMoving();
 //
 // export class GameCanvas implements CanvasComposer, Pressable {
 //
@@ -31,7 +31,7 @@
 //     Promise.zip(IMG.loadBasic(), ajax('/map'), ajax('/tiles'), (_, map, tiles) => {
 //
 //         const lands  = new Lands(map as MapPiece, tiles as Tiles);
-//         this.game    = new Game(lands, moving);
+//         this.game    = new Game(lands, move);
 //         this.loading = 0;
 //       }
 //     ).doOnError(() => this.loading = -1);

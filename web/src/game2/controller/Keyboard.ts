@@ -83,7 +83,7 @@ export class Keyboard {
 
 
     //fixme return the code
-    // this.moving.press(btn.code);
+    // this.move.press(btn.code);
 
   }
 
@@ -101,7 +101,7 @@ export class Keyboard {
   }
 
   private onChanged() {
-    // const f = this.moving.next();
+    // const f = this.move.next();
     // if (f !== undefined) {
     //   console.log('Focus: ', f);
     //   this.listener.onStartMoving(f);

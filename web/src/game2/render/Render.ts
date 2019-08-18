@@ -3,6 +3,7 @@ import { BasePainter } from '../../draw/BasePainter';
 import { CanvasContext } from '../../draw/CanvasContext';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
+import { dirToString, stringTiles } from '../constants';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
 import { StartMoving } from '../engine/actions/StartMoving';
 import { Game } from '../engine/Game';
@@ -48,6 +49,7 @@ export class Render {
 
 
   onFrame(time: DOMHighResTimeStamp) {
+    this.game.onFrame(time);
 
     const player = this.game.getProto();
     const camera = this.camera;
@@ -56,10 +58,7 @@ export class Render {
 
     const actions = this.game.getActions();
     // if (actions.length > 0) return;
-
-
     //start actions
-
     //?
 
     for (const action of actions) {
@@ -91,9 +90,9 @@ export class Render {
     this.drawLifeLine();
     p.draw2(time, this.tp, camera);
 
-
-    const x = camera.toX(p.orientation.x);
-    const y = camera.toY(p.orientation.y);
+    const o = p.orientation;
+    const x = camera.toX(o.x);
+    const y = camera.toY(o.y);
 
     this.drawFog(this.tp, camera);
     this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
@@ -101,8 +100,16 @@ export class Render {
     // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
 
 
-    this.p!!.text(`${p.orientation.shift.toFixed(3)}`, 3, 3, {style: 'white'});
-    this.p!!.text(`${p.orientation.x};${p.orientation.y}`, 3, 13, {style: 'white'});
+    const debugStyle = {style: 'white', font: '9px monospace'};
+    this.p!!.text(`coord: ${o.x};${o.y}`, 3, 3, debugStyle);
+    this.p!!.text(`shift: ${o.shift.toFixed(3)}`, 3, 13, debugStyle);
+    this.p!!.text(`sight: ${dirToString(o.sight)}`, 3, 23, debugStyle);
+    this.p!!.text(` move: ${dirToString(o.move)}`, 3, 33, debugStyle);
+    this.p!!.text(`  vel: ${o.vel}`, 3, 43, debugStyle);
+    this.p!!.text(' tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, 53, debugStyle);
+
+    // this.p!!.text(`${p.orientation.x};${p.orientation.y}`, 3, 13, {style: 'white'});
+
     //draw lands
     //draw creatures
     //draw effects
@@ -144,7 +151,7 @@ export class Render {
     const x = this.camera.absoluteX;
     const y = this.camera.absoluteY;
 
-    this.p!!.ellipse(x + HCELL, y + HCELL + QCELL, HCELL, HCELL-QCELL, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
+    this.p!!.ellipse(x + HCELL, y + HCELL + QCELL, HCELL, HCELL - QCELL, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
     // p.text(c.metrics.life + "", HCELL, CELL + 2, style.lifeText);
   }
 

@@ -1,5 +1,5 @@
-import { Action } from '../../game/actions/Action';
 import { Package } from '../../game/actions/Package';
+import { Action } from './actions/Action';
 
 export interface Api {
 

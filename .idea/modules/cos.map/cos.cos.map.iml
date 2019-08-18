@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$/../../../cos/cos.map">
       <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.map/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.map/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.map/out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

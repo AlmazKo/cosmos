@@ -11,18 +11,18 @@
 //
 //   mv.add(N);
 //   mv.remove(N);
-//   expect(mv.next2()).toEqual({moving: N, sight: N});
+//   expect(mv.next2()).toEqual({move: N, sight: N});
 // });
 // //
 // test('MovingKeys 2', () => {
 //   const mv = new KeyboardMoving();
 //
 //   mv.add(N);
-//   expect(mv.next2()).toEqual({moving: N, sight: N});
+//   expect(mv.next2()).toEqual({move: N, sight: N});
 //   mv.add(W);
-//   expect(mv.next2()).toEqual({moving: W, sight: N});
+//   expect(mv.next2()).toEqual({move: W, sight: N});
 //   mv.remove(N);
-//   expect(mv.next2()).toEqual({moving: W, sight: W});
+//   expect(mv.next2()).toEqual({move: W, sight: W});
 //   mv.remove(W);
 //   expect(mv.next2()).toBeUndefined();
 // });

@@ -2,7 +2,7 @@ import { Package } from '../../game/actions/Package';
 import { ApiArrival } from '../../game/api/ApiArrival';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Dir, dirToArrow, NOPE } from '../constants';
+import { Dir, dirToString, NO } from '../constants';
 import { Api } from '../server/Api';
 import { World } from '../world/World';
 import { Act } from './Act';
@@ -12,10 +12,12 @@ import { Focus, Moving } from './Moving';
 import { MovingListener } from './MovingListener';
 import { Orientation } from './Orientation';
 import { Player } from './Player';
+import { ProtoMoving } from './ProtoMoving';
 
+const NO_ACTIONS: Act[] = [];
+let ID                  = 1;
+const DEF_VEL: velocity = 250;
 
-const NOTHING: Act[] = [];
-let ID               = 1;
 
 export class Game implements MovingListener {
 
@@ -23,11 +25,13 @@ export class Game implements MovingListener {
   // @ts-ignore
   private proto: Player;
   private creatures      = new Map<uint, Creature>();
-  private actions: Act[] = NOTHING;
+  private actions: Act[] = NO_ACTIONS;
+  // @ts-ignore
+  private protoMoving: ProtoMoving;
 
   constructor(
     private readonly api: Api,
-    private readonly world: World,
+    readonly world: World,
     private readonly mvg: Moving,
   ) {
     api.listen(p => this.onData(p))
@@ -47,9 +51,9 @@ export class Game implements MovingListener {
     // }
 
     if (!this.proto) {
-      const arrival = pkg.messages[0].data as ApiArrival;
-      this.proto    = this.addCreature(arrival.creature);
-
+      const arrival    = pkg.messages[0].data as ApiArrival;
+      this.proto       = this.addCreature(arrival.creature);
+      this.protoMoving = new ProtoMoving(this.proto.orientation, this)
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
     }
 
@@ -59,9 +63,14 @@ export class Game implements MovingListener {
 
   }
 
-  private onTick() {
 
+  onFrame(time: DOMHighResTimeStamp) {
+
+    if (this.protoMoving) {
+      this.protoMoving.onFrame(time)
+    }
   }
+
 
   getActions(): Act[] {
     return this.actions.splice(0);
@@ -79,56 +88,54 @@ export class Game implements MovingListener {
   private addCreature(ac: ApiCreature): Creature {
 
     //fixme
-    const c = new Player(ac.id, new Metrics(10, 10, "Test1"), new Orientation(NOPE, Dir.SOUTH, 0, ac.x, ac.y));
+    const c = new Player(ac.id, new Metrics(10, 10, "Test1"), new Orientation(NO, Dir.SOUTH, 0, 0.0, ac.x, ac.y));
     this.creatures.set(c.id, c);
     return c;
   }
 
   sonStartMoving(f: Focus) {
-    const p              = this.proto!!;
-    p.orientation.moving = f.moving;
-    p.orientation.sight  = f.sight;
 
-
-    console.log("Start moving:", f, p.orientation);
-
-    // this.actions.push(new StartMoving(ID++, this.proto, Date.now(), 200, f.moving))
+    // this.actions.push(new StartMoving(ID++, this.proto, Date.now(), 200, f.move))
 
   }
 
-  private readonly stop: Focus = {moving: 0, sight: 0, stoper: 222} as Focus;
-
-  onStartMoving(moving: Dir): void {
+  onStartMoving(moving: Dir, sight: Dir): void {
     const o = this.proto!!.orientation;
+    if (!this.world.canStep(o.x, o.y, moving)) {
+      console.warn(`Step is blocked: ${o}`, dirToString(moving));
+      return;
+    }
 
-    if (o.next === undefined) {
-      o.moving = moving;
-      o.sight  = moving;
+    this.api.sendAction({moving, sight});
+
+    // o.setMoving(moving, sight, DEF_VEL);
+  }
+
+  onChangeMoving(moving: Dir, sight: Dir): void {
+    // const o = this.proto!!.orientation;
+    // if (!o.move) return;
+    //
+    // const vel = Game.getVelocity(moving, sight);
+    //
+    // o.setNext(moving, sight, vel)
+  }
+
+  onStopMoving(moving: Dir, sight: Dir): void {
+    const o = this.proto!!.orientation;
+    this.api.sendAction({moving, sight});
+    if (!o.move) return;
+
+    o.stop();
+  }
+
+  static getVelocity(moving: Dir, sight: Dir) {
+    if (moving === sight) {
+      return DEF_VEL;
+    } else if (sight % 2 === moving % 2) {
+      return DEF_VEL * 4;
     } else {
-      o.next = {moving: moving, sight: moving};
+      return DEF_VEL * 1.5;
     }
   }
-
-  onChangeSight(sight: Dir): void {
-    const o = this.proto!!.orientation;
-
-    if (o.next === undefined) {
-      o.next = {moving: o.moving, sight: sight};
-    } else {
-      o.next!!.sight = sight;
-    }
-  }
-
-  onChangeMoving(moving: Dir): void {
-    const o = this.proto!!.orientation;
-    o.next  = {moving: moving, sight: moving};
-    console.log("Set next moving: " + dirToArrow(o.next.moving))
-  }
-
-  onStopMoving(): void {
-    const p            = this.proto!!;
-    p.orientation.next = this.stop;
-  }
-
 
 }

@@ -5,7 +5,8 @@ import { MovingListener } from './MovingListener';
 
 export interface Focus {
   moving: Dir,
-  sight: Dir
+  sight: Dir,
+  vel: velocity
 }
 
 export class Moving implements MovingAggregator {
@@ -21,11 +22,11 @@ export class Moving implements MovingAggregator {
     if (this._moving === 0) {
       this._moving = dir;
       console.log("onStartMoving " + this);
-      this.listener.onStartMoving(dir);
+      this.listener.onStartMoving(this._moving, this._sight);
     } else if (this._sight === 0) {
       this._sight = dir;
       console.log("onChangeSight " + this);
-      this.listener.onChangeSight(dir)
+      this.listener.onChangeMoving(this._moving, this._sight);
     } else {
       //ignore the 3d action
     }
@@ -35,16 +36,16 @@ export class Moving implements MovingAggregator {
     if (this._moving === dir && this._sight === 0) {
       this._moving = 0;
       console.log("onStopMoving " + this);
-      this.listener.onStopMoving();
+      this.listener.onStopMoving(this._moving, this._sight);
     } else if (this._sight === dir) {
       this._sight = 0;
       console.log("onChangeSight " + this);
-      this.listener.onChangeSight(this._moving)
+      this.listener.onChangeMoving(this._moving, this._moving);
     } else if (this._moving === dir) {
       this._moving = this._sight;
       this._sight  = 0;
       console.log("onChangeMoving " + this);
-      this.listener.onChangeMoving(this._moving)
+      this.listener.onChangeMoving(this._moving, this._moving);
     }
   }
 

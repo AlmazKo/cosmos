@@ -73,7 +73,7 @@ class App(vertx: Vertx) {
 
         val cc = Splitter.split16(lands)
         val maps = cc.mapValues { (k, v) ->
-            //            print(k)
+            //            print(k)x
             //            println( v.joinToString())
             JsonArray(v.map { t ->
                 if (t == null) {

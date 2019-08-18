@@ -1,5 +1,4 @@
 import { Dir } from '../constants';
-import { BTN_DOWN, BTN_LEFT, BTN_RIGHT, BTN_UP, Key } from './Keyboard';
 import { MovingAggregator } from './MovingAggregator';
 
 const Buttons: { [index: number]: Dir } = {
@@ -27,7 +26,6 @@ export class GamePad {
       if (!g) return;
 
       const btns = g.buttons;
-
 
       for (let i = 12; i <= 15; i++) {
         const pressed = btns[i].pressed;

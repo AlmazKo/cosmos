@@ -1,12 +1,12 @@
 { "columns":23,
- "image":"projects\/ballad\/resources\/map1.png",
+ "image":"..\/..\/..\/..\/..\/resources\/map1.png",
  "imageheight":928,
  "imagewidth":736,
  "margin":0,
  "name":"base1",
  "spacing":0,
  "tilecount":667,
- "tiledversion":"1.2.1",
+ "tiledversion":"2019.05.08",
  "tileheight":32,
  "tiles":[
         {
@@ -675,11 +675,11 @@
         }, 
         {
          "id":441,
-         "type":"SHALLOW"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":442,
-         "type":"SHALLOW"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":443,
@@ -692,6 +692,14 @@
         {
          "id":445,
          "type":"GRASS"
+        }, 
+        {
+         "id":451,
+         "type":"DEEP_WATER"
+        }, 
+        {
+         "id":452,
+         "type":"DEEP_WATER"
         }, 
         {
          "id":460,
@@ -711,11 +719,11 @@
         }, 
         {
          "id":464,
-         "type":"SHALLOW"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":465,
-         "type":"SHALLOW"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":466,
@@ -730,6 +738,14 @@
          "type":"GRASS"
         }, 
         {
+         "id":474,
+         "type":"DEEP_WATER"
+        }, 
+        {
+         "id":475,
+         "type":"DEEP_WATER"
+        }, 
+        {
          "id":485,
          "type":"SHALLOW"
         }, 
@@ -739,11 +755,11 @@
         }, 
         {
          "id":487,
-         "type":"SHALLOW"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":488,
-         "type":"SHALLOW"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":489,
@@ -756,6 +772,14 @@
         {
          "id":491,
          "type":"GRASS"
+        }, 
+        {
+         "id":497,
+         "type":"DEEP_WATER"
+        }, 
+        {
+         "id":498,
+         "type":"DEEP_WATER"
         }, 
         {
          "id":506,

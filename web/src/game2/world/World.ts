@@ -1,3 +1,4 @@
+import { Dir, TileType } from '../constants';
 import { MapApi } from '../server/MapApi';
 import { Land } from './Land';
 
@@ -25,7 +26,7 @@ export class Piece {
 
 export class World {
 
-  private peices: Array<Array<Piece | Loading>> = [[]];
+  private pieces: Array<Array<Piece | Loading>> = [[]];
 
 
   constructor(private readonly api: MapApi) {
@@ -49,10 +50,10 @@ export class World {
 
 
   getPiece(x: piecePos, y: piecePos): Piece | undefined {
-    let r = this.peices[x];
+    let r = this.pieces[x];
     if (r == undefined) {
       r              = [];
-      this.peices[x] = r;
+      this.pieces[x] = r;
 
     }
     const p = r[y];
@@ -77,8 +78,14 @@ export class World {
     const p = this.getPiece(pX, pY);
     if (p === undefined) return undefined;
 
-    const offsetX = x % PIECE_SIZE;
-    const offsetY = y % PIECE_SIZE;
+    let offsetX = x % PIECE_SIZE;
+    let offsetY = y % PIECE_SIZE;
+    if (offsetY < 0) {
+      offsetY += PIECE_SIZE
+    }
+    if (offsetX < 0) {
+      offsetX += PIECE_SIZE
+    }
 
     return p.data[offsetY * PIECE_SIZE + offsetX];
   }
@@ -87,7 +94,7 @@ export class World {
 
     return this.api.getMapPiece(x, y).map(p => {
       const lands = [];
-      let pair: [uint, uint];
+      let pair: [uint, TileType];
 
       for (let i = 0; i < p.length; i++) {
         pair     = p[i];
@@ -99,7 +106,27 @@ export class World {
   }
 
 
-  canStep(from: [px, px], to: [px, px], b: boolean) {
-    return false;
+  tileType(x: pos, y: pos) {
+    const land = this.get(x, y);
+    if (!land) return TileType.NOTHING;
+    return land.type;
+  }
+
+  canStep(fromX: pos, fromY: pos, dir: Dir) {
+
+    let x = fromX, y = fromY;
+
+    if (dir === Dir.NORTH) {
+      y--;
+    } else if (dir == Dir.SOUTH) {
+      y++;
+    } else if (dir == Dir.EAST) {
+      x++;
+    } else if (dir == Dir.WEST) {
+      x--;
+    }
+
+    const type = this.tileType(x, y);
+    return type === TileType.GRASS || type === TileType.SHALLOW;
   }
 }

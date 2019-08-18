@@ -25,7 +25,7 @@
     "url": "https://github.com/AlmazKo/trawler"
   },
   "scripts": {
-    "watch": "./node_modules/parcel-bundler/bin/cli.js index.html",
+    "watch": "./node_modules/parcel-bundler/bin/cli.js index.html src/worker.ts",
     "build": "webpack",
     "test": "jest"
   },

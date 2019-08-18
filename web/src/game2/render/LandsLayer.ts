@@ -1,5 +1,6 @@
 import { CanvasContext } from '../../draw/CanvasContext';
 import { Layer } from '../../game/layers/Layer';
+import { debugTile, stringTiles } from '../constants';
 import { Images } from '../Images';
 import { floor, Piece, World } from '../world/World';
 import { Camera } from './Camera';
@@ -93,9 +94,10 @@ export class LandsLayer implements Layer {
       //
       ctx.drawImage(img, sx, sy, TILE_SIZE, TILE_SIZE, x, y, CELL2, CELL2);
       // ctx.rect(x+3, y+3, CELL2-7, CELL2-7, {style: '#000000', dash: [4, 4], width: 4});
-      // ctx.text("" + debugTile(land.type), x + 1, y + 1, {style: 'black'});
-      // ctx.text(x + "", x + 1, y + 1, {style: 'black'});
+      ctx.text(debugTile(land.type), x + CELL2-2, y, {style: 'black', font: '20px sans-serif', align: 'right'});
     }
+      ctx.text(`${piece.x}; ${piece.y}`, 1, 1, {style: 'black', font: '16px sans-serif'});
+
     for (let i = 0; i < 16; i++) {
       ctx.line(0, i * CELL2, PIECE_SIZE2, i * CELL2, {style: '#333333', dash: [2, 3], width: 2});
       ctx.line(i * CELL2, 0, i * CELL2, PIECE_SIZE2, {style: '#333333', dash: [2, 3], width: 2});

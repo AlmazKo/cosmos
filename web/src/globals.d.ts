@@ -54,6 +54,11 @@ declare type sec = int;
 declare type pos = int;
 
 /**
+ * Ms for cell crossing
+ */
+declare type velocity = uint;
+
+/**
  * timestamp (sec)
  */
 declare type ts = sec;

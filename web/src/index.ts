@@ -18,6 +18,12 @@ window.onload = () => {
   p.start(gc);
 
   window.addEventListener('gamepadconnected', e => get(GamePad));
+
+  var myWorker = new Worker('worker.ts');
+
+  myWorker.onmessage = function (e) {
+    console.log('Message received from worker', e);
+  }
 };
 
 

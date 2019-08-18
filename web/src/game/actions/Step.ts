@@ -11,7 +11,7 @@ export class Step implements Action {
   readonly creature: Creature;
   readonly time: tsm;
 
-  constructor(id: int, source: Creature, duration: uint, direction: Dir = source.orientation.moving) {
+  constructor(id: int, source: Creature, duration: uint, direction: Dir = source.orientation.move) {
 
     this.id        = id;
     this.time      = Date.now();//fixme take it from performance*

@@ -24,7 +24,7 @@
 //   constructor(c: ApiCreature) {
 //     this.id           = c.id;
 //     this.metrics      = c.metrics;
-//     this.orientation  = {moving: 0, sight: c.direction, x: c.x, y: c.y, shift: 0};
+//     this.orientation  = {move: 0, sight: c.direction, x: c.x, y: c.y, shift: 0};
 //     this.viewDistance = c.viewDistance;
 //   }
 //
@@ -98,7 +98,7 @@
 //   // step(step: Step) {
 //   //   this.animators.interrupt("step");
 //   //   const dr                = step.direction;
-//   //   this.orientation.moving = dr;
+//   //   this.orientation.move = dr;
 //   //   // const movement          = new Animator(step.duration, f => {
 //   //   //   if (f >= 1) {
 //   //   //     switch (dr) {
@@ -118,7 +118,7 @@
 //   //   //     this.shiftX = 0;
 //   //   //     this.shiftY = 0;
 //   //   //
-//   //   //     this.orientation.moving = 0;
+//   //   //     this.orientation.move = 0;
 //   //   //   } else {
 //   //   //     if (dr == Dir.WEST) this.shiftX = -f * CELL;
 //   //   //     if (dr == Dir.EAST) this.shiftX = f * CELL;

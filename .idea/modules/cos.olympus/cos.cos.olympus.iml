@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$/../../../cos/cos.olympus">
       <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.olympus/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.olympus/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.olympus/out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

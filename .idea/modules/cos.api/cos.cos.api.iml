@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$/../../../cos/cos.api">
       <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.api/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.api/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../cos/cos.api/out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

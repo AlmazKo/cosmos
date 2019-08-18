@@ -36,12 +36,12 @@ export class Fireball implements Effect {
           const from = this.getPosition(this.lastAnimIndex);
           const to   = this.getPosition(i);
 
-          if (!this.world.canStep(from, to, true)) {
-            this.isFinished = true;
-            return true;
-          } else {
-            this.lastAnimIndex = i;
-          }
+          // if (!this.world.canStep(from, to, true)) {
+          //   this.isFinished = true;
+          //   return true;
+          // } else {
+          //   this.lastAnimIndex = i;
+          // }
         }
 
         if (i >= spec.distance) {

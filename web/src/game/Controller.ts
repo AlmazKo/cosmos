@@ -39,7 +39,7 @@
 //   //
 //   //
 //   //   if (this.proto) this.map.updateFocus(this.tp, this.proto);
-//   //   if (!this.proto.orientation.moving) {
+//   //   if (!this.proto.orientation.move) {
 //   //
 //   //   }
 //   //   this.map.draw(p);
@@ -221,10 +221,10 @@
 //   sendOrientation(ot: Orientation) {
 //     const p = this.proto;
 //     if (!this.map.canStep([p.positionX, p.positionY], p.direction)) {
-//       console.warn("Forbidden direction " + ot.moving);
+//       console.warn("Forbidden direction " + ot.move);
 //       return;
 //     }
-//     const step = new Step(this.nextId(), p, 300, ot.moving);
+//     const step = new Step(this.nextId(), p, 300, ot.move);
 //     console.log("STEP", step);
 //     this.server.sendAction(step);
 //     p.step(step);
