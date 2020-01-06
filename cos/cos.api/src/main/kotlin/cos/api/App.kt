@@ -10,7 +10,7 @@ import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonArray
 import io.vertx.core.logging.LoggerFactory
-import io.vertx.core.net.JksOptions
+import io.vertx.core.net.PemKeyCertOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.LoggerFormat
@@ -33,9 +33,9 @@ class App(vertx: Vertx) {
             isUseAlpn = true
             isSsl = true
             port = 443
-            keyStoreOptions = JksOptions().apply {
-                path = "cos-test.ks"
-                password = "123456"
+            pemKeyCertOptions = PemKeyCertOptions().apply {
+                keyPath = "localhost+2-key.pem"
+                certPath = "localhost+2.pem"
             }
         }
 
