@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    kotlin("jvm") version "1.3.41" apply false
-    id("org.javamodularity.moduleplugin") version "1.5.0" apply false
-    id("kotlinx-serialization") version "1.3.40" apply false
+    kotlin("jvm") version "1.3.61" apply false
+    id("org.javamodularity.moduleplugin") version "1.6.0" apply false
+    id("kotlinx-serialization") version "1.3.60" apply false
 //    id("kotlin-multiplatform") version "1.3.30" apply false
 }
 
@@ -54,8 +54,8 @@ subprojects {
         implementation(kotlin("stdlib-jdk8"))
         implementation("com.google.flogger:flogger:0.4")
         implementation("com.google.flogger:flogger-system-backend:0.4")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0")
-        compile("org.jetbrains:annotations:17.0.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+        compile("org.jetbrains:annotations:18.0.0")
     }
     //endregion
 

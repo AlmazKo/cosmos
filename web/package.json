@@ -9,7 +9,7 @@
     "@types/jest": "23.3.9",
     "cssnano": "^4.1.10",
     "jest": "23.6.0",
-    "parcel-bundler": "^1.12.3",
+    "parcel-bundler": "^1.12.4",
     "source-map-loader": "0.2.4",
     "ts-jest": "23.10.4",
     "ts-loader": "6.0.2",
@@ -30,6 +30,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "npm": "^6.9.0"
+    "npm": "^6.13.7"
   }
 }

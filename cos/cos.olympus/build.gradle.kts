@@ -1,4 +1,4 @@
-import org.javamodularity.moduleplugin.tasks.ModuleOptions
+//import org.javamodularity.moduleplugin.tasks.ModuleOptions
 
 plugins {
     application
@@ -17,7 +17,11 @@ dependencies {
 application {
 
     mainClassName = "$moduleName/cos.olympus.Main"
-    applicationDefaultJvmArgs = listOf("-XX:+PrintGCDetails")
+    applicationDefaultJvmArgs = listOf(
+//        "-verbose:gc",
+//        "-verbose:class",
+        "-Xmx128m"
+    )
 }
 
 //patchModules.config = listOf(

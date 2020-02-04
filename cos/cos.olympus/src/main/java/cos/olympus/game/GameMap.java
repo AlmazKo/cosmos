@@ -15,23 +15,17 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public final class GameMap {
+    private final int     width;
+    private final int     height;
     private final short[] basis;
     private final short[] objects;
     private final Tile[]  tiles;
+    private final int[]   creatures;
 
-    public int[] getCreatures() {
-        return creatures;
-    }
+    private final HashMap<Integer, Creature> npcs = new HashMap<>();
 
-    private final int[] creatures;
-    private final int   width;
-    private final int   height;
-
-    private final HashMap<Integer, Npc> npcs = new HashMap<>();
-
-    final         HashMap<Integer, Player> players = new HashMap<>();
-    private final int                      offsetX;
-    private final int                      offsetY;
+    private final int offsetX;
+    private final int offsetY;
 
     public GameMap(Lands lands) {
         this.offsetX = lands.getOffsetX();
@@ -47,83 +41,83 @@ public final class GameMap {
 
 
     private void debug() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < basis.length; i++) {
-
-            short it = basis[i];
-            if (i % width == 0) {
-                sb.append('\n');
-                sb.append(String.format("%1$-4s", i / width + offsetY));
-            }
-
-            if (it == 0) {
-                sb.append('.');
-            } else {
-                Tile tile = tiles[it];
-                if (tile == null) {
-                    sb.append('?');
-                    continue;
-                }
-
-                char b;
-                switch (tile.getType()) {
-
-                    case WATER:
-                        b = '~';
-                        break;
-
-                    case GRASS:
-                        b = '.';
-                        break;
-                    case WALL:
-                        b = '#';
-                        break;
-                    case GATE:
-                        b = 'D';
-                        break;
-                    case NOTHING:
-                        b = 'x';
-                        break;
-
-                    default:
-                        b = 'N';
-                }
-
-                sb.append(b);
-            }
-
-        }
-
-        System.out.println(sb.toString());
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < basis.length; i++) {
+//
+//            short it = basis[i];
+//            if (i % width == 0) {
+//                sb.append('\n');
+//                sb.append(String.format("%1$-4s", i / width + offsetY));
+//            }
+//
+//            if (it == 0) {
+//                sb.append('.');
+//            } else {
+//                Tile tile = tiles[it];
+//                if (tile == null) {
+//                    sb.append('?');
+//                    continue;
+//                }
+//
+//                char b;
+//                switch (tile.getType()) {
+//
+//                    case WATER:
+//                        b = '~';
+//                        break;
+//
+//                    case GRASS:
+//                        b = '.';
+//                        break;
+//                    case WALL:
+//                        b = '#';
+//                        break;
+//                    case GATE:
+//                        b = 'D';
+//                        break;
+//                    case NOTHING:
+//                        b = 'x';
+//                        break;
+//
+//                    default:
+//                        b = 'N';
+//                }
+//
+//                sb.append(b);
+//            }
+//
+//        }
+//
+//        System.out.println(sb.toString());
     }
 
-    public Player addPlayer(int id) {
-
-        int idx = findFreeIndex(-18, 0, 3);
-        if (idx == -1) throw new RuntimeException("Not found the place for player");
-
-        Coord coord = toCoord(idx);
-        Player player = new Player(id, new CreatureState(50, coord.getX(), coord.getY(), Direction.SOUTH));
-
-        creatures[idx] = id;
-        players.put(id, player);
-        return player;
-    }
-
-    public void removePlayer(int id) {
-        Player removed = players.remove(id);
-
-        if (removed != null) {
-            int idx = toIndex(removed.getX(), removed.getY());
-            int inMap = creatures[idx];
-            if (inMap != id) {
-                throw new RuntimeException("Wrong place player=" + id);
-            } else {
-                creatures[idx] = 0;
-            }
-
-        }
-    }
+//    public Player addPlayer(int id) {
+//
+//        int idx = findFreeIndex(-18, 0, 3);
+//        if (idx == -1) throw new RuntimeException("Not found the place for player");
+//
+//        Coord coord = toCoord(idx);
+//        Player player = new Player(id, new CreatureState(50, coord.getX(), coord.getY(), Direction.SOUTH));
+//
+//        creatures[idx] = id;
+//        players.put(id, player);
+//        return player;
+//    }
+//
+//    public void removePlayer(int id) {
+//        Player removed = players.remove(id);
+//
+//        if (removed != null) {
+//            int idx = toIndex(removed.getX(), removed.getY());
+//            int inMap = creatures[idx];
+//            if (inMap != id) {
+//                throw new RuntimeException("Wrong place player=" + id);
+//            } else {
+//                creatures[idx] = 0;
+//            }
+//
+//        }
+//    }
 
     @Nullable public Tile get(int x, int y) {
         int idx = toIndex(x, y);
@@ -147,13 +141,7 @@ public final class GameMap {
 
     @Nullable private Creature _getCreature(int x, int y) {
         int crId = creatures[toIndex(x, y)];
-        if (crId > 1000) {
             return npcs.get(crId);
-        } else if (crId > 0) {
-            return players.get(crId);
-        }
-
-        return null;
     }
 
     List<@NotNull Creature> getCreatures(int centerX, int centerY, int radius) {
@@ -174,6 +162,11 @@ public final class GameMap {
         return result;
     }
 
+    void removeCreature(int id) {
+        npcs.remove(id);
+        creatures[id] = 0;
+    }
+
     boolean addCreature(Creature c) {
         int idx = toIndex(c.getX(), c.getY());
         if (idx < 0 || idx >= basis.length) return false;
@@ -182,10 +175,10 @@ public final class GameMap {
 
         if (idx >= 0) {
             creatures[idx] = c.getId();
-            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
+//            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
             return true;
         } else {
-            return false;
+            throw new IllegalStateException("Fail finding free place");
         }
     }
 
@@ -297,14 +290,14 @@ public final class GameMap {
     }
 
     public void cleanDeadCreatures() {
-        npcs.values().removeIf(n -> {
-            if (n.isDead()) {
-
-                this.creatures[toIndex(n.getX(), n.getY())] = 0;
-                return true;
-            }
-
-            return false;
-        });
+//        npcs.values().removeIf(n -> {
+//            if (n.isDead()) {
+//
+//                this.creatures[toIndex(n.getX(), n.getY())] = 0;
+//                return true;
+//            }
+//
+//            return false;
+//        });
     }
 }

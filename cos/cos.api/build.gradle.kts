@@ -1,4 +1,4 @@
-import org.javamodularity.moduleplugin.tasks.ModuleOptions
+//import org.javamodularity.moduleplugin.tasks.ModuleOptions
 
 plugins {
     application
@@ -23,11 +23,11 @@ application {
 //patchModules.config = listOf(
 //    "java.annotation=jsr305-3.0.2.jar"
 //)
-
-(run) {
-//    extensions.configure<ModuleOptions> {
-//        addModules = listOf("java.sql")
-//    }
 //
-//    jvmArgs = listOf("-XX:+PrintGCDetails")
-}
+//(run) {
+////    extensions.configure<ModuleOptions> {
+////        addModules = listOf("java.sql")
+////    }
+////
+////    jvmArgs = listOf("-XX:+PrintGCDetails")
+//}

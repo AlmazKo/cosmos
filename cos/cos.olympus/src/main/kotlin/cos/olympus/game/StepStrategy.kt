@@ -7,31 +7,31 @@ import cos.olympus.game.actions.Step
 class StepStrategy(val action: Step) {
     var isBack = false
 
-    fun handle(time: Tsm, actions: ActionConsumer, map: GameMap): Boolean {
-
-        val distance = Math.min(1, Math.round((time - action.time) / action.duration.toFloat()))
-
-        if (!isBack) {
-            val st = action.creature.state
-
-            st.direction = action.direction
-
-            if (distance > action.distanceTravelled) {
-                if (step(st, action.direction, map)) {
-                    action.distanceTravelled = distance
-                } else {
-                    isBack = true
-                    actions.add(BackStep(action, time))
-                }
-            }
-        }
-
-        if (time - action.time >= action.duration) {
-            action.finished = true
-        }
-
-        return action.finished
-    }
+//    fun handle(time: Tsm, actions: ActionConsumer, map: GameMap): Boolean {
+//
+//        val distance = Math.min(1, Math.round((time - action.time) / action.duration.toFloat()))
+//
+//        if (!isBack) {
+//            val st = action.creature.state
+//
+//            st.direction = action.direction
+//
+//            if (distance > action.distanceTravelled) {
+//                if (step(st, action.direction, map)) {
+//                    action.distanceTravelled = distance
+//                } else {
+//                    isBack = true
+//                    actions.add(BackStep(action, time))
+//                }
+//            }
+//        }
+//
+//        if (time - action.time >= action.duration) {
+//            action.finished = true
+//        }
+//
+//        return action.finished
+//    }
 
 
     private fun step(st: CreatureState, dir: Direction, map: GameMap): Boolean {

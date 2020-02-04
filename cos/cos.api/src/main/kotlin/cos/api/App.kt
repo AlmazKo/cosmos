@@ -5,11 +5,13 @@ import cos.map.Land
 import cos.map.Lands
 import cos.map.TileType
 import io.vertx.core.Vertx
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonArray
 import io.vertx.core.logging.LoggerFactory
+import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.PemKeyCertOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
@@ -21,7 +23,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 @ImplicitReflectionSerializer
-class App(vertx: Vertx) {
+class App(val vertx: Vertx) {
     private lateinit var test: ShortArray
     private val log = LoggerFactory.getLogger(javaClass)
     private val playerInc = AtomicInteger(0)
@@ -40,7 +42,7 @@ class App(vertx: Vertx) {
         }
 
         val server = vertx.createHttpServer(opts)
-
+        setupClient()
         initApi(vertx, lands, server)
 
         server.listen {
@@ -52,6 +54,31 @@ class App(vertx: Vertx) {
             }
 
         }
+    }
+
+    private fun setupClient() {
+
+        val options = NetClientOptions().setConnectTimeout(1000);
+        val client = vertx.createNetClient(options);
+        client.connect(6666, "localhost") { res ->
+            if (res.succeeded()) {
+                println("Connected!");
+                val socket = res.result();
+                socket.write(Buffer.buffer(byteArrayOf(1, 99, Byte.MAX_VALUE)))
+            } else {
+                println("Failed to connect: " + res.cause());
+            }
+        }
+                val client2 = vertx.createNetClient(options);
+                client2.connect(6666, "localhost") { res ->
+                    if (res.succeeded()) {
+                        println("Connected2!");
+                        val socket = res.result();
+                        socket.write(Buffer.buffer(byteArrayOf(1, 88, Byte.MAX_VALUE)))
+                    } else {
+                        println("Failed to connect2: " + res.cause());
+                    }
+                }
     }
 
     private fun initApi(vertx: Vertx, lands: Lands, server: HttpServer) {

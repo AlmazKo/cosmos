@@ -1,6 +1,6 @@
 
 import org.javamodularity.moduleplugin.extensions.CompileModuleOptions
-import org.javamodularity.moduleplugin.tasks.TestModuleOptions
+//import org.javamodularity.moduleplugin.tasks.TestModuleOptions
 
 //region NO-OP (DSL testing)
 tasks.compileJava {
@@ -35,7 +35,7 @@ modularity {
 //}
 //
 dependencies {
-    compile("io.vertx:vertx-core:3.7.0")
+    compile("io.vertx:vertx-core:3.8.5")
 }
 
 
