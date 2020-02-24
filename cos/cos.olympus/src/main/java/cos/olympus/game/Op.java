@@ -4,6 +4,7 @@ public interface Op {
     byte LOGIN = 1;
     byte APPEAR = 2;
     byte MOVE = 3;
+    byte STOP_MOVE = 4;
 
 
 

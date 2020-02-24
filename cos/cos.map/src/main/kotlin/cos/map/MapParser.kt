@@ -1,8 +1,8 @@
 package cos.map
 
 import cos.map.TileType.NOTHING
-import io.vertx.core.json.JsonArray
-import io.vertx.core.json.JsonObject
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 
 object MapParser {
 
@@ -18,25 +18,24 @@ object MapParser {
 
     fun parse(rawMap: JsonObject, rawTiles: JsonObject): Lands {
 
-        val layers = rawMap.getJsonArray("layers")
+        val layers = rawMap.getArray("layers")
         val spec = calcSpec(layers)
-        val map = readChunks(layers.getJsonObject(0).getJsonArray("chunks"), spec)
-        val objects = readChunks(layers.getJsonObject(1).getJsonArray("chunks"), spec)
+        val map = readChunks(layers.getObject(0).getArray("chunks"), spec)
+        val objects = readChunks(layers.getObject(1).getArray("chunks"), spec)
         val tiles = readTiles(rawTiles)
 
         return Lands(spec.width.toShort(), spec.height.toShort(), spec.shiftX, spec.shiftY, map, objects, tiles)
     }
 
     private fun readTiles(rawTiles: JsonObject): Array<Tile?> {
-        val tilesColumns = rawTiles.getInteger("columns")!!
-        val tileSize = rawTiles.getInteger("tileheight")!!
-        val count = rawTiles.getInteger("tilecount")!!
+        val tilesColumns = rawTiles.getPrimitive("columns").int
+        val tileSize = rawTiles.getPrimitive("tileheight").int
+        val count = rawTiles.getPrimitive("tilecount").int
         val tiles = arrayOfNulls<Tile>(count)
-        rawTiles.getJsonArray("tiles").forEach { it ->
+        rawTiles.getArray("tiles").forEach { it ->
             val tile = it as JsonObject
-            val id = tile.getInteger("id")!!
-            val rawType = tile.getString("type")
-
+            val id = tile.getPrimitive("id").int
+            val rawType = tile.getPrimitive("type").content
             val type = parseTileType(rawType)
 
             tiles[id] = Tile(id, type)
@@ -53,13 +52,13 @@ object MapParser {
         var minShiftX = 0
         var minShiftY = 0
 
-        val basis = rawLayers.getJsonObject(0).getJsonArray("chunks")
+        val basis = rawLayers.getObject(0).getArray("chunks")
 
         basis.forEach { it ->
 
             val chunk = it as JsonObject
-            val shiftX = chunk.getInteger("x")!!
-            val shiftY = chunk.getInteger("y")!!
+            val shiftX = chunk.getPrimitive("x").int
+            val shiftY = chunk.getPrimitive("y").int
             if (isFirst) {
                 isFirst = false
                 minShiftX = shiftX
@@ -82,20 +81,20 @@ object MapParser {
         layers.forEach { it ->
 
             val chunk = it as JsonObject
-            val shiftX = chunk.getInteger("x")!!
-            val shiftY = chunk.getInteger("y")!!
+            val shiftX = chunk.getPrimitive("x").int
+            val shiftY = chunk.getPrimitive("y").int
 
-            val chunkWidth = chunk.getInteger("width")!!
-            val chunkHeight = chunk.getInteger("height")!!
+            val chunkWidth = chunk.getPrimitive("width").int
+            val chunkHeight = chunk.getPrimitive("height").int
 
             //fix me positive
             val posX = shiftX - spec.shiftX
             val posY = shiftY - spec.shiftY
-            val data = chunk.getJsonArray("data")
+            val data = chunk.getArray("data")
 
-            for (i in 0 until data.size()) {
+            for (i in 0 until data.size) {
 
-                val v = data.getInteger(i)!!
+                val v = data.getPrimitive(i).int
                 if (v == 0) continue
 
                 val chnukX = i % chunkWidth

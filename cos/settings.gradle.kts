@@ -1,7 +1,8 @@
 rootProject.name = "cos"
 
-include (
+include(
     "cos.map",
+    "cos.logging",
     "cos.olympus",
     "cos.api"
 )

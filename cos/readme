@@ -1,0 +1,7 @@
+export GRAALVM_HOME=/Users/aleksandrsuslov/Downloads/graalvm-ce-java11-19.3.1/Contents/Home
+$GRAALVM_HOME/bin/native-image -H:+AllowVMInspection -cp ./build/libs/olympus.jar  -H:Class=cos.olympus.Main
+
+time ./cos.olympus.main
+
+
+

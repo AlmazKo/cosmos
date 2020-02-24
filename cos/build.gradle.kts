@@ -3,14 +3,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     kotlin("jvm") version "1.3.61" apply false
+
+    id("com.github.johnrengelman.shadow") version "5.2.0"
     id("org.javamodularity.moduleplugin") version "1.6.0" apply false
-    id("kotlinx-serialization") version "1.3.60" apply false
-//    id("kotlin-multiplatform") version "1.3.30" apply false
+    id("kotlinx-serialization") version "1.3.61" apply false
+//    id("org.beryx.jlink") version "2.17.2"
+}
+
+repositories {
+    jcenter()
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_12
-    targetCompatibility = JavaVersion.VERSION_12
+    sourceCompatibility = JavaVersion.VERSION_13
+    targetCompatibility = JavaVersion.VERSION_13
 }
 
 
@@ -27,39 +34,40 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "kotlinx-serialization")
+    apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "org.javamodularity.moduleplugin")
 
-    //region https://docs.gradle.org/current/userguide/kotlin_dsl.html#using_kotlin_delegated_properties
-    val test by tasks.existing(Test::class)
-    val build by tasks
-    val javadoc by tasks
 
-    val implementation by configurations
-    val testImplementation by configurations
-    val testRuntimeOnly by configurations
+    tasks.compileJava {
+        options.compilerArgs = listOf("--enable-preview")
+//        extensions.configure<org.javamodularity.moduleplugin.extensions.CompileModuleOptions> {
+//            addModules = listOf()
+//            compileModuleInfoSeparately = false
+//        }
+    }
 
-    val jUnitVersion: String by project
-    //endregion
-
-    //region KOTLIN
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "12"
-        kotlinOptions.noReflect = true
-        kotlinOptions.languageVersion = "1.3"
-        kotlinOptions.apiVersion = "1.3"
-        kotlinOptions.suppressWarnings = true
+        kotlinOptions.apply {
+            jvmTarget = "12"
+            noReflect = true
+            noStdlib = true
+            noJdk = false
+            noReflect = true
+            includeRuntime = false
+            languageVersion = "1.3"
+            apiVersion = "1.3"
+            suppressWarnings = true
+        }
     }
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
-        implementation("com.google.flogger:flogger:0.4")
-        implementation("com.google.flogger:flogger-system-backend:0.4")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
-        compile("org.jetbrains:annotations:18.0.0")
+        implementation("org.jetbrains:annotations:18.0.0")
     }
-    //endregion
 
     repositories {
         mavenCentral()
+        jcenter()
     }
 }

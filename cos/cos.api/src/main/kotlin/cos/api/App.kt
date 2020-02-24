@@ -62,23 +62,50 @@ class App(val vertx: Vertx) {
         val client = vertx.createNetClient(options);
         client.connect(6666, "localhost") { res ->
             if (res.succeeded()) {
+                var id = 0;
                 println("Connected!");
                 val socket = res.result();
-                socket.write(Buffer.buffer(byteArrayOf(1, 99, Byte.MAX_VALUE)))
+                socket.write(op(1, ++id,99))
+                vertx.setPeriodic(3000) { _ ->
+                    socket.write(moveOp(3, ++id, 99, 0, 0, 1, 2))
+                }
             } else {
                 println("Failed to connect: " + res.cause());
             }
         }
-                val client2 = vertx.createNetClient(options);
-                client2.connect(6666, "localhost") { res ->
-                    if (res.succeeded()) {
-                        println("Connected2!");
-                        val socket = res.result();
-                        socket.write(Buffer.buffer(byteArrayOf(1, 88, Byte.MAX_VALUE)))
-                    } else {
-                        println("Failed to connect2: " + res.cause());
-                    }
-                }
+        //        val client2 = vertx.createNetClient(options);
+        //        client2.connect(6666, "localhost") { res ->
+        //            if (res.succeeded()) {
+        //                println("Connected2!");
+        //                val socket = res.result();
+        //                socket.write(op(1, 88))
+        //            } else {
+        //                println("Failed to connect2: " + res.cause());
+        //            }
+        //        }
+    }
+
+    private fun op(code: Byte, id: Int, userId: Int, vararg bytes: Byte): Buffer {
+        val bf = Buffer.buffer(bytes.size + 2 + 4)
+        bf.appendByte(code)
+        bf.appendInt(id)
+        bf.appendInt(userId)
+        bf.appendBytes(bytes)
+        bf.appendByte(Byte.MAX_VALUE)
+        return bf
+    }
+
+    private fun moveOp(code: Byte, id: Int, userId: Int, x: Int, y: Int, s: Byte, d: Byte): Buffer {
+        val bf = Buffer.buffer(1 + 4 + 4 + 1 + 1 + 1 + 1 + 1)
+        bf.appendByte(code)
+        bf.appendInt(id)
+        bf.appendInt(userId)
+        bf.appendInt(x)
+        bf.appendInt(y)
+        bf.appendByte(s)
+        bf.appendByte(d)
+        bf.appendByte(Byte.MAX_VALUE)
+        return bf
     }
 
     private fun initApi(vertx: Vertx, lands: Lands, server: HttpServer) {

@@ -3,6 +3,7 @@ package cos.olympus.game;
 import cos.map.Coord;
 import cos.map.Lands;
 import cos.map.Tile;
+import cos.map.TileType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static cos.olympus.game.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -35,60 +37,89 @@ public final class GameMap {
         this.basis = lands.getBasis();
         this.objects = lands.getObjects();
         this.creatures = new int[basis.length];
+//        this.movements = new int[basis.length];
         this.tiles = lands.getTiles();
         debug();
     }
 
-
-    private void debug() {
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < basis.length; i++) {
 //
-//            short it = basis[i];
-//            if (i % width == 0) {
-//                sb.append('\n');
-//                sb.append(String.format("%1$-4s", i / width + offsetY));
-//            }
+//    private void iterate() {
 //
-//            if (it == 0) {
-//                sb.append('.');
-//            } else {
-//                Tile tile = tiles[it];
-//                if (tile == null) {
-//                    sb.append('?');
-//                    continue;
+//        int x = 0;
+//        int y = 0;
+//        int idx = 0;
+//        for (int i = 0; i < creatures.length; i++) {
+//            int c = creatures[i];
+//            if (c == 0) continue;
+//
+//            int speed = c << 4;
+//            if (speed == 0) continue;
+//
+//            int dir = c << 1;
+//            int offset = c << 2;
+//            int newOffset = (offset + speed) % 16;
+//            if (newOffset == 1) {
+//                if (creatures[idx + 1] == 0) {
+//                    creatures[idx + 1] = c;
 //                }
-//
-//                char b;
-//                switch (tile.getType()) {
-//
-//                    case WATER:
-//                        b = '~';
-//                        break;
-//
-//                    case GRASS:
-//                        b = '.';
-//                        break;
+//                //try move
+//            }
+//        }
+//    }
+
+
+    public void debug() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < basis.length; i++) {
+
+            short it = basis[i];
+            if (i % width == 0) {
+                sb.append('\n');
+                sb.append(String.format("%1$-4s", i / width + offsetY));
+            }
+
+            if (it == 0) {
+                sb.append('.');
+            } else {
+                Tile tile = tiles[it];
+                if (tile == null) {
+                    sb.append('?');
+                    continue;
+                }
+
+                char b;
+                switch (tile.getType()) {
+
+                    case SHALLOW:
+                        b = '~';
+                        break;
+                    case DEEP_WATER:
+                        b = '≈';
+                        break;
+
+                    case GRASS:
+                        b = '.';
+                        break;
 //                    case WALL:
 //                        b = '#';
 //                        break;
 //                    case GATE:
 //                        b = 'D';
 //                        break;
-//                    case NOTHING:
-//                        b = 'x';
-//                        break;
-//
-//                    default:
-//                        b = 'N';
-//                }
-//
-//                sb.append(b);
-//            }
-//
-//        }
-//
-//        System.out.println(sb.toString());
+                    case NOTHING:
+                        b = 'x';
+                        break;
+
+                    default:
+                        b = 'N';
+                }
+
+                sb.append(b);
+            }
+
+        }
+
+        System.out.println(sb.toString());
     }
 
 //    public Player addPlayer(int id) {
@@ -119,19 +150,19 @@ public final class GameMap {
 //        }
 //    }
 
-    @Nullable public Tile get(int x, int y) {
+    @Nullable public TileType get(int x, int y) {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
 
-        return tiles[basis[idx]];
+        return tiles[basis[idx]].component2();
     }
-
-    @Nullable public Tile getObject(int x, int y) {
-        int idx = toIndex(x, y);
-        if (idx < 0 || idx >= basis.length) return null;
-
-        return tiles[objects[idx]];
-    }
+//
+//    @Nullable public Tile getObject(int x, int y) {
+//        int idx = toIndex(x, y);
+//        if (idx < 0 || idx >= basis.length) return null;
+//
+//        return tiles[objects[idx]];
+//    }
 
     public @Nullable Creature getCreature(int x, int y) {
         if (!isValid(x, y)) return null;
@@ -141,7 +172,7 @@ public final class GameMap {
 
     @Nullable private Creature _getCreature(int x, int y) {
         int crId = creatures[toIndex(x, y)];
-            return npcs.get(crId);
+        return npcs.get(crId);
     }
 
     List<@NotNull Creature> getCreatures(int centerX, int centerY, int radius) {
@@ -167,16 +198,23 @@ public final class GameMap {
         creatures[id] = 0;
     }
 
-    boolean addCreature(Creature c) {
-        int idx = toIndex(c.getX(), c.getY());
-        if (idx < 0 || idx >= basis.length) return false;
+    public Creature createCreature(User soul) {
 
-        idx = findFreeIndex(c.getX(), c.getY(), 2);
+        int idx = toIndex(soul.lastX, soul.lastY);
+        if (idx < 0 || idx >= basis.length) {
+            throw new IllegalStateException("Fail finding free place");
+        }
+
+        idx = findFreeIndex(soul.lastX, soul.lastY, 2);
 
         if (idx >= 0) {
-            creatures[idx] = c.getId();
+
+            var coord = toCoord(idx);
+            var creature = new Creature(soul.id, soul.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
+
+            creatures[idx] = creature.id;
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
-            return true;
+            return creature;
         } else {
             throw new IllegalStateException("Fail finding free place");
         }
