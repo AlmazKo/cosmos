@@ -1,15 +1,11 @@
 package cos.map;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import static cos.map.Json.Phase.AFTER_KEY;
-import static cos.map.Json.Phase.IN_ARRAY;
-import static cos.map.Json.Phase.IN_KEY;
-import static cos.map.Json.Phase.IN_OBJ;
-import static cos.map.Json.Phase.PRE_VALUE;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -81,7 +77,7 @@ public interface Json {
 //        }
 //    }
 
-    final class EtArray implements Et {
+    final class EtArray extends AbstractCollection<Object> implements Et {
         final         ArrayList<Object> values = new ArrayList<>();
         private final Et                parent;
 
@@ -107,6 +103,14 @@ public interface Json {
 
         public Et up() {
             return parent;
+        }
+
+        @Override public Iterator<Object> iterator() {
+            return values.iterator();
+        }
+
+        @Override public int size() {
+            return values.size();
         }
     }
 
@@ -143,113 +147,201 @@ public interface Json {
         }
     }
 
-    enum Phase {
-        NOPE, IN_KEY, AFTER_KEY, PRE_VALUE, IN_ARRAY, IN_OBJ,, AFTER_VALUE
-    }
-
     static EtObject parse(String cs) {
-
-        Phase p = IN_OBJ;
-
-        EtObject root = new EtObject(null);
-        Et et = root;
-        var keyBuf = new StringBuilder();
-        var key = "";
+        boolean expectValue = true;
+        Et et = null;
+        String key = null;
 
         for (int i = 0; i < cs.length(); i++) {
             char c = cs.charAt(i);
+            if (isWhitespace(c)) continue;
 
-            switch (p) {
-                case IN_OBJ: {
-                    if (c == '"') {
-                        p = IN_KEY;
-                    } else if (c == '}') {
-                        et = et.up();
-                    }
-                }
-                case IN_KEY: {
-                    if (c == '"') {
-                        p = AFTER_KEY;
-                        key = keyBuf.toString();
-                    } else {
-                        keyBuf.append(c);
-                    }
-                }
-                case AFTER_KEY: {
-                    if (c == ':') {
-                        p = PRE_VALUE;
-                    }
-                }
-                case IN_ARRAY: {
-                    if (c == ']') {
-                        et = et.up();
-                    }
-                }
-                case AFTER_VALUE: {
-                    if (c == ',') {
-                        if (et instanceof EtObject) {
-                            p = IN_OBJ;
-                        } else if (et instanceof EtArray) {
-                            p = IN_ARRAY;
-                        }
-                    }
-                }
-                case PRE_VALUE: {
-                    if (c == ' ') continue;
+            if (expectValue) {
+                expectValue = false;
 
-                    final var eo = et;
+                final var eo = et;
 
-                    Object value = null;
-
-                    if (c == '[') {
-                        p = IN_ARRAY;
+                Object value = null;
+                switch (c) {
+                    case '[' -> {
                         et = new EtArray(eo);
+                        expectValue = true;
                         value = et;
-                    } else if (c == '{') {
-                        p = IN_OBJ;
+                    }
+                    case '{' -> {
                         et = new EtObject(eo);
                         value = et;
-                    } else if (c == '"') {
-                        int endI = cs.indexOf('"', i + 1);
-                        value = cs.substring(i, endI);
+                    }
+                    case '"' -> {
+                        int endI = cs.indexOf('"', i + 1) - 1;
+                        value = cs.substring(i + 1, endI + 1);
+                        //todo remove escaped
+                        // .replace("\\", "");
                         i = endI + 1;
-                    } else if (c == 'n') {
-                        value = null;
+                    }
+                    case 'n' -> i += 3; //null
+                    case 't' -> {
                         i += 3;
-                    } else if (c == 't') {
                         value = TRUE;
-                        i += 3;
-                    } else if (c == 'f') {
-                        value = FALSE;
+                    }
+                    case 'f' -> {
                         i += 4;
-                    } else {
+                        value = FALSE;
+                    }
+                    default -> {
                         boolean isInt = true;
                         for (int ii = i; ii < cs.length(); ii++) {
-                            var ci = cs.charAt(i);
-                            if (ci == 'e' || ci == '.') isInt = false;
+                            var ci = cs.charAt(ii);
+                            if (ci == 'e' || ci == 'E' || ci == '.') isInt = false;
 
-                            if (ci == ' ' || ci == ',' || ci == '}' || ci == ']') {
+                            if (isWhitespace(ci) || ci == ',' || ci == '}' || ci == ']') {
                                 if (isInt) {
-                                    value = Integer.parseInt(cs, i, ii - 1, 10);
+                                    value = Integer.parseInt(cs, i, ii, 10);
                                 } else {
-                                    value = Double.parseDouble(cs.substring(i, ii - 1));
+                                    value = Double.parseDouble(cs.substring(i, ii));
                                 }
+                                i = ii - 1;
+                                break;
                             }
-                        }
-
-                    }
-
-                    if (value != null) {
-                        if (eo instanceof EtObject) {
-                            ((EtObject) eo).values.put(key, value);
-                        } else if (eo instanceof EtArray) {
-                            ((EtArray) eo).values.add(value);
                         }
                     }
                 }
+
+                if (eo != null) {
+                    if (eo instanceof EtObject) {
+                        ((EtObject) eo).values.put(key, value);
+                        key = null;
+                    } else {
+                        ((EtArray) eo).values.add(value);
+                    }
+                }
+            } else {
+
+                if (et instanceof EtObject) {
+                    if (c == '"') {
+                        int endI = cs.indexOf('"', i + 1) - 1;
+                        key = cs.substring(i + 1, endI + 1);
+                        i = endI + 1;
+                    } else if (c == '}') {
+                        if (et.up() != null) et = et.up();
+                    } else if (c == ':') {
+                        expectValue = true;
+                    }
+                } else if (et instanceof EtArray) {
+                    if (c == ',') {
+                        expectValue = true;
+                    } else if (c == ']') {
+                        if (et.up() != null) et = et.up();
+                    }
+
+                }
+
             }
         }
 
-        return root;
+        return null;
+    }
+
+
+//
+//
+//            switch (ctx) {
+//                case OBJECT -> {
+//                    if (c == '"') {
+//                        int endI = cs.indexOf('"', i + 1) - 1;
+//                        key = cs.substring(i + 1, endI + 1);
+//                        i = endI + 1;
+//                        p = AFTER_KEY;
+//                    } else if (c == '}') {
+//                        et = et.up();
+//                    }
+//                }
+////                case AFTER_KEY -> {
+////                    if (c == ':') {
+////                        p = PRE_VALUE;
+////                    }
+////                }
+//                case ARRAY -> {
+//                    if (c == ']') {
+//                        et = et.up();
+//                    }
+//                }
+////                case AFTER_VALUE -> {
+////                    if (c == ',') {
+////                        if (et instanceof EtObject) {
+////                            p = IN_OBJ;
+////                        } else if (et instanceof EtArray) {
+////                            p = IN_ARRAY;
+////                        }
+////                    }
+////                }
+//                case VALUE -> {
+//                    if (isBlank(c)) continue;
+//
+//                    final var eo = et;
+//                    Object value = null;
+//
+//                    if (c == '[') {
+//                        et = new EtArray(eo);
+//                        ctx = Ctx.ARRAY;
+//                        value = et;
+//                    } else if (c == '{') {
+////                        p = IN_OBJ;
+//                        ctx = Ctx.OBJECT;
+//                        et = new EtObject(eo);
+//                        value = et;
+//                    } else if (c == '"') {
+//                        int endI = cs.indexOf('"', i + 1) - 1;
+//                        value = cs.substring(i + 1, endI + 1);
+//                        i = endI + 1;
+//                    } else if (c == 'n') {
+//                        i += 3; //null
+//                    } else if (c == 't') {
+//                        value = TRUE;
+//                        i += 3;
+//                    } else if (c == 'f') {
+//                        value = FALSE;
+//                        i += 4;
+//                    } else {
+//                        boolean isInt = true;
+//                        for (int ii = i; ii < cs.length(); ii++) {
+//                            var ci = cs.charAt(ii);
+//                            if (ci == 'e' || ci == '.') isInt = false;
+//
+//                            if (ci == ' ' || ci == ',' || ci == '}' || ci == ']') {
+//                                if (isInt) {
+//                                    value = Integer.parseInt(cs, i, ii, 10);
+//                                } else {
+//                                    value = Double.parseDouble(cs.substring(i, ii));
+//                                }
+//                                i = ii - 1;
+//                                break;
+//                            }
+//                        }
+//
+//                    }
+//
+//                    if (et instanceof EtObject) {
+//                        p = IN_OBJ;
+//                    }/* else if (et instanceof EtArray) {
+//                        p = IN_ARRAY;
+//                    }
+//*/
+//                    if (eo != null && value != null) {
+//                        if (eo instanceof EtObject) {
+//                            ((EtObject) eo).values.put(key, value);
+//                        } else if (eo instanceof EtArray) {
+//                            ((EtArray) eo).values.add(value);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return root;
+//}
+
+    private static boolean isWhitespace(char c) {
+        return c == ' ' || c == '\r' || c == '\n' || c == '\t';
     }
 }
