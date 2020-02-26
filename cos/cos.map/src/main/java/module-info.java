@@ -3,5 +3,9 @@ module cos.map {
     requires kotlin.stdlib;
     requires kotlinx.serialization.runtime;
     requires org.jetbrains.annotations;
+
+    requires vertx.core;
     exports cos.map;
+
+
 }

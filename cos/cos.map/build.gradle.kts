@@ -34,5 +34,6 @@ plugins {
 
 
 dependencies {
+    implementation("io.vertx:vertx-core:3.8.5")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
 }
