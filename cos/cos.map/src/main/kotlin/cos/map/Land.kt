@@ -21,10 +21,10 @@ object Land {
         var kx: Any? = null
         var j1: Any? = null
         var j2: Any? = null
-        for (x in 1..1000) {
+        for (x in 1..2000) {
             vx = JsonObject(map)
             kx = parser.parseJson(map)
-//            j1 = cos.map.Json.parse(map)
+            j1 = cos.map.Json.parse(map)
             j2 = cos.json.Json2.parse(map)
         }
 
@@ -33,7 +33,7 @@ object Land {
 
         var time = currentTimeMillis()
 
-        for (x in 1..10000) {
+        for (x in 1..1000) {
             vx = JsonObject(map)
         }
 
@@ -42,24 +42,24 @@ object Land {
 
         time = currentTimeMillis()
 
-        for (x in 1..10000) {
+        for (x in 1..1000) {
             kx = parser.parseJson(map)
         }
 
         println("kx " + (currentTimeMillis() - time))
 //
-//        time = currentTimeMillis()
-//
-//        for (x in 1..1000) {
-//            j1 = cos.map.Json.parse(map)
-//        }
-//
+        time = currentTimeMillis()
+
+        for (x in 1..1000) {
+            j1 = cos.map.Json.parse(map)
+        }
+
 //        println("")
-//        println("j1 " + (currentTimeMillis() - time))
+        println("j1 " + (currentTimeMillis() - time))
 //        println("")
 //        time = currentTimeMillis()
 
-        for (x in 1..10000) {
+        for (x in 1..1000) {
             j2 = cos.json.Json2.parse(map)
         }
 

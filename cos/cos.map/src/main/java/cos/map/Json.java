@@ -117,7 +117,7 @@ public interface Json {
     Object NOTHING = new Object();
 
     @NotNull static String parseString(String cs, int beginIdx, int endIdx) {
-        return cs.substring(beginIdx, endIdx);
+        return cs.substring( endIdx, beginIdx);
         //todo remove escaped
         // .replace("\\", "");
     }
