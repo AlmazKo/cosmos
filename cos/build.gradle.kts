@@ -2,11 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
+    `java-library`
     kotlin("jvm") version "1.3.61" apply false
 
     id("com.github.johnrengelman.shadow") version "5.2.0"
     id("org.javamodularity.moduleplugin") version "1.6.0" apply false
     id("kotlinx-serialization") version "1.3.61" apply false
+//    id("me.champeau.gradle.jmh") version "0.5.0"
 //    id("org.beryx.jlink") version "2.17.2"
 }
 
@@ -37,6 +39,7 @@ subprojects {
     apply(plugin = "kotlinx-serialization")
     apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "org.javamodularity.moduleplugin")
+//    apply(plugin = "me.champeau.gradle.jmh")
 
 
     tasks.compileJava {
@@ -70,4 +73,12 @@ subprojects {
         mavenCentral()
         jcenter()
     }
+
+
+    tasks.withType<JavaCompile> {
+        options.compilerArgs = listOf("--enable-preview")
+    }
+
+
+
 }

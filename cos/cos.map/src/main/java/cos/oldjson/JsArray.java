@@ -1,4 +1,4 @@
-package cos.map;
+package cos.oldjson;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ public final class JsArray extends AbstractList<Object> implements Json.JsNode {
         return (JsArray) values.get(pos);
     }
 
-    public JsArray getObject(int pos) {
-        return (JsArray) values.get(pos);
+    public JsObject getObject(int pos) {
+        return (JsObject) values.get(pos);
     }
 
     public Integer getInt(int pos) {

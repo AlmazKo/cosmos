@@ -22,8 +22,8 @@ public final class JsArray extends AbstractList<Object> {
         return (JsArray) values.get(pos);
     }
 
-    public JsArray getObject(int pos) {
-        return (JsArray) values.get(pos);
+    public JsObject getObject(int pos) {
+        return (JsObject) values.get(pos);
     }
 
     public Integer getInt(int pos) {

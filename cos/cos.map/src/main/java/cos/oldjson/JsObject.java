@@ -1,4 +1,4 @@
-package cos.map;
+package cos.oldjson;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

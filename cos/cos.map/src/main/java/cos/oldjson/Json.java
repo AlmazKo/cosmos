@@ -1,6 +1,5 @@
-package cos.map;
+package cos.oldjson;
 
-import kotlinx.serialization.json.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Boolean.FALSE;
@@ -12,17 +11,16 @@ public interface Json {
         JsNode parent();
     }
 
-    static Object parse(String string) {
+    static Object parse(String cs) {
         boolean expectValue = true;
         JsNode node = null;
         String key = null;
         Object value = NOTHING;
-        int len = string.length();
+        int len = cs.length();
 
-        char[] data = string.toCharArray();
 
         for (int i = 0; i < len; i++) {
-            char c = data[i];
+            char c = cs.charAt(i);
             if (isWhitespace(c)) continue;
 
             if (expectValue) {
@@ -31,34 +29,33 @@ public interface Json {
                 final JsNode eo = node;
 
                 switch (c) {
-                    case '[' -> {
+                    case '[':
                         node = new JsArray(eo);
                         expectValue = true;
                         value = node;
-                    }
-                    case '{' -> {
+                        break;
+                    case '{':
                         node = new JsObject(eo);
                         value = node;
-                    }
-                    case '"' -> {
+                        break;
+                    case '"':
                         int endI = cs.indexOf('"', i + 1);
                         value = parseString(cs, endI, i + 1);
                         i = endI;
-                    }
-                    case 'n' -> {
+                        break;
+                    case 'n':
                         value = null;
                         i += 3;
-                    }
-                    case 't' -> {
+                        break;
+                    case 't':
                         i += 3;
                         value = TRUE;
-                    }
-                    case 'f' -> {
+                        break;
+                    case 'f':
                         i += 4;
                         value = FALSE;
-                    }
-                    default -> {
-
+                        break;
+                    default:
                         boolean isInt = true;
                         for (int ii = i; ii < cs.length(); ii++) {
                             var ci = cs.charAt(ii);
@@ -74,7 +71,7 @@ public interface Json {
                                 break;
                             }
                         }
-                    }
+                        break;
                 }
 
                 if (value == NOTHING) throw new IllegalArgumentException("Wrong JSON");
