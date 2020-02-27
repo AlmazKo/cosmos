@@ -12,14 +12,17 @@ public interface Json {
         JsNode parent();
     }
 
-    static Object parse(String cs) {
+    static Object parse(String string) {
         boolean expectValue = true;
         JsNode node = null;
         String key = null;
         Object value = NOTHING;
+        int len = string.length();
 
-        for (int i = 0; i < cs.length(); i++) {
-            char c = cs.charAt(i);
+        char[] data = string.toCharArray();
+
+        for (int i = 0; i < len; i++) {
+            char c = data[i];
             if (isWhitespace(c)) continue;
 
             if (expectValue) {
@@ -40,7 +43,7 @@ public interface Json {
                     case '"' -> {
                         int endI = cs.indexOf('"', i + 1);
                         value = parseString(cs, endI, i + 1);
-                        i = endI + 1;
+                        i = endI;
                     }
                     case 'n' -> {
                         value = null;
@@ -90,7 +93,7 @@ public interface Json {
                     if (c == '"') {
                         int endI = cs.indexOf('"', i + 1);
                         key = parseString(cs, endI, i + 1);
-                        i = endI + 1;
+                        i = endI;
                     } else if (c == '}') {
                         if (node.parent() != null) node = node.parent();
                     } else if (c == ':') {

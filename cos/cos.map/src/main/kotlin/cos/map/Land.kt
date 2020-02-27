@@ -30,7 +30,6 @@ object Land {
 
         print("${vx.hashCode()} ${kx.hashCode()} $j1 ${j2.hashCode()}")
 
-
         var time = currentTimeMillis()
 
         for (x in 1..1000) {
@@ -47,17 +46,16 @@ object Land {
         }
 
         println("kx " + (currentTimeMillis() - time))
-//
+        //
         time = currentTimeMillis()
 
         for (x in 1..1000) {
             j1 = cos.map.Json.parse(map)
         }
 
-//        println("")
         println("j1 " + (currentTimeMillis() - time))
-//        println("")
-//        time = currentTimeMillis()
+
+        time = currentTimeMillis()
 
         for (x in 1..1000) {
             j2 = cos.json.Json2.parse(map)
@@ -68,7 +66,7 @@ object Land {
         print("${vx.hashCode()} ${kx.hashCode()} $j1 ${j2.hashCode()}")
 
 
-System.exit(0)
+        System.exit(0)
 
 
         val rawTiles = parser.parseJson(base)
