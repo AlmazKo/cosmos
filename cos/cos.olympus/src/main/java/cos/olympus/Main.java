@@ -9,6 +9,8 @@ import cos.olympus.ops.AnyOp;
 import cos.olympus.ops.Login;
 import cos.olympus.ops.Move;
 
+import java.io.IOException;
+
 import static cos.olympus.Util.tsm;
 import static cos.olympus.game.Direction.NORTH;
 
@@ -24,7 +26,7 @@ class Main {
     //    var logger = org.apache.logging.log4j.LogManager.getLogger(javaClass)
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
 
         logger.info("Started ");

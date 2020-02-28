@@ -8,6 +8,7 @@ val moduleName: String by project
 //val run by tasks.existing(JavaExec::class) // https://youtrack.jetbrains.com/issue/KT-28013
 
 dependencies {
+    implementation("org.jetbrains:annotations:18.0.0")
     implementation(project(":cos.map"))
     implementation(project(":cos.logging"))
 }

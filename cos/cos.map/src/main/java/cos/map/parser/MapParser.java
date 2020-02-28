@@ -1,10 +1,13 @@
-package cos.map;
+package cos.map.parser;
 
 import cos.json.JsArray;
 import cos.json.JsObject;
+import cos.map.Lands;
+import cos.map.Tile;
+import cos.map.TileType;
 import org.jetbrains.annotations.Nullable;
 
-class MapParser {
+public class MapParser {
 
     private final static int chunkSize = 16;
 
@@ -23,7 +26,7 @@ class MapParser {
     }
 
 
-    static Lands parse(JsObject rawMap, JsObject rawTiles) {
+    public static Lands parse(JsObject rawMap, JsObject rawTiles) {
 
 
         var layers = rawMap.getArray("layers");

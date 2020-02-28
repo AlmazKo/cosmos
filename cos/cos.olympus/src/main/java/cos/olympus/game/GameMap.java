@@ -154,7 +154,7 @@ public final class GameMap {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
 
-        return tiles[basis[idx]].component2();
+        return tiles[basis[idx]].getType();
     }
 //
 //    @Nullable public Tile getObject(int x, int y) {

@@ -4,12 +4,12 @@ sourceSets.create("jmh") {
 }
 
 dependencies {
-    implementation("io.vertx:vertx-core:3.8.5")
+//    implementation("io.vertx:vertx-core:3.8.5")
     "jmhImplementation"(project)
     "jmhImplementation"("org.openjdk.jmh:jmh-core:1.23")
     "jmhImplementation"("io.vertx:vertx-core:3.8.5")
     "jmhAnnotationProcessor"("org.openjdk.jmh:jmh-generator-annprocess:1.23")
-    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+//    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
 }
 
 tasks {
