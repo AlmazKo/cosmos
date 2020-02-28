@@ -13,6 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$/cos" />
             <option value="$PROJECT_DIR$/cos/cos.api" />
+            <option value="$PROJECT_DIR$/cos/cos.json" />
             <option value="$PROJECT_DIR$/cos/cos.logging" />
             <option value="$PROJECT_DIR$/cos/cos.map" />
             <option value="$PROJECT_DIR$/cos/cos.olympus" />

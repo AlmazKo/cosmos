@@ -1,7 +1,6 @@
-module cos.map {
+module cos.json {
     requires java.base;
-    requires cos.json;
     requires org.jetbrains.annotations;
 
-    exports cos.map;
+    exports cos.json;
 }

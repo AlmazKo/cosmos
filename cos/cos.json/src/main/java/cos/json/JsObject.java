@@ -1,16 +1,20 @@
-package cos.oldjson;
+package cos.json;
 
-import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-public final class JsObject implements Json.JsNode {
+public final class JsObject {
 
-//    static final JsObject        EMPTY = JsObject();
-    private final Json.JsNode         parent;
-    final         Map<String, Object> values = new LinkedHashMap<>();
+    static final JsObject            EMPTY = new JsObject(Collections.emptyMap());
+    final        Map<String, Object> values;
 
-    JsObject(Json.JsNode parent) {
-        this.parent = parent;
+    JsObject(Map<String, Object> values) {
+        this.values = values;
+    }
+
+    public JsObject() {
+        this.values = new HashMap<>();
     }
 
 
@@ -30,16 +34,12 @@ public final class JsObject implements Json.JsNode {
         return (String) values.get(key);
     }
 
-    public Integer getInt(String key) {
-        return (Integer) values.get(key);
+    public int getInt(String key) {
+        return ((Number) values.get(key)).intValue();
     }
 
     public Boolean getBoolean(String key) {
         return (Boolean) values.get(key);
     }
 
-
-    public Json.JsNode parent() {
-        return parent;
-    }
 }

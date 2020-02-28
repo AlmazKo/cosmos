@@ -26,8 +26,8 @@ public final class JsArray extends AbstractList<Object> {
         return (JsObject) values.get(pos);
     }
 
-    public Integer getInt(int pos) {
-        return (Integer) values.get(pos);
+    public int getInt(int pos) {
+        return ((Number) values.get(pos)).intValue();
     }
 
     public Boolean getBoolean(int pos) {
@@ -36,6 +36,10 @@ public final class JsArray extends AbstractList<Object> {
 
     public String getString(int pos) {
         return (String) values.get(pos);
+    }
+
+    public Number getNumber(int pos) {
+        return (Number) values.get(pos);
     }
 
 
