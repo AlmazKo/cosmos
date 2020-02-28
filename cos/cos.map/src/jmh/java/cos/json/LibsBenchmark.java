@@ -1,6 +1,7 @@
 package cos.json;
 
 import cos.oldjson.Json;
+import io.vertx.core.json.JsonObject;
 import kotlinx.serialization.json.JsonConfiguration;
 import kotlinx.serialization.modules.EmptyModule;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -409,16 +410,16 @@ public class LibsBenchmark {
 //        }
 //        return x;
 //    }
-
+//
     @Benchmark
     public Object json2() {
         return Json2.parse(raw);
     }
 
-    @Benchmark
-    public Object json3() {
-        return Json3.parse(raw);
-    }
+//    @Benchmark
+//    public Object json3() {
+//        return Json3.parse(raw);
+//    }
 
 //    @Benchmark
 //    public Object json2Big() {
@@ -448,10 +449,10 @@ public class LibsBenchmark {
 //        return new JsonObject("{}");
 //    }
 //
-//    @Benchmark
-//    public Object jackson() {
-//        return new JsonObject(raw);
-//    }
+    @Benchmark
+    public Object jackson() {
+        return new JsonObject(raw);
+    }
 //
 //    @Benchmark
 //    public Object jacksonBig() {

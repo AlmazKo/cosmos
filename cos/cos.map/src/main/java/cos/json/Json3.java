@@ -1,30 +1,63 @@
 package cos.json;
 
-import org.jetbrains.annotations.NotNull;
-
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 public interface Json3 {
+    class Node {
+        final Node prev;
+        Object value;
 
-    final class Parsing {
-        final String cs;
-        final char[] cs2;
-        int i = 0;
-
-        public Parsing(String cs) {
-            this.cs = cs;
-            this.cs2 = cs.toCharArray();
+        public Node(Node prev, Object value) {
+            this.prev = prev;
+            this.value = value;
         }
 
-        Object parseValue() {
-            Object value = NOTHING;
-            skipWhitespaces();
-            char c = cs2[i];
+    }
+
+    static Object parse(String cs) {
+        Node node = null;
+        String key = null;
+        Object value = null;
+
+        boolean expectedValue = true;
+        int len = cs.length();
+        for (int i = 0; i < len; i++) {
+            char c = cs.charAt(i);
+
             switch (c) {
-                case '[' -> value = parseArray();
-                case '{' -> value = parseObject();
-                case '"' -> value = parseString();
+                case ':', ' ', '\r', '\n', '\t' -> {
+                    continue;
+                }
+                case ',' -> {
+                    expectedValue = false; // for arrays = true
+                    continue;
+                }
+                case '}' -> {
+                    if (node != null) {
+                        value = node.value;
+                        node = node.prev;
+                    }
+                }
+                case '{' -> {
+                    expectedValue = false;
+                    node = new Node(node, null);
+                    continue;
+                }
+                case '"' -> {
+                    int endIdx = cs.indexOf('"', i + 1);
+                    String v = cs.substring(i + 1, endIdx);
+                    i = endIdx;
+
+                    //value or key
+                    if (expectedValue) {
+                        value = v;
+                    } else {
+                        key = v;
+                        expectedValue = true;
+                        continue;
+                    }
+                }
                 case 'n' -> {
                     i += 3;
                     value = null;
@@ -37,93 +70,24 @@ public interface Json3 {
                     i += 4;
                     value = FALSE;
                 }
-                default -> value = parseNumber();
+//                    default -> value = parseNumber();
+                default -> value = null;
             }
 
-            return value;
-        }
-
-        private void skipWhitespaces() {
-            while (i < cs2.length) {
-                char c = cs2[i];
-                if (!isWhitespace(c)) return;
-                i++;
-            }
-        }
-
-        @NotNull String parseString() {
-            int endIdx = cs.indexOf('"', i + 1);
-            String value = cs.substring(i + 1, endIdx);
-            i = endIdx;
-            return value;
-            //todo remove escaped
-            // .replace("\\", "");
-        }
-
-
-        @NotNull Number parseNumber() {
-            boolean isInt = true;
-            int beginIdx = i;
-            for (; ; i++) {
-                var c = cs2[i];
-                if (c == 'e' || c == 'E' || c == '.') isInt = false;
-
-                if (isWhitespace(c) || c == ',' || c == '}' || c == ']') {
-                    try {
-                        Number value;
-                        if (isInt) {
-                            value = Integer.parseInt(cs, beginIdx, i, 10);
-                        } else {
-                            value = Double.parseDouble(cs.substring(beginIdx, i));
-                        }
-                        i--;
-                        return value;
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("Wrong JSON at position: " + beginIdx, e);
+            if (node != null) {
+                if (key != null) {
+                    if (node.value == null) {
+                        node.value = new JsObject();
                     }
+                    ((JsObject) node.value).values.put(key, value);
+                    expectedValue = false;
+                    key = null;
                 }
             }
         }
 
-        @NotNull JsObject parseObject() {
-            JsObject obj = null;
-            String key = null;
-            for (; ; i++) {
-                char c = cs2[i];
-                if (c == '{' || c == ',' || isWhitespace(c)) continue;
+        return value;
 
-                if (c == '"') {
-                    key = parseString();
-                } else if (c == '}') {
-                    return (obj == null) ? JsObject.EMPTY : obj;
-                } else if (c == ':') {
-                    if (obj == null) obj = new JsObject();
-                    i++;
-                    Object value = parseValue();
-                    obj.values.put(key, value);
-                }
-            }
-        }
-
-        @NotNull JsArray parseArray() {
-            JsArray array = null;
-            for (; ; i++) {
-                char c = cs2[i];
-                if (c == '[' || c == ',' || isWhitespace(c)) continue;
-
-                if (c == ']') {
-                    return (array == null) ? JsArray.EMPTY : array;
-                } else {
-                    if (array == null) array = new JsArray();
-                    Object value = parseValue();
-                    array.values.add(value);
-                }
-            }
-        }
-    }
-
-    static Object parse(String s) {
-        return new Parsing(s).parseValue();
 
     }
 

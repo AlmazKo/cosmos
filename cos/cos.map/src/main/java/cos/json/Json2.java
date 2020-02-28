@@ -16,34 +16,25 @@ public interface Json2 {
         }
 
         Object parseValue() {
-            Object value = NOTHING;
+            Object value;
             skipWhitespaces();
-            char c = cs.charAt(i);
-            switch (c) {
-                case '[':
-                    value = parseArray();
-                    break;
-                case '{':
-                    value = parseObject();
-                    break;
-                case '"':
-                    value = parseString();
-                    break;
-                case 'n':
+            switch ( cs.charAt(i)) {
+                case '[' -> value = parseArray();
+                case '{' -> value = parseObject();
+                case '"' -> value = parseString();
+                case 'n' -> {
                     i += 3;
                     value = null;
-                    break;
-                case 't':
+                }
+                case 't' -> {
                     i += 3;
                     value = TRUE;
-                    break;
-                case 'f':
+                }
+                case 'f' -> {
                     i += 4;
                     value = FALSE;
-                    break;
-                default:
-                    value = parseNumber();
-                    break;
+                }
+                default -> value = parseNumber();
             }
 
             return value;
@@ -94,9 +85,9 @@ public interface Json2 {
         @NotNull JsObject parseObject() {
             JsObject obj = null;
             String key = null;
-            for (; ; i++) {
+            for (i++; ; i++) {
                 char c = cs.charAt(i);
-                if (c == '{' || c == ',' || isWhitespace(c)) continue;
+                if (c == ',' || isWhitespace(c)) continue;
 
                 if (c == '"') {
                     key = parseString();
@@ -113,9 +104,9 @@ public interface Json2 {
 
         @NotNull JsArray parseArray() {
             JsArray array = null;
-            for (; ; i++) {
+            for (i++; ; i++) {
                 char c = cs.charAt(i);
-                if (c == '[' || c == ',' || isWhitespace(c)) continue;
+                if (c == ',' || isWhitespace(c)) continue;
 
                 if (c == ']') {
                     return (array == null) ? JsArray.EMPTY : array;
