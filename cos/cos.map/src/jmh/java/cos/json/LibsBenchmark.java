@@ -1,7 +1,6 @@
 package cos.json;
 
 import cos.oldjson.Json;
-import io.vertx.core.json.JsonObject;
 import kotlinx.serialization.json.JsonConfiguration;
 import kotlinx.serialization.modules.EmptyModule;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -381,27 +380,35 @@ public class LibsBenchmark {
     private static final kotlinx.serialization.json.Json kxParser = new kotlinx.serialization.json.Json(JsonConfiguration.Companion.getDefault(), EmptyModule.INSTANCE);
 
 
-    @Benchmark
-    public Object json1Simple() {
-        return Json.parse("{}");
-    }
+//    @Benchmark
+//    public Object json1Simple() {
+//        return Json.parse("{}");
+//    }
+//
+//    @Benchmark
+//    public Object json1() {
+//        return Json.parse(raw);
+//    }
 
-    @Benchmark
-    public Object json1() {
-        return Json.parse(raw);
-    }
-
-    @Benchmark
-    public Object json1Big() {
-        return Json.parse(rawBig);
-    }
+//    @Benchmark
+//    public Object json1Big() {
+//        return Json.parse(rawBig);
+//    }
 
 
-
-    @Benchmark
-    public Object json2Simple() {
-        return Json2.parse("{}");
-    }
+//    @Benchmark
+//    public Object json2Simple() {
+//        return Json2.parse("{}");
+//    }
+//
+//    @Benchmark
+//    public Object stringBase() {
+//        int x = 0;
+//        for (int i = 0; i < raw.length(); i++) {
+//            x += raw.charAt(i);
+//        }
+//        return x;
+//    }
 
     @Benchmark
     public Object json2() {
@@ -409,43 +416,47 @@ public class LibsBenchmark {
     }
 
     @Benchmark
-    public Object json2Big() {
-        return Json2.parse(rawBig);
+    public Object json3() {
+        return Json3.parse(raw);
     }
 
+//    @Benchmark
+//    public Object json2Big() {
+//        return Json2.parse(rawBig);
+//    }
 
 
-    @Benchmark
-    public Object kotlinxSimple() {
-        return kxParser.parseJson("{}");
-    }
-
-    @Benchmark
-    public Object kotlinx() {
-        return kxParser.parseJson(raw);
-    }
-
-    @Benchmark
-    public Object kotlinxBig() {
-        return kxParser.parseJson(rawBig);
-    }
-
-
-
-    @Benchmark
-    public Object jacksonSimple() {
-        return new JsonObject("{}");
-    }
-
-    @Benchmark
-    public Object jackson() {
-        return new JsonObject(raw);
-    }
-
-    @Benchmark
-    public Object jacksonBig() {
-        return new JsonObject(rawBig);
-    }
+//    @Benchmark
+//    public Object kotlinxSimple() {
+//        return kxParser.parseJson("{}");
+//    }
+//
+//    @Benchmark
+//    public Object kotlinx() {
+//        return kxParser.parseJson(raw);
+//    }
+//
+//    @Benchmark
+//    public Object kotlinxBig() {
+//        return kxParser.parseJson(rawBig);
+//    }
+//
+//
+//
+//    @Benchmark
+//    public Object jacksonSimple() {
+//        return new JsonObject("{}");
+//    }
+//
+//    @Benchmark
+//    public Object jackson() {
+//        return new JsonObject(raw);
+//    }
+//
+//    @Benchmark
+//    public Object jacksonBig() {
+//        return new JsonObject(rawBig);
+//    }
 
 
     public static void main(String[] args) throws RunnerException {
