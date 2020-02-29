@@ -81,7 +81,7 @@ public class MapParser {
             var posX = shiftX - spec.shiftX;
             var posY = shiftY - spec.shiftY;
             var data = chunk.getArray("data");
-            for (int i = data.size() - 1; i > 0; i--) {
+            for (int i = data.size() - 1; i >= 0; i--) {
                 var v = data.getInt(i);
                 if (v == 0) continue;
                 var chnukX = i % chunkWidth;
