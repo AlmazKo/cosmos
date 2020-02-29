@@ -153,8 +153,9 @@ public final class GameMap {
     @Nullable public TileType get(int x, int y) {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
-
-        return tiles[basis[idx]].getType();
+        var b = basis[idx];
+        var t = tiles[b];
+        return (t == null) ? null : t.getType();
     }
 //
 //    @Nullable public Tile getObject(int x, int y) {

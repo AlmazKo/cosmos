@@ -11,21 +11,6 @@ public class MapParser {
 
     private final static int chunkSize = 16;
 
-    static final class Spec {
-        int width;
-        int height;
-        int shiftX;
-        int shiftY;
-
-        public Spec(int width, int height, int shiftX, int shiftY) {
-            this.width = width;
-            this.height = height;
-            this.shiftX = shiftX;
-            this.shiftY = shiftY;
-        }
-    }
-
-
     public static Lands parse(JsObject rawMap, JsObject rawTiles) {
 
 
@@ -51,7 +36,6 @@ public class MapParser {
 
             tiles[id] = new Tile(id, type);
         });
-        ;
         return tiles;
     }
 
@@ -91,18 +75,13 @@ public class MapParser {
             var chunk = (JsObject) it;
             var shiftX = chunk.getInt("x");
             var shiftY = chunk.getInt("y");
-            ;
             var chunkWidth = chunk.getInt("width");
             var chunkHeight = chunk.getInt("height");
-            ;
             //fix me positive;
             var posX = shiftX - spec.shiftX;
             var posY = shiftY - spec.shiftY;
             var data = chunk.getArray("data");
-            ;
-            for (int i = data.size(); i > 0; i--) {
-                ;
-                ;
+            for (int i = data.size() - 1; i > 0; i--) {
                 var v = data.getInt(i);
                 if (v == 0) continue;
                 var chnukX = i % chunkWidth;
@@ -110,12 +89,9 @@ public class MapParser {
                 var coord = posX + chnukX + (posY + chnukY) * spec.width;
                 map[coord] = (short) (v - 1); //tile manager increments every tile id (I don't know why);
             }
-            ;
-            ;
         }
         return map;
     }
-
 
     private static TileType parseTileType(@Nullable String raw) {
 
@@ -127,5 +103,19 @@ public class MapParser {
             return TileType.NOTHING;
         }
 
+    }
+
+    static final class Spec {
+        int width;
+        int height;
+        int shiftX;
+        int shiftY;
+
+        public Spec(int width, int height, int shiftX, int shiftY) {
+            this.width = width;
+            this.height = height;
+            this.shiftX = shiftX;
+            this.shiftY = shiftY;
+        }
     }
 }

@@ -41,7 +41,7 @@ public class Logger {
             int line = Thread.currentThread().getStackTrace()[3].getLineNumber();
             sb.append('(');
             sb.append(name);
-            sb.append(".kt:");
+            sb.append(".java:");
             sb.append(line);
             sb.append(')');
         } else {

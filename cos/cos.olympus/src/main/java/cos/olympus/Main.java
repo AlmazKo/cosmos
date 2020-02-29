@@ -1,6 +1,5 @@
 package cos.olympus;
 
-
 import cos.logging.Logger;
 import cos.map.Land;
 import cos.olympus.game.Game;
@@ -13,12 +12,6 @@ import java.io.IOException;
 
 import static cos.olympus.Util.tsm;
 import static cos.olympus.game.Direction.NORTH;
-
-//import static cos.olympus.UtilKt.tsm;
-
-
-//import java.lang.management.ManagementFactory
-
 
 class Main {
 
@@ -33,11 +26,9 @@ class Main {
 
 //        val bb = ByteBuffer.wrap(byteArrayOf(10, 20, 30, 40, 50, 60))
         var actionsBuffer = new DoubleBuffer<AnyOp>();
-        var lands = Land.load();
+        var lands = Land.load("/Users/aleksandrsuslov/projects/mmo/cos/resources");
         var gameMap = new GameMap(lands);
         var game = new Game(gameMap, actionsBuffer);
-
-        gameMap.debug();
 
         actionsBuffer.add(new Login(1, 99));
         actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
