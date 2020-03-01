@@ -28,6 +28,19 @@ final class Creature {
         this.dir = dir;
         this.sight = sight;
     }
+
+    @Override public String toString() {
+        return "Creature{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", offset=" + offset +
+                ", speed=" + speed +
+                ", dir=" + dir +
+                ", sight=" + sight +
+                '}';
+    }
 }
 /*) : GameObject, VectorObject {
 

@@ -6,6 +6,8 @@ import cos.olympus.ops.Move;
 
 import java.util.HashMap;
 
+import static java.lang.String.format;
+
 final class Movements {
 
 
@@ -52,6 +54,7 @@ final class Movements {
 
 
     void update() {
+        //todo remove allocations
         mvs.values().removeIf(this::onTick);
         //            int dir = c << 1;
         //            int offset = c << 2;
@@ -67,12 +70,12 @@ final class Movements {
             if (mv.stop && cr.offset >= HALF) {
                 cr.offset = HALF;
                 cr.speed = 0;
-                logger.info("MV finished $cr");
+                logger.info("MV finished " + cr);
                 return true;
             }
 
             cr.offset = newOffset;
-            logger.info("MV $cr");
+            logger.info("MV " + cr);
             return false;
         }
 
@@ -97,14 +100,14 @@ final class Movements {
                 cr.dir = cr.dir.opposite();
                 mv.stop = true;
                 mv.rollBack = true;
-                logger.warn("$tile, rollback tile ... : [$x;$y]");
+                logger.warn(format("%s, rollback tile ... : [%d;%d]", tile, x, y));
             }
 
         } else {
             throw new IllegalStateException("big offset=$newOffset,  $cr");
         }
 
-        logger.info("MV $cr");
+        logger.info("MV " + cr);
         return false;
     }
 

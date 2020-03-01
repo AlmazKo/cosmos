@@ -8,7 +8,8 @@ val moduleName: String by project
 //val run by tasks.existing(JavaExec::class) // https://youtrack.jetbrains.com/issue/KT-28013
 
 dependencies {
-    implementation("org.jetbrains:annotations:18.0.0")
+//    implementation("org.jetbrains:annotations:18.0.0")
+    implementation(project(":cos.json"))
     implementation(project(":cos.map"))
     implementation(project(":cos.logging"))
 }
@@ -21,7 +22,7 @@ application {
         //        "-verbose:gc",
 //                "-verbose:class",
         "--enable-preview",
-        "-Xmx128m"
+        "-Xmx8m"
     )
 }
 
@@ -57,22 +58,30 @@ tasks {
         group = "Build"
         description = "Generate custom Java runtime image"
 
-        dependsOn("clean", "jar")
+        dependsOn("classes")
 
         val javaHome = System.getProperty("java.home")
         //        val moduleName = "org.rognan.jlink"
         //        val moduleLaunchPoint = "org.rognan.Application"
 
-        workingDir = file("build")
+//        workingDir = file("build")
+
 
         commandLine(
             "$javaHome/bin/jlink",
-            "--module-path", "libs${File.pathSeparatorChar}$javaHome/jmods",
-            "--module-path", "../cos.map/build/libs${File.pathSeparatorChar}$javaHome/jmods",
-            "--strip-debug", "--no-header-files", "--no-man-pages", "--compress", "2",
-            "--add-modules", "cos.olympus, cos.map",
-            "--launcher", "launch=${application.mainClassName}",
-            "--output", "image"
+//            "--help"
+//            "/Library/Java/JavaVirtualMachines/jdk-13.0.2.jdk/Contents/Home/bin/jlink",
+            "--module-path", "build/classes/java/main/:../cos.logging/build/classes/java/main/:../cos.map/build/classes/java/main/:../cos.json/build/classes/java/main/:../libs/:$javaHome/jmods",
+//            "--module-path", "/Library/Java/JavaVirtualMachines/jdk-13.0.2.jdk/Contents/Home/jmods",
+//            "--module-path", "/Users/aleksandrsuslov/projects/mmo/cos/cos.olympus/build/classes/java/main",
+//            "--module-path", "/Users/aleksandrsuslov/projects/mmo/cos/cos.logging/build/classes/java/main",
+//            "--module-path", "/Users/aleksandrsuslov/projects/mmo/cos/cos.map/build/classes/java/main",
+//            "--strip-debug", "--no-header-files", "--no-man-pages",
+            "--add-modules", "cos.olympus",
+////            "--launcher", "launch=${application.mainClassName}",
+            "--launcher", "launch=cos.olympus/cos.olympus.Main",
+            "--output", "image4"
         )
     }
 }
+// '--enable-preview -Xmx32m -verbose:class'

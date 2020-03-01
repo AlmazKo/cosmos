@@ -30,7 +30,7 @@ public final class JsObject {
         return (Number) values.get(key);
     }
 
-    public String getString(String key) {
+    public @Nullable String getString(String key) {
         return (String) values.get(key);
     }
 

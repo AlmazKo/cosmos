@@ -2,10 +2,10 @@ package cos.map.parser;
 
 import cos.json.JsArray;
 import cos.json.JsObject;
+import cos.json.Nullable;
 import cos.map.Lands;
 import cos.map.Tile;
 import cos.map.TileType;
-import org.jetbrains.annotations.Nullable;
 
 public class MapParser {
 

@@ -1,7 +1,5 @@
 package cos.json;
 
-import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.NotNull;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -138,11 +136,11 @@ public final class Json {
         return c == ' ' || c == '\r' || c == '\n' || c == '\t';
     }
 
-    public static Object parse(@Language("JSON") String s) throws IllegalArgumentException {
+    public static Object parse(String s) throws IllegalArgumentException {
         return new Json(s).parseValue();
     }
 
-    public static JsObject parseObject(@Language("JSON") String s) throws IllegalArgumentException {
+    public static JsObject parseObject(String s) throws IllegalArgumentException {
         return new Json(s).parseObject();
     }
 }

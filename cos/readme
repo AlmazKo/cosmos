@@ -5,3 +5,28 @@ time ./cos.olympus.main
 
 
 
+        commandLine(
+//            "$javaHome/bin/jlink",
+            "/Library/Java/JavaVirtualMachines/jdk-13.0.2.jdk/Contents/Home/bin/jlink",
+//            "--module-path", "libs${File.pathSeparatorChar}$javaHome/jmods",
+            "--module-path", "/Library/Java/JavaVirtualMachines/jdk-13.0.2.jdk/Contents/Home/jmods",
+            "--module-path", "/Users/aleksandrsuslov/projects/mmo/cos/cos.olympus/build/classes/java/main",
+            "--module-path", "/Users/aleksandrsuslov/projects/mmo/cos/cos.logging/build/classes/java/main",
+//            "--module-path", "/Users/aleksandrsuslov/projects/mmo/cos/cos.map/build/classes/java/main",
+            "--strip-debug", "--no-header-files", "--no-man-pages",
+            "--add-modules", "cos.olympus",
+//            "--launcher", "launch=${application.mainClassName}",
+            "--launcher", "launch=cos.olympus/cos.olympus.Main",
+            "--output", "image"
+        )
+
+
+
+/Library/Java/JavaVirtualMachines/jdk-13.0.2.jdk/Contents/Home/bin/jlink \
+--launcher customjrelauncher=cos.olympus/cos.olympus.Main \
+--module-path /Users/aleksandrsuslov/projects/mmo/cos/cos.olympus/build/classes/java/main \
+--module-path /Users/aleksandrsuslov/projects/mmo/cos/cos.map/build/classes/java/main \
+--add-modules cos.olympus \
+--output olympus-server \
+--strip-debug --vm=server --strip-java-debug-attributes --no-man-pages --no-header-files
+

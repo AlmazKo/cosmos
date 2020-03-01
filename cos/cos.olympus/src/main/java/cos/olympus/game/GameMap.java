@@ -1,12 +1,12 @@
 package cos.olympus.game;
 
+import cos.json.NotNull;
+import cos.json.Nullable;
 import cos.map.Coord;
 import cos.map.Lands;
 import cos.map.Tile;
 import cos.map.TileType;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -312,7 +312,8 @@ public final class GameMap {
         return sb.toString();
     }
 
-    @Contract(pure = true) private boolean isValid(int x, int y) {
+//    @Contract(pure = true)
+    private boolean isValid(int x, int y) {
         return x >= offsetX && x < (offsetX + width) && y >= offsetY && x < (offsetY + height);
     }
 

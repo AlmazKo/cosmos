@@ -7,7 +7,7 @@ import java.io.PrintStream;
 public class Logger {
 
     private       boolean       errorsOnly = false;
-    private final boolean       debug      = true;
+    private final boolean       debug      = false;
     private final String        name;
     private final StringBuilder sb         = new StringBuilder(255);
 
