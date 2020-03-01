@@ -6,17 +6,30 @@ import java.io.PrintStream;
 
 public class Logger {
 
+    private final String        ext;
     private       boolean       errorsOnly = false;
-    private final boolean       debug      = false;
+    private final boolean       debug      = true;
+    private final Class<?>      klass;
     private final String        name;
     private final StringBuilder sb         = new StringBuilder(255);
 
 
     public Logger(Class<?> klass) {
+        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+        //todo: move to a fabric method
+        var file = ste.getFileName();
+        int pos = file.lastIndexOf('.');
+        this.ext = file.substring(pos);
+
+        this.klass = klass;
         name = klass.getSimpleName();
     }
 
     public void warn(String msg) {
+        log(System.err, msg);
+    }
+
+    public void warn(String msg, Throwable t) {
         log(System.err, msg);
     }
 
@@ -41,7 +54,8 @@ public class Logger {
             int line = Thread.currentThread().getStackTrace()[3].getLineNumber();
             sb.append('(');
             sb.append(name);
-            sb.append(".java:");
+            sb.append(ext);
+            sb.append(':');
             sb.append(line);
             sb.append(')');
         } else {

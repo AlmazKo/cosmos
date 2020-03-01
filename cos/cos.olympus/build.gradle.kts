@@ -19,7 +19,7 @@ application {
 
     mainClassName = "$moduleName/cos.olympus.Main"
     applicationDefaultJvmArgs = listOf(
-        //        "-verbose:gc",
+                "-verbose:gc",
 //                "-verbose:class",
         "--enable-preview",
         "-Xmx8m"

@@ -12,7 +12,7 @@ public class DoubleBuffer<T> {
     private final ArrayList<T> second   = new ArrayList<>();
     private       ArrayList<T> consumer = first;
 
-    synchronized void add(T cmd) {
+    synchronized public void add(T cmd) {
         consumer.add(cmd);
         logger.info("Add in ${System.identityHashCode(consumer)}, size=" + consumer.size());
     }

@@ -11,8 +11,8 @@ import static java.lang.String.format;
 final class Movements {
 
 
-    public final static  int                  HALF   = 32;
-    private final static int                  YARD   = 16;
+    public final static  int                  HALF   = 16;
+    private final static int                  YARD   = 32;
     private final static Logger               logger = new Logger(Movements.class);
     private final        GameMap              map;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();

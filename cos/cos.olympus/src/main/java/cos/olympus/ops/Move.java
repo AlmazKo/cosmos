@@ -2,6 +2,8 @@ package cos.olympus.ops;
 
 import cos.olympus.game.Direction;
 
+import java.nio.ByteBuffer;
+
 public final class Move implements AnyOp {
     public final int       id;
     public final int       userId;
@@ -17,6 +19,15 @@ public final class Move implements AnyOp {
         this.y = y;
         this.dir = dir;
         this.sight = sight;
+    }
+
+    public Move(ByteBuffer b) {
+        id = b.getInt();
+        userId = b.getInt();
+        x = b.getInt();
+        y =b.getInt();
+        dir = Direction.values()[b.get()];
+        sight = Direction.values()[b.get()];
     }
 }
 

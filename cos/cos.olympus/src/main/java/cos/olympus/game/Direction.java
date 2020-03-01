@@ -7,11 +7,7 @@ public enum Direction {
     EAST;
 
     public Direction opposite() {
-        return switch (this) {
-            case NORTH -> SOUTH;
-            case SOUTH -> NORTH;
-            case WEST -> EAST;
-            case EAST -> WEST;
-        };
+        int ord = ordinal();
+        return Direction.values()[(ord % 2 == 0) ? ord + 1 : ord - 1];
     }
 }

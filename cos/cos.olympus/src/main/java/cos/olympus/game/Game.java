@@ -50,7 +50,7 @@ public final class Game {
             usr = new User(op.userId, "user:" + op.userId);
             var creature = map.createCreature(usr);
             creatures.put(creature.id, creature);
-            logger.info("Placed $creature");
+            logger.info("Placed" + creature);
         } else {
 
             logger.warn("User already logged in $usr");

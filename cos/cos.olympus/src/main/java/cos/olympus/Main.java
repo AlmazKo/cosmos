@@ -4,20 +4,16 @@ import cos.logging.Logger;
 import cos.map.Land;
 import cos.olympus.game.Game;
 import cos.olympus.game.GameMap;
+import cos.olympus.game.server.GameServer;
 import cos.olympus.ops.AnyOp;
-import cos.olympus.ops.Login;
-import cos.olympus.ops.Move;
 
 import java.io.IOException;
 
 import static cos.olympus.Util.tsm;
-import static cos.olympus.game.Direction.NORTH;
 
 class Main {
 
     private final static Logger logger = new Logger(Main.class);
-    //    var logger = org.apache.logging.log4j.LogManager.getLogger(javaClass)
-
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
@@ -30,8 +26,10 @@ class Main {
         var gameMap = new GameMap(lands);
         var game = new Game(gameMap, actionsBuffer);
 
-        actionsBuffer.add(new Login(1, 99));
-        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
+
+        GameServer.run(actionsBuffer);
+//        actionsBuffer.add(new Login(1, 99));
+//        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
 
         var id = 0;
         while (true) {

@@ -1,6 +1,7 @@
 package cos.api
 
 
+import cos.logging.Logger
 import cos.map.Land
 import cos.map.Lands
 import cos.map.TileType
@@ -25,11 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger
 @ImplicitReflectionSerializer
 class App(val vertx: Vertx) {
     private lateinit var test: ShortArray
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val log = Logger(javaClass)
     private val playerInc = AtomicInteger(0)
 
     init {
-        val lands = Land.load()
+        val lands = Land.load("/Users/aleksandrsuslov/projects/mmo/cos/resources")
 
         val opts = HttpServerOptions().apply {
             isUseAlpn = true
@@ -47,7 +48,7 @@ class App(val vertx: Vertx) {
 
         server.listen {
             if (it.failed()) {
-                log.info("Fail!", it.cause())
+                log.warn("Fail!", it.cause())
                 vertx.close()
             } else {
                 log.info("Started!")
