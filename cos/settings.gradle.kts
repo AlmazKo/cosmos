@@ -21,3 +21,4 @@ pluginManagement {
         }
     }
 }
+include("cos.agent")

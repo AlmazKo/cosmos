@@ -6,7 +6,6 @@ import java.io.PrintStream;
 
 public class Logger {
 
-    private final String        ext;
     private       boolean       errorsOnly = false;
     private final boolean       debug      = true;
     private final Class<?>      klass;
@@ -15,12 +14,6 @@ public class Logger {
 
 
     public Logger(Class<?> klass) {
-        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
-        //todo: move to a fabric method
-        var file = ste.getFileName();
-        int pos = file.lastIndexOf('.');
-        this.ext = file.substring(pos);
-
         this.klass = klass;
         name = klass.getSimpleName();
     }
@@ -42,26 +35,47 @@ public class Logger {
         sb.append(' ');
         appendThread(sb);
         sb.append(' ');
-        appendFileName(sb);
+        if (debug) {
+            appendLoc(sb);
+        } else {
+            sb.append(name);
+        }
         sb.append(' ');
         sb.append(msg);
         stream.println(sb.toString());
         sb.setLength(0);
     }
 
-    private void appendFileName(StringBuilder sb) {
-        if (debug) {
-            int line = Thread.currentThread().getStackTrace()[3].getLineNumber();
-            sb.append('(');
-            sb.append(name);
-            sb.append(ext);
-            sb.append(':');
-            sb.append(line);
-            sb.append(')');
-        } else {
-            sb.append(name);
+    private void appendLoc(StringBuilder sb) {
+        int line = 0;
+        String ext = ".java";
+        var st = Thread.currentThread().getStackTrace();
+        StackTraceElement ste;
+        for (int i = 1; i < st.length; i++) {
+            ste = st[i];
+            if (st[i].getClassName().equals(klass.getName())) {
+                line = st[i].getLineNumber();
+                var file = ste.getFileName();
+                ext = file.substring(file.lastIndexOf('.'));
+                break;
+            }
         }
+
+        appendLoc(sb, line);
     }
+
+    private void appendLoc(StringBuilder sb, int line) {
+        String ext = ".java";
+
+
+        sb.append('(');
+        sb.append(name);
+        sb.append(ext);
+        sb.append(':');
+        sb.append(line);
+        sb.append(')');
+    }
+
 
     private void appendThread(StringBuilder sb) {
         String name = Thread.currentThread().getName();
@@ -70,7 +84,7 @@ public class Logger {
         sb.append(']');
     }
 
-    private void appendTime(StringBuilder sb) {
+    private static void appendTime(StringBuilder sb) {
         int msDay = (int) (System.currentTimeMillis() % 86400000);
         int h = msDay / 3_600_000;
         int mi = (msDay - h * 3_600_000) / 60_000;

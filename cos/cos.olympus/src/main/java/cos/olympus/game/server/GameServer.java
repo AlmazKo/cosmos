@@ -45,7 +45,7 @@ public final class GameServer {
         //        log.atInfo().log("Waiting for connections ...");
 
         while (running) {
-            logger.info(Thread.currentThread().getName() + " i'm a server and i'm waiting for new connection and buffer select...");
+            logger.info(" i'm a server and i'm waiting for new connection and buffer select...");
             // Selects a set of keys whose corresponding channels are ready for I/O operations
             selector.select();
             // token representing the registration of a SelectableChannel with a Selector
@@ -57,7 +57,7 @@ public final class GameServer {
                 keys.remove();
                 if (!key.isValid()) continue;
 
-                logger.info(Thread.currentThread().getName() + " next: $key");
+                logger.info(" next: $key");
                 logger.info("isAcceptable=${key.isAcceptable} isReadable=${key.isReadable}  isConnectable=${key.isConnectable}  isValid=${key.isValid}  isWritable=${key.isWritable}"
                 );
                 // Tests whether this key's channel is ready to accept a new socket connection
@@ -76,7 +76,7 @@ public final class GameServer {
 
 
                     if (buf.get(0) == Op.NOPE) {
-                        logger.info(" No Data, close it");
+                        logger.info("No Data, close it");
                         client.close();
                         continue;
                     }

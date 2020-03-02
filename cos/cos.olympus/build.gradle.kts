@@ -19,8 +19,9 @@ application {
 
     mainClassName = "$moduleName/cos.olympus.Main"
     applicationDefaultJvmArgs = listOf(
-                "-verbose:gc",
+//                "-verbose:gc",
 //                "-verbose:class",
+//                "-javaagent:/Users/aleksandrsuslov/projects/mmo/cos/cos.agent/build/libs/agent.jar",
         "--enable-preview",
         "-Xmx8m"
     )
@@ -80,7 +81,7 @@ tasks {
             "--add-modules", "cos.olympus",
 ////            "--launcher", "launch=${application.mainClassName}",
             "--launcher", "launch=cos.olympus/cos.olympus.Main",
-            "--output", "image4"
+            "--output", "image5"
         )
     }
 }
