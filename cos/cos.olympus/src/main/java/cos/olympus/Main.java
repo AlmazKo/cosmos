@@ -2,14 +2,18 @@ package cos.olympus;
 
 import cos.logging.Logger;
 import cos.map.Land;
+import cos.olympus.game.Direction;
 import cos.olympus.game.Game;
 import cos.olympus.game.GameMap;
 import cos.olympus.game.server.GameServer;
 import cos.olympus.ops.AnyOp;
+import cos.olympus.ops.Login;
+import cos.olympus.ops.Move;
 
 import java.io.IOException;
 
 import static cos.olympus.Util.tsm;
+import static cos.olympus.game.Direction.NORTH;
 
 class Main {
 
@@ -28,8 +32,8 @@ class Main {
 
 
         GameServer.run(actionsBuffer);
-//        actionsBuffer.add(new Login(1, 99));
-//        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
+        actionsBuffer.add(new Login(1, 99));
+        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
 
         var id = 0;
         while (true) {
