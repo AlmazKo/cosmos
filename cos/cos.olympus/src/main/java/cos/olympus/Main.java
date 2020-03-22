@@ -32,8 +32,8 @@ class Main {
 
 
         GameServer.run(actionsBuffer);
-        actionsBuffer.add(new Login(1, 99));
-        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
+//        actionsBuffer.add(new Login(1, 99));
+//        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
 
         var id = 0;
         while (true) {

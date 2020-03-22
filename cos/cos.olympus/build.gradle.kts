@@ -23,7 +23,7 @@ application {
 //                "-verbose:class",
 //                "-javaagent:/Users/aleksandrsuslov/projects/mmo/cos/cos.agent/build/libs/agent.jar",
         "--enable-preview",
-        "-Xmx8m"
+        "-Xmx16m"
     )
 }
 
@@ -31,7 +31,7 @@ application {
 tasks.withType<ShadowJar> {
     archiveFileName.set("olympus.jar")
     mergeServiceFiles()
-    minimize()
+//    minimize()
     manifest {
         attributes(
             mapOf(

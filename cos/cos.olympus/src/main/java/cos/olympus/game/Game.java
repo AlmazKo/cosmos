@@ -3,10 +3,13 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.ops.AnyOp;
+import cos.olympus.ops.Arrival;
 import cos.olympus.ops.Login;
 import cos.olympus.ops.Move;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 ;
 
@@ -18,6 +21,8 @@ public final class Game {
     private final        HashMap<Integer, User>     users     = new HashMap();
     private final        HashMap<Integer, Creature> creatures = new HashMap();
 
+    private final ArrayList<AnyOp> updates = new ArrayList<>();
+
     int id = 0;
 
     public Game(GameMap map, DoubleBuffer<AnyOp> bufferOps) {
@@ -27,7 +32,8 @@ public final class Game {
     }
 
 
-    public void onTick(int id, long tsm) {
+    public List<AnyOp> onTick(int id, long tsm) {
+        updates.clear();
         var ops = bufferOps.getAndSwap();
 
         movements.update();
@@ -41,6 +47,8 @@ public final class Game {
             }
             ;
         });
+
+        return updates;
     }
 
     private void onLogin(Login op) {
@@ -51,6 +59,7 @@ public final class Game {
             var creature = map.createCreature(usr);
             creatures.put(creature.id, creature);
             logger.info("Placed" + creature);
+            updates.add(new Arrival(op.id, usr.id, creature.x, creature.y, creature.dir, creature.sight));
         } else {
 
             logger.warn("User already logged in $usr");

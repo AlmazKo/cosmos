@@ -11,8 +11,8 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.JsonArray
-import io.vertx.core.logging.LoggerFactory
 import io.vertx.core.net.NetClientOptions
+import io.vertx.core.net.NetSocket
 import io.vertx.core.net.PemKeyCertOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
@@ -25,7 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @ImplicitReflectionSerializer
 class App(val vertx: Vertx) {
+    var cid = AtomicInteger(0)
+    private var socket: NetSocket? = null
     private lateinit var test: ShortArray
+
     private val log = Logger(javaClass)
     private val playerInc = AtomicInteger(0)
 
@@ -59,19 +62,19 @@ class App(val vertx: Vertx) {
 
     private fun setupClient() {
 
-        val options = NetClientOptions().setConnectTimeout(1000);
-        val client = vertx.createNetClient(options);
+        val options = NetClientOptions().setConnectTimeout(1000)
+        val client = vertx.createNetClient(options)
         client.connect(6666, "localhost") { res ->
             if (res.succeeded()) {
-                var id = 0;
-                println("Connected!");
-                val socket = res.result();
-                socket.write(op(1, ++id,99))
-                vertx.setPeriodic(3000) { _ ->
-                    socket.write(moveOp(3, ++id, 99, 0, 0, 1, 2))
-                }
+
+                println("Connected!")
+                 socket = res.result()
+
+//                vertx.setPeriodic(3000) { _ ->
+//                    socket.write(moveOp(3, ++id, 99, 0, 0, 1, 2))
+//                }
             } else {
-                println("Failed to connect: " + res.cause());
+                println("Failed to connect: " + res.cause())
             }
         }
         //        val client2 = vertx.createNetClient(options);
@@ -162,6 +165,17 @@ class App(val vertx: Vertx) {
             req.response()
                 .end(t.toString())
         }
+
+        router.route("/ws").handler { ctx ->
+            val ws = ctx.request().upgrade()
+            val id = playerInc.incrementAndGet()
+            log.info("Connected player: #$id")
+
+            socket?.write(op(1, cid.incrementAndGet(), id))
+//            val p = map.addPlayer(id)
+//            PlayerSession(p, ws, game)
+        }
+
         /*
         router.get("/map-piece").handler { req ->
 

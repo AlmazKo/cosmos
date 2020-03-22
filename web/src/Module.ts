@@ -9,6 +9,7 @@ import { Render } from './game2/render/Render';
 import { ImageAssets } from './game2/server/ImageAssets';
 import { LocalServer } from './game2/server/LocalServer';
 import { ResourcesServer } from './game2/server/ResourcesServer';
+import { WsServer } from './game2/server/WsServer';
 import { World } from './game2/world/World';
 
 
@@ -44,7 +45,7 @@ export function get<T>(c: Constructor<T> | string): T {
   return f()
 }
 
-setCached('api', () => new LocalServer());
+setCached('api', () => new WsServer("wss://localhost/ws"));
 setCached('map', () => new ResourcesServer());
 setCached('images', () => new ImageAssets(HOST));
 // setCached(LocalServer, () => new LocalServer());

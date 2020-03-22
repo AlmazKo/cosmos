@@ -97,7 +97,7 @@ public final class GameServer {
                 }
 
             }
-            Thread.sleep(300);
+            Thread.sleep(10);
         }
 
     }
