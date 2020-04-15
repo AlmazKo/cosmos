@@ -45,7 +45,7 @@ public final class GameServer {
         //        log.atInfo().log("Waiting for connections ...");
 
         while (running) {
-            logger.info(" i'm a server and i'm waiting for new connection and buffer select...");
+            logger.info("I'm a server and i'm waiting for new connection and buffer select...");
             // Selects a set of keys whose corresponding channels are ready for I/O operations
             selector.select();
             // token representing the registration of a SelectableChannel with a Selector

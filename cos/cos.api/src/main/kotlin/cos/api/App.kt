@@ -33,7 +33,7 @@ class App(val vertx: Vertx) {
     private val playerInc = AtomicInteger(0)
 
     init {
-        val lands = Land.load("/Users/aleksandrsuslov/projects/mmo/cos/resources")
+        val lands = Land.load("/Users/almaz/projects/cosmos/cos/resources")
 
         val opts = HttpServerOptions().apply {
             isUseAlpn = true

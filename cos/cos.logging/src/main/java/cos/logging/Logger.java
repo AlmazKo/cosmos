@@ -4,24 +4,18 @@ import java.io.PrintStream;
 
 import static java.lang.System.currentTimeMillis;
 
-//val start = System.nanoTime()
-
 public class Logger {
 
-    private       boolean  errorsOnly = false;
-    private final boolean  debug      = true;
-//    private final Class<?> klass;
-    private final String   name;
-    private final String   className;
-    private final char[]   buf        = new char[256];
-
+    private       boolean errorsOnly = false;
+    private final boolean debug      = true;
+    private final String  name;
+    private final String  className;
+    private final char[]  buf        = new char[256];
+    private final boolean appendFile = false;
 
     public Logger(Class<?> klass) {
-//        this.klass = klass;
         name = klass.getSimpleName();
         className = klass.getName();
-
-
     }
 
     public void warn(String msg) {
@@ -39,8 +33,17 @@ public class Logger {
 
     private void log(PrintStream stream, String msg) {
         int i = appendTime(buf, currentTimeMillis());
-        buf[i++] = ' ';
         i = appendThread(buf, i);
+        if (appendFile) i = appendFileLink(i);
+        buf[i++] = ' ';
+        msg.getChars(0, msg.length(), buf, i);
+        i += msg.length();
+        buf[i] = '\u0000';
+
+        stream.println(buf);
+    }
+
+    private int appendFileLink(int i) {
         buf[i++] = ' ';
         buf[i++] = '(';
 //        if (debug) {
@@ -67,13 +70,7 @@ public class Logger {
         buf[i++] = '0';
         buf[i++] = ')';
         buf[i++] = ' ';
-
-        msg.getChars(0, msg.length(), buf, i);
-        i += msg.length();
-
-        buf[i] = '\u0000';
-
-        stream.println(buf);
+        return i;
     }
 
 //    private int appendLoc(char[] buf, int idx) {
@@ -106,6 +103,7 @@ public class Logger {
 
 
     private static int appendThread(char[] buf, int i) {
+        buf[i++] = ' ';
         String name = Thread.currentThread().getName();
         buf[i++] = '[';
         name.getChars(0, name.length(), buf, i);

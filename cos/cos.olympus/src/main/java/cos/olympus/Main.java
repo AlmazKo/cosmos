@@ -26,7 +26,7 @@ class Main {
 
 //        val bb = ByteBuffer.wrap(byteArrayOf(10, 20, 30, 40, 50, 60))
         var actionsBuffer = new DoubleBuffer<AnyOp>();
-        var lands = Land.load("/Users/aleksandrsuslov/projects/mmo/cos/resources");
+        var lands = Land.load("/Users/almaz/projects/cosmos/cos/resources");
         var gameMap = new GameMap(lands);
         var game = new Game(gameMap, actionsBuffer);
 
