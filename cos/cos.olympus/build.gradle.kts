@@ -13,6 +13,7 @@ java {
 
 dependencies {
     compileOnly("org.jetbrains:annotations:19.0.0")
+    compileOnly("org.jetbrains:annotations:19.0.0")
     implementation(project(":cos.ops"))
     implementation(project(":cos.map"))
     implementation(project(":cos.logging"))
