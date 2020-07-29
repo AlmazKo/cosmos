@@ -6,11 +6,11 @@ import static java.lang.System.currentTimeMillis;
 
 public class Logger {
 
-    private       boolean errorsOnly = false;
-    private final boolean debug      = true;
-    private final String  name;
-    private final String  className;
-    private final char[]  buf        = new char[256];
+    private boolean errorsOnly = false;
+    private final boolean debug = true;
+    private final String name;
+    private final String className;
+    private final byte[] buf = new byte[256];
     private final boolean appendFile = false;
 
     public Logger(Class<?> klass) {
@@ -24,7 +24,7 @@ public class Logger {
 
     public void warn(String msg, Throwable t) {
         log(System.err, msg);
-        t.printStackTrace();
+        t.printStackTrace(System.err);
     }
 
     public void info(String msg) {
@@ -36,11 +36,10 @@ public class Logger {
         i = appendThread(buf, i);
         if (appendFile) i = appendFileLink(i);
         buf[i++] = ' ';
-        msg.getChars(0, msg.length(), buf, i);
+        msg.getBytes(0, msg.length(), buf, i);
         i += msg.length();
-        buf[i] = '\u0000';
-
-        stream.println(buf);
+        buf[i] = '\n';
+        stream.write(buf, 0, i + 1);
     }
 
     private int appendFileLink(int i) {
@@ -58,7 +57,7 @@ public class Logger {
 //            buf[i++] = ')';
 
 //        } else {
-        name.getChars(0, name.length(), buf, i);
+        name.getBytes(0, name.length(), buf, i);
         i += name.length();
 //        }
         buf[i++] = '.';
@@ -102,17 +101,17 @@ public class Logger {
 //    }
 
 
-    private static int appendThread(char[] buf, int i) {
+    private static int appendThread(byte[] buf, int i) {
         buf[i++] = ' ';
         String name = Thread.currentThread().getName();
         buf[i++] = '[';
-        name.getChars(0, name.length(), buf, i);
+        name.getBytes(0, name.length(), buf, i);
         i += name.length();
         buf[i++] = ']';
         return i;
     }
 
-    private static int appendTime(char[] buf, long ts) {
+    private static int appendTime(byte[] buf, long ts) {
         int msDay = (int) (ts % 86400000);
         int h = msDay / 3_600_000;
         int mi = (msDay - h * 3_600_000) / 60_000;
@@ -120,18 +119,18 @@ public class Logger {
         int ms = (msDay - h * 3_600_000 - mi * 60_000 - sec * 1000);
 
         int i = 0;
-        buf[i++] = (char) (h / 10 + 48);
-        buf[i++] = (char) (h % 10 + 48);
+        buf[i++] = (byte) (h / 10 + 48);
+        buf[i++] = (byte) (h % 10 + 48);
         buf[i++] = ':';
-        buf[i++] = (char) (mi / 10 + 48);
-        buf[i++] = (char) (mi % 10 + 48);
+        buf[i++] = (byte) (mi / 10 + 48);
+        buf[i++] = (byte) (mi % 10 + 48);
         buf[i++] = ':';
-        buf[i++] = (char) (sec / 10 + 48);
-        buf[i++] = (char) (sec % 10 + 48);
+        buf[i++] = (byte) (sec / 10 + 48);
+        buf[i++] = (byte) (sec % 10 + 48);
         buf[i++] = '.';
-        buf[i++] = (char) (ms / 100 + 48);
-        buf[i++] = (char) (ms % 100 / 10 + 48);
-        buf[i++] = (char) (ms % 10 + 48);
+        buf[i++] = (byte) (ms / 100 + 48);
+        buf[i++] = (byte) (ms % 100 / 10 + 48);
+        buf[i++] = (byte) (ms % 10 + 48);
         return i;
     }
 

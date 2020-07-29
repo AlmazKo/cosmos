@@ -1,3 +1,13 @@
+plugins {
+    java
+}
+
+java {
+    modularity.inferModulePath.set(true)
+}
+
+
 dependencies {
-    implementation(project(":cos.json"))
+    compileOnly("org.jetbrains:annotations:19.0.0")
+    implementation("almazko:microjson:0.5")
 }

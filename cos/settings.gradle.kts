@@ -5,8 +5,7 @@ include(
     "cos.map",
     "cos.logging",
     "cos.olympus",
-    "cos.api",
-    "cos.json"
+    "cos.api"
 )
 
 

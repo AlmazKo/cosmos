@@ -1,18 +1,19 @@
 package cos.map;
 
-import cos.json.JsObject;
-import cos.json.Json;
+import almazko.microjson.JsObject;
+import almazko.microjson.Json;
 import cos.map.parser.MapParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Land {
 
-    public static Lands load(String dir) throws IOException {
-        var baseFile = Paths.get(dir, "/base1.json");
-        var mapFile = Paths.get(dir, "/map.json");
+    public static Lands load(Path dir) throws IOException {
+        var baseFile = dir.resolve("base1.json");
+        var mapFile =  dir.resolve("map.json");
         var base = (JsObject) Json.parseObject(Files.readString(baseFile));
         var map = Json.parseObject(Files.readString(mapFile));
         return MapParser.parse(map, base);

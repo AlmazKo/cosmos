@@ -2,18 +2,15 @@ package cos.olympus;
 
 import cos.logging.Logger;
 import cos.map.Land;
-import cos.olympus.game.Direction;
 import cos.olympus.game.Game;
 import cos.olympus.game.GameMap;
 import cos.olympus.game.server.GameServer;
 import cos.olympus.ops.AnyOp;
-import cos.olympus.ops.Login;
-import cos.olympus.ops.Move;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static cos.olympus.Util.tsm;
-import static cos.olympus.game.Direction.NORTH;
 
 class Main {
 
@@ -25,20 +22,26 @@ class Main {
         logger.info("Started ");
 
 //        val bb = ByteBuffer.wrap(byteArrayOf(10, 20, 30, 40, 50, 60))
-        var actionsBuffer = new DoubleBuffer<AnyOp>();
-        var lands = Land.load("/Users/almaz/projects/cosmos/cos/resources");
+        var requests = new DoubleBuffer<AnyOp>();
+        var responses = new Responses();
+        var lands = Land.load(Paths.get("", "../resources").toAbsolutePath());
         var gameMap = new GameMap(lands);
-        var game = new Game(gameMap, actionsBuffer);
+        var game = new Game(gameMap, requests);
 
 
-        GameServer.run(actionsBuffer);
-//        actionsBuffer.add(new Login(1, 99));
-//        actionsBuffer.add(new Move(2, 99, 0, 0, NORTH, NORTH));
+        GameServer.run(requests, responses);
+//        requests.add(new Login(1, 99));
+//        requests.add(new Move(2, 99, 0, 0, NORTH, NORTH));
 
         var id = 0;
         while (true) {
 
-            game.onTick(++id, tsm());
+            var oo = game.onTick(++id, tsm());
+            if (!oo.isEmpty()) {
+                logger.info("OOOPS");
+                responses.ops.addAll(oo);
+            }
+
             //            logger.info("%d) %.3fms".format(id, execTime / 1000000.0))
             Thread.sleep(100);
 

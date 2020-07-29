@@ -2,8 +2,8 @@
 
 plugins {
     application
-    kotlin("jvm") version "1.3.61" apply false
-    id("kotlinx-serialization") version "1.3.61" apply false
+    kotlin("jvm") version "1.3.72" apply false
+    id("kotlinx-serialization") version "1.3.72" apply false
 }
 
 apply(plugin = "kotlin")

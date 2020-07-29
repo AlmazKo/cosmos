@@ -1,11 +1,12 @@
 package cos.olympus.game;
 
-import cos.json.NotNull;
-import cos.json.Nullable;
+
 import cos.map.Coord;
 import cos.map.Lands;
 import cos.map.Tile;
 import cos.map.TileType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 import java.util.ArrayList;

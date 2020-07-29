@@ -20,6 +20,7 @@ import io.vertx.ext.web.handler.LoggerFormat
 import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.ext.web.handler.StaticHandler
 import kotlinx.serialization.ImplicitReflectionSerializer
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -33,7 +34,7 @@ class App(val vertx: Vertx) {
     private val playerInc = AtomicInteger(0)
 
     init {
-        val lands = Land.load("/Users/almaz/projects/cosmos/cos/resources")
+        val lands = Land.load(Paths.get("", "../resources").toAbsolutePath())
 
         val opts = HttpServerOptions().apply {
             isUseAlpn = true
@@ -62,17 +63,27 @@ class App(val vertx: Vertx) {
 
     private fun setupClient() {
 
-        val options = NetClientOptions().setConnectTimeout(1000)
+        val options = NetClientOptions()/*.setConnectTimeout(1000)*/
         val client = vertx.createNetClient(options)
         client.connect(6666, "localhost") { res ->
             if (res.succeeded()) {
 
                 println("Connected!")
-                 socket = res.result()
+                socket = res.result()
 
-//                vertx.setPeriodic(3000) { _ ->
-//                    socket.write(moveOp(3, ++id, 99, 0, 0, 1, 2))
-//                }
+                socket!!.handler {
+                    log.info("Got response " + it)
+                }
+                socket!!.closeHandler {
+                    log.info("Closed " + it)
+                }
+                socket!!.exceptionHandler {
+                    log.warn("exceptionHandler " + it, it)
+                }
+
+                //                vertx.setPeriodic(3000) { _ ->
+                //                    socket.write(moveOp(3, ++id, 99, 0, 0, 1, 2))
+                //                }
             } else {
                 println("Failed to connect: " + res.cause())
             }
@@ -172,8 +183,8 @@ class App(val vertx: Vertx) {
             log.info("Connected player: #$id")
 
             socket?.write(op(1, cid.incrementAndGet(), id))
-//            val p = map.addPlayer(id)
-//            PlayerSession(p, ws, game)
+            //            val p = map.addPlayer(id)
+            //            PlayerSession(p, ws, game)
         }
 
         /*

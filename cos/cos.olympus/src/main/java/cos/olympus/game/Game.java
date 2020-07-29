@@ -6,12 +6,13 @@ import cos.olympus.ops.AnyOp;
 import cos.olympus.ops.Arrival;
 import cos.olympus.ops.Login;
 import cos.olympus.ops.Move;
+import cos.olympus.ops.OutOp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-;
 
 public final class Game {
     private final static Logger                     logger    = new Logger(Game.class);
@@ -21,7 +22,7 @@ public final class Game {
     private final        HashMap<Integer, User>     users     = new HashMap();
     private final        HashMap<Integer, Creature> creatures = new HashMap();
 
-    private final ArrayList<AnyOp> updates = new ArrayList<>();
+    private final ArrayList<OutOp> outOps = new ArrayList<>();
 
     int id = 0;
 
@@ -32,8 +33,8 @@ public final class Game {
     }
 
 
-    public List<AnyOp> onTick(int id, long tsm) {
-        updates.clear();
+    public List<OutOp> onTick(int id, long tsm) {
+        outOps.clear();
         var ops = bufferOps.getAndSwap();
 
         movements.update();
@@ -48,27 +49,27 @@ public final class Game {
             ;
         });
 
-        return updates;
+        return outOps;
     }
 
     private void onLogin(Login op) {
 
-        var usr = users.get(op.userId);
+        var usr = users.get(op.userId());
         if (usr == null) {
-            usr = new User(op.userId, "user:" + op.userId);
+            usr = new User(op.userId(), "user:" + op.userId());
             var creature = map.createCreature(usr);
             creatures.put(creature.id, creature);
-            logger.info("Placed" + creature);
-            updates.add(new Arrival(op.id, usr.id, creature.x, creature.y, creature.dir, creature.sight));
+            logger.info("Placed " + creature);
+            outOps.add(new Arrival(op.id(), usr.id, creature.x, creature.y, creature.dir, creature.sight));
         } else {
 
-            logger.warn("User already logged in $usr");
+            logger.warn("User already logged in " + usr);
         }
 
     }
 
     private void onMove(Move op) {
-        var cr = creatures.get(op.userId);
+        var cr = creatures.get(op.userId());
         if (cr == null) return;
 
         movements.start(cr, op);

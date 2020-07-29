@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/mmo.iml" filepath="$PROJECT_DIR$/.idea/mmo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/cosmos.iml" filepath="$PROJECT_DIR$/.idea/cosmos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cos/fx.iml" filepath="$PROJECT_DIR$/cos/fx.iml" />
     </modules>
   </component>
 </project>
