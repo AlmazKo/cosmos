@@ -2,8 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="cos.cos.agent.main" target="14" />
-      <module name="cos.cos.agent.test" target="14" />
       <module name="cos.cos.api.jmh" target="13" />
       <module name="cos.cos.json" target="14" />
       <module name="cos.cos.json.jmh" target="14" />
