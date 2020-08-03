@@ -30,6 +30,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    implementation(project(":cos.ops"))
     implementation(project(":cos.map"))
     implementation(project(":cos.logging"))
     implementation("io.vertx:vertx-core:3.8.5")

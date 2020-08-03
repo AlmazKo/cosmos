@@ -5,7 +5,7 @@ import cos.map.Land;
 import cos.olympus.game.Game;
 import cos.olympus.game.GameMap;
 import cos.olympus.game.server.GameServer;
-import cos.olympus.ops.AnyOp;
+import cos.ops.AnyOp;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -43,7 +43,7 @@ class Main {
             }
 
             //            logger.info("%d) %.3fms".format(id, execTime / 1000000.0))
-            Thread.sleep(100);
+            Thread.sleep(500);
 
         }
 

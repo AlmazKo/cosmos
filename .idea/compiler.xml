@@ -14,6 +14,9 @@
       <module name="cos.fx.main" target="14" />
       <module name="cos.fx.test" target="14" />
       <module name="cos.jmh" target="13" />
+      <module name="cos.ops" target="14" />
+      <module name="cos.ops.main" target="14" />
+      <module name="cos.ops.test" target="14" />
     </bytecodeTargetLevel>
   </component>
 </project>

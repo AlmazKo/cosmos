@@ -1,4 +1,4 @@
-package cos.olympus.game;
+package cos.ops;
 
 public enum Direction {
     NORTH,

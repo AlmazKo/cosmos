@@ -4,6 +4,7 @@ include(
     "cos.agent",
     "cos.map",
     "cos.logging",
+    "cos.ops",
     "cos.olympus",
     "cos.api"
 )

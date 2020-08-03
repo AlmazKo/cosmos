@@ -1,4 +1,4 @@
-package cos.olympus.ops;
+package cos.ops;
 
 import java.nio.ByteBuffer;
 

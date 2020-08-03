@@ -2,7 +2,7 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.TileType;
-import cos.olympus.ops.Move;
+import cos.ops.Move;
 
 import java.util.HashMap;
 

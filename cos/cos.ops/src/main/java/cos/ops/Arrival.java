@@ -1,6 +1,4 @@
-package cos.olympus.ops;
-
-import cos.olympus.game.Direction;
+package cos.ops;
 
 import java.nio.ByteBuffer;
 
@@ -19,6 +17,16 @@ public record Arrival(
         buf.putInt(x);
         buf.put((byte) dir.ordinal());
         buf.put((byte) sight.ordinal());
+    }
+
+    public static Arrival create(ByteBuffer b) {
+        return new Arrival(
+                b.getInt(),
+                b.getInt(),
+                b.getInt(),
+                b.getInt(),
+                Direction.values()[b.get()],
+                Direction.values()[b.get()]);
     }
 
 //    public Arrival(int id, int userId, int x, int y, Direction dir, Direction sight) {

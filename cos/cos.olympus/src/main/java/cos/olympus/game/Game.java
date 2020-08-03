@@ -2,14 +2,13 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
-import cos.olympus.ops.AnyOp;
-import cos.olympus.ops.Arrival;
-import cos.olympus.ops.Login;
-import cos.olympus.ops.Move;
-import cos.olympus.ops.OutOp;
+import cos.ops.AnyOp;
+import cos.ops.Arrival;
+import cos.ops.Login;
+import cos.ops.Move;
+import cos.ops.OutOp;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 

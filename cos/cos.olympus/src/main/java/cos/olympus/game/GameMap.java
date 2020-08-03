@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static cos.olympus.game.Direction.SOUTH;
+import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 

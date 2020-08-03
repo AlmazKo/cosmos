@@ -1,6 +1,4 @@
-package cos.olympus.ops;
-
-import cos.olympus.game.Direction;
+package cos.ops;
 
 import java.nio.ByteBuffer;
 

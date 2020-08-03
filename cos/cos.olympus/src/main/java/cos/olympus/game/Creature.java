@@ -1,6 +1,8 @@
 package cos.olympus.game;
 
-import static cos.olympus.game.Direction.SOUTH;
+import cos.ops.Direction;
+
+import static cos.ops.Direction.SOUTH;
 import static cos.olympus.game.Movements.HALF;
 
 final class Creature {
@@ -9,9 +11,9 @@ final class Creature {
     int       x;
     int       y;
     int       offset = HALF;
-    int       speed  = 0;
-    Direction dir    = SOUTH;
-    Direction sight  = SOUTH;
+    int       speed = 0;
+    Direction dir   = SOUTH;
+    Direction sight = SOUTH;
 
     public Creature(int id, String name) {
         this.id = id;

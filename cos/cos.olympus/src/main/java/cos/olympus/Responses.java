@@ -1,6 +1,6 @@
 package cos.olympus;
 
-import cos.olympus.ops.OutOp;
+import cos.ops.OutOp;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ public class Responses {
         }
 
         ops.clear();
+//        buf.rewind();
         return buf;
     }
 }

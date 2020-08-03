@@ -4,9 +4,10 @@ import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.Responses;
 import cos.olympus.game.Op;
-import cos.olympus.ops.AnyOp;
-import cos.olympus.ops.Login;
-import cos.olympus.ops.Move;
+import cos.ops.AnyOp;
+import cos.ops.Login;
+import cos.ops.Move;
+import cos.ops.OutOp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,13 +21,13 @@ import java.util.HashSet;
 
 public final class GameServer {
 
-    private final static Logger logger = new Logger(GameServer.class);
-    private HashSet<SocketChannel> activeChannels = new HashSet<>();
-    private final DoubleBuffer<AnyOp> actionsBuffer;
-    private final Responses responses;
-    private ByteBuffer responseBuffer;
-    volatile private boolean running = true;
-    volatile private int id = 0;
+    private final static Logger                 logger         = new Logger(GameServer.class);
+    private              HashSet<SocketChannel> activeChannels = new HashSet<>();
+    private final        DoubleBuffer<AnyOp>    actionsBuffer;
+    private final        Responses              responses;
+    private              ByteBuffer             responseBuffer = ByteBuffer.allocate(1024);
+    volatile private     boolean                running        = true;
+    volatile private     int                    id             = 0;
 
     public GameServer(DoubleBuffer<AnyOp> actionsBuffer, Responses responses) {
         this.actionsBuffer = actionsBuffer;
@@ -42,8 +43,6 @@ public final class GameServer {
         while (running) {
 
             selector.select(500);
-            // token representing the registration of a SelectableChannel with a Selector
-
             var keys = selector.selectedKeys().iterator();
 
             while (keys.hasNext()) {
@@ -51,51 +50,70 @@ public final class GameServer {
                 keys.remove();
                 if (!key.isValid()) continue;
 
-                logger.info(" next: " + key);
-                logger.info("isAcceptable=" + key.isAcceptable() + ", isReadable=" + key.isReadable() + "  isConnectable=${key.isConnectable}  isValid=${key.isValid}  isWritable=${key.isWritable}"
-                );
+
+//                logger.info(" next: " + key);
+//                logger.info("isAcceptable=" + key.isAcceptable() + ", isReadable=" + key.isReadable() + "  isConnectable=${key.isConnectable}  isValid=${key.isValid}  isWritable=${key.isWritable}"
+//                );
 
                 if (key.isAcceptable()) {
-                    register(key, selector);
+                    accept(key, selector);
                 } else if (key.isReadable()) {
+                    logger.info("Reading: " + key);
                     read(key);
-//                    key.interestOps(SelectionKey.OP_WRITE);
                 } else if (key.isWritable()) {
-                    logger.info("isWritable");
+//                    logger.info("isWritable");
+                    if (responseBuffer.hasRemaining()) {
+                        logger.info("Writing...");
+                        SocketChannel socketChannel = (SocketChannel) key.channel();
+                        responseBuffer.flip();
+                        socketChannel.write(responseBuffer);
+                    }
 
-//                    write(key);
                 }
 
             }
 
 
-            if (!responses.ops.isEmpty()) {
-                logger.info("Sent ops...");
-//                var client = (SocketChannel) activeChannels.iterator().next();
-                responseBuffer = responses.flush();
-                activeChannels.forEach(c -> {
-                    logger.info("" + c);
-                    logger.info("" + responseBuffer);
-                    try {
-                        c.write(ByteBuffer.wrap("xxxxAAA".getBytes()));
-                        c.write(responseBuffer);
-                        //c.finishConnect();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
+            readResponses();
 
-            logger.info("...");
+//            logger.info("...");
         }
     }
 
-    private void register(SelectionKey key, Selector selector) throws IOException {
+    private void readResponses() {
+        if (responses.ops.isEmpty()) return;
+
+        logger.info("Writing ops to buffer ...");
+
+        responseBuffer.clear();
+        for(OutOp op: responses.ops) {
+            logger.info("Write op: " + op);
+        }
+        responseBuffer = responses.flush();
+
+//        logger.info("Wrote ops: " + Arrays.toString(responseBuffer.array()));
+//        responseBuffer.rewind();
+
+//        activeChannels.forEach(c -> {
+//            logger.info("" + c);
+//            logger.info("" + responseBuffer);
+//            try {
+//                c.write(responseBuffer);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+
+    }
+
+    private void accept(SelectionKey key, Selector selector) throws IOException {
         var ch = ((ServerSocketChannel) key.channel()).accept();
         ch.configureBlocking(false);
-        ch.register(selector, SelectionKey.OP_READ);
+        ch.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         logger.info("Connection accepted: " + ch.getRemoteAddress());
         activeChannels.add(ch);
+//        ByteBuffer buffer = ByteBuffer.allocate(1024); ////
+//        key.attach(buffer);
     }
 
     private void read(SelectionKey key) throws IOException {
@@ -118,9 +136,6 @@ public final class GameServer {
                 actionsBuffer.add(op);
             }
         }
-
-
-        ch.write(ByteBuffer.wrap("xxxxAAA".getBytes()));
     }
 
     private void write(SelectionKey key) throws IOException {
