@@ -1,4 +1,4 @@
-package cos.olympus.game;
+package cos.ops;
 
 public interface Op {
     byte LOGIN = 1;

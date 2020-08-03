@@ -11,10 +11,13 @@ public record Arrival(
         Direction sight
 ) implements OutOp {
 
+
     public void write(ByteBuffer buf) {
+        buf.put(Op.APPEAR);
         buf.putInt(id);
+        buf.putInt(userId);
         buf.putInt(x);
-        buf.putInt(x);
+        buf.putInt(y);
         buf.put((byte) dir.ordinal());
         buf.put((byte) sight.ordinal());
     }
@@ -28,6 +31,18 @@ public record Arrival(
                 Direction.values()[b.get()],
                 Direction.values()[b.get()]);
     }
+
+    @Override public String toString() {
+        return "{" +
+                "id:" + id +
+                ", userId:" + userId +
+                ", x=" + x +
+                ", y=" + y +
+                ", dir=" + dir +
+                ", sight=" + sight +
+                '}';
+    }
+
 
 //    public Arrival(int id, int userId, int x, int y, Direction dir, Direction sight) {
 //        this.id = id;

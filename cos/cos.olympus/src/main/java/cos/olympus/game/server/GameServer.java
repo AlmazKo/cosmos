@@ -3,7 +3,7 @@ package cos.olympus.game.server;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.Responses;
-import cos.olympus.game.Op;
+import cos.ops.Op;
 import cos.ops.AnyOp;
 import cos.ops.Login;
 import cos.ops.Move;

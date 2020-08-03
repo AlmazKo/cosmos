@@ -5,7 +5,9 @@ import cos.logging.Logger
 import cos.map.Land
 import cos.map.Lands
 import cos.map.TileType
+import cos.ops.AnyOp
 import cos.ops.Arrival
+import cos.ops.Op
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpMethod
@@ -13,6 +15,7 @@ import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.json.JsonArray
+import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.NetSocket
 import io.vertx.core.net.PemKeyCertOptions
@@ -20,6 +23,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.StaticHandler
 import kotlinx.serialization.ImplicitReflectionSerializer
+import java.nio.ByteBuffer
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -62,7 +66,6 @@ class App(val vertx: Vertx) {
     }
 
 
-
     private fun op(code: Byte, id: Int, userId: Int, vararg bytes: Byte): Buffer {
         val bf = Buffer.buffer(bytes.size + 2 + 4)
         bf.appendByte(code)
@@ -88,7 +91,7 @@ class App(val vertx: Vertx) {
 
     private fun initApi(vertx: Vertx, lands: Lands, server: HttpServer) {
         val router = Router.router(vertx)
-//        router.route().handler(WebLogger())
+        //        router.route().handler(WebLogger())
         initCors(router)
 
 
@@ -132,12 +135,14 @@ class App(val vertx: Vertx) {
 
     inner class Conn(private val ws: ServerWebSocket, val id: Int) {
         private var socket: NetSocket? = null
+
         init {
+
             log.info("Connected player: #$id")
 
             setupClient()
 
-//
+            //
             //            val p = map.addPlayer(id)
             //            PlayerSession(p, ws, game)
         }
@@ -151,7 +156,7 @@ class App(val vertx: Vertx) {
 
             val options = NetClientOptions()/*.setConnectTimeout(1000)*/
             val client = vertx.createNetClient(options)
-            client.connect(6666, "localhost") { res ->
+            client.connect(6666, "127.0.0.1") { res ->
                 if (res.succeeded()) {
 
                     println("Connected to core!!")
@@ -160,10 +165,36 @@ class App(val vertx: Vertx) {
                     onStart()
 
                     socket!!.handler {
-                        var buf = it.byteBuf.nioBuffer();
-                        buf.rewind()
+                        try {
+                            val buf = it.byteBuf.nioBuffer();
+                            buf.rewind()
+                            val op = parse(buf)
+                            log.info("Got response " + op)
 
-                        log.info("Got response " + it)
+                            if (op is Arrival) {
+                                val js = JsonObject()
+                                    .put("id", op.id())
+                                    .put("action", "appear")
+                                    .put("type", "")
+                                    .put(
+                                        "data", JsonObject()
+                                            .put("x", op.x())
+                                            .put("y", op.y())
+                                            .put("dir", op.dir().ordinal)
+                                            .put("sight", op.sight().ordinal)
+                                    )
+
+                                val j = JsonObject()
+                                    .put("tick", 1)
+                                    .put("time", System.currentTimeMillis() / 1000)
+                                    .put("messages", JsonArray().add(js))
+
+                                ws.writeTextMessage(j.toString())
+                            }
+
+                        } catch (e: Exception) {
+                            log.warn("wrong op", e)
+                        }
                     }
                     socket!!.closeHandler {
                         log.info("Closed " + it)
@@ -193,7 +224,7 @@ class App(val vertx: Vertx) {
             //        }
         }
 
-        fun onClose(){
+        fun onClose() {
             log.info("Closing connect...")
             socket?.close()
         }
@@ -210,6 +241,19 @@ class App(val vertx: Vertx) {
         cors.maxAgeSeconds(600)
         cors.allowedHeaders(headers)
         router.route().handler(cors)
+    }
+
+
+    companion object {
+
+        fun parse(b: ByteBuffer): AnyOp {
+            return when (b.get()) {
+                Op.APPEAR -> Arrival.create(b);
+                else -> throw RuntimeException("Unknown op")
+            }
+        }
+
+
     }
 
 }
