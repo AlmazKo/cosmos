@@ -6,7 +6,7 @@ import { Dir } from '../constants';
 import { Creature } from '../engine/Creature';
 import { Orientation } from '../engine/Orientation';
 import { Camera } from './Camera';
-import { CELL, startMoving2 } from './constants';
+import { CELL } from './constants';
 
 
 const map: px[] = [];

@@ -11,8 +11,8 @@ export interface Focus {
 
 export class Moving implements MovingAggregator {
   private listener: MovingListener = null!!;
-  private _moving: Dir             = 0;
-  private _sight: Dir              = 0;
+  private _moving: Dir = 0;
+  private _sight: Dir = 0;
 
   listen(listener: MovingListener) {
     this.listener = listener;
@@ -43,7 +43,7 @@ export class Moving implements MovingAggregator {
       this.listener.onChangeMoving(this._moving, this._moving);
     } else if (this._moving === dir) {
       this._moving = this._sight;
-      this._sight  = 0;
+      this._sight = 0;
       console.log("onChangeMoving " + this);
       this.listener.onChangeMoving(this._moving, this._moving);
     }

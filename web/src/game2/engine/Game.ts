@@ -15,16 +15,16 @@ import { Player } from './Player';
 import { ProtoMoving } from './ProtoMoving';
 
 const NO_ACTIONS: Act[] = [];
-let ID                  = 1;
+let ID = 1;
 const DEF_VEL: velocity = 250;
 
 
 export class Game implements MovingListener {
 
-  private lastTick       = 0;
+  private lastTick = 0;
   // @ts-ignore
   private proto: Player;
-  private creatures      = new Map<uint, Creature>();
+  private creatures = new Map<uint, Creature>();
   private actions: Act[] = NO_ACTIONS;
   // @ts-ignore
   private protoMoving: ProtoMoving;
@@ -51,8 +51,8 @@ export class Game implements MovingListener {
     // }
 
     if (!this.proto) {
-      const arrival    = pkg.messages[0].data as ApiArrival;
-      this.proto       = this.addCreature(arrival.creature);
+      const arrival = pkg.messages[0].data as ApiArrival;
+      this.proto = this.addCreature(arrival.creature);
       this.protoMoving = new ProtoMoving(this.proto.orientation, this)
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
     }
@@ -107,25 +107,21 @@ export class Game implements MovingListener {
     }
 
     this.api.sendAction({moving, sight});
-
-    // o.setMoving(moving, sight, DEF_VEL);
+    o.setMoving(moving, (!sight) ? moving : sight, DEF_VEL);
   }
 
   onChangeMoving(moving: Dir, sight: Dir): void {
-    // const o = this.proto!!.orientation;
-    // if (!o.move) return;
-    //
-    // const vel = Game.getVelocity(moving, sight);
-    //
-    // o.setNext(moving, sight, vel)
+    const o = this.proto!!.orientation;
+    if (!o.move) return;
+    const vel = Game.getVelocity(moving, sight);
+    o.setNext(moving, (!sight) ? moving : sight, vel)
   }
 
   onStopMoving(moving: Dir, sight: Dir): void {
     const o = this.proto!!.orientation;
     this.api.sendAction({moving, sight});
-    if (!o.move) return;
-
-    o.stop();
+    const vel = Game.getVelocity(moving, sight);
+    o.setNext(moving, (!sight) ? moving : sight, vel)
   }
 
   static getVelocity(moving: Dir, sight: Dir) {
