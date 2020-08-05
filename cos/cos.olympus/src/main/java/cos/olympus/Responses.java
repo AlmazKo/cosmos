@@ -9,7 +9,7 @@ public class Responses {
     public volatile ArrayList<OutOp> ops = new ArrayList<>();
 
     public synchronized ByteBuffer flush() {
-        var buf = ByteBuffer.allocate(256);
+        var buf = ByteBuffer.allocate(1024);
 
         for (OutOp op : ops) {
             op.write(buf);

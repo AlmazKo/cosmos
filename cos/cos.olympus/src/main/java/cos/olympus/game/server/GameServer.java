@@ -25,7 +25,7 @@ public final class GameServer {
     private              HashSet<SocketChannel> activeChannels = new HashSet<>();
     private final        DoubleBuffer<AnyOp>    actionsBuffer;
     private final        Responses              responses;
-    private              ByteBuffer             responseBuffer = ByteBuffer.allocate(1024);
+    private              ByteBuffer             responseBuffer = ByteBuffer.allocate(10024);
     volatile private     boolean                running        = true;
     volatile private     int                    id             = 0;
 
@@ -90,20 +90,6 @@ public final class GameServer {
             logger.info("Write op: " + op);
         }
         responseBuffer = responses.flush();
-
-//        logger.info("Wrote ops: " + Arrays.toString(responseBuffer.array()));
-//        responseBuffer.rewind();
-
-//        activeChannels.forEach(c -> {
-//            logger.info("" + c);
-//            logger.info("" + responseBuffer);
-//            try {
-//                c.write(responseBuffer);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-
     }
 
     private void accept(SelectionKey key, Selector selector) throws IOException {

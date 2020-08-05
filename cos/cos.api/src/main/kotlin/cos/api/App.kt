@@ -1,6 +1,7 @@
 package cos.api
 
 
+import cos.api.JsonMapper.toJson
 import cos.logging.Logger
 import cos.map.Land
 import cos.map.Lands
@@ -15,7 +16,6 @@ import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.json.JsonArray
-import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.NetSocket
 import io.vertx.core.net.PemKeyCertOptions
@@ -31,9 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger
 @ImplicitReflectionSerializer
 class App(val vertx: Vertx) {
     var cid = AtomicInteger(0)
-
-    private lateinit var test: ShortArray
-
     private val log = Logger(javaClass)
     private val playerInc = AtomicInteger(0)
 
@@ -127,26 +124,19 @@ class App(val vertx: Vertx) {
 
         router.route("/ws").handler { ctx ->
             val ws = ctx.request().upgrade()
-            Conn(ws, playerInc.incrementAndGet())
+            PlayerSession(ws, playerInc.incrementAndGet())
         }
         server.requestHandler(router::accept)
     }
 
 
-    inner class Conn(private val ws: ServerWebSocket, val id: Int) {
+    inner class PlayerSession(private val ws: ServerWebSocket, val id: Int) {
         private var socket: NetSocket? = null
 
         init {
-
             log.info("Connected player: #$id")
-
             setupClient()
-
-            //
-            //            val p = map.addPlayer(id)
-            //            PlayerSession(p, ws, game)
         }
-
 
         private fun onStart() {
             socket?.write(op(1, cid.incrementAndGet(), id))
@@ -161,7 +151,6 @@ class App(val vertx: Vertx) {
 
                     println("Connected to core!!")
                     socket = res.result()
-
                     onStart()
 
                     socket!!.handler {
@@ -169,29 +158,8 @@ class App(val vertx: Vertx) {
                             val buf = it.byteBuf.nioBuffer();
                             buf.rewind()
                             val op = parse(buf)
-                            log.info("Got response " + op)
-
-                            if (op is Arrival) {
-                                val js = JsonObject()
-                                    .put("id", op.id())
-                                    .put("action", "appear")
-                                    .put("type", "")
-                                    .put(
-                                        "data", JsonObject()
-                                            .put("x", op.x())
-                                            .put("y", op.y())
-                                            .put("dir", op.dir().ordinal)
-                                            .put("sight", op.sight().ordinal)
-                                    )
-
-                                val j = JsonObject()
-                                    .put("tick", 1)
-                                    .put("time", System.currentTimeMillis() / 1000)
-                                    .put("messages", JsonArray().add(js))
-
-                                ws.writeTextMessage(j.toString())
-                            }
-
+                            log.info("Got response $op")
+                            ws.writeTextMessage(toJson(op).toString())
                         } catch (e: Exception) {
                             log.warn("wrong op", e)
                         }
@@ -204,28 +172,17 @@ class App(val vertx: Vertx) {
                         log.warn("exceptionHandler " + it, it)
                     }
 
-                    //                vertx.setPeriodic(3000) { _ ->
-                    //                    socket.write(moveOp(3, ++id, 99, 0, 0, 1, 2))
-                    //                }
                 } else {
                     println("Failed to connect: " + res.cause())
                     onClose()
                 }
             }
-            //        val client2 = vertx.createNetClient(options);
-            //        client2.connect(6666, "localhost") { res ->
-            //            if (res.succeeded()) {
-            //                println("Connected2!");
-            //                val socket = res.result();
-            //                socket.write(op(1, 88))
-            //            } else {
-            //                println("Failed to connect2: " + res.cause());
-            //            }
-            //        }
+
         }
 
         fun onClose() {
             log.info("Closing connect...")
+            ws.close()
             socket?.close()
         }
     }

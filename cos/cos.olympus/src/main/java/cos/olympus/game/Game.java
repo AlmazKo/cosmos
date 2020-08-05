@@ -24,6 +24,7 @@ public final class Game {
     private final ArrayList<OutOp> outOps = new ArrayList<>();
 
     int id = 0;
+    private int tick = 0;
 
     public Game(GameMap map, DoubleBuffer<AnyOp> bufferOps) {
         this.map = map;
@@ -33,6 +34,7 @@ public final class Game {
 
 
     public List<OutOp> onTick(int id, long tsm) {
+        tick = id;
         outOps.clear();
         var ops = bufferOps.getAndSwap();
 
@@ -59,7 +61,7 @@ public final class Game {
             var creature = map.createCreature(usr);
             creatures.put(creature.id, creature);
             logger.info("Placed " + creature);
-            outOps.add(new Arrival(op.id(), usr.id, creature.x, creature.y, creature.dir, creature.sight));
+            outOps.add(new Arrival(op.id(), tick, usr.id, creature.x, creature.y, creature.dir, creature.sight));
         } else {
 
             logger.warn("User already logged in " + usr);

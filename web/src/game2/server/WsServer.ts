@@ -31,32 +31,32 @@ export class WsServer implements Api {
     this.prematurePackages.forEach(m => this.handler!!(m));
     this.prematurePackages = []
 
+    //
+    // const pkg = {
+    //   tick    : 0,
+    //   time    : 0,
+    //   messages: [
+    //     {
+    //       id    : 1,
+    //       action: "PROTAGONIST_ARRIVAL",
+    //       type  : "",
+    //       data  : {
+    //         "creature": {
+    //           "id"          : 4,
+    //           "isPlayer"    : true,
+    //           "x"           : 18,
+    //           "y"           : 0,
+    //           "direction"   : 2,
+    //           "metrics"     : {"name": "4", "life": 50, "maxLife": 50},
+    //           "viewDistance": 10
+    //         }
+    //
+    //       }
+    //     } as ApiMessage]
+    // } as Package;
 
-    const pkg = {
-      tick    : 0,
-      time    : 0,
-      messages: [
-        {
-          id    : 1,
-          action: "PROTAGONIST_ARRIVAL",
-          type  : "",
-          data  : {
-            "creature": {
-              "id"          : 4,
-              "isPlayer"    : true,
-              "x"           : 18,
-              "y"           : 0,
-              "direction"   : 2,
-              "metrics"     : {"name": "4", "life": 50, "maxLife": 50},
-              "viewDistance": 10
-            }
 
-          }
-        } as ApiMessage]
-    } as Package;
-
-
-    handler(pkg)
+    // handler(pkg)
   }
 
   sendAction(action: Action) {

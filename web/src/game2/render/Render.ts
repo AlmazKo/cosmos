@@ -62,6 +62,7 @@ export class Render {
     //?
 
     for (const action of actions) {
+      console.log("Processing action", action)
 
       if (action instanceof ProtoArrival) {
         camera.setTarget(action.creature.orientation);

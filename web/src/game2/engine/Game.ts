@@ -1,5 +1,4 @@
 import { Package } from '../../game/actions/Package';
-import { ApiArrival } from '../../game/api/ApiArrival';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
 import { Dir, dirToString, NO } from '../constants';
@@ -51,8 +50,20 @@ export class Game implements MovingListener {
     // }
 
     if (!this.proto) {
-      const arrival = pkg.messages[0].data as ApiArrival;
-      this.proto = this.addCreature(arrival.creature);
+      const dto = pkg.messages[0].data as any;
+
+      const arrival: ApiCreature = {
+        id          : 4,
+        isPlayer    : true,
+        x           : dto.x,
+        y           : dto.y,
+        sight       : dto.sight,
+        direction   : dto.dir,
+        metrics     : new Metrics(50, 50, "Player#3"),
+        viewDistance: 10
+      };
+
+      this.proto = this.addCreature(arrival);
       this.protoMoving = new ProtoMoving(this.proto.orientation, this)
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
     }
@@ -86,9 +97,9 @@ export class Game implements MovingListener {
   // }
 
   private addCreature(ac: ApiCreature): Creature {
-
-    //fixme
-    const c = new Player(ac.id, new Metrics(10, 10, "Test1"), new Orientation(NO, Dir.SOUTH, 0, 0.0, ac.x, ac.y));
+    const o = new Orientation(NO, ac.sight, 0, 0.0, ac.x, ac.y);
+    const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
+    const c = new Player(ac.id, m, o);
     this.creatures.set(c.id, c);
     return c;
   }

@@ -3,9 +3,8 @@ package cos.ops;
 import java.nio.ByteBuffer;
 
 public interface OutOp extends AnyOp {
-//    int id();
-//    val code: Byte
-//    val userId: Int
+    //    int id();
+    int tick();
 
 
     void write(ByteBuffer buf);

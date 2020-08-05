@@ -7,6 +7,7 @@ export interface ApiCreature {
   isPlayer: boolean,
   x: index;
   y: index;
+  sight: Dir;
   direction: Dir;
   viewDistance: uint;
 }
