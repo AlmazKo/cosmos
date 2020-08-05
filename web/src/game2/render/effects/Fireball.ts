@@ -46,11 +46,11 @@ export class Fireball implements Effect {
 
         if (i >= spec.distance) {
           this.isFinished = true;
-          return true;
+          return 0;
         } else {
           this.f     = f;
           this.shift = (i + f) * CELL;
-          return false;
+          return spec.duration;
         }
       }
     );

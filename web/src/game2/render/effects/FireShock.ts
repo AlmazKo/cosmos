@@ -13,24 +13,25 @@ export class FireShock implements Effect {
   private posY: index;
   private shift: px = 0;
   private anim: LoopAnimator;
-  isFinished        = false;
+  isFinished = false;
 
   private f: float = 0;
   readonly id: uint;
 
   constructor(spec: FireShockSpell) {
 
-    this.id   = spec.id;
+    this.id = spec.id;
     this.posX = spec.posX;
     this.posY = spec.posY;
+
     this.anim = new LoopAnimator(spec.duration, (f, i) => {
         this.f = f;
         if (i >= spec.distance) {
           this.isFinished = true;
-          return true;
+          return 0;
         } else {
           this.shift = (i + f) * CELL;
-          return false;
+          return spec.duration;
         }
       }
     );
@@ -40,13 +41,13 @@ export class FireShock implements Effect {
 
     this.anim.run(time);
 
-    const fire1    = RES.get("objects");
+    const fire1 = RES.get("objects");
     const size: px = 16;
-    const sy: px   = 48;
-    const sx: px   = 64 + Math.floor(this.f * 6) * size;
-    const s: px    = this.shift;
-    const posX     = this.posX;
-    const posY     = this.posY;
+    const sy: px = 48;
+    const sx: px = 64 + Math.floor(this.f * 6) * size;
+    const s: px = this.shift;
+    const posX = this.posX;
+    const posY = this.posY;
 
     //fixme
 

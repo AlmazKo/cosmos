@@ -25,7 +25,7 @@ export class ProtoMoving {
     }
   }
 
-  onUpdate(f: float, i: index, isNewCycle: Boolean): uint {
+  onUpdate(f: float, i: index, isNewCycle: boolean): uint {
 
     const o = this.o;
     // let move = o.move;

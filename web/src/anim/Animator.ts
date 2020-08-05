@@ -127,7 +127,7 @@ export class Delay implements Animated {
 
 export class LoopAnimator implements Animated {
   private readonly interpolator: Interpolator;
-  private readonly callback: (f: float, i: index, isNew: Boolean) => uint;
+  private readonly callback: (f: float, i: index, isNew: boolean) => uint;
   private duration: number;
   private finished = false;
 
@@ -135,7 +135,7 @@ export class LoopAnimator implements Animated {
   private times: index               = 0;
 
 
-  constructor(duration: ms, callback: (f: float, i: index, isNew: Boolean) => uint, interpolator: Interpolator = linear) {
+  constructor(duration: ms, callback: (f: float, i: index, isNew: boolean) => uint, interpolator: Interpolator = linear) {
     this.duration     = duration;
     this.callback     = callback;
     this.interpolator = interpolator;
