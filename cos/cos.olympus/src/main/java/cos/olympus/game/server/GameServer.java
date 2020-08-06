@@ -28,7 +28,7 @@ public final class GameServer {
     private final        DoubleBuffer<AnyOp>                 actionsBuffer;
     private final        Responses                           responses;
     private              HashMap<Integer, @Nullable Session> userSessions = new HashMap<>();
-    private              HashMap<Integer, @Nullable Session> anonSessions = new HashMap<>();
+//    private              HashMap<Integer, @Nullable Session> anonSessions = new HashMap<>();
 
     public GameServer(DoubleBuffer<AnyOp> actionsBuffer, Responses responses) {
         this.actionsBuffer = actionsBuffer;
@@ -71,9 +71,7 @@ public final class GameServer {
 
         logger.info("Writing ops to buffer ...");
         for (OutOp op : responses.ops) {
-
-
-            var sess = userSessions.get(op.sessId());
+            var sess = userSessions.get(op.userId());
             if (sess == null) {
                 logger.info("Not exists connection for op: " + op);
             } else {
@@ -86,19 +84,19 @@ public final class GameServer {
     private void accept(SelectionKey key, Selector selector) throws IOException {
         var ch = ((ServerSocketChannel) key.channel()).accept();
         ch.configureBlocking(false);
-        ch.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        var clientKey = ch.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         var session = new Session(inc.incrementAndGet(), ch.getRemoteAddress());
-        anonSessions.put(session.id, session);
         logger.info("Accepted: " + session);
-        key.attach(session);
+        clientKey.attach(session);
     }
 
     private void write(SelectionKey key) throws IOException {
         var session = (Session) key.attachment();
-        logger.info("Writing... " + session);
+//        logger.info("Writing... " + session);
         var out = session.out;
         //                    logger.info("isWritable");
-        if (out.hasRemaining()) {
+
+        if (!out.hasRemaining()) {
             logger.info("Writing...");
             SocketChannel socketChannel = (SocketChannel) key.channel();
             session.out.flip();
@@ -114,22 +112,34 @@ public final class GameServer {
         var in = session.in;
         ch.read(in);
 
-//        if (buf.get(0) == Op.NOPE) {
-//            logger.info("No Data, close it");
-//            ch.close();
-//            key.cancel();
-//            return;
-//        }
+        if (in.get(0) == Op.NOPE) {
+            logger.info("No Data, close it");
+            ch.close();
+            key.cancel();
+            return;
+        }
 
+        in.flip();
         while (in.hasRemaining()) {
-            in.flip();
             var op = parseOp(in);
+
+            if (session.userId == 0 && op instanceof Login) {
+                session.userId = op.userId();
+                userSessions.put(op.userId(), session);
+                logger.info("Authorized: " + session);
+            }
+
             logger.info("Op: " + op);
             if (op != null) {
                 actionsBuffer.add(op);
+            } else {
+                ch.close();
+                key.cancel();
             }
         }
+        in.clear();
 
+//        in.clear();
         in.compact();
     }
 

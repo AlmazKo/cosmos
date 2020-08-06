@@ -6,12 +6,12 @@ import static java.lang.System.currentTimeMillis;
 
 public class Logger {
 
-    private boolean errorsOnly = false;
-    private final boolean debug = true;
-    private final String name;
-    private final String className;
-    private final byte[] buf = new byte[256];
-    private final boolean appendFile = false;
+    private       boolean errorsOnly = false;
+    private final boolean debug      = true;
+    private final String  name;
+    private final String  className;
+    private final byte[]  buf        = new byte[256];
+    private final boolean appendFile = true;
 
     public Logger(Class<?> klass) {
         name = klass.getSimpleName();
@@ -66,27 +66,28 @@ public class Logger {
         buf[i++] = 'v';
         buf[i++] = 'a';
         buf[i++] = ':';
-        buf[i++] = '0';
+//        buf[i++] = '0';
+
+        i = appendLoc(buf, i);
         buf[i++] = ')';
         buf[i++] = ' ';
         return i;
     }
 
-//    private int appendLoc(char[] buf, int idx) {
-//        int line = 0;
-//        var st = Thread.currentThread().getStackTrace();
-//        StackTraceElement ste;
-//        for (int i = 1; i < st.length; i++) {
-//            ste = st[i];
-//            if (st[i].getClassName().equals(className)) {
-//                return st[i].getLineNumber();
-//                var file = ste.getFileName();
-//                ext = file.substring(file.lastIndexOf('.'));
-//            }
-//        }
-//
-//        return line;
-//    }
+    private int appendLoc(byte[] buf, int idx) {
+        int line = 0;
+        var st = Thread.currentThread().getStackTrace();
+        StackTraceElement ste;
+        for (int i = 1; i < st.length; i++) {
+            if (st[i].getClassName().equals(className)) {
+                line = st[i].getLineNumber();
+                break;
+            }
+        }
+
+
+        return appendInt(line, buf, idx);
+    }
 
 //    private static int appendLoc(char[] buf, int i, int line) {
 //        String ext = ".java";
@@ -119,23 +120,47 @@ public class Logger {
         int ms = (msDay - h * 3_600_000 - mi * 60_000 - sec * 1000);
 
         int i = 0;
-        buf[i++] = (byte) (h / 10 + 48);
-        buf[i++] = (byte) (h % 10 + 48);
+        buf[i++] = (byte) (h / 10 + '0');
+        buf[i++] = (byte) (h % 10 + '0');
         buf[i++] = ':';
-        buf[i++] = (byte) (mi / 10 + 48);
-        buf[i++] = (byte) (mi % 10 + 48);
+        buf[i++] = (byte) (mi / 10 + '0');
+        buf[i++] = (byte) (mi % 10 + '0');
         buf[i++] = ':';
-        buf[i++] = (byte) (sec / 10 + 48);
-        buf[i++] = (byte) (sec % 10 + 48);
+        buf[i++] = (byte) (sec / 10 + '0');
+        buf[i++] = (byte) (sec % 10 + '0');
         buf[i++] = '.';
-        buf[i++] = (byte) (ms / 100 + 48);
-        buf[i++] = (byte) (ms % 100 / 10 + 48);
-        buf[i++] = (byte) (ms % 10 + 48);
+        buf[i++] = (byte) (ms / 100 + '0');
+        buf[i++] = (byte) (ms % 100 / 10 + '0');
+        buf[i++] = (byte) (ms % 10 + '0');
         return i;
     }
 
     public Logger atErrors() {
         errorsOnly = true;
         return this;
+    }
+
+
+    private int appendInt(int value, byte[] buf, int idx) {
+        var ss = stringSize(value);
+        var i = idx + ss;
+        while (value > 0) {
+            buf[--i] = (byte) ('0' + value % 10);
+            value /= 10;
+        }
+
+        return idx + ss;
+    }
+
+    static int stringSize(int x) {
+        int d = 0;
+        x = -x;
+        int p = -10;
+        for (int i = 1; i < 10; i++) {
+            if (x > p)
+                return i + d;
+            p = 10 * p;
+        }
+        return 10 + d;
     }
 }

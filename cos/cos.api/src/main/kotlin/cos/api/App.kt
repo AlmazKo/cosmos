@@ -136,6 +136,11 @@ class App(val vertx: Vertx) {
         init {
             log.info("Connected player: #$id")
             setupClient()
+
+            ws.closeHandler {
+                log.info("Closing connect...")
+                socket?.close()
+            }
         }
 
         private fun onStart() {
@@ -165,7 +170,7 @@ class App(val vertx: Vertx) {
                         }
                     }
                     socket!!.closeHandler {
-                        log.info("Closed " + it)
+                        log.info("Closed ")
                         onClose()
                     }
                     socket!!.exceptionHandler {
@@ -182,8 +187,8 @@ class App(val vertx: Vertx) {
 
         fun onClose() {
             log.info("Closing connect...")
-            ws.close()
             socket?.close()
+            if (!ws.isClosed) ws.close()
         }
     }
 
