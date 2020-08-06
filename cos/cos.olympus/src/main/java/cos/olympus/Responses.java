@@ -8,15 +8,11 @@ import java.util.ArrayList;
 public class Responses {
     public volatile ArrayList<OutOp> ops = new ArrayList<>();
 
-    public synchronized ByteBuffer flush() {
-        var buf = ByteBuffer.allocate(1024);
-
+    public synchronized void flush(ByteBuffer buf) {
         for (OutOp op : ops) {
             op.write(buf);
         }
 
         ops.clear();
-//        buf.rewind();
-        return buf;
     }
 }

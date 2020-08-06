@@ -3,11 +3,12 @@ package cos.olympus.game.server;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.Responses;
-import cos.ops.Op;
 import cos.ops.AnyOp;
 import cos.ops.Login;
 import cos.ops.Move;
+import cos.ops.Op;
 import cos.ops.OutOp;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,17 +18,17 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class GameServer {
-
-    private final static Logger                 logger         = new Logger(GameServer.class);
-    private              HashSet<SocketChannel> activeChannels = new HashSet<>();
-    private final        DoubleBuffer<AnyOp>    actionsBuffer;
-    private final        Responses              responses;
-    private              ByteBuffer             responseBuffer = ByteBuffer.allocate(10024);
-    volatile private     boolean                running        = true;
-    volatile private     int                    id             = 0;
+    private volatile     boolean                             running      = true;
+    private final        AtomicInteger                       inc          = new AtomicInteger();
+    private final static Logger                              logger       = new Logger(GameServer.class);
+    private final        DoubleBuffer<AnyOp>                 actionsBuffer;
+    private final        Responses                           responses;
+    private              HashMap<Integer, @Nullable Session> userSessions = new HashMap<>();
+    private              HashMap<Integer, @Nullable Session> anonSessions = new HashMap<>();
 
     public GameServer(DoubleBuffer<AnyOp> actionsBuffer, Responses responses) {
         this.actionsBuffer = actionsBuffer;
@@ -48,89 +49,91 @@ public final class GameServer {
             while (keys.hasNext()) {
                 var key = keys.next();
                 keys.remove();
-                if (!key.isValid()) continue;
 
-
-//                logger.info(" next: " + key);
-//                logger.info("isAcceptable=" + key.isAcceptable() + ", isReadable=" + key.isReadable() + "  isConnectable=${key.isConnectable}  isValid=${key.isValid}  isWritable=${key.isWritable}"
-//                );
-
-                if (key.isAcceptable()) {
+                if (!key.isValid()) {
+                    //nothing
+                } else if (key.isAcceptable()) {
                     accept(key, selector);
                 } else if (key.isReadable()) {
-                    logger.info("Reading: " + key);
                     read(key);
                 } else if (key.isWritable()) {
-//                    logger.info("isWritable");
-                    if (responseBuffer.hasRemaining()) {
-                        logger.info("Writing...");
-                        SocketChannel socketChannel = (SocketChannel) key.channel();
-                        responseBuffer.flip();
-                        socketChannel.write(responseBuffer);
-                    }
-
+                    write(key);
                 }
-
             }
 
-
-            readResponses();
-
-//            logger.info("...");
+            prepareResponses();
         }
     }
 
-    private void readResponses() {
+
+    private void prepareResponses() {
         if (responses.ops.isEmpty()) return;
 
         logger.info("Writing ops to buffer ...");
+        for (OutOp op : responses.ops) {
 
-        responseBuffer.clear();
-        for(OutOp op: responses.ops) {
-            logger.info("Write op: " + op);
+
+            var sess = userSessions.get(op.sessId());
+            if (sess == null) {
+                logger.info("Not exists connection for op: " + op);
+            } else {
+                op.write(sess.out);
+            }
         }
-        responseBuffer = responses.flush();
+        responses.ops.clear();
     }
 
     private void accept(SelectionKey key, Selector selector) throws IOException {
         var ch = ((ServerSocketChannel) key.channel()).accept();
         ch.configureBlocking(false);
         ch.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-        logger.info("Connection accepted: " + ch.getRemoteAddress());
-        activeChannels.add(ch);
-//        ByteBuffer buffer = ByteBuffer.allocate(1024); ////
-//        key.attach(buffer);
+        var session = new Session(inc.incrementAndGet(), ch.getRemoteAddress());
+        anonSessions.put(session.id, session);
+        logger.info("Accepted: " + session);
+        key.attach(session);
+    }
+
+    private void write(SelectionKey key) throws IOException {
+        var session = (Session) key.attachment();
+        logger.info("Writing... " + session);
+        var out = session.out;
+        //                    logger.info("isWritable");
+        if (out.hasRemaining()) {
+            logger.info("Writing...");
+            SocketChannel socketChannel = (SocketChannel) key.channel();
+            session.out.flip();
+            socketChannel.write(session.out);
+            out.compact();
+        }
     }
 
     private void read(SelectionKey key) throws IOException {
+        var session = (Session) key.attachment();
+        logger.info("Reading... " + session);
         var ch = (SocketChannel) key.channel();
-        var buf = ByteBuffer.allocate(32);
-        ch.read(buf);
+        var in = session.in;
+        ch.read(in);
 
-        if (buf.get(0) == Op.NOPE) {
-            logger.info("No Data, close it");
-            ch.close();
-            key.cancel();
-            return;
-        }
+//        if (buf.get(0) == Op.NOPE) {
+//            logger.info("No Data, close it");
+//            ch.close();
+//            key.cancel();
+//            return;
+//        }
 
-        buf.flip();
-        while (buf.remaining() > 0) {
-            var op = parseOp(buf);
+        while (in.hasRemaining()) {
+            in.flip();
+            var op = parseOp(in);
             logger.info("Op: " + op);
             if (op != null) {
                 actionsBuffer.add(op);
             }
         }
+
+        in.compact();
     }
 
-    private void write(SelectionKey key) throws IOException {
-        SocketChannel socketChannel = (SocketChannel) key.channel();
-        socketChannel.write(responseBuffer);
-        key.interestOps(SelectionKey.OP_READ);
-    }
-
-    private ServerSocketChannel setupSocket(int port, Selector selector) throws IOException {
+    private void setupSocket(int port, Selector selector) throws IOException {
         var socket = ServerSocketChannel.open();
         socket.configureBlocking(false);
         //set some options
@@ -138,7 +141,6 @@ public final class GameServer {
         socket.setOption(StandardSocketOptions.SO_REUSEADDR, true);
         socket.bind(new InetSocketAddress(port));
         socket.register(selector, SelectionKey.OP_ACCEPT);
-        return socket;
     }
 
 
