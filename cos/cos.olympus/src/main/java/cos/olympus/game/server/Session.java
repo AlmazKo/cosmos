@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 
 class Session {
     int userId = 0;
+    volatile boolean close = false;
     final int           id;
     final SocketAddress remoteAddress;
     final ByteBuffer    in;
@@ -15,7 +16,7 @@ class Session {
         this.remoteAddress = remoteAddress;
         this.in = ByteBuffer.allocate(4096);
         this.out = ByteBuffer.allocate(4096);
-        this.out.flip();
+//        this.out.flip();
     }
 
     @Override public String toString() {

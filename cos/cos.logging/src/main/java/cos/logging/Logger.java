@@ -6,12 +6,13 @@ import static java.lang.System.currentTimeMillis;
 
 public class Logger {
 
-    private       boolean errorsOnly = false;
-    private final boolean debug      = true;
-    private final String  name;
-    private final String  className;
-    private final byte[]  buf        = new byte[256];
-    private final boolean appendFile = true;
+    private final static String  loggerClassName = Logger.class.getName();
+    private              boolean errorsOnly      = false;
+    private final        boolean debug           = true;
+    private final        String  name;
+    private final        String  className;
+    private final        byte[]  buf             = new byte[256];
+    private final        boolean appendFile      = true;
 
     public Logger(Class<?> klass) {
         name = klass.getSimpleName();
@@ -57,15 +58,9 @@ public class Logger {
 //            buf[i++] = ')';
 
 //        } else {
-        name.getBytes(0, name.length(), buf, i);
-        i += name.length();
+        i = appendString(name, buf, i);
 //        }
-        buf[i++] = '.';
-        buf[i++] = 'j';
-        buf[i++] = 'a';
-        buf[i++] = 'v';
-        buf[i++] = 'a';
-        buf[i++] = ':';
+
 //        buf[i++] = '0';
 
         i = appendLoc(buf, i);
@@ -74,19 +69,30 @@ public class Logger {
         return i;
     }
 
+    private int appendString(String value, byte[] buf, int idx) {
+        value.getBytes(0, value.length(), buf, idx);
+        return idx + name.length();
+    }
+
     private int appendLoc(byte[] buf, int idx) {
         int line = 0;
+        String ext = "java";
         var st = Thread.currentThread().getStackTrace();
         StackTraceElement ste;
         for (int i = 1; i < st.length; i++) {
-            if (st[i].getClassName().equals(className)) {
+            ste = st[i];
+            if (!ste.getClassName().equals(loggerClassName)) {
                 line = st[i].getLineNumber();
+                var file = ste.getFileName();
+                ext = file.substring(file.lastIndexOf('.'));
                 break;
             }
         }
 
+        int i = appendString(ext, buf, idx);
+        buf[i++] = ':';
 
-        return appendInt(line, buf, idx);
+        return appendInt(line, buf, i);
     }
 
 //    private static int appendLoc(char[] buf, int i, int line) {

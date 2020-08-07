@@ -8,6 +8,7 @@ import cos.map.Lands
 import cos.map.TileType
 import cos.ops.AnyOp
 import cos.ops.Arrival
+import cos.ops.Login
 import cos.ops.Op
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
@@ -73,6 +74,17 @@ class App(val vertx: Vertx) {
         return bf
     }
 
+    private fun op(op: AnyOp): Buffer {
+        val bb = ByteBuffer.allocate(256)
+        bb.put(op.code())
+        val pos = bb.position();
+        bb.position(pos + 1);
+        op.write(bb)
+        bb.put(pos, (bb.position() - 2).toByte());
+        val bw = Arrays.copyOf(bb.array(),  bb.position())
+        return Buffer.buffer(bw);
+    }
+
     private fun moveOp(code: Byte, id: Int, userId: Int, x: Int, y: Int, s: Byte, d: Byte): Buffer {
         val bf = Buffer.buffer(1 + 4 + 4 + 1 + 1 + 1 + 1 + 1)
         bf.appendByte(code)
@@ -130,11 +142,11 @@ class App(val vertx: Vertx) {
     }
 
 
-    inner class PlayerSession(private val ws: ServerWebSocket, val id: Int) {
+    inner class PlayerSession(private val ws: ServerWebSocket, val userId: Int) {
         private var socket: NetSocket? = null
 
         init {
-            log.info("Connected player: #$id")
+            log.info("Connected player: #$userId")
             setupClient()
 
             ws.closeHandler {
@@ -144,7 +156,8 @@ class App(val vertx: Vertx) {
         }
 
         private fun onStart() {
-            socket?.write(op(1, cid.incrementAndGet(), id))
+            socket?.write(op(Login(cid.incrementAndGet(), userId)))
+            //            socket?.write(op(1, cid.incrementAndGet(), userId))
         }
 
         private fun setupClient() {
@@ -210,7 +223,7 @@ class App(val vertx: Vertx) {
 
         fun parse(b: ByteBuffer): AnyOp {
             return when (b.get()) {
-                Op.APPEAR -> Arrival.create(b);
+                Op.APPEAR -> Arrival.read(b);
                 else -> throw RuntimeException("Unknown op")
             }
         }

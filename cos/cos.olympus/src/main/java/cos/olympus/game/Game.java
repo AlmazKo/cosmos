@@ -4,6 +4,7 @@ import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.ops.AnyOp;
 import cos.ops.Arrival;
+import cos.ops.Disconnect;
 import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.OutOp;
@@ -42,12 +43,17 @@ public final class Game {
         if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
 
         ops.forEach((op) -> {
-            if (op instanceof Login) {
-                onLogin((Login) op);
-            } else if (op instanceof Move) {
-                onMove((Move) op);
+            try {
+                if (op instanceof Login) {
+                    onLogin((Login) op);
+                } else if (op instanceof Move) {
+                    onMove((Move) op);
+                }
+            } catch (Exception ex) {
+                logger.warn("Error during processing ", ex);
+                outOps.add(new Disconnect(op.id(),tick, op.userId()));
             }
-            ;
+
         });
 
         return outOps;

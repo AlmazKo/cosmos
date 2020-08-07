@@ -21,6 +21,10 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.nio.channels.SelectionKey.OP_ACCEPT;
+import static java.nio.channels.SelectionKey.OP_READ;
+import static java.nio.channels.SelectionKey.OP_WRITE;
+
 public final class GameServer {
     private volatile     boolean                             running      = true;
     private final        AtomicInteger                       inc          = new AtomicInteger();
@@ -36,14 +40,12 @@ public final class GameServer {
     }
 
 
-    void start(int port) throws IOException, InterruptedException {
-        var selector = Selector.open();
-        setupSocket(port, selector);
+    void start(int port) throws IOException {
+        var selector = setupServerSocket(port);
+        logger.info("Server started");
 
-        logger.info("I'm a server and i'm waiting for new connection and buffer select...");
         while (running) {
-
-            selector.select(500);
+            selector.select();
             var keys = selector.selectedKeys().iterator();
 
             while (keys.hasNext()) {
@@ -51,6 +53,7 @@ public final class GameServer {
                 keys.remove();
 
                 if (!key.isValid()) {
+                    logger.warn("NOT isValid");
                     //nothing
                 } else if (key.isAcceptable()) {
                     accept(key, selector);
@@ -75,33 +78,46 @@ public final class GameServer {
             if (sess == null) {
                 logger.info("Not exists connection for op: " + op);
             } else {
-                op.write(sess.out);
+                if (op.code() == Op.DISCONNECT) {
+                    sess.close = true;
+                }
+                write(sess.out, op);
             }
         }
         responses.ops.clear();
     }
 
+    private void write(ByteBuffer bb, OutOp op) {
+        bb.put(op.code());
+        int pos = bb.position();
+        bb.position(pos + 1);
+        op.write(bb);
+        bb.put(pos, (byte) (bb.position() - 2));//write the length
+    }
+
     private void accept(SelectionKey key, Selector selector) throws IOException {
         var ch = ((ServerSocketChannel) key.channel()).accept();
         ch.configureBlocking(false);
-        var clientKey = ch.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         var session = new Session(inc.incrementAndGet(), ch.getRemoteAddress());
+        ch.register(selector, OP_READ | OP_WRITE, session);
         logger.info("Accepted: " + session);
-        clientKey.attach(session);
     }
 
     private void write(SelectionKey key) throws IOException {
         var session = (Session) key.attachment();
-//        logger.info("Writing... " + session);
         var out = session.out;
-        //                    logger.info("isWritable");
 
-        if (!out.hasRemaining()) {
-            logger.info("Writing...");
+        if (out.position() > 0) {
+            logger.info("Writing... " + session);
+            out.flip();
             SocketChannel socketChannel = (SocketChannel) key.channel();
-            session.out.flip();
-            socketChannel.write(session.out);
-            out.compact();
+            socketChannel.write(out);
+            out.clear();
+        }
+
+        if (session.close) {
+            logger.info("Closing(internally) ... " + session);
+            key.channel().close();
         }
     }
 
@@ -110,19 +126,25 @@ public final class GameServer {
         logger.info("Reading... " + session);
         var ch = (SocketChannel) key.channel();
         var in = session.in;
-        ch.read(in);
+        var read = ch.read(in);
 
-        if (in.get(0) == Op.NOPE) {
-            logger.info("No Data, close it");
+        logger.info("Read " + read);
+        if (read == -1) {
+            userSessions.remove(session.userId);
+            logger.info("Closing ... " + session);
             ch.close();
-            key.cancel();
+            return;
+        }
+
+        if (in.remaining() < 2 || in.remaining() < in.get(1)) {
+            //not enough data
+            logger.warn("not enough data " + session);
             return;
         }
 
         in.flip();
         while (in.hasRemaining()) {
             var op = parseOp(in);
-
             if (session.userId == 0 && op instanceof Login) {
                 session.userId = op.userId();
                 userSessions.put(op.userId(), session);
@@ -133,29 +155,30 @@ public final class GameServer {
             if (op != null) {
                 actionsBuffer.add(op);
             } else {
-                ch.close();
-                key.cancel();
+//                ch.close();
+//                key.cancel();
             }
         }
         in.clear();
-
-//        in.clear();
-        in.compact();
+        // if data exists then call       in.compact();
     }
 
-    private void setupSocket(int port, Selector selector) throws IOException {
-        var socket = ServerSocketChannel.open();
-        socket.configureBlocking(false);
-        //set some options
-        socket.setOption(StandardSocketOptions.SO_RCVBUF, 256 * 1024);
-        socket.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-        socket.bind(new InetSocketAddress(port));
-        socket.register(selector, SelectionKey.OP_ACCEPT);
+    private Selector setupServerSocket(int port) throws IOException {
+        var selector = Selector.open();
+        var server = ServerSocketChannel.open();
+        server.configureBlocking(false);
+        server.setOption(StandardSocketOptions.SO_RCVBUF, 256 * 1024);
+        server.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+        server.bind(new InetSocketAddress(port));
+        server.register(selector, OP_ACCEPT);
+        return selector;
     }
 
 
     private AnyOp parseOp(ByteBuffer b) {
-        switch (b.get()) {
+        var opCode = b.get();
+        var length = b.get();
+        switch (opCode) {
             case Op.LOGIN -> {
                 return Login.create(b);
             }
@@ -175,7 +198,7 @@ public final class GameServer {
         new Thread(() -> {
             try {
                 new GameServer(requests, responses).start(6666);
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }, "GameServer").start();

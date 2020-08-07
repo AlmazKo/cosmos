@@ -6,6 +6,4 @@ public interface OutOp extends AnyOp {
     //    int id();
     int tick();
 
-
-    void write(ByteBuffer buf);
 }

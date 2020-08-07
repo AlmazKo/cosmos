@@ -3,6 +3,7 @@ package cos.ops;
 import java.nio.ByteBuffer;
 
 public record Arrival(
+        @Override byte code,
         @Override int id,
         @Override int tick,
         int userId,
@@ -12,9 +13,11 @@ public record Arrival(
         Direction sight
 ) implements OutOp {
 
+    public Arrival(int id, int tick, int userId, int x, int y, Direction dir, Direction sight) {
+        this(Op.APPEAR, id, tick, userId, x, y, dir, sight);
+    }
 
     public void write(ByteBuffer buf) {
-        buf.put(Op.APPEAR);
         buf.putInt(id);
         buf.putInt(tick);
         buf.putInt(userId);
@@ -24,7 +27,7 @@ public record Arrival(
         buf.put((byte) sight.ordinal());
     }
 
-    public static Arrival create(ByteBuffer b) {
+    public static Arrival read(ByteBuffer b) {
         return new Arrival(
                 b.getInt(),
                 b.getInt(),
