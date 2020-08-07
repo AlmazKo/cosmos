@@ -16,7 +16,7 @@ public record Move(
         this(Op.MOVE, id, userId, x, y, dir, sight);
     }
 
-    public static Move create(ByteBuffer b) {
+    public static Move read(ByteBuffer b) {
         return new Move(
                 b.getInt(),
                 b.getInt(),

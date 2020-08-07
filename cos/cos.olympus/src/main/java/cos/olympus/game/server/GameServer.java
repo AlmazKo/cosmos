@@ -8,6 +8,8 @@ import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
+import cos.ops.Unknown;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -32,15 +34,13 @@ public final class GameServer {
     private final        DoubleBuffer<AnyOp>                 actionsBuffer;
     private final        Responses                           responses;
     private              HashMap<Integer, @Nullable Session> userSessions = new HashMap<>();
-//    private              HashMap<Integer, @Nullable Session> anonSessions = new HashMap<>();
 
     public GameServer(DoubleBuffer<AnyOp> actionsBuffer, Responses responses) {
         this.actionsBuffer = actionsBuffer;
         this.responses = responses;
     }
 
-
-    void start(int port) throws IOException {
+    void start(final int port) throws IOException {
         var selector = setupServerSocket(port);
         logger.info("Server started");
 
@@ -152,11 +152,8 @@ public final class GameServer {
             }
 
             logger.info("Op: " + op);
-            if (op != null) {
+            if (op.code() != Op.NOPE) {
                 actionsBuffer.add(op);
-            } else {
-//                ch.close();
-//                key.cancel();
             }
         }
         in.clear();
@@ -175,21 +172,14 @@ public final class GameServer {
     }
 
 
-    private AnyOp parseOp(ByteBuffer b) {
+    private @NotNull AnyOp parseOp(ByteBuffer b) {
         var opCode = b.get();
         var length = b.get();
-        switch (opCode) {
-            case Op.LOGIN -> {
-                return Login.create(b);
-            }
-            case Op.MOVE -> {
-                return Move.create(b);
-            }
-//            case Op.FINISH -> {return null}
-            default -> {
-                return null;
-            }
-        }
+        return switch (opCode) {
+            case Op.LOGIN -> Login.read(b);
+            case Op.MOVE -> Move.read(b);
+            default -> Unknown.read(b, length);
+        };
     }
 
 

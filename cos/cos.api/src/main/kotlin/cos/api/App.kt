@@ -1,24 +1,19 @@
 package cos.api
 
 
-import cos.api.JsonMapper.toJson
 import cos.logging.Logger
 import cos.map.Land
 import cos.map.Lands
 import cos.map.TileType
 import cos.ops.AnyOp
 import cos.ops.Arrival
-import cos.ops.Login
 import cos.ops.Op
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
-import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.json.JsonArray
-import io.vertx.core.net.NetClientOptions
-import io.vertx.core.net.NetSocket
 import io.vertx.core.net.PemKeyCertOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
@@ -49,7 +44,6 @@ class App(val vertx: Vertx) {
         }
 
         val server = vertx.createHttpServer(opts)
-        //        setupClient()
         initApi(vertx, lands, server)
 
         server.listen {
@@ -59,7 +53,6 @@ class App(val vertx: Vertx) {
             } else {
                 log.info("Started!")
             }
-
         }
     }
 
@@ -74,48 +67,25 @@ class App(val vertx: Vertx) {
         return bf
     }
 
-    private fun op(op: AnyOp): Buffer {
-        val bb = ByteBuffer.allocate(256)
-        bb.put(op.code())
-        val pos = bb.position();
-        bb.position(pos + 1);
-        op.write(bb)
-        bb.put(pos, (bb.position() - 2).toByte());
-        val bw = Arrays.copyOf(bb.array(),  bb.position())
-        return Buffer.buffer(bw);
-    }
-
-    private fun moveOp(code: Byte, id: Int, userId: Int, x: Int, y: Int, s: Byte, d: Byte): Buffer {
-        val bf = Buffer.buffer(1 + 4 + 4 + 1 + 1 + 1 + 1 + 1)
-        bf.appendByte(code)
-        bf.appendInt(id)
-        bf.appendInt(userId)
-        bf.appendInt(x)
-        bf.appendInt(y)
-        bf.appendByte(s)
-        bf.appendByte(d)
-        bf.appendByte(Byte.MAX_VALUE)
-        return bf
-    }
 
     private fun initApi(vertx: Vertx, lands: Lands, server: HttpServer) {
         val router = Router.router(vertx)
         //        router.route().handler(WebLogger())
         initCors(router)
 
-
-        val t = lands.basis.asSequence()
-            .map { tileId ->
-                val typeId = lands.tiles[tileId.toInt()]?.type?.id ?: TileType.NOTHING.id
-                JsonArray(listOf(tileId, typeId))
-            }
-            .toList()
+//
+//        val t = lands.basis.asSequence()
+//            .map { tileId ->
+//                val typeId = lands.tiles[tileId.toInt()]?.type?.id ?: TileType.NOTHING.id
+//                JsonArray(listOf(tileId, typeId))
+//            }
+//            .toList()
 
         val cc = Splitter.split16(lands)
         val maps = cc.mapValues { (k, v) ->
             JsonArray(v.map { t ->
                 if (t == null) {
-                    println("Wrong $k - " + k)
+                    println("Wrong $k - $k")
                 } else {
                     listOf(t.id, t.type.id)
                 }
@@ -125,10 +95,8 @@ class App(val vertx: Vertx) {
         router.route("/res/*").handler(StaticHandler.create("../../resources"))
 
         router.get("/map").handler { req ->
-
             val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
             val t = maps[key]!!
-
             req.response().putHeader("content-type", "application/json; charset=utf-8")
             req.response()
                 .end(t.toString())
@@ -136,74 +104,11 @@ class App(val vertx: Vertx) {
 
         router.route("/ws").handler { ctx ->
             val ws = ctx.request().upgrade()
-            PlayerSession(ws, playerInc.incrementAndGet())
+            PlayerSession(vertx, ws, playerInc.incrementAndGet())
         }
         server.requestHandler(router::accept)
     }
 
-
-    inner class PlayerSession(private val ws: ServerWebSocket, val userId: Int) {
-        private var socket: NetSocket? = null
-
-        init {
-            log.info("Connected player: #$userId")
-            setupClient()
-
-            ws.closeHandler {
-                log.info("Closing connect...")
-                socket?.close()
-            }
-        }
-
-        private fun onStart() {
-            socket?.write(op(Login(cid.incrementAndGet(), userId)))
-            //            socket?.write(op(1, cid.incrementAndGet(), userId))
-        }
-
-        private fun setupClient() {
-
-            val options = NetClientOptions()/*.setConnectTimeout(1000)*/
-            val client = vertx.createNetClient(options)
-            client.connect(6666, "127.0.0.1") { res ->
-                if (res.succeeded()) {
-
-                    println("Connected to core!!")
-                    socket = res.result()
-                    onStart()
-
-                    socket!!.handler {
-                        try {
-                            val buf = it.byteBuf.nioBuffer();
-                            buf.rewind()
-                            val op = parse(buf)
-                            log.info("Got response $op")
-                            ws.writeTextMessage(toJson(op).toString())
-                        } catch (e: Exception) {
-                            log.warn("wrong op", e)
-                        }
-                    }
-                    socket!!.closeHandler {
-                        log.info("Closed ")
-                        onClose()
-                    }
-                    socket!!.exceptionHandler {
-                        log.warn("exceptionHandler " + it, it)
-                    }
-
-                } else {
-                    println("Failed to connect: " + res.cause())
-                    onClose()
-                }
-            }
-
-        }
-
-        fun onClose() {
-            log.info("Closing connect...")
-            socket?.close()
-            if (!ws.isClosed) ws.close()
-        }
-    }
 
     private fun initCors(router: Router) {
         val cors = CorsHandler.create("*")
@@ -221,12 +126,7 @@ class App(val vertx: Vertx) {
 
     companion object {
 
-        fun parse(b: ByteBuffer): AnyOp {
-            return when (b.get()) {
-                Op.APPEAR -> Arrival.read(b);
-                else -> throw RuntimeException("Unknown op")
-            }
-        }
+
 
 
     }

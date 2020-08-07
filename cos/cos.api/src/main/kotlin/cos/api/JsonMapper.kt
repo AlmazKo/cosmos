@@ -30,6 +30,7 @@ object JsonMapper {
         }
 
 
-        throw RuntimeException("Unknown op $op")
+        return JsonObject()
+//        throw RuntimeException("Unknown op $op")
     }
 }
