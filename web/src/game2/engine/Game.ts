@@ -117,20 +117,21 @@ export class Game implements MovingListener {
       return;
     }
 
-    this.api.sendAction({moving, sight});
+    this.api.sendAction('move', {dir: moving, sight, x: o.x, y: o.y});
     o.setMoving(moving, (!sight) ? moving : sight, DEF_VEL);
   }
 
   onChangeMoving(moving: Dir, sight: Dir): void {
     const o = this.proto!!.orientation;
     if (!o.move) return;
+    this.api.sendAction('move', {dir: moving, sight, x: o.x, y: o.y});
     const vel = Game.getVelocity(moving, sight);
     o.setNext(moving, (!sight) ? moving : sight, vel)
   }
 
   onStopMoving(moving: Dir, sight: Dir): void {
     const o = this.proto!!.orientation;
-    this.api.sendAction({moving, sight});
+    this.api.sendAction('move', {dir: moving, sight, x: o.x, y: o.y});
     const vel = Game.getVelocity(moving, sight);
     o.setNext(moving, (!sight) ? moving : sight, vel)
   }

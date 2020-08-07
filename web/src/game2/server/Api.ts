@@ -5,5 +5,5 @@ export interface Api {
 
   listen(handler: (pkg: Package) => void): void;
 
-  sendAction(action: Action): void;
+  sendAction(name: string, action: Action): void;
 }

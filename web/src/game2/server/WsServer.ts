@@ -1,4 +1,3 @@
-import { ApiMessage } from '../../game/actions/ApiMessage';
 import { Package } from '../../game/actions/Package';
 import { Action } from './actions/Action';
 import { Api } from './Api';
@@ -11,7 +10,7 @@ export class WsServer implements Api {
   private prematurePackages: Package[] = [];
 
   constructor(url: string) {
-    this.ws           = new WebSocket(url);
+    this.ws = new WebSocket(url);
     this.ws.onmessage = (event) => this.onRawData(JSON.parse(event.data))
   }
 
@@ -30,39 +29,12 @@ export class WsServer implements Api {
     //todo: may be make a small delay?
     this.prematurePackages.forEach(m => this.handler!!(m));
     this.prematurePackages = []
-
-    //
-    // const pkg = {
-    //   tick    : 0,
-    //   time    : 0,
-    //   messages: [
-    //     {
-    //       id    : 1,
-    //       action: "PROTAGONIST_ARRIVAL",
-    //       type  : "",
-    //       data  : {
-    //         "creature": {
-    //           "id"          : 4,
-    //           "isPlayer"    : true,
-    //           "x"           : 18,
-    //           "y"           : 0,
-    //           "direction"   : 2,
-    //           "metrics"     : {"name": "4", "life": 50, "maxLife": 50},
-    //           "viewDistance": 10
-    //         }
-    //
-    //       }
-    //     } as ApiMessage]
-    // } as Package;
-
-
-    // handler(pkg)
   }
 
-  sendAction(action: Action) {
+  sendAction(name: string, action: Action) {
 
     console.log("Action >", action);
-
+    this.ws.send(JSON.stringify({op: name, ...action}))
 
     // if (action instanceof Step) {
     //   this.ws.send(JSON.stringify({
