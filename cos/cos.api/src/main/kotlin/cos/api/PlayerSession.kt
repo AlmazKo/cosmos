@@ -8,6 +8,7 @@ import cos.ops.Disconnect
 import cos.ops.Login
 import cos.ops.Move
 import cos.ops.Op
+import cos.ops.StopMove
 import cos.ops.Unknown
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
@@ -26,7 +27,7 @@ class PlayerSession(
 ) {
 
 
-    var cid = AtomicInteger(0)
+    private val cid = AtomicInteger(0)
     private var socket: NetSocket? = null
     private val log = Logger(javaClass)
 
@@ -43,28 +44,53 @@ class PlayerSession(
     }
 
     private fun onStart() {
-        socket?.write(op(Login(cid.incrementAndGet(), userId)))
+        send(Login(cid.incrementAndGet(), userId))
+    }
+
+
+    private fun send(op: AnyOp) {
+        socket?.write(serialize(op))
     }
 
     private fun onRequest(msg: String) {
         val js = JsonObject(msg)
-
         log.info("onRequest $msg")
-        val dirId = js.getInteger("dir")
-        var sightId = js.getInteger("sight")
-        if (sightId == 0) sightId = dirId;
-
-        if (dirId == 0) return
-
-        val op = Move(
-            cid.incrementAndGet(), userId,
-            js.getInteger("x"),
-            js.getInteger("y"),
-            Direction.values()[dirId - 1],
-            Direction.values()[sightId - 1]
-        )
+        val op = parseRequest(js) ?: return
 
         log.info("Get op: $op")
+        send(op)
+    }
+
+    private fun parseRequest(js: JsonObject): AnyOp? {
+        return when (js.getString("op")) {
+            "move" -> {
+                val dirId = js.getInteger("dir")
+                var sightId = js.getInteger("sight")
+                if (sightId == 0) sightId = dirId;
+
+                Move(
+                    cid.incrementAndGet(),
+                    userId,
+                    js.getInteger("x"),
+                    js.getInteger("y"),
+                    Direction.values()[dirId - 1],
+                    Direction.values()[sightId - 1]
+                )
+
+            }
+            "stop_move" -> {
+                val sightId = js.getInteger("sight")
+                StopMove(
+                    cid.incrementAndGet(),
+                    userId,
+                    js.getInteger("x"),
+                    js.getInteger("y"),
+                    Direction.values()[sightId - 1]
+                )
+            }
+            else -> null
+        }
+
     }
 
     private fun setupClient() {
@@ -107,7 +133,7 @@ class PlayerSession(
     }
 
     companion object {
-        private fun op(op: AnyOp): Buffer {
+        private fun serialize(op: AnyOp): Buffer {
             val bb = ByteBuffer.allocate(256)
             bb.put(op.code())
             val pos = bb.position();

@@ -8,6 +8,7 @@ import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
+import cos.ops.StopMove;
 import cos.ops.Unknown;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -123,12 +124,12 @@ public final class GameServer {
 
     private void read(SelectionKey key) throws IOException {
         var session = (Session) key.attachment();
-        logger.info("Reading... " + session);
+        //logger.info("Reading... " + session);
         var ch = (SocketChannel) key.channel();
         var in = session.in;
         var read = ch.read(in);
 
-        logger.info("Read " + read);
+        //ogger.info("Read " + read);
         if (read == -1) {
             userSessions.remove(session.userId);
             logger.info("Closing ... " + session);
@@ -178,6 +179,7 @@ public final class GameServer {
         return switch (opCode) {
             case Op.LOGIN -> Login.read(b);
             case Op.MOVE -> Move.read(b);
+            case Op.STOP_MOVE -> StopMove.read(b);
             default -> Unknown.read(b, length);
         };
     }

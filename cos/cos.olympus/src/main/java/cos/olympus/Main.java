@@ -12,8 +12,8 @@ import java.nio.file.Paths;
 
 import static cos.olympus.Util.tsm;
 
-class Main {
-
+public class Main {
+    private final static int TICKS_PER_SECOND = 10;
     private final static Logger logger = new Logger(Main.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -43,11 +43,15 @@ class Main {
             }
 
             //            logger.info("%d) %.3fms".format(id, execTime / 1000000.0))
-            Thread.sleep(500);
+            Thread.sleep(1000 / TICKS_PER_SECOND);
 
         }
 
     }
 
+
+    public static float tickSpeed(float v) {
+        return v / TICKS_PER_SECOND;
+    }
 
 }

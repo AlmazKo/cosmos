@@ -9,17 +9,22 @@ java {
     modularity.inferModulePath.set(true)
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+    jvmArgs = listOf("--enable-preview")
+}
 
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:19.0.0")
-    compileOnly("org.jetbrains:annotations:19.0.0")
+    compileOnly("org.jetbrains:annotations:20.0.0")
     implementation(project(":cos.ops"))
     implementation(project(":cos.map"))
     implementation(project(":cos.logging"))
     implementation("almazko:microjson:0.5")
-}
 
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+}
 
 application {
     mainClassName = "cos.olympus.Main"
@@ -27,8 +32,8 @@ application {
         //        "-Xmx128m",
         //        "-XX:+UnlockExperimentalVMOptions",
         //        "-XX:+UseEpsilonGC",
-//        "-verbose:gc",
-//                        "-verbose:class",
+        //        "-verbose:gc",
+        //                        "-verbose:class",
         //                "-javaagent:/Users/aleksandrsuslov/projects/mmo/cos/cos.agent/build/libs/agent.jar",
         "--enable-preview"
     )

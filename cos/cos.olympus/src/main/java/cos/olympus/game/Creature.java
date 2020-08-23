@@ -1,26 +1,21 @@
 package cos.olympus.game;
 
 import cos.ops.Direction;
+import org.jetbrains.annotations.Nullable;
 
-import static cos.ops.Direction.SOUTH;
 import static cos.olympus.game.Movements.HALF;
 
 final class Creature {
     final int    id;
     final String name;
-    int       x;
-    int       y;
-    int       offset = HALF;
-    int       speed = 0;
-    Direction dir   = SOUTH;
-    Direction sight = SOUTH;
+    int   x;
+    int   y;
+    float offset = HALF;
+    float speed  = 0;
+    @Nullable Direction dir = null;
+    Direction sight;
 
-    public Creature(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public Creature(int id, String name, int x, int y, int offset, int speed, Direction dir, Direction sight) {
+    public Creature(int id, String name, int x, int y, float offset, float speed, @Nullable Direction dir, Direction sight) {
         this.id = id;
         this.name = name;
         this.x = x;
@@ -28,6 +23,14 @@ final class Creature {
         this.offset = offset;
         this.speed = speed;
         this.dir = dir;
+        this.sight = sight;
+    }
+
+    public Creature(int id, String name, int x, int y, Direction sight) {
+        this.id = id;
+        this.name = name;
+        this.x = x;
+        this.y = y;
         this.sight = sight;
     }
 

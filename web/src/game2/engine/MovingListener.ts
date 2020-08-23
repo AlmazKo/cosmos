@@ -1,11 +1,6 @@
 import { Dir } from '../constants';
+import { StatusMoving } from './Moving2';
 
 export interface MovingListener {
-  onStartMoving(moving: Dir, sight: Dir): void;
-
-  // onChangeSight(move: Dir, sight: Dir): void;
-
-  onChangeMoving(moving: Dir, sight: Dir): void;
-
-  onStopMoving(moving: Dir, sight: Dir): void;
+  onMovingChanged(status: StatusMoving, dir: Dir, sight: Dir): void;
 }

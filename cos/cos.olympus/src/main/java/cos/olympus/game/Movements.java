@@ -1,23 +1,23 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
-import cos.map.TileType;
 import cos.ops.Move;
+import cos.ops.StopMove;
 
 import java.util.HashMap;
 
-import static java.lang.String.format;
+import static cos.olympus.Main.tickSpeed;
 
-final class Movements {
+final class Movements implements TickAware {
 
 
-    public final static  int                  HALF   = 16;
-    private final static int                  YARD   = 32;
+    public final static  float                HALF   = 0.5f;
+    private final static float                YARD   = 1.0f;
     private final static Logger               logger = new Logger(Movements.class);
-    private final        GameMap              map;
+    private final        TileMap              map;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
 
-    Movements(GameMap map) {
+    Movements(TileMap map) {
         this.map = map;
     }
 
@@ -40,20 +40,31 @@ final class Movements {
             mv.next = op;
         } else {
             mvs.put(cr.id, new Mv(cr));
+            cr.dir = op.dir();
+            cr.sight = op.sight();
         }
 
         var currentTile = map.get(cr.x, cr.y);
 
+
         cr.speed = switch (currentTile) {
-            case GRASS -> 5;
-            case SHALLOW -> 2;
+            case GRASS -> tickSpeed(4.0f);
+            case SHALLOW -> tickSpeed(2.0f);
             default -> throw new IllegalStateException();
         };
 
     }
 
 
-    void update() {
+    void stop(Creature cr, StopMove op) {
+        var mv = mvs.get(cr.id);
+        if (mv != null) {
+            mv.stop = true;
+        }
+    }
+
+
+    public void onTick(int tickId, long time) {
         //todo remove allocations
         mvs.values().removeIf(this::onTick);
         //            int dir = c << 1;
@@ -79,29 +90,30 @@ final class Movements {
             return false;
         }
 
+
         if (newOffset >= YARD) {
             int x = nextX(cr);
             int y = nextY(cr);
             var tile = map.get(x, y);
-            if (tile == TileType.GRASS) {
+//            if (tile == TileType.GRASS) {
 
-                cr.x = x;
-                cr.y = y;
-                cr.offset = newOffset - YARD;
+            cr.x = x;
+            cr.y = y;
+            cr.offset = newOffset - YARD;
 
-                var next = mv.next;
-                if (next != null) {
-//                    cr.sight = next.sight;
-//                    cr.dir = next.dir;
-                }
-            } else {
-                cr.speed = 1;
-                cr.offset = 0;
-                cr.dir = cr.dir.opposite();
-                mv.stop = true;
-                mv.rollBack = true;
-                logger.warn(format("%s, rollback tile ... : [%d;%d]", tile, x, y));
+            var next = mv.next;
+            if (next != null) {
+                cr.sight = next.sight();
+                cr.dir = next.dir();
             }
+//            } else {
+//                cr.speed = tickSpeed(1);
+//                cr.offset = 0;
+//                cr.dir = cr.dir.opposite();
+//                mv.stop = true;
+//                mv.rollBack = true;
+//                logger.warn(format("%s, rollback tile ... : [%d;%d]", tile, x, y));
+//            }
 
         } else {
             throw new IllegalStateException("big offset=$newOffset,  $cr");

@@ -7,7 +7,8 @@ import { World } from '../world/World';
 import { Act } from './Act';
 import { ProtoArrival } from './actions/ProtoArrival';
 import { Creature } from './Creature';
-import { Focus, Moving } from './Moving';
+import { Moving } from './Moving';
+import { StatusMoving } from './Moving2';
 import { MovingListener } from './MovingListener';
 import { Orientation } from './Orientation';
 import { Player } from './Player';
@@ -104,37 +105,28 @@ export class Game implements MovingListener {
     return c;
   }
 
-  sonStartMoving(f: Focus) {
-
-    // this.actions.push(new StartMoving(ID++, this.proto, Date.now(), 200, f.move))
-
-  }
-
-  onStartMoving(moving: Dir, sight: Dir): void {
+  onMovingChanged(status: StatusMoving, dir: Dir, sight: Dir) {
     const o = this.proto!!.orientation;
-    if (!this.world.canStep(o.x, o.y, moving)) {
-      console.warn(`Step is blocked: ${o}`, dirToString(moving));
-      return;
+    const vel = Game.getVelocity(dir, sight);
+
+    if (!this.world.canStep(o.x, o.y, dir)) {
+      console.warn(`Step is blocked: ${o}`, dirToString(dir));
+      //TODO return;
     }
 
-    this.api.sendAction('move', {dir: moving, sight, x: o.x, y: o.y});
-    o.setMoving(moving, (!sight) ? moving : sight, DEF_VEL);
+    if (status === StatusMoving.START) {
+      o.setMoving(dir, sight, vel);
+    } else {
+      o.setNext(dir, sight, vel)
+    }
+
+    if (status === StatusMoving.STOP) {
+      this.api.sendAction('stop_move', {sight, x: o.x, y: o.y});
+    } else {
+      this.api.sendAction('move', {dir, sight, x: o.x, y: o.y});
+    }
   }
 
-  onChangeMoving(moving: Dir, sight: Dir): void {
-    const o = this.proto!!.orientation;
-    if (!o.move) return;
-    this.api.sendAction('move', {dir: moving, sight, x: o.x, y: o.y});
-    const vel = Game.getVelocity(moving, sight);
-    o.setNext(moving, (!sight) ? moving : sight, vel)
-  }
-
-  onStopMoving(moving: Dir, sight: Dir): void {
-    const o = this.proto!!.orientation;
-    this.api.sendAction('move', {dir: moving, sight, x: o.x, y: o.y});
-    const vel = Game.getVelocity(moving, sight);
-    o.setNext(moving, (!sight) ? moving : sight, vel)
-  }
 
   static getVelocity(moving: Dir, sight: Dir) {
     if (moving === sight) {

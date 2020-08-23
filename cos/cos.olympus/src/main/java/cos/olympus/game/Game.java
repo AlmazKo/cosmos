@@ -8,6 +8,7 @@ import cos.ops.Disconnect;
 import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.OutOp;
+import cos.ops.StopMove;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,24 +40,25 @@ public final class Game {
         outOps.clear();
         var ops = bufferOps.getAndSwap();
 
-        movements.update();
+        movements.onTick(id, tsm);
         if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
-
-        ops.forEach((op) -> {
-            try {
-                if (op instanceof Login) {
-                    onLogin((Login) op);
-                } else if (op instanceof Move) {
-                    onMove((Move) op);
-                }
-            } catch (Exception ex) {
-                logger.warn("Error during processing ", ex);
-                outOps.add(new Disconnect(op.id(),tick, op.userId()));
-            }
-
-        });
-
+        ops.forEach(this::handleIncomeOp);
         return outOps;
+    }
+
+    private void handleIncomeOp(AnyOp op) {
+        try {
+            if (op instanceof Login) {
+                onLogin((Login) op);
+            } else if (op instanceof Move) {
+                onMove((Move) op);
+            } else if (op instanceof StopMove) {
+                onStopMove((StopMove) op);
+            }
+        } catch (Exception ex) {
+            logger.warn("Error during processing " + op, ex);
+            outOps.add(new Disconnect(op.id(), tick, op.userId()));
+        }
     }
 
     private void onLogin(Login op) {
@@ -80,6 +82,13 @@ public final class Game {
         if (cr == null) return;
 
         movements.start(cr, op);
+    }
+
+    private void onStopMove(StopMove op) {
+        var cr = creatures.get(op.userId());
+        if (cr == null) return;
+
+        movements.stop(cr, op);
     }
 }
 

@@ -8,7 +8,6 @@ import cos.map.TileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,7 @@ import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public final class GameMap {
+public final class GameMap implements TileMap {
     private final int     width;
     private final int     height;
     private final short[] basis;
@@ -200,19 +199,19 @@ public final class GameMap {
         creatures[id] = 0;
     }
 
-    public Creature createCreature(User soul) {
+    public Creature createCreature(User usr) {
 
-        int idx = toIndex(soul.lastX, soul.lastY);
+        int idx = toIndex(usr.lastX, usr.lastY);
         if (idx < 0 || idx >= basis.length) {
             throw new IllegalStateException("Fail finding free place");
         }
 
-        idx = findFreeIndex(soul.lastX, soul.lastY, 2);
+        idx = findFreeIndex(usr.lastX, usr.lastY, 2);
 
         if (idx >= 0) {
 
             var coord = toCoord(idx);
-            var creature = new Creature(soul.id, soul.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
+            var creature = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
 
             creatures[idx] = creature.id;
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
@@ -313,7 +312,7 @@ public final class GameMap {
         return sb.toString();
     }
 
-//    @Contract(pure = true)
+    //    @Contract(pure = true)
     private boolean isValid(int x, int y) {
         return x >= offsetX && x < (offsetX + width) && y >= offsetY && x < (offsetY + height);
     }
