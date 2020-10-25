@@ -4,10 +4,6 @@ package cos.api
 import cos.logging.Logger
 import cos.map.Land
 import cos.map.Lands
-import cos.map.TileType
-import cos.ops.AnyOp
-import cos.ops.Arrival
-import cos.ops.Op
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpMethod
@@ -19,7 +15,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.StaticHandler
 import kotlinx.serialization.ImplicitReflectionSerializer
-import java.nio.ByteBuffer
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -82,10 +77,22 @@ class App(val vertx: Vertx) {
 //            .toList()
 
         val cc = Splitter.split16(lands)
-        val maps = cc.mapValues { (k, v) ->
+        val basis = cc.mapValues { (k, v) ->
             JsonArray(v.map { t ->
                 if (t == null) {
                     println("Wrong $k - $k")
+                    emptyList()
+                } else {
+                    listOf(t.id, t.type.id)
+                }
+            })
+        }
+        val cco = Splitter.splitObjects16(lands)
+        val objects = cco.mapValues { (k, v) ->
+            JsonArray(v.map { t ->
+                if (t == null) {
+                    emptyList()
+                    //println("Wrong $k - $k")
                 } else {
                     listOf(t.id, t.type.id)
                 }
@@ -96,7 +103,15 @@ class App(val vertx: Vertx) {
 
         router.get("/map").handler { req ->
             val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
-            val t = maps[key]!!
+            val t = basis[key]!!
+            req.response().putHeader("content-type", "application/json; charset=utf-8")
+            req.response()
+                .end(t.toString())
+        }
+
+        router.get("/objects").handler { req ->
+            val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
+            val t = objects.getOrDefault(key, JsonArray())
             req.response().putHeader("content-type", "application/json; charset=utf-8")
             req.response()
                 .end(t.toString())

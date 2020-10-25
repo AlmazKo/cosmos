@@ -4,4 +4,6 @@ export interface MapApi {
 
   getMapPiece(x: int, y: int): Promise<MapPieceRaw>
 
+  getObjectsPiece(x: int, y: int): Promise<MapPieceRaw>
+
 }

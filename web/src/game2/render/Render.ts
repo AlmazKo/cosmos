@@ -34,7 +34,7 @@ export class Render {
     private readonly lands: LandsLayer,
     private readonly images: Images
   ) {
-    this.camera = new Camera(0, -4, 1);
+    this.camera = new Camera();
   }
 
 

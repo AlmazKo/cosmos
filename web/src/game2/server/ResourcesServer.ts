@@ -7,6 +7,9 @@ export class ResourcesServer implements MapApi {
   getMapPiece(x: int, y: int): Promise<MapPieceRaw> {
     return this.ajax(`/map?x=${x}&y=${y}`) as Promise<MapPieceRaw>;
   }
+  getObjectsPiece(x: int, y: int): Promise<MapPieceRaw> {
+    return this.ajax(`/objects?x=${x}&y=${y}`) as Promise<MapPieceRaw>;
+  }
 
   private ajax(url: string): Promise<object> {
     return new Promise((resolve, reject) => {

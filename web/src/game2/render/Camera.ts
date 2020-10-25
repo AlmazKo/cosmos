@@ -7,16 +7,13 @@ export class Camera {
   absoluteY: px = 0;
   target: Orientation;
 
-  constructor(
-    public offset: floatShare,
-    public x: pos,
-    public y: pos) {
-    this.target = new Orientation(NO, NO, 0, offset, x, y)
+  constructor(public offset: floatShare = 0.0) {
+    this.target = new Orientation(NO, NO, 0, offset, 0, 0)
   }
 
   setTarget(orientation: Orientation) {
     this.target = orientation;
-    this.target.setPosition(1, 1);
+    // this.target.setPosition(1, 1);
   }
 
   toX(pos: pos): px {

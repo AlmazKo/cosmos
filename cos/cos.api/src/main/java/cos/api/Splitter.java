@@ -44,6 +44,38 @@ public class Splitter {
 
         return result;
     }
+    public static Map<Pair<Integer, Integer>, Tile[]> splitObjects16(Lands lands) {
+        var result = new HashMap<Pair<Integer, Integer>, Tile[]>();
+
+        Tile t;
+        int width = lands.getWidth();
+        int height = lands.getHeight();
+        int x, y, idx;
+        var objects = lands.getObjects();
+        var tiles = lands.getTiles();
+
+        for (int i = 0; i < objects.length; i++) {
+
+            t = tiles[objects[i]];
+            if (t == null) {
+                continue;
+            }
+
+            x = i % width + lands.getOffsetX();
+            y = i / width + lands.getOffsetY();
+
+            var xx = floorDiv(x, 16);
+            var yy = floorDiv(y, 16);
+//            idx = toIndex(xx, yy);
+            var chunk = result.computeIfAbsent(new Pair<>(xx, yy), p -> new Tile[16 * 16]);
+
+            var xi = floorMod(x, 16);
+            var yi = floorMod(y, 16);
+            chunk[yi * 16 + xi % 16] = t;
+        }
+
+        return result;
+    }
 
     public static int toIndex(int xx, int yy) {
         return xx << 8 + yy;

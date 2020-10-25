@@ -206,7 +206,7 @@ public final class GameMap implements TileMap {
             throw new IllegalStateException("Fail finding free place");
         }
 
-        idx = findFreeIndex(usr.lastX, usr.lastY, 2);
+        idx = findFreeIndex(usr.lastX, usr.lastY, 3);
 
         if (idx >= 0) {
 
