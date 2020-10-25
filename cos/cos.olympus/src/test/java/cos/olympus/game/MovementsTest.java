@@ -1,63 +1,134 @@
 package cos.olympus.game;
 
 import cos.map.TileType;
+import cos.ops.Direction;
 import cos.ops.Move;
 import cos.ops.StopMove;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static cos.olympus.game.Movements.HALF;
+import static cos.ops.Direction.EAST;
 import static cos.ops.Direction.NORTH;
 import static cos.ops.Direction.SOUTH;
+import static cos.ops.Direction.WEST;
+import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MovementsTest {
 
-    private final static float   D           = 0.0001f;
-    private final        TileMap infinityMap = (x, y) -> TileType.GRASS;
+    /*
+     ...
+     .≈.
+     ...
+     */
+    private final  TileMap lakeMap     = (x, y) -> {
+        if (x == 0 && y == 0) {
+            return TileType.SHALLOW;
+        } else if (abs(x) <= 1 && abs(y) <= 1) {
+            return TileType.GRASS;
+        } else {
+            return TileType.NOTHING;
+        }
+    };
+    private final  TileMap infinityMap = (x, y) -> TileType.GRASS;
+    private static int     idOp        = 0;
+    private static int     idTick      = 0;
 
     @Test
-    void start() {
+    @DisplayName("Infinity moving")
+    void infinityMoving() {
+        //given
         var mv = new Movements(infinityMap);
-        var cr = new Creature(123, "Player#123", 1, 1, SOUTH);
-        mv.start(cr, new Move(1234, cr.id, 1, 1, NORTH, NORTH));
+        var cr = new Creature(123, "Richard", 1, 1, SOUTH);
+        mv.start(cr, mv(cr, NORTH));
 
+        //init state
         assertTrue(cr.speed > 0);
-        assertEquals(0.5f, cr.offset);
+        assertEquals(0, cr.offset);
         assertEquals(NORTH, cr.dir);
         assertEquals(NORTH, cr.sight);
 
 
-        mv.onTick(1, 100);
-        assertEquals(HALF + cr.speed, cr.offset, D);
+        //state after 1st tick
+        tick(mv);
+        assertEquals(cr.speed, cr.offset);
         assertEquals(NORTH, cr.dir);
         assertEquals(NORTH, cr.sight);
         assertEquals(1, cr.x);
         assertEquals(1, cr.y);
 
 
-        mv.onTick(2, 100);
-        assertEquals(0.3, cr.offset, D);
+        tick(mv);
+        assertEquals(-20, cr.offset);
         assertEquals(1, cr.x);
         assertEquals(0, cr.y);
 
+        tick(mv);
+        assertEquals(20, cr.offset);
 
-        mv.onTick(3, 100);
-        assertEquals(0.7, cr.offset, D);
-        mv.stop(cr, new StopMove(1235, cr.id, 1, 0, NORTH));
+        //when
+        mv.stop(cr, new StopMove(++idOp, cr.id, 1, 0, NORTH));
 
-
-        mv.onTick(4, 100);
-        assertEquals(0.1, cr.offset, D);
+        tick(mv);
+        assertEquals(-40, cr.offset);
         assertEquals(1, cr.x);
         assertEquals(-1, cr.y);
 
-
-        mv.onTick(5, 100);
-        assertEquals(HALF, cr.offset, D);
+        tick(mv);
+        assertEquals(0, cr.offset);
         assertEquals(0, cr.speed);
         assertEquals(1, cr.x);
         assertEquals(-1, cr.y);
+    }
 
+    @Test
+    @DisplayName("Step in no-area")
+    void lakeMoving() {
+        //given
+        var mv = new Movements(lakeMap);
+        var cr = new Creature(124, "Fishman", -1, -1, SOUTH);
+        mv.start(cr, mv(cr, SOUTH));
+        tick(mv);// .4
+        tick(mv);// .8
+        tick(mv);// 1.2
+        tick(mv);// 1.6
+        assertEquals(-1, cr.x);
+        assertEquals(1, cr.y);
+        tick(mv);//
+        tick(mv);//
+        assertEquals(1, cr.y);
+
+        tick(mv); //step in forbidden zone
+        assertEquals(-40, cr.speed);
+
+        tick(mv); //stopped
+        assertEquals(0, cr.speed);
+    }
+
+    @Test
+    @DisplayName("Go through lake")
+    void goThroughLake() {
+        //given
+        var mv = new Movements(lakeMap);
+        var cr = new Creature(124, "Fishman", -1, 0, EAST);
+        mv.start(cr, mv(cr, EAST));
+        tick(mv);// .4
+        tick(mv);// .8
+        tick(mv);// 1.2
+        assertEquals(20, cr.speed);
+        tick(mv);// 1.4
+        tick(mv);// 1.6
+        tick(mv);// 1.8
+        tick(mv);// 2.0
+        assertEquals(40, cr.speed);
+    }
+
+    private Move mv(Creature cr, Direction dir) {
+        return new Move(++idOp, cr.id, cr.x, cr.y, dir, dir);
+    }
+
+    private void tick(Movements mv) {
+        mv.onTick(++idTick, 100);
     }
 }

@@ -1,16 +1,19 @@
 package cos.olympus.game;
 
 
+import cos.ops.Direction;
+import org.jetbrains.annotations.Nullable;
+
 interface VectorObject {
-    int getX();
+    int x();
 
-    int getY();
+    int y();
 
-    int getOffset();
+    int offset();
 
-    int getSpeed();
+    int speed();
 
-    int getDir();
+    @Nullable Direction dir();
 
 //    fun toLong(): Long {
 //        //todo: implement it

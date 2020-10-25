@@ -1,18 +1,18 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
+import cos.map.TileType;
 import cos.ops.Move;
 import cos.ops.StopMove;
 
 import java.util.HashMap;
 
-import static cos.olympus.Main.tickSpeed;
+import static cos.olympus.Main.toTickSpeed;
 
 final class Movements implements TickAware {
 
-
-    public final static  float                HALF   = 0.5f;
-    private final static float                YARD   = 1.0f;
+    public final static  int                  HALF   = 50;
+    public final static  int                  METER  = 100;
     private final static Logger               logger = new Logger(Movements.class);
     private final        TileMap              map;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
@@ -21,7 +21,7 @@ final class Movements implements TickAware {
         this.map = map;
     }
 
-    class Mv {
+    final static class Mv {
         final Creature cr;
         Move    next;
         boolean stop     = false;
@@ -33,9 +33,7 @@ final class Movements implements TickAware {
     }
 
     void start(Creature cr, Move op) {
-
         var mv = mvs.get(cr.id);
-
         if (mv != null) {
             mv.next = op;
         } else {
@@ -45,14 +43,15 @@ final class Movements implements TickAware {
         }
 
         var currentTile = map.get(cr.x, cr.y);
+        cr.speed = toTickSpeed(getSpeed(currentTile));
+    }
 
-
-        cr.speed = switch (currentTile) {
-            case GRASS -> tickSpeed(4.0f);
-            case SHALLOW -> tickSpeed(2.0f);
+    private static int getSpeed(TileType currentTile) {
+        return switch (currentTile) {
+            case GRASS -> 400;
+            case SHALLOW -> 200;
             default -> throw new IllegalStateException();
         };
-
     }
 
 
@@ -67,58 +66,121 @@ final class Movements implements TickAware {
     public void onTick(int tickId, long time) {
         //todo remove allocations
         mvs.values().removeIf(this::onTick);
-        //            int dir = c << 1;
-        //            int offset = c << 2;
-        //            int newOffset = (offset + speed) % 16;
     }
 
     private boolean onTick(Mv mv) {
         var cr = mv.cr;
         var newOffset = cr.offset + cr.speed;
 
-        if (newOffset < YARD) {
+        if (mv.rollBack) {
+            if (newOffset > 0) {
+                cr.offset = newOffset;
+                return false;
+            } else {
+                cr.stop();
+                return true;
+            }
+        }
 
-            if (mv.stop && cr.offset >= HALF) {
-                cr.offset = HALF;
-                cr.speed = 0;
+        if (newOffset < 0) {
+            cr.offset = newOffset;
+        } else if (newOffset < HALF) {
+            if (mv.stop) {
+                cr.stop();
                 logger.info("MV finished " + cr);
                 return true;
             }
 
             cr.offset = newOffset;
-            logger.info("MV " + cr);
-            return false;
-        }
-
-
-        if (newOffset >= YARD) {
+        } else {
             int x = nextX(cr);
             int y = nextY(cr);
             var tile = map.get(x, y);
-//            if (tile == TileType.GRASS) {
-
-            cr.x = x;
-            cr.y = y;
-            cr.offset = newOffset - YARD;
-
-            var next = mv.next;
-            if (next != null) {
-                cr.sight = next.sight();
-                cr.dir = next.dir();
+            if (tile == TileType.NOTHING || tile == TileType.DEEP_WATER) {
+                mv.rollBack = true;
+                cr.speed = -cr.speed;
+                //don't touch offset
+                logger.info("Rollback " + cr);
+            } else {
+                cr.x = x;
+                cr.y = y;
+                cr.offset = newOffset - METER;
+                cr.speed = toTickSpeed(getSpeed(tile));
             }
-//            } else {
-//                cr.speed = tickSpeed(1);
-//                cr.offset = 0;
-//                cr.dir = cr.dir.opposite();
-//                mv.stop = true;
-//                mv.rollBack = true;
-//                logger.warn(format("%s, rollback tile ... : [%d;%d]", tile, x, y));
-//            }
-
-        } else {
-            throw new IllegalStateException("big offset=$newOffset,  $cr");
         }
 
+//        if (newOffset < HALF) {
+//            cr.offset = newOffset;
+//        } else if (newOffset < METER) {
+//            if (cr.offset < HALF) {
+//                int x = nextX(cr);
+//                int y = nextY(cr);
+//                var tile = map.get(x, y);
+//                if (tile == TileType.NOTHING || tile == TileType.DEEP_WATER) {
+//                    mv.rollBack = true;
+//                    logger.info("Rollback " + cr);
+//                } else {
+//                    cr.x = x;
+//                    cr.y = y;
+//                }
+//            }
+//            cr.offset = newOffset;
+//
+//        } else {
+//            if (mv.stop) {
+//                cr.offset = 0;
+//                cr.speed = 0;
+//                cr.dir = null;
+//                logger.info("MV finished " + cr);
+//                return true;
+//            } else {
+//                cr.offset = newOffset - METER;
+//            }
+//        }
+
+//
+//        if (newOffset < METER) {
+//
+//            if (mv.stop && cr.offset >= HALF) {
+//                cr.offset = HALF;
+//                cr.speed = 0;
+//                logger.info("MV finished " + cr);
+//                return true;
+//            }
+//
+//            cr.offset = newOffset;
+//            logger.info("MV " + cr);
+//            return false;
+//        }
+//        if (newOffset >= METER) {
+//            int x = nextX(cr);
+//            int y = nextY(cr);
+//            var tile = map.get(x, y);
+////            if (tile == TileType.GRASS) {
+//
+//            cr.x = x;
+//            cr.y = y;
+//            cr.offset = newOffset - METER;
+//
+//            var next = mv.next;
+//            if (next != null) {
+//                cr.sight = next.sight();
+//                cr.dir = next.dir();
+//            }
+////            } else {
+////                cr.speed = tickSpeed(1);
+////                cr.offset = 0;
+////                cr.dir = cr.dir.opposite();
+////                mv.stop = true;
+////                mv.rollBack = true;
+////                logger.warn(format("%s, rollback tile ... : [%d;%d]", tile, x, y));
+////            }
+//
+//        } else {
+//            throw new IllegalStateException("big offset=$newOffset,  $cr");
+//        }
+//
+//        logger.info("MV " + cr);
         logger.info("MV " + cr);
         return false;
     }

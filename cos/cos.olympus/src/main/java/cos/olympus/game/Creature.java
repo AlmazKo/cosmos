@@ -3,19 +3,23 @@ package cos.olympus.game;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
-import static cos.olympus.game.Movements.HALF;
+import static cos.olympus.game.Movements.METER;
+import static cos.ops.Direction.EAST;
+import static cos.ops.Direction.NORTH;
+import static cos.ops.Direction.SOUTH;
+import static cos.ops.Direction.WEST;
 
 final class Creature {
     final int    id;
     final String name;
-    int   x;
-    int   y;
-    float offset = HALF;
-    float speed  = 0;
+    int x;
+    int y;
+    int offset = 0;
+    int speed  = 0;
     @Nullable Direction dir = null;
     Direction sight;
 
-    public Creature(int id, String name, int x, int y, float offset, float speed, @Nullable Direction dir, Direction sight) {
+    public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
         this.id = id;
         this.name = name;
         this.x = x;
@@ -40,11 +44,27 @@ final class Creature {
                 ", name='" + name + '\'' +
                 ", x=" + x +
                 ", y=" + y +
+                ", rx=" + rx() +
+                ", ry=" + ry() +
                 ", offset=" + offset +
                 ", speed=" + speed +
                 ", dir=" + dir +
                 ", sight=" + sight +
                 '}';
+    }
+
+    public float ry() {
+        return y + ((dir == NORTH || dir == SOUTH) ? ((float) offset / METER) : 0);
+    }
+
+    public float rx() {
+        return x + ((dir == WEST || dir == EAST) ? ((float) offset / METER) : 0);
+    }
+
+    public void stop() {
+        offset = 0;
+        speed = 0;
+        dir = null;
     }
 }
 /*) : GameObject, VectorObject {

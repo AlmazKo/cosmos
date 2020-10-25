@@ -7,6 +7,7 @@ import cos.ops.Arrival;
 import cos.ops.Disconnect;
 import cos.ops.Login;
 import cos.ops.Move;
+import cos.ops.Op;
 import cos.ops.OutOp;
 import cos.ops.StopMove;
 
@@ -20,8 +21,8 @@ public final class Game {
     private final        GameMap                    map;
     private final        DoubleBuffer<AnyOp>        bufferOps;
     private final        Movements                  movements;
-    private final        HashMap<Integer, User>     users     = new HashMap();
-    private final        HashMap<Integer, Creature> creatures = new HashMap();
+    private final        HashMap<Integer, User>     users     = new HashMap<>();
+    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
 
     private final ArrayList<OutOp> outOps = new ArrayList<>();
 
@@ -33,7 +34,6 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
     }
-
 
     public List<OutOp> onTick(int id, long tsm) {
         tick = id;
@@ -48,12 +48,10 @@ public final class Game {
 
     private void handleIncomeOp(AnyOp op) {
         try {
-            if (op instanceof Login) {
-                onLogin((Login) op);
-            } else if (op instanceof Move) {
-                onMove((Move) op);
-            } else if (op instanceof StopMove) {
-                onStopMove((StopMove) op);
+            switch (op.code()) {
+                case Op.LOGIN -> onLogin((Login) op);
+                case Op.MOVE -> onMove((Move) op);
+                case Op.STOP_MOVE -> onStopMove((StopMove) op);
             }
         } catch (Exception ex) {
             logger.warn("Error during processing " + op, ex);
@@ -62,7 +60,6 @@ public final class Game {
     }
 
     private void onLogin(Login op) {
-
         var usr = users.get(op.userId());
         if (usr == null) {
             usr = new User(op.userId(), "user:" + op.userId());
@@ -71,10 +68,8 @@ public final class Game {
             logger.info("Placed " + creature);
             outOps.add(new Arrival(op.id(), tick, usr.id, creature.x, creature.y, creature.dir, creature.sight));
         } else {
-
             logger.warn("User already logged in " + usr);
         }
-
     }
 
     private void onMove(Move op) {

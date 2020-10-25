@@ -50,7 +50,7 @@ public class Main {
     }
 
 
-    public static float tickSpeed(float v) {
+    public static int toTickSpeed(int v) {
         return v / TICKS_PER_SECOND;
     }
 
