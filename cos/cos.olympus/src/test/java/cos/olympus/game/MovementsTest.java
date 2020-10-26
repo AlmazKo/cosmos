@@ -51,31 +51,32 @@ class MovementsTest {
 
 
         //state after 1st tick
-        tick(mv);
+        tick(mv); // .4
         assertEquals(cr.speed, cr.offset);
         assertEquals(NORTH, cr.dir);
         assertEquals(NORTH, cr.sight);
         assertEquals(1, cr.x);
         assertEquals(1, cr.y);
 
+        tick(mv);// .8
+        assertEquals(80, cr.offset);
+        assertEquals(1, cr.x);
+        assertEquals(1, cr.y);
 
-        tick(mv);
-        assertEquals(-20, cr.offset);
+        tick(mv);// 1.2
+        assertEquals(20, cr.offset);
         assertEquals(1, cr.x);
         assertEquals(0, cr.y);
-
-        tick(mv);
-        assertEquals(20, cr.offset);
 
         //when
         mv.stop(cr, new StopMove(++idOp, cr.id, 1, 0, NORTH));
 
-        tick(mv);
-        assertEquals(-40, cr.offset);
+        tick(mv); //1.6
+        assertEquals(60, cr.offset);
         assertEquals(1, cr.x);
-        assertEquals(-1, cr.y);
+        assertEquals(0, cr.y);
 
-        tick(mv);
+        tick(mv); //2.0
         assertEquals(0, cr.offset);
         assertEquals(0, cr.speed);
         assertEquals(1, cr.x);
@@ -92,16 +93,18 @@ class MovementsTest {
         tick(mv);// .4
         tick(mv);// .8
         tick(mv);// 1.2
+        assertEquals(0, cr.y);
         tick(mv);// 1.6
-        assertEquals(-1, cr.x);
+        tick(mv);// 2.0
         assertEquals(1, cr.y);
-        tick(mv);//
-        tick(mv);//
-        assertEquals(1, cr.y);
+        tick(mv); //2.4
 
-        tick(mv); //step in forbidden zone
+        tick(mv); //2.8
+        tick(mv); // 3.2
         assertEquals(-40, cr.speed);
 
+        tick(mv); //2.8
+        tick(mv); //2.4
         tick(mv); //stopped
         assertEquals(0, cr.speed);
     }

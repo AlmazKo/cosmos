@@ -82,107 +82,39 @@ final class Movements implements TickAware {
             }
         }
 
-        if (newOffset < 0) {
+        if (newOffset < METER) {
             cr.offset = newOffset;
-        } else if (newOffset < HALF) {
-            if (mv.stop) {
-                cr.stop();
-                logger.info("MV finished " + cr);
-                return true;
-            }
-
-            cr.offset = newOffset;
-        } else {
-            int x = nextX(cr);
-            int y = nextY(cr);
-            var tile = map.get(x, y);
-            if (tile == TileType.NOTHING || tile == TileType.DEEP_WATER) {
-                mv.rollBack = true;
-                cr.speed = -cr.speed;
-                //don't touch offset
-                logger.info("Rollback " + cr);
-            } else {
-                cr.x = x;
-                cr.y = y;
-                cr.offset = newOffset - METER;
-                cr.speed = toTickSpeed(getSpeed(tile));
-            }
+            return false;
         }
 
-//        if (newOffset < HALF) {
-//            cr.offset = newOffset;
-//        } else if (newOffset < METER) {
-//            if (cr.offset < HALF) {
-//                int x = nextX(cr);
-//                int y = nextY(cr);
-//                var tile = map.get(x, y);
-//                if (tile == TileType.NOTHING || tile == TileType.DEEP_WATER) {
-//                    mv.rollBack = true;
-//                    logger.info("Rollback " + cr);
-//                } else {
-//                    cr.x = x;
-//                    cr.y = y;
-//                }
-//            }
-//            cr.offset = newOffset;
-//
-//        } else {
-//            if (mv.stop) {
-//                cr.offset = 0;
-//                cr.speed = 0;
-//                cr.dir = null;
-//                logger.info("MV finished " + cr);
-//                return true;
-//            } else {
-//                cr.offset = newOffset - METER;
-//            }
-//        }
+        int x = nextX(cr);
+        int y = nextY(cr);
+        var tile = map.get(x, y);
 
-//
-//        if (newOffset < METER) {
-//
-//            if (mv.stop && cr.offset >= HALF) {
-//                cr.offset = HALF;
-//                cr.speed = 0;
-//                logger.info("MV finished " + cr);
-//                return true;
-//            }
-//
-//            cr.offset = newOffset;
-//            logger.info("MV " + cr);
-//            return false;
-//        }
-//        if (newOffset >= METER) {
-//            int x = nextX(cr);
-//            int y = nextY(cr);
-//            var tile = map.get(x, y);
-////            if (tile == TileType.GRASS) {
-//
-//            cr.x = x;
-//            cr.y = y;
-//            cr.offset = newOffset - METER;
-//
-//            var next = mv.next;
-//            if (next != null) {
-//                cr.sight = next.sight();
-//                cr.dir = next.dir();
-//            }
-////            } else {
-////                cr.speed = tickSpeed(1);
-////                cr.offset = 0;
-////                cr.dir = cr.dir.opposite();
-////                mv.stop = true;
-////                mv.rollBack = true;
-////                logger.warn(format("%s, rollback tile ... : [%d;%d]", tile, x, y));
-////            }
-//
-//        } else {
-//            throw new IllegalStateException("big offset=$newOffset,  $cr");
-//        }
-//
-//        logger.info("MV " + cr);
-        logger.info("MV " + cr);
-        return false;
+        if (cannotStep(cr, tile)) {
+            mv.rollBack = true;
+            cr.speed = -cr.speed;
+            //don't touch offset
+            logger.info("Rollback " + cr);
+            return false;
+        }
+
+        cr.x = x;
+        cr.y = y;
+        if (mv.stop) {
+            cr.stop();
+            logger.info("MV finished " + cr);
+            return true;
+        } else {
+            cr.offset = newOffset - METER;
+            cr.speed = toTickSpeed(getSpeed(tile));
+            logger.info("MV " + cr);
+            return false;
+        }
+    }
+
+    private boolean cannotStep(Creature cr, TileType tile) {
+        return tile == TileType.NOTHING || tile == TileType.DEEP_WATER;
     }
 
 
