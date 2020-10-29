@@ -3,6 +3,9 @@ package cos.olympus.game;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static cos.olympus.game.Movements.METER;
 import static cos.ops.Direction.EAST;
 import static cos.ops.Direction.NORTH;
@@ -10,7 +13,7 @@ import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
 final class Creature {
-    final GMap map;
+    final GameMap map;
     final int     id;
     final String  name;
 
@@ -19,7 +22,8 @@ final class Creature {
     int offset = 0;
     int speed  = 0;
     @Nullable Direction dir = null;
-    Direction sight;
+    Direction         sight;
+    Map<Integer, Obj> objects = new HashMap<>();
 
     public Creature(GMap map, int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
         this.map = map;
@@ -33,7 +37,7 @@ final class Creature {
         this.sight = sight;
     }
 
-    public Creature(GMap map,int id, String name, int x, int y, Direction sight) {
+    public Creature(GMap map, int id, String name, int x, int y, Direction sight) {
         this.map = map;
         this.id = id;
         this.name = name;
@@ -41,6 +45,7 @@ final class Creature {
         this.y = y;
         this.sight = sight;
     }
+
 
     @Override public String toString() {
         return "Creature{" +

@@ -201,6 +201,16 @@ public final class GameMap implements TileMap, GMap {
         return result;
     }
 
+    public void iterate(int centerX, int centerY, int radius, IntIntConsumer consumer) {
+        for (int x = max(offsetX, centerX - radius); x <= min(centerX + radius, width + offsetX); x++) {
+            for (int y = max(offsetY, centerY - radius); y <= min(centerY + radius, height + offsetY); y++) {
+//                if (x == centerX && y == centerY) continue;
+                consumer.accept(x, y);
+            }
+        }
+
+    }
+
     void removeCreature(int id) {
         npcs.remove(id);
         creatures[id] = 0;
