@@ -16,7 +16,7 @@ import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public final class GameMap implements TileMap {
+public final class GameMap implements TileMap, GMap {
     private final int     width;
     private final int     height;
     private final short[] basis;
@@ -150,12 +150,19 @@ public final class GameMap implements TileMap {
 //        }
 //    }
 
-    @Nullable public TileType get(int x, int y) {
+    @Nullable @Override public TileType get(int x, int y) {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
         var b = basis[idx];
         var t = tiles[b];
         return (t == null) ? null : t.getType();
+    }
+
+    public int getObject(int x, int y) {
+        int idx = toIndex(x, y);
+        if (idx < 0 || idx >= objects.length) return 0;
+
+        return objects[idx];
     }
 //
 //    @Nullable public Tile getObject(int x, int y) {
@@ -165,7 +172,7 @@ public final class GameMap implements TileMap {
 //        return tiles[objects[idx]];
 //    }
 
-    public @Nullable Creature getCreature(int x, int y) {
+    public @Override @Nullable Creature getCreature(int x, int y) {
         if (!isValid(x, y)) return null;
 
         return _getCreature(x, y);
@@ -211,7 +218,7 @@ public final class GameMap implements TileMap {
         if (idx >= 0) {
 
             var coord = toCoord(idx);
-            var creature = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
+            var creature = new Creature(this, usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
 
             creatures[idx] = creature.id;
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
@@ -222,13 +229,13 @@ public final class GameMap implements TileMap {
     }
 
 
-    public boolean isNoCreatures(int x, int y) {
+    public @Override boolean isNoCreatures(int x, int y) {
         if (!isValid(x, y)) return false;
 
         return creatures[toIndex(x, y)] == 0;
     }
 
-    public void moveCreature(int fromX, int fromY, int toX, int toY) {
+    public @Override void moveCreature(int fromX, int fromY, int toX, int toY) {
         //        if (!isValid(x, y)) return false;
         //todo add validation
 

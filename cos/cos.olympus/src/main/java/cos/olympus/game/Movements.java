@@ -14,10 +14,10 @@ final class Movements implements TickAware {
     public final static  int                  HALF   = 50;
     public final static  int                  METER  = 100;
     private final static Logger               logger = new Logger(Movements.class);
-    private final        TileMap              map;
+    private final        GMap                 map;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
 
-    Movements(TileMap map) {
+    Movements(GMap map) {
         this.map = map;
     }
 
@@ -99,8 +99,7 @@ final class Movements implements TickAware {
             return false;
         }
 
-        cr.x = x;
-        cr.y = y;
+        cr.mv(x,y);
         if (mv.stop) {
             cr.stop();
             logger.info("MV finished " + cr);

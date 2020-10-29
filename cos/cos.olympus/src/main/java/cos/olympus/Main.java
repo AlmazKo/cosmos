@@ -13,11 +13,10 @@ import java.nio.file.Paths;
 import static cos.olympus.Util.tsm;
 
 public class Main {
-    private final static int TICKS_PER_SECOND = 10;
-    private final static Logger logger = new Logger(Main.class);
+    private final static int    TICKS_PER_SECOND = 10;
+    private final static Logger logger           = new Logger(Main.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
-
 
         logger.info("Started ");
 

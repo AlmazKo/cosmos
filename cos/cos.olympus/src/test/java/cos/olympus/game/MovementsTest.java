@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import static cos.ops.Direction.EAST;
 import static cos.ops.Direction.NORTH;
 import static cos.ops.Direction.SOUTH;
-import static cos.ops.Direction.WEST;
 import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,25 +21,63 @@ class MovementsTest {
      .≈.
      ...
      */
-    private final  TileMap lakeMap     = (x, y) -> {
-        if (x == 0 && y == 0) {
-            return TileType.SHALLOW;
-        } else if (abs(x) <= 1 && abs(y) <= 1) {
-            return TileType.GRASS;
-        } else {
-            return TileType.NOTHING;
+    private final  GMap lakeMap     = new GMap() {
+        @Override public TileType get(int x, int y) {
+            if (x == 0 && y == 0) {
+                return TileType.SHALLOW;
+            } else if (abs(x) <= 1 && abs(y) <= 1) {
+                return TileType.GRASS;
+            } else {
+                return TileType.NOTHING;
+            }
+        }
+
+        @Override public int getObject(int x, int y) {
+            return 0;
+        }
+
+        @Override public Creature getCreature(int x, int y) {
+            return null;
+        }
+
+        @Override public boolean isNoCreatures(int x, int y) {
+            return true;
+        }
+
+        @Override public Creature createCreature(User usr) {
+            return new Creature(this, usr.id, usr.name, 0, 0, EAST);
         }
     };
-    private final  TileMap infinityMap = (x, y) -> TileType.GRASS;
-    private static int     idOp        = 0;
-    private static int     idTick      = 0;
+    private final  GMap infinityMap = new GMap() {
+        @Override public TileType get(int x, int y) {
+            return TileType.GRASS;
+        }
+
+        @Override public int getObject(int x, int y) {
+            return 0;
+        }
+
+        @Override public Creature getCreature(int x, int y) {
+            return null;
+        }
+
+        @Override public boolean isNoCreatures(int x, int y) {
+            return true;
+        }
+
+        @Override public Creature createCreature(User usr) {
+            return new Creature(this, usr.id, usr.name, 0, 0, EAST);
+        }
+    };
+    private static int  idOp        = 0;
+    private static int  idTick      = 0;
 
     @Test
     @DisplayName("Infinity moving")
     void infinityMoving() {
         //given
         var mv = new Movements(infinityMap);
-        var cr = new Creature(123, "Richard", 1, 1, SOUTH);
+        var cr = infinityMap.createCreature(new User(123, "Richard", 1, 1, SOUTH));
         mv.start(cr, mv(cr, NORTH));
 
         //init state
@@ -114,7 +151,9 @@ class MovementsTest {
     void goThroughLake() {
         //given
         var mv = new Movements(lakeMap);
-        var cr = new Creature(124, "Fishman", -1, 0, EAST);
+        var cr = lakeMap.createCreature(new User(124, "Fishman"));
+        cr.mv(-1, 0);
+        cr.sight = EAST;
         mv.start(cr, mv(cr, EAST));
         tick(mv);// .4
         tick(mv);// .8

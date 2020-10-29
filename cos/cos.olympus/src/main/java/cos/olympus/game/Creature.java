@@ -10,8 +10,10 @@ import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
 final class Creature {
-    final int    id;
-    final String name;
+    final GMap map;
+    final int     id;
+    final String  name;
+
     int x;
     int y;
     int offset = 0;
@@ -19,7 +21,8 @@ final class Creature {
     @Nullable Direction dir = null;
     Direction sight;
 
-    public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
+    public Creature(GMap map, int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
+        this.map = map;
         this.id = id;
         this.name = name;
         this.x = x;
@@ -30,7 +33,8 @@ final class Creature {
         this.sight = sight;
     }
 
-    public Creature(int id, String name, int x, int y, Direction sight) {
+    public Creature(GMap map,int id, String name, int x, int y, Direction sight) {
+        this.map = map;
         this.id = id;
         this.name = name;
         this.x = x;
@@ -65,6 +69,12 @@ final class Creature {
         offset = 0;
         speed = 0;
         dir = null;
+    }
+
+    public void mv(int x, int y) {
+        map.moveCreature(this.x, this.y, x, y);
+        this.x = x;
+        this.y = y;
     }
 }
 /*) : GameObject, VectorObject {
