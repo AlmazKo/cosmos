@@ -2,9 +2,9 @@ package cos.ops;
 
 public enum Direction {
     NORTH,
+    EAST,
     SOUTH,
-    WEST,
-    EAST;
+    WEST;
 
     public Direction opposite() {
         int ord = ordinal();

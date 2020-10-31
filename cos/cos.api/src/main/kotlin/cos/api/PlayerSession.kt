@@ -2,17 +2,19 @@ package cos.api
 
 import cos.logging.Logger
 import cos.ops.AnyOp
-import cos.ops.Arrival
+import cos.ops.Appear
 import cos.ops.Direction
 import cos.ops.Disconnect
 import cos.ops.Login
 import cos.ops.Move
+import cos.ops.ObjAppear
 import cos.ops.Op
 import cos.ops.StopMove
 import cos.ops.Unknown
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.core.net.NetClientOptions
 import io.vertx.core.net.NetSocket
@@ -105,17 +107,26 @@ class PlayerSession(
                 onStart()
 
                 socket!!.handler {
+                    val messages = JsonArray()
                     try {
                         val buf = it.byteBuf.nioBuffer();
                         buf.rewind()
-                        val op = parse(buf)
-                        log.info("Got Server response $op")
-                        val clientRes = JsonMapper.toJson(op).toString()
-                        log.info("Sending ... $clientRes")
-                        ws.writeTextMessage(clientRes)
+
+                        while (buf.hasRemaining()) {
+                            val op = parse(buf)
+                            log.info("Got Server response $op")
+                            messages.add(JsonMapper.toJson(op))
+                        }
+
                     } catch (e: Exception) {
-                        log.warn("wrong op", e)
+                        log.warn("wrong op" + e.message)
                     }
+                    val clientRes = JsonObject()
+                        .put("tick", 1) //todo hardcode
+                        .put("time", System.currentTimeMillis() / 1000)
+                        .put("messages", messages)
+//                    log.info("Sending ... $clientRes")
+                    ws.writeTextMessage(clientRes.toString())
                 }
                 socket!!.closeHandler {
                     log.info("Server socket is closing ... ")
@@ -148,8 +159,9 @@ class PlayerSession(
             val code = b.get();
             val len = b.get();
             return when (code) {
-                Op.APPEAR -> Arrival.read(b);
+                Op.APPEAR -> Appear.read(b);
                 Op.DISCONNECT -> Disconnect.read(b);
+                Op.APPEAR_OBJ -> ObjAppear.read(b);
                 else -> Unknown.read(b, len)
             }
         }

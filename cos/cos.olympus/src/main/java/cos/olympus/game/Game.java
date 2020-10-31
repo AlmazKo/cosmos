@@ -3,7 +3,7 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.ops.AnyOp;
-import cos.ops.Arrival;
+import cos.ops.Appear;
 import cos.ops.Disconnect;
 import cos.ops.Login;
 import cos.ops.Move;
@@ -25,12 +25,14 @@ public final class Game {
     private final        HashMap<Integer, Creature> creatures = new HashMap<>();
 
     private final ArrayList<OutOp> outOps = new ArrayList<>();
+    private final Zone             zone;
 
     int id = 0;
     private int tick = 0;
 
     public Game(GameMap map, DoubleBuffer<AnyOp> bufferOps) {
         this.map = map;
+        this.zone = new Zone(map);
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
     }
@@ -43,6 +45,11 @@ public final class Game {
         movements.onTick(id, tsm);
         if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
         ops.forEach(this::handleIncomeOp);
+
+        creatures.values().forEach(cr -> {
+            zone.calc(cr, tick, outOps);
+        });
+
         return outOps;
     }
 
@@ -66,7 +73,7 @@ public final class Game {
             var creature = map.createCreature(usr);
             creatures.put(creature.id, creature);
             logger.info("Placed " + creature);
-            outOps.add(new Arrival(op.id(), tick, usr.id, creature.x, creature.y, creature.dir, creature.sight));
+            outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight));
         } else {
             logger.warn("User already logged in " + usr);
         }

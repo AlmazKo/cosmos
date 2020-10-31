@@ -13,32 +13,30 @@ import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
 final class Creature {
-    final GameMap map;
-    final int     id;
-    final String  name;
+    final int    id;
+    final String name;
 
     int x;
     int y;
     int offset = 0;
     int speed  = 0;
-    @Nullable Direction dir = null;
-    Direction         sight;
-    Map<Integer, Obj> objects = new HashMap<>();
+    @Nullable Direction mv = null;
 
-    public Creature(GMap map, int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
-        this.map = map;
+    Direction         sight;
+    Map<Integer, Obj> zoneObjects = new HashMap<>();
+
+    public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
         this.id = id;
         this.name = name;
         this.x = x;
         this.y = y;
         this.offset = offset;
         this.speed = speed;
-        this.dir = dir;
+        this.mv = dir;
         this.sight = sight;
     }
 
-    public Creature(GMap map, int id, String name, int x, int y, Direction sight) {
-        this.map = map;
+    public Creature(int id, String name, int x, int y, Direction sight) {
         this.id = id;
         this.name = name;
         this.x = x;
@@ -57,29 +55,27 @@ final class Creature {
                 ", ry=" + ry() +
                 ", offset=" + offset +
                 ", speed=" + speed +
-                ", dir=" + dir +
+                ", dir=" + mv +
                 ", sight=" + sight +
                 '}';
     }
 
     public float ry() {
-        return y + ((dir == NORTH || dir == SOUTH) ? ((float) offset / METER) : 0);
+        if (mv == NORTH) return y - ((float) offset / METER);
+        if (mv == SOUTH) return y + ((float) offset / METER);
+        return y;
     }
 
     public float rx() {
-        return x + ((dir == WEST || dir == EAST) ? ((float) offset / METER) : 0);
+        if (mv == WEST) return x - ((float) offset / METER);
+        if (mv == EAST) return x + ((float) offset / METER);
+        return x;
     }
 
     public void stop() {
         offset = 0;
         speed = 0;
-        dir = null;
-    }
-
-    public void mv(int x, int y) {
-        map.moveCreature(this.x, this.y, x, y);
-        this.x = x;
-        this.y = y;
+        mv = null;
     }
 }
 /*) : GameObject, VectorObject {

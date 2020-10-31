@@ -5,8 +5,8 @@ export interface ApiCreature {
   id: uint;
   metrics: Metrics;
   isPlayer: boolean,
-  x: index;
-  y: index;
+  x: pos;
+  y: pos;
   sight: Dir;
   direction: Dir;
   viewDistance: uint;

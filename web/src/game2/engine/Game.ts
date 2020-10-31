@@ -1,3 +1,4 @@
+import { ObjAppear } from '../../game/actions/ApiMessage';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
@@ -70,6 +71,13 @@ export class Game implements MovingListener {
     }
 
     pkg.messages.forEach(msg => {
+
+      if (msg.action === 'appear_obj') {
+        //{id; x: 11, y: 5, tileId: 232}
+        const p = this.proto!!;
+        const e = msg.data as ObjAppear;
+        p.zoneObjects.set(e.id, e)
+      }
       // actions.push()msg.action
     })
 

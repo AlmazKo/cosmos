@@ -1,4 +1,3 @@
-import { Animator, Delay } from '../../anim/Animator';
 import { Animators } from '../../anim/Animators';
 import { TileDrawable } from '../../game/TileDrawable';
 import { TilePainter } from '../../game/TilePainter';
@@ -13,19 +12,21 @@ const map: px[] = [];
 
 map[Dir.NORTH] = 0;
 map[Dir.SOUTH] = 128;
-map[Dir.EAST]  = 196;
-map[Dir.WEST]  = 64;
+map[Dir.EAST] = 196;
+map[Dir.WEST] = 64;
 
 
 export class DrawableCreature implements TileDrawable {
 
   readonly orientation: Orientation;
+  public readonly creature: Creature;
 
-  private animators          = new Animators();
-  private showInstantSpell   = false;
+  private animators = new Animators();
+  private showInstantSpell = false;
   private meleeFactor: float = 0;
 
   constructor(c: Creature) {
+    this.creature = c;
     this.orientation = c.orientation;
   }
 
@@ -40,8 +41,8 @@ export class DrawableCreature implements TileDrawable {
     // this.animators.run(time);
     const x = camera.absoluteX;
     const y = camera.absoluteY;
-    let sy  = map[o.sight];
-    let sx  = Math.floor(Math.abs(o.shift) * 9) * 64;
+    let sy = map[o.sight];
+    let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
     // drawLifeLine(bp.toInDirect(x, y), this);
 
     let sw = 64, sh = 64;

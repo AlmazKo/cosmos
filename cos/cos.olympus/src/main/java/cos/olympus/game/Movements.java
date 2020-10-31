@@ -38,7 +38,7 @@ final class Movements implements TickAware {
             mv.next = op;
         } else {
             mvs.put(cr.id, new Mv(cr));
-            cr.dir = op.dir();
+            cr.mv = op.dir();
             cr.sight = op.sight();
         }
 
@@ -99,7 +99,8 @@ final class Movements implements TickAware {
             return false;
         }
 
-        cr.mv(x,y);
+        map.moveCreature(cr, x, y);
+
         if (mv.stop) {
             cr.stop();
             logger.info("MV finished " + cr);
@@ -118,7 +119,7 @@ final class Movements implements TickAware {
 
 
     public static int nextX(Creature cr) {
-        return switch (cr.dir) {
+        return switch (cr.mv) {
             case NORTH, SOUTH -> cr.x;
             case WEST -> cr.x - 1;
             case EAST -> cr.x + 1;
@@ -126,7 +127,7 @@ final class Movements implements TickAware {
     }
 
     public static int nextY(Creature cr) {
-        return switch (cr.dir) {
+        return switch (cr.mv) {
             case NORTH -> cr.y - 1;
             case SOUTH -> cr.y + 1;
             case WEST, EAST -> cr.y;

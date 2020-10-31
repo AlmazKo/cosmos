@@ -8,11 +8,11 @@ import { CELL } from './constants';
 
 
 const ratio = 2;
-const CELL2 = CELL * ratio;
+export const CELL2 = CELL * ratio;
 const PIECE_SIZE: px = CELL * 16;//fixme remove. take from api
 const PIECE_SIZE2: px = PIECE_SIZE * ratio;
-const TILE_SIZE: px = 32;//fixme remove. take from api
-const TILESET_SIZE: px = 23;//fixme remove. take from api
+export const TILE_SIZE: px = 32;//fixme remove. take from api
+export const TILESET_SIZE: px = 23;//fixme remove. take from api
 const offCanvas = new (window as any).OffscreenCanvas(PIECE_SIZE * ratio, PIECE_SIZE * ratio) as any;
 const offCtx: CanvasRenderingContext2D = offCanvas.getContext('2d', {alpha: true})!!;
 offCtx.imageSmoothingEnabled = false;

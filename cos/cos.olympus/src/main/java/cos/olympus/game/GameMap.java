@@ -158,11 +158,14 @@ public final class GameMap implements TileMap, GMap {
         return (t == null) ? null : t.getType();
     }
 
-    public int getObject(int x, int y) {
+    public @Nullable Obj getObject(int x, int y) {
         int idx = toIndex(x, y);
-        if (idx < 0 || idx >= objects.length) return 0;
+        if (idx < 0 || idx >= objects.length) return null;
 
-        return objects[idx];
+        var objTileId =  objects[idx];
+        if(objTileId == 0) return null;
+
+        return new Obj(idx,objTileId,x,y);//todo id is hardcoded
     }
 //
 //    @Nullable public Tile getObject(int x, int y) {
@@ -228,7 +231,7 @@ public final class GameMap implements TileMap, GMap {
         if (idx >= 0) {
 
             var coord = toCoord(idx);
-            var creature = new Creature(this, usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
+            var creature = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
 
             creatures[idx] = creature.id;
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
@@ -243,6 +246,12 @@ public final class GameMap implements TileMap, GMap {
         if (!isValid(x, y)) return false;
 
         return creatures[toIndex(x, y)] == 0;
+    }
+
+    public @Override void moveCreature(Creature cr, int toX, int toY) {
+        moveCreature(cr.x, cr.y, toX, toY);
+        cr.x = toX;
+        cr.y = toY;
     }
 
     public @Override void moveCreature(int fromX, int fromY, int toX, int toY) {

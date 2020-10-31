@@ -341,7 +341,7 @@
  "nextobjectid":1,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.2.1",
+ "tiledversion":"2019.05.08",
  "tileheight":32,
  "tilesets":[
         {

@@ -1,7 +1,8 @@
 package cos.api
 
 import cos.ops.AnyOp
-import cos.ops.Arrival
+import cos.ops.Appear
+import cos.ops.ObjAppear
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 
@@ -10,27 +11,34 @@ object JsonMapper {
 
     fun toJson(op: AnyOp): JsonObject {
 
-        if (op is Arrival) {
-            val js = JsonObject()
-                .put("id", op.id())
-                .put("action", "appear")
-                .put("type", "")
-                .put(
-                    "data", JsonObject()
-                        .put("x", op.x())
-                        .put("y", op.y())
-                        .put("dir", op.dir().ordinal)
-                        .put("sight", op.sight().ordinal)
-                )
-
-            return JsonObject()
-                .put("tick", 1)
-                .put("time", System.currentTimeMillis() / 1000)
-                .put("messages", JsonArray().add(js))
+        return when (op) {
+            is Appear -> toJ(op)
+            is ObjAppear -> toJ(op)
+            else -> throw RuntimeException("Unknown $op")
         }
-
-
-        return JsonObject()
-//        throw RuntimeException("Unknown op $op")
     }
+
+    fun toJ(op: Appear) = JsonObject()
+        .put("id", op.id())
+        .put("action", "appear")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("x", op.x())
+                .put("y", op.y())
+                .put("dir", op.dir().ordinal)
+                .put("sight", op.sight().ordinal)
+        )
+
+    fun toJ(op: ObjAppear) = JsonObject()
+        .put("id", op.id())
+        .put("action", "appear_obj")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("x", op.x())
+                .put("y", op.y())
+                .put("tileId", op.tileId())
+        )
 }
