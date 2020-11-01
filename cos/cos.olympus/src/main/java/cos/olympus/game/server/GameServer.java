@@ -73,7 +73,7 @@ public final class GameServer {
     private void prepareResponses() {
         if (responses.ops.isEmpty()) return;
 
-        logger.info("Writing ops to buffer ...");
+//        logger.info("Writing ops to buffer ...");
         for (OutOp op : responses.ops) {
             var sess = userSessions.get(op.userId());
             if (sess == null) {
@@ -101,7 +101,7 @@ public final class GameServer {
         ch.configureBlocking(false);
         var session = new Session(inc.incrementAndGet(), ch.getRemoteAddress());
         ch.register(selector, OP_READ | OP_WRITE, session);
-        logger.info("Accepted: " + session);
+//        logger.info("Accepted: " + session);
     }
 
     private void write(SelectionKey key) throws IOException {
@@ -109,7 +109,7 @@ public final class GameServer {
         var out = session.out;
 
         if (out.position() > 0) {
-            logger.info("Writing... " + session);
+          //  logger.info("Writing... " + session);
             out.flip();
             SocketChannel socketChannel = (SocketChannel) key.channel();
             socketChannel.write(out);
@@ -149,10 +149,10 @@ public final class GameServer {
             if (session.userId == 0 && op instanceof Login) {
                 session.userId = op.userId();
                 userSessions.put(op.userId(), session);
-                logger.info("Authorized: " + session);
+//                logger.info("Authorized: " + session);
             }
 
-            logger.info("Op: " + op);
+//            logger.info("Op: " + op);
             if (op.code() != Op.NOPE) {
                 actionsBuffer.add(op);
             }

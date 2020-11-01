@@ -60,7 +60,7 @@ export class Game implements MovingListener {
         x           : dto.x,
         y           : dto.y,
         sight       : dto.sight,
-        direction   : dto.dir,
+        direction   : dto.mv,
         metrics     : new Metrics(50, 50, "Player#3"),
         viewDistance: 10
       };

@@ -2,10 +2,10 @@ export const NO = 0;
 
 export enum Dir {
   // NO = 0,
-  NORTH = 1,
-  EAST  = 2,
-  SOUTH = 3,
-  WEST  = 4
+  NORTH = 'NORTH',
+  EAST  = 'EAST',
+  SOUTH = 'SOUTH',
+  WEST  = 'WEST'
 }
 
 

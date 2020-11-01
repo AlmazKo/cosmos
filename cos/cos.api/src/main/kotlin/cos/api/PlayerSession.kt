@@ -66,28 +66,28 @@ class PlayerSession(
     private fun parseRequest(js: JsonObject): AnyOp? {
         return when (js.getString("op")) {
             "move" -> {
-                val dirId = js.getInteger("dir")
-                var sightId = js.getInteger("sight")
-                if (sightId == 0) sightId = dirId;
+                val dirId = js.getString("dir")
+                var sightId = js.getString("sight")
+                if (sightId == null) sightId = dirId;
 
                 Move(
                     cid.incrementAndGet(),
                     userId,
                     js.getInteger("x"),
                     js.getInteger("y"),
-                    Direction.values()[dirId - 1],
-                    Direction.values()[sightId - 1]
+                    Direction.valueOf(dirId),
+                    Direction.valueOf(sightId)
                 )
 
             }
             "stop_move" -> {
-                val sightId = js.getInteger("sight")
+                val sightId = js.getString("sight")
                 StopMove(
                     cid.incrementAndGet(),
                     userId,
                     js.getInteger("x"),
                     js.getInteger("y"),
-                    Direction.values()[sightId - 1]
+                    Direction.valueOf(sightId)
                 )
             }
             else -> null

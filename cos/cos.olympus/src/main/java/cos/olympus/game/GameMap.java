@@ -231,7 +231,7 @@ public final class GameMap implements TileMap, GMap {
         if (idx >= 0) {
 
             var coord = toCoord(idx);
-            var creature = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, SOUTH, SOUTH);
+            var creature = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, null, SOUTH);
 
             creatures[idx] = creature.id;
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);

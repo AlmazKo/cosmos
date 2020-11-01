@@ -48,9 +48,9 @@ final class Creature {
     @Override public String toString() {
         return "Creature{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", x=" + x +
-                ", y=" + y +
+//                ", name='" + name + '\'' +
+//                ", x=" + x +
+//                ", y=" + y +
                 ", rx=" + rx() +
                 ", ry=" + ry() +
                 ", offset=" + offset +

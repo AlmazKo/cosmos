@@ -37,7 +37,7 @@ public class Main {
 
             var oo = game.onTick(++id, tsm());
             if (!oo.isEmpty()) {
-                logger.info("OOOPS");
+               // logger.info("OOOPS");
                 responses.ops.addAll(oo);
             }
 

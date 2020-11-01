@@ -3,7 +3,6 @@ package cos.api
 import cos.ops.AnyOp
 import cos.ops.Appear
 import cos.ops.ObjAppear
-import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 
 object JsonMapper {
@@ -26,8 +25,8 @@ object JsonMapper {
             "data", JsonObject()
                 .put("x", op.x())
                 .put("y", op.y())
-                .put("dir", op.dir().ordinal)
-                .put("sight", op.sight().ordinal)
+                .put("mv", op.mv())
+                .put("sight", op.sight())
         )
 
     fun toJ(op: ObjAppear) = JsonObject()

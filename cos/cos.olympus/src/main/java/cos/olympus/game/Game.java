@@ -43,7 +43,7 @@ public final class Game {
         var ops = bufferOps.getAndSwap();
 
         movements.onTick(id, tsm);
-        if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
+      //  if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
         ops.forEach(this::handleIncomeOp);
 
         creatures.values().forEach(cr -> {
