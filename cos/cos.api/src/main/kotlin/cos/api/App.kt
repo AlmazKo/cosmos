@@ -26,7 +26,7 @@ class App(val vertx: Vertx) {
     private val playerInc = AtomicInteger(0)
 
     init {
-        val lands = Land.load(Paths.get("", "../resources").toAbsolutePath())
+        val lands = Land.load(Paths.get("", "../../resources").toAbsolutePath())
 
         val opts = HttpServerOptions().apply {
             isUseAlpn = true

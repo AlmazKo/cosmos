@@ -23,7 +23,7 @@ public class Main {
 //        val bb = ByteBuffer.wrap(byteArrayOf(10, 20, 30, 40, 50, 60))
         var requests = new DoubleBuffer<AnyOp>();
         var responses = new Responses();
-        var lands = Land.load(Paths.get("", "../resources").toAbsolutePath());
+        var lands = Land.load(Paths.get("", "../../resources").toAbsolutePath());
         var gameMap = new GameMap(lands);
         var game = new Game(gameMap, requests);
 

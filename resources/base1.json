@@ -1,33 +1,33 @@
 { "columns":23,
- "image":"map1.png",
+ "image":"./map1.png",
  "imageheight":928,
  "imagewidth":736,
  "margin":0,
  "name":"base1",
  "spacing":0,
  "tilecount":667,
- "tiledversion":"1.2.1",
+ "tiledversion":"2019.05.08",
  "tileheight":32,
  "tiles":[
         {
          "id":23,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":24,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":25,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":26,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":27,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":28,
@@ -39,39 +39,39 @@
         }, 
         {
          "id":30,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":31,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":32,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":33,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":46,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":47,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":48,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":49,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":50,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":51,
@@ -83,43 +83,43 @@
         }, 
         {
          "id":53,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":54,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":55,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":56,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":69,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":70,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":71,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":72,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":73,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":74,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":75,
@@ -127,39 +127,39 @@
         }, 
         {
          "id":76,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":77,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":78,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":92,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":93,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":94,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":95,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":96,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":97,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":98,
@@ -167,155 +167,155 @@
         }, 
         {
          "id":115,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":116,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":117,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":118,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":119,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":120,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":121,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":122,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":123,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":124,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":125,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":139,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":141,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":142,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":143,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":144,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":145,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":146,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":147,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":148,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":164,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":165,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":166,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":167,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":168,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":169,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":170,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":171,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":187,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":188,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":189,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":190,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":191,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":192,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":193,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":194,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":199,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":200,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":201,
@@ -327,43 +327,43 @@
         }, 
         {
          "id":210,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":211,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":212,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":213,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":214,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":215,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":216,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":217,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":222,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":223,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":224,
@@ -375,607 +375,631 @@
         }, 
         {
          "id":226,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":227,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":228,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":229,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":234,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":236,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":237,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":238,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":239,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":240,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":245,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":246,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":247,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":248,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":249,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":250,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":251,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":252,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":258,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":259,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":260,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":261,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":262,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":263,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":268,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":269,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":270,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":271,
-         "type":"Wall"
+         "type":"WALL"
         }, 
         {
          "id":281,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":282,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":283,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":284,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":285,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":286,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":304,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":305,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":306,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":307,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":308,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":309,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":327,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":328,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":329,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":330,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":331,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":332,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":368,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":369,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":370,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":371,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":374,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":375,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":376,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":391,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":392,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":393,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":394,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":395,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":396,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":397,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":398,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":399,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":414,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":415,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":416,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":417,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":418,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":419,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":420,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":421,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":422,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":437,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":438,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":439,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":440,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":441,
-         "type":"Water"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":442,
-         "type":"Water"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":443,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":444,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":445,
-         "type":"Land"
+         "type":"GRASS"
+        }, 
+        {
+         "id":451,
+         "type":"DEEP_WATER"
+        }, 
+        {
+         "id":452,
+         "type":"DEEP_WATER"
         }, 
         {
          "id":460,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":461,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":462,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":463,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":464,
-         "type":"Water"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":465,
-         "type":"Water"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":466,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":467,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":468,
-         "type":"Land"
+         "type":"GRASS"
+        }, 
+        {
+         "id":474,
+         "type":"DEEP_WATER"
+        }, 
+        {
+         "id":475,
+         "type":"DEEP_WATER"
         }, 
         {
          "id":485,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":486,
-         "type":"Water"
+         "type":"SHALLOW"
         }, 
         {
          "id":487,
-         "type":"Water"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":488,
-         "type":"Water"
+         "type":"DEEP_WATER"
         }, 
         {
          "id":489,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":490,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":491,
-         "type":"Land"
+         "type":"GRASS"
+        }, 
+        {
+         "id":497,
+         "type":"DEEP_WATER"
+        }, 
+        {
+         "id":498,
+         "type":"DEEP_WATER"
         }, 
         {
          "id":506,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":507,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":508,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":509,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":510,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":511,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":512,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":513,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":514,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":529,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":530,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":531,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":532,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":533,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":534,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":535,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":536,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":537,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":552,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":553,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":554,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":555,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":556,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":557,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":558,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":559,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":560,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":575,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":576,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":577,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":578,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":579,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":580,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":581,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":582,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":598,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":599,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":600,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":601,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":602,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":603,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":604,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":605,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":621,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":622,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":623,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":624,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":625,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":626,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":644,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":645,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":646,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":647,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":648,
-         "type":"Land"
+         "type":"GRASS"
         }, 
         {
          "id":649,
-         "type":"Land"
+         "type":"GRASS"
         }],
  "tilewidth":32,
  "transparentcolor":"#ff00ff",
