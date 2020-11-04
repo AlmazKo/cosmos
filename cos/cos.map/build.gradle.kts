@@ -8,6 +8,6 @@ java {
 
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:19.0.0")
+    compileOnly("org.jetbrains:annotations:20.1.0")
     implementation("almazko:microjson:0.5")
 }

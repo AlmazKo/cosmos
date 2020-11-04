@@ -17,10 +17,12 @@ export class Camera {
   }
 
   toX(pos: pos): px {
-    const m    = this.target.move;
+    const mv = this.target.move;
     const base = (pos - this.target.x) * CELL + this.absoluteX;
 
-    if (m === Dir.WEST || m === Dir.EAST) {
+    if (mv === Dir.WEST) {
+      return base + this.target.shift * CELL;
+    } else if (mv === Dir.EAST) {
       return base - this.target.shift * CELL;
     } else {
       return base;
@@ -28,10 +30,12 @@ export class Camera {
   }
 
   toY(pos: pos): px {
-    const m    = this.target.move;
+    const mv = this.target.move;
     const base = (pos - this.target.y) * CELL + this.absoluteY;
 
-    if (m === Dir.SOUTH || m === Dir.NORTH) {
+    if (mv === Dir.SOUTH) {
+      return base - this.target.shift * CELL;
+    } else if (mv === Dir.NORTH) {
       return base + this.target.shift * CELL;
     } else {
       return base;

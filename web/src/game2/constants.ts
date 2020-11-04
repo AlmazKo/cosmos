@@ -25,7 +25,7 @@ export const dirToString = (d: Dir) => {
 };
 
 
-export const dirToArrow = (d: Dir) => {
+export const dirToArrow = (d: Dir|null) => {
   switch (d) {
     case Dir.NORTH:
       return "↑";

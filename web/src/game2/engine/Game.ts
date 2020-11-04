@@ -2,18 +2,18 @@ import { ObjAppear } from '../../game/actions/ApiMessage';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Dir, dirToString, NO } from '../constants';
+import { Dir, NO, TileType } from '../constants';
 import { Api } from '../server/Api';
 import { World } from '../world/World';
 import { Act } from './Act';
 import { ProtoArrival } from './actions/ProtoArrival';
 import { Creature } from './Creature';
+import { Movements } from './Movements';
 import { Moving } from './Moving';
 import { StatusMoving } from './Moving2';
 import { MovingListener } from './MovingListener';
 import { Orientation } from './Orientation';
 import { Player } from './Player';
-import { ProtoMoving } from './ProtoMoving';
 
 const NO_ACTIONS: Act[] = [];
 let ID = 1;
@@ -28,13 +28,14 @@ export class Game implements MovingListener {
   private creatures = new Map<uint, Creature>();
   private actions: Act[] = NO_ACTIONS;
   // @ts-ignore
-  private protoMoving: ProtoMoving;
+  private movements: Movements;
 
   constructor(
     private readonly api: Api,
     readonly world: World,
     private readonly mvg: Moving,
   ) {
+    this.movements = new Movements(world)
     api.listen(p => this.onData(p))
     mvg.listen(this)
   }
@@ -66,7 +67,6 @@ export class Game implements MovingListener {
       };
 
       this.proto = this.addCreature(arrival);
-      this.protoMoving = new ProtoMoving(this.proto.orientation, this)
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
     }
 
@@ -85,10 +85,7 @@ export class Game implements MovingListener {
 
 
   onFrame(time: DOMHighResTimeStamp) {
-
-    if (this.protoMoving) {
-      this.protoMoving.onFrame(time)
-    }
+    this.movements.onFrame(time)
   }
 
 
@@ -114,36 +111,33 @@ export class Game implements MovingListener {
   }
 
   onMovingChanged(status: StatusMoving, dir: Dir, sight: Dir) {
-    const o = this.proto!!.orientation;
-    const vel = Game.getVelocity(dir, sight);
 
-    if (!this.world.canStep(o.x, o.y, dir)) {
-      console.warn(`Step is blocked: ${o}`, dirToString(dir));
-      //TODO return;
-    }
+    const accepted = this.movements.onMovingChanged(this.proto!!, status, dir, sight);
 
-    if (status === StatusMoving.START) {
-      o.setMoving(dir, sight, vel);
-    } else {
-      o.setNext(dir, sight, vel)
-    }
-
-    if (status === StatusMoving.STOP) {
-      this.api.sendAction('stop_move', {sight, x: o.x, y: o.y});
-    } else {
-      this.api.sendAction('move', {dir, sight, x: o.x, y: o.y});
+    if (accepted) {
+      const o = this.proto!!.orientation;
+      if (status === StatusMoving.STOP) {
+        this.api.sendAction('stop_move', {sight, x: o.x, y: o.y});
+      } else {
+        this.api.sendAction('move', {dir, sight, x: o.x, y: o.y});
+      }
     }
   }
 
 
-  static getVelocity(moving: Dir, sight: Dir) {
-    if (moving === sight) {
-      return DEF_VEL;
-    } else if (sight % 2 === moving % 2) {
-      return DEF_VEL * 4;
-    } else {
-      return DEF_VEL * 1.5;
-    }
+  static getVelocity(tile: TileType, moving: Dir, sight: Dir): number {
+    if (tile === TileType.GRASS) return DEF_VEL;
+    if (tile === TileType.SHALLOW) return DEF_VEL * 2;
+    return DEF_VEL * 4;
+    // return type === TileType.GRASS || type === TileType.DEF_VEL;
+    //todo return logic
+    // if (moving === sight) {
+    //   return DEF_VEL;
+    // } else if (sight % 2 === moving % 2) {
+    //   return DEF_VEL * 4;
+    // } else {
+    //   return DEF_VEL * 1.5;
+    // }
   }
 
 }

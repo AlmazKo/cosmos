@@ -56,7 +56,9 @@ declare type pos = int;
 /**
  * Ms for cell crossing
  */
-declare type velocity = uint;
+declare type velocity = ms;
+
+declare type speed = number; //cm per sec
 
 /**
  * timestamp (sec)

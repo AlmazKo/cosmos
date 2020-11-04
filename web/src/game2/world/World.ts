@@ -1,4 +1,5 @@
 import { Dir, TileType } from '../constants';
+import { Creature } from '../engine/Creature';
 import { MapApi } from '../server/MapApi';
 import { Land } from './Land';
 
@@ -106,13 +107,13 @@ export class World {
   }
 
 
-  tileType(x: pos, y: pos) {
+  tileType(x: pos, y: pos): TileType {
     const land = this.get(x, y);
     if (!land) return TileType.NOTHING;
     return land.type;
   }
 
-  canStep(fromX: pos, fromY: pos, dir: Dir) {
+  canStep(fromX: pos, fromY: pos, dir: Dir|null) {
 
     let x = fromX, y = fromY;
 
@@ -128,5 +129,9 @@ export class World {
 
     const type = this.tileType(x, y);
     return type === TileType.GRASS || type === TileType.SHALLOW;
+  }
+
+  moveCreature(cr: Creature, toX: pos, toY: pos) {
+    cr.orientation.setPosition(toX, toY)
   }
 }

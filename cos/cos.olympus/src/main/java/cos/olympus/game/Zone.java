@@ -15,7 +15,7 @@ public class Zone {
 
     void calc(Creature cr, int tick, Collection<OutOp> consumer) {
         //todo hardcode radius
-        map.iterate(cr.x, cr.y, 2, (x, y) -> {
+        map.iterate(cr.x, cr.y, 8, (x, y) -> {
             var o = map.getObject(x, y);
             if (o != null && !cr.zoneObjects.containsKey(o.id())) {
                 cr.zoneObjects.put(o.id(), o);

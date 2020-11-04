@@ -1,7 +1,6 @@
 rootProject.name = "cos"
 
 include(
-    "cos.agent",
     "cos.map",
     "cos.logging",
     "cos.ops",

@@ -49,7 +49,7 @@ final class Movements implements TickAware {
     private static int getSpeed(TileType currentTile) {
         return switch (currentTile) {
             case GRASS -> 400;
-            case SHALLOW -> 200;
+            case SHALLOW -> 100;
             default -> throw new IllegalStateException();
         };
     }
