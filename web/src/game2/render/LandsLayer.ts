@@ -93,7 +93,7 @@ export class LandsLayer implements Layer {
 
       //
       ctx.drawImage(img, sx, sy, TILE_SIZE, TILE_SIZE, x, y, CELL2, CELL2);
-      ctx.text(debugTile(land.type), x + CELL2 - 2, y, {style: 'black', font: '20px sans-serif', align: 'right'});
+      //debug ctx.text(debugTile(land.type), x + CELL2 - 2, y, {style: 'black', font: '20px sans-serif', align: 'right'});
     }
     //comment corner
     ctx.text(`${piece.x}; ${piece.y}`, 1, 1, {style: 'black', font: '20px sans-serif'});

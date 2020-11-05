@@ -25,7 +25,7 @@ export const dirToString = (d: Dir) => {
 };
 
 
-export const dirToArrow = (d: Dir|null) => {
+export const dirToArrow = (d: Dir | null) => {
   switch (d) {
     case Dir.NORTH:
       return "↑";
@@ -49,7 +49,8 @@ export enum TileType {
   DEEP_WATER = 5,
   ICE        = 6,
   SNOW       = 7,
-  ROAD       = 8
+  ROAD       = 8,
+  GATE       = 9
 }
 
 export const stringTiles = [
@@ -61,6 +62,7 @@ export const stringTiles = [
   'DEEP_WATER',
   'ICE',
   'SNOW',
+  'GATE',
   'ROAD'
 ];
 
@@ -84,7 +86,9 @@ export function debugTile(t: TileType): string {
     case TileType.SNOW:
       return '∴';
     case TileType.ROAD:
-      return '='
+      return '=';
+    case TileType.GATE:
+      return 'П';
 
   }
 }

@@ -42,7 +42,7 @@ export class ImageAssets implements Images {
     return new Promise((resolve, reject) => {
       let img         = new Image();
       img.crossOrigin = "Anonymous";
-      img.src         = `${this.host}/res/${name}.png`;
+      img.src         = `${this.host}/r/${name}.png`;
       img.onerror     = reject;
       img.onload      = () => {
         resolve(img)

@@ -1,6 +1,7 @@
 package cos.olympus.game;
 
 
+import cos.logging.Logger;
 import cos.map.Coord;
 import cos.map.Lands;
 import cos.map.Tile;
@@ -17,17 +18,19 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public final class GameMap implements TileMap, GMap {
-    private final int     width;
-    private final int     height;
-    private final short[] basis;
-    private final short[] objects;
-    private final Tile[]  tiles;
-    private final int[]   creatures;
+    private final static Logger  logger = new Logger(Game.class);
+    private final        int     width;
+    private final        int     height;
+    private final        short[] basis;
+    private final        short[] objects;
+    private final        Tile[]  tiles;
+    private final        int[]   creatures;
 
-    private final HashMap<Integer, Creature> npcs = new HashMap<>();
+    private final HashMap<Integer, Creature> creatureObjects = new HashMap<>();
 
     private final int offsetX;
     private final int offsetY;
+
 
     public GameMap(Lands lands) {
         this.offsetX = lands.getOffsetX();
@@ -103,9 +106,9 @@ public final class GameMap implements TileMap, GMap {
 //                    case WALL:
 //                        b = '#';
 //                        break;
-//                    case GATE:
-//                        b = 'D';
-//                        break;
+                    case GATE:
+                        b = 'П';
+                        break;
                     case NOTHING:
                         b = 'x';
                         break;
@@ -162,10 +165,10 @@ public final class GameMap implements TileMap, GMap {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= objects.length) return null;
 
-        var objTileId =  objects[idx];
-        if(objTileId == 0) return null;
+        var objTileId = objects[idx];
+        if (objTileId == 0) return null;
 
-        return new Obj(idx,objTileId,x,y);//todo id is hardcoded
+        return new Obj(idx, objTileId, x, y);//todo id is hardcoded
     }
 //
 //    @Nullable public Tile getObject(int x, int y) {
@@ -183,7 +186,7 @@ public final class GameMap implements TileMap, GMap {
 
     @Nullable private Creature _getCreature(int x, int y) {
         int crId = creatures[toIndex(x, y)];
-        return npcs.get(crId);
+        return creatureObjects.get(crId);
     }
 
     List<@NotNull Creature> getCreatures(int centerX, int centerY, int radius) {
@@ -215,7 +218,7 @@ public final class GameMap implements TileMap, GMap {
     }
 
     void removeCreature(int id) {
-        npcs.remove(id);
+        creatureObjects.remove(id);
         creatures[id] = 0;
     }
 
@@ -231,11 +234,13 @@ public final class GameMap implements TileMap, GMap {
         if (idx >= 0) {
 
             var coord = toCoord(idx);
-            var creature = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, null, SOUTH);
+            var cr = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, null, SOUTH);
 
-            creatures[idx] = creature.id;
+            creatures[idx] = cr.id;
+            creatureObjects.put(cr.id, cr);
+            logger.info("Creature #" + cr.id + " set x=" + cr.x + ", y=" + cr.y);
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
-            return creature;
+            return cr;
         } else {
             throw new IllegalStateException("Fail finding free place");
         }
@@ -260,7 +265,9 @@ public final class GameMap implements TileMap, GMap {
 
         int from = toIndex(fromX, fromY);
         int to = toIndex(toX, toY);
-        creatures[to] = creatures[from];
+        int creatureId = creatures[from];
+        creatures[to] = creatureId;
+        logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
         creatures[from] = 0;
     }
 

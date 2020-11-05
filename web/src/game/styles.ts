@@ -44,14 +44,14 @@ export const style = {
     align   : "center",
     baseline: "top",
     style   : "white",
-    font    : "bold 8px Regular"
+    font    : "bold 10px Regular"
   } as Partial<FontStyle>,
 
   creatureNameBg: {
     align   : "center",
     baseline: "top",
     style   : "black",
-    font    : "bold 8px Regular"
+    font    : "bold 10px Regular"
   } as Partial<FontStyle>,
 
   lifeText: {

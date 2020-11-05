@@ -21,7 +21,7 @@ public record StopMove(
                 b.getInt(),
                 b.getInt(),
                 b.getInt(),
-                Direction.values()[b.get()]);
+                Direction.of(b.get()));
     }
 
     public void write(ByteBuffer buf) {

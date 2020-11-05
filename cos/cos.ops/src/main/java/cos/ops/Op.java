@@ -8,6 +8,7 @@ public interface Op {
     byte LOGOUT     = 104;
     byte MOVE_STOP  = 105;
     byte APPEAR_OBJ = 106;
+    byte CREATURE_MOVED = 107;
 
     //infrastructure op-codes
     byte NOPE       = 0;

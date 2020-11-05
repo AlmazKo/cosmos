@@ -1,11 +1,13 @@
 import { Animators } from '../../anim/Animators';
+import { style } from '../../game/styles';
 import { TileDrawable } from '../../game/TileDrawable';
 import { TilePainter } from '../../game/TilePainter';
 import { Dir } from '../constants';
 import { Creature } from '../engine/Creature';
 import { Orientation } from '../engine/Orientation';
+import { Player } from '../engine/Player';
 import { Camera } from './Camera';
-import { CELL } from './constants';
+import { CELL, HCELL } from './constants';
 
 
 const map: px[] = [];
@@ -39,15 +41,34 @@ export class DrawableCreature implements TileDrawable {
     const o = this.orientation;
 
     // this.animators.run(time);
-    const x = camera.absoluteX;
-    const y = camera.absoluteY;
-    let sy = map[o.sight];
-    let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
-    // drawLifeLine(bp.toInDirect(x, y), this);
 
-    let sw = 64, sh = 64;
-    bp.drawTo("ch", sx, sy, sw, sh, x, y, CELL, CELL);
+    let x: px, y: px;
+    if (this.creature instanceof Player) {
+      x = camera.absoluteX;
+      y = camera.absoluteY;
+      let sy = map[o.sight];
+      let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
+      // drawLifeLine(bp.toInDirect(x, y), this);
+
+      let sw = 64, sh = 64;
+      bp.drawTo("ch", sx, sy, sw, sh, x, y, CELL, CELL);
+    } else {
+      x = camera.toX2(this.creature.orientation);
+      y = camera.toY2(this.creature.orientation);
+      let sy = map[o.sight];
+      let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
+      // drawLifeLine(bp.toInDirect(x, y), this);
+
+      let sw = 64, sh = 64;
+      bp.drawTo("ch_alien", sx, sy, sw, sh, x, y, CELL, CELL);
+    }
+
+    const c = this.creature;
+    // bp.p.text(c.metrics.name + "", x, y, style.creatureNameBg);
+    bp.p.text(c.metrics.name, x + HCELL + 0.5, y - 1.5, style.creatureNameBg)
+    bp.p.text(c.metrics.name, x + HCELL, y - 2, style.creatureName)
   }
+
 
   // onRotated(rotated: boolean) {
   //   this.rotated = rotated;

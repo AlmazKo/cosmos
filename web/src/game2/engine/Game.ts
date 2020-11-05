@@ -1,13 +1,14 @@
-import { ObjAppear } from '../../game/actions/ApiMessage';
+import { CreatureMoved, ObjAppear } from '../../game/actions/ApiMessage';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Dir, NO, TileType } from '../constants';
+import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { World } from '../world/World';
 import { Act } from './Act';
 import { ProtoArrival } from './actions/ProtoArrival';
 import { Creature } from './Creature';
+import { CreatureObject } from './CreatureObject';
 import { Movements } from './Movements';
 import { Moving } from './Moving';
 import { StatusMoving } from './Moving2';
@@ -47,7 +48,7 @@ export class Game implements MovingListener {
 
   private onData(pkg: Package) {
 
-    console.log("onData", pkg);
+    // console.log("onData", pkg.messages);
     // if (p.tick > this.lastTick) {
     //
     // }
@@ -56,29 +57,63 @@ export class Game implements MovingListener {
       const dto = pkg.messages[0].data as any;
 
       const arrival: ApiCreature = {
-        id          : 4,
+        id          : dto.id,
         isPlayer    : true,
         x           : dto.x,
         y           : dto.y,
         sight       : dto.sight,
         direction   : dto.mv,
-        metrics     : new Metrics(50, 50, "Player#3"),
+        metrics     : new Metrics(50, 50, "Player#" + dto.userId),
         viewDistance: 10
       };
 
-      this.proto = this.addCreature(arrival);
+      this.proto = this.addPlayer(arrival) as Player;
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
     }
 
+    const proto = this.proto!!;
+
     pkg.messages.forEach(msg => {
 
-      if (msg.action === 'appear_obj') {
-        //{id; x: 11, y: 5, tileId: 232}
-        const p = this.proto!!;
-        const e = msg.data as ObjAppear;
-        p.zoneObjects.set(e.id, e)
+      let e;
+      console.log(msg.action, msg.data);
+      switch (msg.action) {
+        case 'appear_obj':
+          e = msg.data as ObjAppear;
+          proto.zoneObjects.set(e.id, e)
+          break;
+        case 'creature_moved':
+          e = msg.data as CreatureMoved;
+
+
+          const exist = proto.zoneCreatures.get(e.creatureId);
+          if (exist) {
+            this.movements.on(exist, e.x,e.y, e.speed, e.mv, e.sight)
+            return;
+          }
+
+          const crr: ApiCreature = {
+            id          : e.creatureId,
+            isPlayer    : true,
+            x           : e.x,
+            y           : e.y,
+            sight       : e.sight,
+            direction   : e.mv,
+            metrics     : new Metrics(10, 10, "#" + e.creatureId),
+            viewDistance: 10
+          };
+
+          const cr = this.addCreature(crr);
+          proto.zoneCreatures.set(e.creatureId, cr);
+          this.world.moveCreature(cr, e.x, e.y);
+
+          this.movements.on(cr, e.x,e.y, e.speed, e.mv, e.sight)
+
+          // this.movements.onMovingChanged(cr, StatusMoving.START, e.mv, e.sight)
+
+          // this.actions.push(new StartMoving(ID++, cr, Date.now(), 400, e.mv))
+          break;
       }
-      // actions.push()msg.action
     })
 
   }
@@ -102,10 +137,18 @@ export class Game implements MovingListener {
   //
   // }
 
-  private addCreature(ac: ApiCreature): Creature {
-    const o = new Orientation(NO, ac.sight, 0, 0.0, ac.x, ac.y);
+  private addPlayer(ac: ApiCreature): Creature {
+    const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
     const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
     const c = new Player(ac.id, m, o);
+    this.creatures.set(c.id, c);
+    return c;
+  }
+
+  private addCreature(ac: ApiCreature): Creature {
+    const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
+    const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
+    const c = new CreatureObject(ac.id, m, o);
     this.creatures.set(c.id, c);
     return c;
   }
@@ -122,22 +165,6 @@ export class Game implements MovingListener {
         this.api.sendAction('move', {dir, sight, x: o.x, y: o.y});
       }
     }
-  }
-
-
-  static getVelocity(tile: TileType, moving: Dir, sight: Dir): number {
-    if (tile === TileType.GRASS) return DEF_VEL;
-    if (tile === TileType.SHALLOW) return DEF_VEL * 2;
-    return DEF_VEL * 4;
-    // return type === TileType.GRASS || type === TileType.DEF_VEL;
-    //todo return logic
-    // if (moving === sight) {
-    //   return DEF_VEL;
-    // } else if (sight % 2 === moving % 2) {
-    //   return DEF_VEL * 4;
-    // } else {
-    //   return DEF_VEL * 1.5;
-    // }
   }
 
 }

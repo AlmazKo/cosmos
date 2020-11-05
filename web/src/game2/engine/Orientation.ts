@@ -1,14 +1,11 @@
 import { Dir, dirToArrow } from '../constants';
-import { Focus } from './Moving';
 
 export class Orientation {
-  /** @deprecated */
-  next: Focus | undefined;
 
   constructor(
     public move: Dir | null,
     public sight: Dir,
-    public vel: velocity,
+    public speed: speed,
     public shift: float,
     public x: pos,
     public y: pos
@@ -24,11 +21,10 @@ export class Orientation {
   // }
 
   stop() {
-    this.next = undefined;
-    this.vel = 0;
+    this.speed = 0;
     this.move = null;
     this.shift = 0;
-    console.log("Stopped", this);
+    //todo debug console.log("Stopped", this);
   }
 
   setPosition(nextX: pos, nextY: pos) {

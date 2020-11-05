@@ -31,11 +31,11 @@
         }, 
         {
          "id":28,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":29,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":30,
@@ -75,11 +75,11 @@
         }, 
         {
          "id":51,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":52,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":53,
@@ -123,7 +123,7 @@
         }, 
         {
          "id":75,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":76,
@@ -163,7 +163,7 @@
         }, 
         {
          "id":98,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":115,
@@ -319,11 +319,11 @@
         }, 
         {
          "id":201,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":202,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":210,
@@ -367,11 +367,11 @@
         }, 
         {
          "id":224,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":225,
-         "type":"Gate"
+         "type":"GATE"
         }, 
         {
          "id":226,

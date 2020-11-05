@@ -5,17 +5,17 @@ import java.nio.ByteBuffer;
 
 class Session {
     int userId = 0;
-    volatile boolean close = false;
-    final int           id;
-    final SocketAddress remoteAddress;
-    final ByteBuffer    in;
-    final ByteBuffer    out;
+    volatile boolean       close = false;
+    final    int           id;
+    final    SocketAddress remoteAddress;
+    final    ByteBuffer    in;
+    final    ByteBuffer    out;
 
     Session(int id, SocketAddress remoteAddress) {
         this.id = id;
         this.remoteAddress = remoteAddress;
         this.in = ByteBuffer.allocate(4096);
-        this.out = ByteBuffer.allocate(4096);
+        this.out = ByteBuffer.allocate(32 * 1024);
 //        this.out.flip();
     }
 

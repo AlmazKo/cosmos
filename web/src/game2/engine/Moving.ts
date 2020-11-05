@@ -20,7 +20,7 @@ export class Moving implements MovingAggregator {
 
   press(dir: Dir) {
     const m = this.mv.press(dir);
-    console.log('press ', m)
+    //debug console.log('press ', m)
     if (m) {
       this.listener.onMovingChanged(m.status, m.move, m.sight)
     }
@@ -28,7 +28,7 @@ export class Moving implements MovingAggregator {
 
   release(dir: Dir) {
     const m = this.mv.release(dir);
-    console.log('release ', m)
+    //debug console.log('release ', m)
     if (m) {
       this.listener.onMovingChanged(m.status, m.move, m.sight)
     }

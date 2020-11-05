@@ -13,7 +13,7 @@ interface VectorObject {
 
     int speed();
 
-    @Nullable Direction dir();
+    @Nullable Direction mv();
 
 //    fun toLong(): Long {
 //        //todo: implement it

@@ -29,6 +29,26 @@ export class Camera {
     }
   }
 
+  toX2(ort: Orientation): px {
+    const mv = this.target.move;
+    const base = (ort.x - this.target.x) * CELL + this.absoluteX;
+
+    let shiftX: px = 0;
+    if (ort.move == Dir.WEST) {
+      shiftX = -ort.shift * CELL
+    } else if (ort.move === Dir.EAST) {
+      shiftX = ort.shift * CELL
+    }
+
+    if (mv === Dir.WEST) {
+      return base + this.target.shift * CELL + shiftX;
+    } else if (mv === Dir.EAST) {
+      return base - this.target.shift * CELL + shiftX;
+    } else {
+      return base + shiftX;
+    }
+  }
+
   toY(pos: pos): px {
     const mv = this.target.move;
     const base = (pos - this.target.y) * CELL + this.absoluteY;
@@ -39,6 +59,27 @@ export class Camera {
       return base + this.target.shift * CELL;
     } else {
       return base;
+    }
+  }
+
+  toY2(ort: Orientation): px {
+    const mv = this.target.move;
+    const base = (ort.y - this.target.y) * CELL + this.absoluteY;
+
+    let shiftY: px = 0;
+    if (ort.move == Dir.SOUTH) {
+      shiftY = ort.shift * CELL
+    } else if (ort.move === Dir.NORTH) {
+      shiftY = -ort.shift * CELL
+    }
+
+
+    if (mv === Dir.SOUTH) {
+      return base - this.target.shift * CELL + shiftY;
+    } else if (mv === Dir.NORTH) {
+      return base + this.target.shift * CELL + shiftY;
+    } else {
+      return base + shiftY;
     }
   }
 }

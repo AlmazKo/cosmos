@@ -5,14 +5,13 @@ import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
 import { dirToString, stringTiles } from '../constants';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
-import { StartMoving } from '../engine/actions/StartMoving';
 import { Game } from '../engine/Game';
 import { Orientation } from '../engine/Orientation';
 import { Player } from '../engine/Player';
 import { Images } from '../Images';
-import { DrawableCreature } from './BaseCreature';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
+import { DrawableCreature } from './DrawableCreature';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 
 
@@ -25,7 +24,7 @@ export class Render {
 
   private readonly camera: Camera;
   private player: DrawableCreature | undefined;
-  private phantoms: DrawableCreature[] = [];
+  private phantoms = new Map<uint, DrawableCreature>();
   // @ts-ignore
   private tp: TilePainter;
   private imageData: Uint8ClampedArray | undefined;
@@ -70,11 +69,14 @@ export class Render {
         camera.setTarget(action.creature.orientation);
         this.player = new DrawableCreature(action.creature)
       }
-
-      if (action instanceof StartMoving) {
-        //fixme
-        // this.player!!.startMoving(action)
-      }
+      //
+      // if (action instanceof StartMoving) {
+      //   if (!this.phantoms.has(action.creature.id)) {
+      //     this.phantoms.set(action.creature.id, new DrawableCreature(action.creature))
+      //   }
+      //   //fixme
+      //   // this.player!!.startMoving(action)
+      // }
 
     }
 
@@ -106,8 +108,18 @@ export class Render {
 
       let sw = 32, sh = 32;
       this.tp.drawTo("map1", sx, sy, sw, sh, x, y, CELL, CELL);
-     //debug this.p!!.rect(x, y, CELL, CELL, {style: '#fff'})
+      //debug this.p!!.rect(x, y, CELL, CELL, {style: '#fff'})
     })
+
+    crp.zoneCreatures.forEach((cr) => {
+      let dc = this.phantoms.get(cr.id);
+      if (!dc) {
+        dc = new DrawableCreature(cr)
+        this.phantoms.set(cr.id, dc);
+      }
+      dc.draw2(time, this.tp, camera);
+    });
+
     this.drawLifeLine();
     p.draw2(time, this.tp, camera);
 
@@ -117,7 +129,7 @@ export class Render {
     const y = camera.toY(o.y);
 
     this.drawFog(this.tp, camera);
-    this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
+    //todo debug this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
 
     // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
     this.debug(o);
@@ -138,7 +150,7 @@ export class Render {
     this.p!!.text(`shift: ${o.shift.toFixed(3)}`, 3, 13, debugStyle);
     this.p!!.text(`sight: ${dirToString(o.sight)}`, 3, 23, debugStyle);
     this.p!!.text(` move: ${dirToString(o.move)}`, 3, 33, debugStyle);
-    this.p!!.text(`  vel: ${o.vel}`, 3, 43, debugStyle);
+    this.p!!.text(`  vel: ${o.speed}`, 3, 43, debugStyle);
     this.p!!.text(' tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, 53, debugStyle);
   }
 

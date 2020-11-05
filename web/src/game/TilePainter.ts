@@ -13,7 +13,7 @@ export class TilePainter {
   height: px;
 
 
-  constructor(private readonly p: CanvasContext,
+  constructor( readonly p: CanvasContext,
               private readonly images: Images) {
 
     this.ctx    = p.ctx;

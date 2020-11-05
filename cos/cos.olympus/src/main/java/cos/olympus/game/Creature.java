@@ -23,7 +23,8 @@ final class Creature {
     @Nullable Direction mv = null;
 
     Direction         sight;
-    Map<Integer, Obj> zoneObjects = new HashMap<>();
+    Map<Integer, Obj> zoneObjects   = new HashMap<>();
+    Map<Integer, Orientation> zoneCreatures = new HashMap<>();
 
     public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
         this.id = id;
@@ -44,6 +45,9 @@ final class Creature {
         this.sight = sight;
     }
 
+    Orientation orientation() {
+        return new Orientation(x, y, speed, offset, mv);
+    }
 
     @Override public String toString() {
         return "Creature{" +

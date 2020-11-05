@@ -128,7 +128,7 @@ export class World {
     }
 
     const type = this.tileType(x, y);
-    return type === TileType.GRASS || type === TileType.SHALLOW;
+    return type !== TileType.DEEP_WATER && type !== TileType.NOTHING;
   }
 
   moveCreature(cr: Creature, toX: pos, toY: pos) {

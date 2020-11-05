@@ -33,7 +33,7 @@ export class Movements {
 
       const o = m.cr.orientation;
       const sec = (time - m.start) / 1000;
-      const shift = sec * o.vel / 100;
+      const shift = sec * o.speed / 100;
 
       if (shift < 1) {
         o.shift = shift;
@@ -57,7 +57,7 @@ export class Movements {
         console.warn(`Step is blocked: ${o}`, o.move);
         o.stop();
         this.data.delete(m.cr.id);
-        console.log("MOVING STOP")
+        // console.log("MOVING STOP")
         return;
       }
 
@@ -65,17 +65,17 @@ export class Movements {
       if (m.next !== undefined) {
         o.sight = m.next.sight;
         o.move = m.next.mv;
-        o.vel = Movements.getSpeed(newTile, o.move, o.sight);
+        o.speed = Movements.getSpeed(newTile, o.move, o.sight);
       }
 
 
       m.start = time; //todo check overlaps
       o.shift -= 1;
-      o.vel = Movements.getSpeed(newTile, o.move, o.sight);
+      o.speed = Movements.getSpeed(newTile, o.move, o.sight);
     });
   }
 
-  nextX(o: Orientation) {
+  private nextX(o: Orientation) {
     if (o.move === Dir.WEST) {
       return o.x - 1
     } else if (o.move === Dir.EAST) {
@@ -85,13 +85,32 @@ export class Movements {
     }
   }
 
-  nextY(o: Orientation): pos {
+  private nextY(o: Orientation): pos {
     if (o.move === Dir.NORTH) {
       return o.y - 1
     } else if (o.move === Dir.SOUTH) {
       return o.y + 1;
     } else {
       return o.y;
+    }
+  }
+
+
+  on(cr: Creature, x: pos, y: pos, speed: speed, move: Dir | null, sight: Dir) {
+    const o = cr.orientation;
+    if (speed == 0) {
+      o.stop();
+      o.sight = sight;
+
+      this.data.delete(cr.id);
+      this.world.moveCreature(cr, x, y);
+
+    } else {
+      const mv = this.data.get(cr.id);
+      o.sight = sight;
+      o.speed = speed * 10;//fixme, it depends on server
+      o.move = move;
+      this.data.set(cr.id, {cr, start: 0});//fixme date
     }
   }
 
@@ -106,23 +125,26 @@ export class Movements {
       mv.next = {mv: dir, sight}
     } else {
       o.sight = sight;
+      if (dir === null) return false;
+
       if (!this.world.canStep(o.x, o.y, dir)) {
         console.warn(`Step is blocked: ${o}`, dir);
         return false;
       }
       if (status !== StatusMoving.STOP) {
         o.move = dir;
-        o.vel = Movements.getSpeed(tile, dir, sight);
-        console.log("MOVING START", {status, dir, sight})
+        o.speed = Movements.getSpeed(tile, dir, sight);
+        // console.log("MOVING START", {status, dir, sight})
         this.data.set(cr.id, {cr, start: 0})
       }
     }
     return true
   }
 
-  static getSpeed(tile: TileType, moving: Dir|null, sight: Dir): speed {
+  static getSpeed(tile: TileType, moving: Dir | null, sight: Dir): speed {
     if (tile === TileType.GRASS) return GRASS_SPEED;
     if (tile === TileType.SHALLOW) return WATER_SPEED;
+    if (tile === TileType.GATE) return WATER_SPEED;
     return 0;
     // return type === TileType.GRASS || type === TileType.DEF_VEL;
     //todo return logic

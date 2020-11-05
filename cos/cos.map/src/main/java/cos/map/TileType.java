@@ -9,7 +9,9 @@ public enum TileType {
     DEEP_WATER(5),
     ICE(6),
     SNOW(7),
-    ROAD(8);
+    ROAD(8),
+    GATE(9),
+    ;
 
     private final byte id;
 

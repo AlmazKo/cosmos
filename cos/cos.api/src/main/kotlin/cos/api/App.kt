@@ -99,7 +99,7 @@ class App(val vertx: Vertx) {
             })
         }
 
-        router.route("/res/*").handler(StaticHandler.create("../../resources"))
+        router.route("/r/*").handler(StaticHandler.create("../../resources"))
 
         router.get("/map").handler { req ->
             val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()

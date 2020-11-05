@@ -3,6 +3,7 @@ package cos.api
 import cos.logging.Logger
 import cos.ops.AnyOp
 import cos.ops.Appear
+import cos.ops.CreatureMoved
 import cos.ops.Direction
 import cos.ops.Disconnect
 import cos.ops.Login
@@ -114,18 +115,22 @@ class PlayerSession(
 
                         while (buf.hasRemaining()) {
                             val op = parse(buf)
-                            log.info("Got Server response $op")
-                            messages.add(JsonMapper.toJson(op))
+                            if(op.userId() == userId) {
+                                log.info("#$userId Got Server response $op")
+                                messages.add(JsonMapper.toJson(op))
+                            }
                         }
 
                     } catch (e: Exception) {
                         log.warn("wrong op" + e.message)
                     }
+                    if(messages.isEmpty) return@handler
+
                     val clientRes = JsonObject()
                         .put("tick", 1) //todo hardcode
                         .put("time", System.currentTimeMillis() / 1000)
                         .put("messages", messages)
-//                    log.info("Sending ... $clientRes")
+                    //                    log.info("Sending ... $clientRes")
                     ws.writeTextMessage(clientRes.toString())
                 }
                 socket!!.closeHandler {
@@ -162,6 +167,7 @@ class PlayerSession(
                 Op.APPEAR -> Appear.read(b);
                 Op.DISCONNECT -> Disconnect.read(b);
                 Op.APPEAR_OBJ -> ObjAppear.read(b);
+                Op.CREATURE_MOVED -> CreatureMoved.read(b);
                 else -> Unknown.read(b, len)
             }
         }
