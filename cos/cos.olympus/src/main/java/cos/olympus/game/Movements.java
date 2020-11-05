@@ -55,6 +55,10 @@ final class Movements implements TickAware {
     }
 
 
+    void interrupt(Creature cr) {
+        mvs.remove(cr.id);
+    }
+
     void stop(Creature cr, StopMove op) {
         var mv = mvs.get(cr.id);
         if (mv != null) {

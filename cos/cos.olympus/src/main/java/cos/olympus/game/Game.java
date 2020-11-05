@@ -5,6 +5,7 @@ import cos.olympus.DoubleBuffer;
 import cos.ops.AnyOp;
 import cos.ops.Appear;
 import cos.ops.Disconnect;
+import cos.ops.Exit;
 import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.Op;
@@ -59,6 +60,7 @@ public final class Game {
                 case Op.LOGIN -> onLogin((Login) op);
                 case Op.MOVE -> onMove((Move) op);
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
+                case Op.EXIT -> onExit((Exit) op);
             }
         } catch (Exception ex) {
             logger.warn("Error during processing " + op, ex);
@@ -91,6 +93,15 @@ public final class Game {
         if (cr == null) return;
 
         movements.stop(cr, op);
+    }
+
+    private void onExit(Exit op) {
+        var cr = creatures.get(op.userId());
+        if (cr == null) return;
+
+        //todo allow finish step
+        movements.interrupt(cr);
+        map.removeCreature(cr.id);
     }
 }
 

@@ -13,4 +13,5 @@ public interface Op {
     //infrastructure op-codes
     byte NOPE       = 0;
     byte DISCONNECT = 1;
+    byte EXIT = 2;
 }

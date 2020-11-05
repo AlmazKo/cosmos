@@ -4,6 +4,7 @@ import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.Responses;
 import cos.ops.AnyOp;
+import cos.ops.Exit;
 import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.Op;
@@ -132,6 +133,7 @@ public final class GameServer {
         //ogger.info("Read " + read);
         if (read == -1) {
             userSessions.remove(session.userId);
+            actionsBuffer.add(new Exit(0, session.userId));//todo hardcoded id
             logger.info("Closing ... " + session);
             ch.close();
             return;
