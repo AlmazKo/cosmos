@@ -7,7 +7,6 @@ import { GameCanvas } from './game2/render/GameCanvas';
 import { LandsLayer } from './game2/render/LandsLayer';
 import { Render } from './game2/render/Render';
 import { ImageAssets } from './game2/server/ImageAssets';
-import { LocalServer } from './game2/server/LocalServer';
 import { ResourcesServer } from './game2/server/ResourcesServer';
 import { WsServer } from './game2/server/WsServer';
 import { World } from './game2/world/World';
@@ -17,7 +16,7 @@ interface Constructor<T = any> {
   new(..._: any[]): T;
 }
 
-const data: Map<Constructor | string, any>   = new Map();
+const data: Map<Constructor | string, any> = new Map();
 const cached: Map<Constructor | string, any> = new Map();
 
 
@@ -50,7 +49,7 @@ setCached('map', () => new ResourcesServer());
 setCached('images', () => new ImageAssets(HOST));
 // setCached(LocalServer, () => new LocalServer());
 setCached(Moving, () => new Moving());
-setCached(Keyboard, () => new Keyboard(get(Moving)));
+setCached(Keyboard, () => new Keyboard(get(Moving), get(Game)));
 setCached(GamePad, () => new GamePad(get(Moving)));
 setCached(World, () => new World(get('map')));
 setCached(Game, () => new Game(get('api'), get(World), get(Moving)));

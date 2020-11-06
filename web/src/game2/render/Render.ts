@@ -1,9 +1,11 @@
 import { Animators } from '../../anim/Animators';
 import { BasePainter } from '../../draw/BasePainter';
 import { CanvasContext } from '../../draw/CanvasContext';
+import { Panels } from '../../game/layers/Panels';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
 import { dirToString, stringTiles } from '../constants';
+import { ActivateTrait } from '../engine/actions/ActivateTrait';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
 import { Game } from '../engine/Game';
 import { Orientation } from '../engine/Orientation';
@@ -30,6 +32,7 @@ export class Render {
   // @ts-ignore
   private tp: TilePainter;
   private imageData: Uint8ClampedArray | undefined;
+  private readonly panels: Panels;
 
 
   constructor(
@@ -38,8 +41,8 @@ export class Render {
     private readonly images: Images
   ) {
     this.camera = new Camera();
+    this.panels = new Panels(images);
   }
-
 
   updateContext(ctx: CanvasRenderingContext2D, width: px, height: px): void {
     this.width = width;
@@ -70,6 +73,10 @@ export class Render {
       if (action instanceof ProtoArrival) {
         camera.setTarget(action.creature.orientation);
         this.player = new DrawableCreature(action.creature)
+      }
+
+      if (action instanceof ActivateTrait) {
+        this.panels.activate(action);
       }
       //
       // if (action instanceof StartMoving) {
@@ -117,7 +124,7 @@ export class Render {
 
       // fixme deleted creatures
       //fixme optimize
-      let dc =  new DrawableCreature(cr);
+      let dc = new DrawableCreature(cr);
       dc.draw2(time, this.tp, camera);
     });
 
@@ -132,6 +139,7 @@ export class Render {
     this.drawFog(this.tp, camera);
     //todo debug this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
 
+    this.panels.draw(time, this.tp.p)
     // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
     this.debug(o);
 

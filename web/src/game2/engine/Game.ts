@@ -2,10 +2,12 @@ import { CreatureHid, CreatureMoved, ObjAppear } from '../../game/actions/ApiMes
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
+import { Trait } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { World } from '../world/World';
 import { Act } from './Act';
+import { ActivateTrait } from './actions/ActivateTrait';
 import { ProtoArrival } from './actions/ProtoArrival';
 import { Creature } from './Creature';
 import { CreatureObject } from './CreatureObject';
@@ -118,9 +120,11 @@ export class Game implements MovingListener {
           break;
       }
     })
-
   }
 
+  onAction(trait: Trait) {
+    this.actions.push(new ActivateTrait(ID++, this.proto!!, Date.now(), trait))
+  }
 
   onFrame(time: DOMHighResTimeStamp) {
     this.movements.onFrame(time)

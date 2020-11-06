@@ -1,7 +1,7 @@
 import { HotKey } from '../../game/Slot';
 import { Traits, TraitStep } from '../../game/Trait';
 import { Dir } from '../constants';
-import { MovingListener } from '../engine/MovingListener';
+import { Game } from '../engine/Game';
 import { MovingAggregator } from './MovingAggregator';
 
 export class Key {
@@ -20,10 +20,10 @@ export const BTN_1 = new Key(49, "1");
 export const BTN_2 = new Key(50, "2");
 export const BTN_3 = new Key(51, "3");
 
-export const BTN_LEFT  = new Key(37, "◁");
+export const BTN_LEFT = new Key(37, "◁");
 export const BTN_RIGHT = new Key(39, "▷");
-export const BTN_UP    = new Key(38, "△");
-export const BTN_DOWN  = new Key(40, "▽");
+export const BTN_UP = new Key(38, "△");
+export const BTN_DOWN = new Key(40, "▽");
 
 export const MovingButtons = [BTN_LEFT.code, BTN_RIGHT.code, BTN_UP.code, BTN_DOWN.code];
 
@@ -51,7 +51,9 @@ const Buttons: { [index: number]: Key } = {
 
 export class Keyboard {
 
-  constructor(private readonly moving: MovingAggregator) {
+  constructor(
+    private readonly moving: MovingAggregator,
+    private readonly game: Game) {
     window.addEventListener('keydown', e => this.onKeydown(e));
     window.addEventListener('keyup', e => this.onKeyup(e));
   }
@@ -79,6 +81,8 @@ export class Keyboard {
         this.lastKeyDowns.push(t.dir);
         this.moving.press(t.dir);
       }
+    } else {
+      this.game.onAction(t);
     }
 
 
