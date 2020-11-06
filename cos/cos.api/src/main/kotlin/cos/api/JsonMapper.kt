@@ -2,6 +2,7 @@ package cos.api
 
 import cos.ops.AnyOp
 import cos.ops.Appear
+import cos.ops.CreatureHid
 import cos.ops.CreatureMoved
 import cos.ops.ObjAppear
 import io.vertx.core.json.JsonObject
@@ -15,6 +16,7 @@ object JsonMapper {
             is Appear -> toJ(op)
             is ObjAppear -> toJ(op)
             is CreatureMoved -> toJ(op)
+            is CreatureHid -> toJ(op)
             else -> throw RuntimeException("Unknown $op")
         }
     }
@@ -59,5 +61,15 @@ object JsonMapper {
                 .put("speed", op.speed())
                 .put("mv", op.mv())
                 .put("sight", op.sight())
+        )
+
+    private fun toJ(op: CreatureHid) = JsonObject()
+        .put("id", op.id())
+        .put("action", "creature_hid")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("creatureId", op.creatureId())
         )
 }

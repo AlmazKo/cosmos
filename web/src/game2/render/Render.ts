@@ -15,6 +15,8 @@ import { DrawableCreature } from './DrawableCreature';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 
 
+const FOV_RADIUS = 8;
+
 export class Render {
 
   private width: px = 100;
@@ -112,11 +114,10 @@ export class Render {
     })
 
     crp.zoneCreatures.forEach((cr) => {
-      let dc = this.phantoms.get(cr.id);
-      if (!dc) {
-        dc = new DrawableCreature(cr)
-        this.phantoms.set(cr.id, dc);
-      }
+
+      // fixme deleted creatures
+      //fixme optimize
+      let dc =  new DrawableCreature(cr);
       dc.draw2(time, this.tp, camera);
     });
 
@@ -163,7 +164,7 @@ export class Render {
     //   return;
     // }
 
-    const radius = (9) * CELL;
+    const radius = FOV_RADIUS * CELL;
     const x = camera.absoluteX;
     const y = camera.absoluteY;
     const xL = x - radius;

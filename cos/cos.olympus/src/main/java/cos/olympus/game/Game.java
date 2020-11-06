@@ -18,12 +18,12 @@ import java.util.List;
 
 
 public final class Game {
-    private final static Logger                     logger    = new Logger(Game.class);
-    private final        GameMap                    map;
-    private final        DoubleBuffer<AnyOp>        bufferOps;
-    private final        Movements                  movements;
-    private final        HashMap<Integer, User>     users     = new HashMap<>();
-    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
+    private final static Logger                 logger = new Logger(Game.class);
+    private final        World                  world;
+    private final        DoubleBuffer<AnyOp>    bufferOps;
+    private final        Movements              movements;
+    private final        HashMap<Integer, User> users  = new HashMap<>();
+//    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
 
     private final ArrayList<OutOp> outOps = new ArrayList<>();
     private final Zone             zone;
@@ -31,8 +31,8 @@ public final class Game {
     int id = 0;
     private int tick = 0;
 
-    public Game(GameMap map, DoubleBuffer<AnyOp> bufferOps) {
-        this.map = map;
+    public Game(World map, DoubleBuffer<AnyOp> bufferOps) {
+        this.world = map;
         this.zone = new Zone(map);
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
@@ -44,10 +44,10 @@ public final class Game {
         var ops = bufferOps.getAndSwap();
 
         movements.onTick(id, tsm);
-      //  if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
+        //  if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
         ops.forEach(this::handleIncomeOp);
 
-        creatures.values().forEach(cr -> {
+        world.getAllCreatures().forEach(cr -> {
             zone.calc(cr, tick, outOps);
         });
 
@@ -72,8 +72,7 @@ public final class Game {
         var usr = users.get(op.userId());
         if (usr == null) {
             usr = new User(op.userId(), "user:" + op.userId());
-            var creature = map.createCreature(usr);
-            creatures.put(creature.id, creature);
+            var creature = world.createCreature(usr);
             logger.info("Placed " + creature);
             outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight));
         } else {
@@ -82,26 +81,26 @@ public final class Game {
     }
 
     private void onMove(Move op) {
-        var cr = creatures.get(op.userId());
+        var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
         movements.start(cr, op);
     }
 
     private void onStopMove(StopMove op) {
-        var cr = creatures.get(op.userId());
+        var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
         movements.stop(cr, op);
     }
 
     private void onExit(Exit op) {
-        var cr = creatures.get(op.userId());
+        var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
         //todo allow finish step
         movements.interrupt(cr);
-        map.removeCreature(cr.id);
+        world.removeCreature(cr.id);
     }
 }
 

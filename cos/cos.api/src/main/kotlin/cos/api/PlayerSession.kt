@@ -3,6 +3,7 @@ package cos.api
 import cos.logging.Logger
 import cos.ops.AnyOp
 import cos.ops.Appear
+import cos.ops.CreatureHid
 import cos.ops.CreatureMoved
 import cos.ops.Direction
 import cos.ops.Disconnect
@@ -122,7 +123,7 @@ class PlayerSession(
                         }
 
                     } catch (e: Exception) {
-                        log.warn("wrong op" + e.message)
+                        log.warn("wrong op " + e)
                     }
                     if(messages.isEmpty) return@handler
 
@@ -168,6 +169,7 @@ class PlayerSession(
                 Op.DISCONNECT -> Disconnect.read(b);
                 Op.APPEAR_OBJ -> ObjAppear.read(b);
                 Op.CREATURE_MOVED -> CreatureMoved.read(b);
+                Op.CREATURE_HID -> CreatureHid.read(b);
                 else -> Unknown.read(b, len)
             }
         }

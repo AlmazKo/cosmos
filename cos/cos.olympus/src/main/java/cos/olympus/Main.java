@@ -3,7 +3,7 @@ package cos.olympus;
 import cos.logging.Logger;
 import cos.map.Land;
 import cos.olympus.game.Game;
-import cos.olympus.game.GameMap;
+import cos.olympus.game.World;
 import cos.olympus.game.server.GameServer;
 import cos.ops.AnyOp;
 
@@ -24,7 +24,7 @@ public class Main {
         var requests = new DoubleBuffer<AnyOp>();
         var responses = new Responses();
         var lands = Land.load(Paths.get("", "../../resources").toAbsolutePath());
-        var gameMap = new GameMap(lands);
+        var gameMap = new World(lands);
         var game = new Game(gameMap, requests);
 
 

@@ -29,11 +29,11 @@ export class Moving2 {
   press(dir: Dir): Mv | null {
     if (this._moving === null) {
       this._moving = dir;
-      console.log("onStartMoving " + this);
+      //debug  console.log("onStartMoving " + this);
       return {status: StatusMoving.START, move: this._moving, sight: this._moving};
     } else if (this._sight === null) {
       this._sight = dir;
-      console.log("onChangeSight " + this);
+      //debug  console.log("onChangeSight " + this);
       return {status: StatusMoving.CHANGE_SIGHT, move: this._moving, sight: this._sight};
     } else {
       //ignore the 3d action
@@ -44,16 +44,16 @@ export class Moving2 {
   release(dir: Dir): Mv | null {
     if (this._moving === dir && this._sight === null) {
       this._moving = null;
-      console.log("onStopMoving " + this);
+      //debug  console.log("onStopMoving " + this);
       return {status: StatusMoving.STOP, move: this._moving, sight: dir};
     } else if (this._sight === dir) {
       this._sight = null;
-      console.log("onChangeSight " + this);
+      //debug  console.log("onChangeSight " + this);
       return {status: StatusMoving.CHANGE_SIGHT, move: this._moving, sight: this._moving};
     } else if (this._moving === dir) {
       this._moving = this._sight;
       this._sight = null;
-      console.log("onChangeMoving " + this);
+    //debug  console.log("onChangeMoving " + this);
       return {status: StatusMoving.CHANGE_MOVE, move: this._moving, sight: this._moving};
     }
 

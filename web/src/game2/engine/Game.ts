@@ -1,4 +1,4 @@
-import { CreatureMoved, ObjAppear } from '../../game/actions/ApiMessage';
+import { CreatureHid, CreatureMoved, ObjAppear } from '../../game/actions/ApiMessage';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
@@ -82,13 +82,18 @@ export class Game implements MovingListener {
           e = msg.data as ObjAppear;
           proto.zoneObjects.set(e.id, e)
           break;
+        case 'creature_hid':
+          e = msg.data as CreatureHid;
+          this.movements.interrupt(e.creatureId)
+          proto.zoneCreatures.delete(e.creatureId);
+          break
         case 'creature_moved':
           e = msg.data as CreatureMoved;
 
 
           const exist = proto.zoneCreatures.get(e.creatureId);
           if (exist) {
-            this.movements.on(exist, e.x,e.y, e.speed, e.mv, e.sight)
+            this.movements.on(exist, e.x, e.y, e.speed, e.mv, e.sight)
             return;
           }
 
@@ -105,9 +110,7 @@ export class Game implements MovingListener {
 
           const cr = this.addCreature(crr);
           proto.zoneCreatures.set(e.creatureId, cr);
-          this.world.moveCreature(cr, e.x, e.y);
-
-          this.movements.on(cr, e.x,e.y, e.speed, e.mv, e.sight)
+          this.movements.on(cr, e.x, e.y, e.speed, e.mv, e.sight)
 
           // this.movements.onMovingChanged(cr, StatusMoving.START, e.mv, e.sight)
 

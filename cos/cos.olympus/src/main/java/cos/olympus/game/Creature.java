@@ -46,7 +46,7 @@ final class Creature {
     }
 
     Orientation orientation() {
-        return new Orientation(x, y, speed, offset, mv);
+        return new Orientation(id,x, y, speed, offset, mv);
     }
 
     @Override public String toString() {

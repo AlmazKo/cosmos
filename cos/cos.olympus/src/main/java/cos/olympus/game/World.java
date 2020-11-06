@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public final class GameMap implements TileMap, GMap {
+public final class World implements TileMap, GMap {
     private final static Logger  logger = new Logger(Game.class);
     private final        int     width;
     private final        int     height;
@@ -32,7 +33,7 @@ public final class GameMap implements TileMap, GMap {
     private final int offsetY;
 
 
-    public GameMap(Lands lands) {
+    public World(Lands lands) {
         this.offsetX = lands.getOffsetX();
         this.offsetY = lands.getOffsetY();
         this.width = lands.getWidth();
@@ -178,6 +179,9 @@ public final class GameMap implements TileMap, GMap {
 //        return tiles[objects[idx]];
 //    }
 
+    public  @Nullable Creature getCreature(int uid) {
+        return creatureObjects.get(uid);
+    }
     public @Override @Nullable Creature getCreature(int x, int y) {
         if (!isValid(x, y)) return null;
 
@@ -217,9 +221,16 @@ public final class GameMap implements TileMap, GMap {
 
     }
 
+    public boolean isNoCreature(int id) {
+        return !creatureObjects.containsKey(id);
+    }
+
     void removeCreature(int id) {
-        creatureObjects.remove(id);
-        creatures[id] = 0;
+        var cr = creatureObjects.remove(id);
+        if (cr == null) return;
+
+        int idx = toIndex(cr.x, cr.y);
+        creatures[idx] = 0;
     }
 
     public Creature createCreature(User usr) {
@@ -372,5 +383,9 @@ public final class GameMap implements TileMap, GMap {
 //
 //            return false;
 //        });
+    }
+
+    public Collection<Creature> getAllCreatures() {
+        return creatureObjects.values();
     }
 }

@@ -9,6 +9,7 @@ public interface Op {
     byte MOVE_STOP  = 105;
     byte APPEAR_OBJ = 106;
     byte CREATURE_MOVED = 107;
+    byte CREATURE_HID = 108;
 
     //infrastructure op-codes
     byte NOPE       = 0;

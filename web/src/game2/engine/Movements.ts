@@ -1,3 +1,4 @@
+import { uid } from '../../game/actions/ApiMessage';
 import { Dir, TileType } from '../constants';
 import { World } from '../world/World';
 import { Creature } from './Creature';
@@ -21,7 +22,7 @@ interface Mv {
 
 export class Movements {
 
-  private readonly data = new Map<uint, Mv>()
+  private readonly data = new Map<uid, Mv>()
 
   constructor(readonly world: World) {
   }
@@ -96,6 +97,10 @@ export class Movements {
   }
 
 
+  interrupt(creatureId: uid) {
+    this.data.delete(creatureId);
+  }
+
   on(cr: Creature, x: pos, y: pos, speed: speed, move: Dir | null, sight: Dir) {
     const o = cr.orientation;
     if (speed == 0) {
@@ -106,7 +111,9 @@ export class Movements {
       this.world.moveCreature(cr, x, y);
 
     } else {
-      const mv = this.data.get(cr.id);
+      this.data.delete(cr.id);
+      o.x = x;
+      o.y = y;
       o.sight = sight;
       o.speed = speed * 10;//fixme, it depends on server
       o.move = move;
@@ -156,5 +163,6 @@ export class Movements {
     //   return DEF_VEL * 1.5;
     // }
   }
+
 
 }
