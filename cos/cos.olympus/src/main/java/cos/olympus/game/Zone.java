@@ -19,13 +19,13 @@ public class Zone {
         this.world = world;
     }
 
-    void calc(Creature target, int tick, Collection<OutOp> consumer) {
+    void onTick(Creature target, int tick, Collection<OutOp> consumer) {
         //todo hardcode radius
         world.iterate(target.x, target.y, radius, (x, y) -> {
             var o = world.getObject(x, y);
             if (o != null && !target.zoneObjects.containsKey(o.id())) {
                 target.zoneObjects.put(o.id(), o);
-                consumer.add(new ObjAppear(o.id(), tick, target.id, x, y, o.tileId()));
+                consumer.add(new ObjAppear(o.id(), tick, target.id, x, y, o.tile().id()));
             }
 
             if (target.x == x && target.y == y) return; // avoid self-detection

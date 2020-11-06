@@ -18,6 +18,13 @@ map[Dir.SOUTH] = 128;
 map[Dir.EAST] = 196;
 map[Dir.WEST] = 64;
 
+const mapNpc: px[] = [];
+
+mapNpc[Dir.NORTH] = 64;
+mapNpc[Dir.SOUTH] = 0;
+mapNpc[Dir.EAST] = 32;
+mapNpc[Dir.WEST] = 96;
+
 
 export class DrawableCreature implements TileDrawable {
 
@@ -56,12 +63,21 @@ export class DrawableCreature implements TileDrawable {
     } else {
       x = camera.toX2(this.creature.orientation);
       y = camera.toY2(this.creature.orientation);
-      let sy = map[o.sight];
-      let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
-      // drawLifeLine(bp.toInDirect(x, y), this);
 
-      let sw = 64, sh = 64;
-      bp.drawTo("ch_alien", sx, sy, sw, sh, x, y, CELL, CELL);
+      if (this.creature.id < 10000) {
+        let sy = map[o.sight];
+        let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
+
+        let sw = 64, sh = 64;
+        bp.drawTo("ch_alien", sx, sy, sw, sh, x, y, CELL, CELL);
+      } else {
+        let sy = mapNpc[o.sight];
+        let sx = Math.floor(Math.abs(o.shift) * 4) * 16;
+
+        let sw = 16, sh = 32;  //64-16=48/2=24/2=12
+        bp.drawTo("NPC_test", sx, sy, sw, sh, x + 12, y, sw, sh);
+      }
+      // drawLifeLine(bp.toInDirect(x, y), this);
     }
 
     const c = this.creature;

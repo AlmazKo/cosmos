@@ -3,7 +3,6 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.map.TileType;
 import cos.ops.Move;
-import cos.ops.StopMove;
 
 import java.util.HashMap;
 
@@ -59,7 +58,7 @@ final class Movements implements TickAware {
         mvs.remove(cr.id);
     }
 
-    void stop(Creature cr, StopMove op) {
+    void stop(Creature cr) {
         var mv = mvs.get(cr.id);
         if (mv != null) {
             mv.stop = true;
@@ -93,9 +92,8 @@ final class Movements implements TickAware {
 
         int x = nextX(cr);
         int y = nextY(cr);
-        var tile = map.get(x, y);
 
-        if (cannotStep(cr, tile)) {
+        if (cannotStep(cr, x, y)) {
             mv.rollBack = true;
             cr.speed = -cr.speed;
             //don't touch offset
@@ -111,30 +109,30 @@ final class Movements implements TickAware {
             return true;
         } else {
             cr.offset = newOffset - METER;
+            var tile = map.get(x, y);
             cr.speed = toTickSpeed(getSpeed(tile));
             logger.info("MV " + cr);
             return false;
         }
     }
 
-    private boolean cannotStep(Creature cr, TileType tile) {
+    private boolean cannotStep(Creature cr, int x, int y) {
+        var obj = map.getObject(x, y);
+        if (obj != null && obj.tile().type() == TileType.WALL) {
+            logger.info("Found wall " + obj.tile());
+            return false;
+        }
+        var tile = map.get(x, y);
         return tile == TileType.NOTHING || tile == TileType.DEEP_WATER;
     }
 
 
-    public static int nextX(Creature cr) {
-        return switch (cr.mv) {
-            case NORTH, SOUTH -> cr.x;
-            case WEST -> cr.x - 1;
-            case EAST -> cr.x + 1;
-        };
+    static int nextX(Creature cr) {
+        return Util.nextX(cr, cr.mv);
     }
 
-    public static int nextY(Creature cr) {
-        return switch (cr.mv) {
-            case NORTH -> cr.y - 1;
-            case SOUTH -> cr.y + 1;
-            case WEST, EAST -> cr.y;
-        };
+    static int nextY(Creature cr) {
+        return Util.nextY(cr, cr.mv);
     }
+
 }

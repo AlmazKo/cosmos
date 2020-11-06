@@ -144,7 +144,7 @@ export class Render {
     const o = p.orientation;
     const x = camera.toX(o.x);
     const y = camera.toY(o.y);
-    // this.drawFog(this.tp, camera);
+    this.drawFog(this.tp, camera);
 
 
 

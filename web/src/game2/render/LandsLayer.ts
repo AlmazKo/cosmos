@@ -42,7 +42,8 @@ export class LandsLayer implements Layer {
 
   draw(time: DOMHighResTimeStamp, camera: Camera) {
 
-    this.world.iterateLands(camera.target.x, camera.target.y, 16, piece => {
+    const loadRadius = 20;
+    this.world.iterateLands(camera.target.x, camera.target.y, loadRadius, piece => {
 
       if (piece) {
         const img = this.getPieceImage(piece);

@@ -22,8 +22,8 @@ final class Creature {
     int speed  = 0;
     @Nullable Direction mv = null;
 
-    Direction         sight;
-    Map<Integer, Obj> zoneObjects   = new HashMap<>();
+    Direction                 sight;
+    Map<Integer, Obj>         zoneObjects   = new HashMap<>();
     Map<Integer, Orientation> zoneCreatures = new HashMap<>();
 
     public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
@@ -46,7 +46,7 @@ final class Creature {
     }
 
     Orientation orientation() {
-        return new Orientation(id,x, y, speed, offset, mv);
+        return new Orientation(id, x, y, speed, offset, mv);
     }
 
     @Override public String toString() {
@@ -80,6 +80,11 @@ final class Creature {
         offset = 0;
         speed = 0;
         mv = null;
+    }
+
+    public boolean isDead() {
+        return false;
+//        val isDead get() = state.life <= 0
     }
 }
 /*) : GameObject, VectorObject {

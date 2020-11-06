@@ -18,11 +18,12 @@ import java.util.List;
 
 
 public final class Game {
-    private final static Logger                 logger = new Logger(Game.class);
-    private final        World                  world;
-    private final        DoubleBuffer<AnyOp>    bufferOps;
-    private final        Movements              movements;
-    private final        HashMap<Integer, User> users  = new HashMap<>();
+    private final static Logger                     logger      = new Logger(Game.class);
+    private final        World                      world;
+    private final        DoubleBuffer<AnyOp>        bufferOps;
+    private final        Movements                  movements;
+    private final        HashMap<Integer, User>     users       = new HashMap<>();
+    private final        ArrayList<RespawnStrategy> npcRespawns = new ArrayList<>();
 //    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
 
     private final ArrayList<OutOp> outOps = new ArrayList<>();
@@ -36,6 +37,14 @@ public final class Game {
         this.zone = new Zone(map);
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
+
+        settleMobs(map);
+    }
+
+    private void settleMobs(World map) {
+        for (int i = 0; i < 10; i++) {
+            npcRespawns.add(new RespawnStrategy(map, movements, CreatureType.NPC));
+        }
     }
 
     public List<OutOp> onTick(int id, long tsm) {
@@ -43,12 +52,14 @@ public final class Game {
         outOps.clear();
         var ops = bufferOps.getAndSwap();
 
+        ops.forEach(this::handleIncomeOp);
         movements.onTick(id, tsm);
         //  if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
-        ops.forEach(this::handleIncomeOp);
+
+        npcRespawns.forEach(it -> it.onTick(tick, outOps));
 
         world.getAllCreatures().forEach(cr -> {
-            zone.calc(cr, tick, outOps);
+            zone.onTick(cr, tick, outOps);
         });
 
         return outOps;
@@ -91,7 +102,7 @@ public final class Game {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
-        movements.stop(cr, op);
+        movements.stop(cr);
     }
 
     private void onExit(Exit op) {

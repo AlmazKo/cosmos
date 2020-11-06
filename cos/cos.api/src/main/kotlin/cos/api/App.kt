@@ -83,7 +83,7 @@ class App(val vertx: Vertx) {
                     println("Wrong $k - $k")
                     emptyList()
                 } else {
-                    listOf(t.id, t.type.id)
+                    listOf(t.id(), t.type().id)
                 }
             })
         }
@@ -94,7 +94,7 @@ class App(val vertx: Vertx) {
                     emptyList()
                     //println("Wrong $k - $k")
                 } else {
-                    listOf(t.id, t.type.id)
+                    listOf(t.id(), t.type().id)
                 }
             })
         }

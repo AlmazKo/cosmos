@@ -92,7 +92,7 @@ public final class World implements TileMap, GMap {
                 }
 
                 char b;
-                switch (tile.getType()) {
+                switch (tile.type()) {
 
                     case SHALLOW:
                         b = '~';
@@ -159,7 +159,7 @@ public final class World implements TileMap, GMap {
         if (idx < 0 || idx >= basis.length) return null;
         var b = basis[idx];
         var t = tiles[b];
-        return (t == null) ? null : t.getType();
+        return (t == null) ? null : t.type();
     }
 
     public @Nullable Obj getObject(int x, int y) {
@@ -168,8 +168,10 @@ public final class World implements TileMap, GMap {
 
         var objTileId = objects[idx];
         if (objTileId == 0) return null;
+        var t = tiles[objTileId];
+        if (t == null) return null;
 
-        return new Obj(idx, objTileId, x, y);//todo id is hardcoded
+        return new Obj(idx, t, x, y);//todo id is hardcoded
     }
 //
 //    @Nullable public Tile getObject(int x, int y) {
@@ -179,9 +181,10 @@ public final class World implements TileMap, GMap {
 //        return tiles[objects[idx]];
 //    }
 
-    public  @Nullable Creature getCreature(int uid) {
+    public @Nullable Creature getCreature(int uid) {
         return creatureObjects.get(uid);
     }
+
     public @Override @Nullable Creature getCreature(int x, int y) {
         if (!isValid(x, y)) return null;
 
@@ -264,6 +267,21 @@ public final class World implements TileMap, GMap {
         return creatures[toIndex(x, y)] == 0;
     }
 
+    public boolean isFree(int x, int y) {
+        if (!isValid(x, y)) return false;
+        int idx = toIndex(x, y);
+
+        var b = get(x, y);
+        if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
+        var o = getObject(x, y);
+        if (o != null) {
+            b = o.tile().type();
+            if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
+        }
+
+        return creatures[idx] == 0;
+    }
+
     public @Override void moveCreature(Creature cr, int toX, int toY) {
         moveCreature(cr.x, cr.y, toX, toY);
         cr.x = toX;
@@ -310,22 +328,22 @@ public final class World implements TileMap, GMap {
             if (i % 2 == 1) {
                 for (int s = 0; s < i; s++) {
                     x++;
-                    if (isValid(x, y) && creatures[toIndex(x, y)] == 0) return toIndex(x, y);
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
                 }
 
                 for (int s = 0; s < i; s++) {
                     y++;
-                    if (isValid(x, y) && creatures[toIndex(x, y)] == 0) return toIndex(x, y);
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
                 }
             } else {
                 for (int s = 0; s < i; s++) {
                     x--;
-                    if (isValid(x, y) && creatures[toIndex(x, y)] == 0) return toIndex(x, y);
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
                 }
 
                 for (int s = 0; s < i; s++) {
                     y--;
-                    if (isValid(x, y) && creatures[toIndex(x, y)] == 0) return toIndex(x, y);
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
                 }
             }
         }

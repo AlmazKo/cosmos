@@ -76,6 +76,8 @@ public final class GameServer {
 
 //        logger.info("Writing ops to buffer ...");
         for (OutOp op : responses.ops) {
+            if (op.userId() >= 10000) continue;
+
             var sess = userSessions.get(op.userId());
             if (sess == null) {
                 logger.info("Not exists connection for op: " + op);
@@ -110,7 +112,7 @@ public final class GameServer {
         var out = session.out;
 
         if (out.position() > 0) {
-          //  logger.info("Writing... " + session);
+            //  logger.info("Writing... " + session);
             out.flip();
             SocketChannel socketChannel = (SocketChannel) key.channel();
             socketChannel.write(out);
