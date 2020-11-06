@@ -1,14 +1,16 @@
 import { CreatureHid, CreatureMoved, ObjAppear } from '../../game/actions/ApiMessage';
+import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Trait } from '../../game/Trait';
+import { Trait, TraitFireball } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { World } from '../world/World';
 import { Act } from './Act';
 import { ActivateTrait } from './actions/ActivateTrait';
 import { ProtoArrival } from './actions/ProtoArrival';
+import { Spell } from './actions/Spell';
 import { Creature } from './Creature';
 import { CreatureObject } from './CreatureObject';
 import { Movements } from './Movements';
@@ -123,7 +125,14 @@ export class Game implements MovingListener {
   }
 
   onAction(trait: Trait) {
-    this.actions.push(new ActivateTrait(ID++, this.proto!!, Date.now(), trait))
+    const p = this.proto!!;
+    if (trait instanceof TraitFireball) {
+      const fireball = new FireballSpell(Date.now(), ID++, p, 100, 10, p.orientation.x, p.orientation.y, p.orientation.sight);
+      this.actions.push(new Spell(ID++, p, Date.now(), fireball))
+    }
+
+
+    this.actions.push(new ActivateTrait(ID++, p, Date.now(), trait))
   }
 
   onFrame(time: DOMHighResTimeStamp) {

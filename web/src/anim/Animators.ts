@@ -36,7 +36,7 @@ export class Animators {
         const finisher = this.finishCallbacks[key];
         if (finisher) finisher();
         delete this.finishCallbacks[key];
-        console.log('Finished animator: ', key)
+        console.debug('Finished animator: ', key)
       }
     }
   }

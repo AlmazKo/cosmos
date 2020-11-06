@@ -1,12 +1,14 @@
 import { Animators } from '../../anim/Animators';
 import { BasePainter } from '../../draw/BasePainter';
 import { CanvasContext } from '../../draw/CanvasContext';
+import { Effects } from '../../game/Effects';
 import { Panels } from '../../game/layers/Panels';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
 import { dirToString, stringTiles } from '../constants';
 import { ActivateTrait } from '../engine/actions/ActivateTrait';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
+import { Spell } from '../engine/actions/Spell';
 import { Game } from '../engine/Game';
 import { Orientation } from '../engine/Orientation';
 import { Player } from '../engine/Player';
@@ -14,6 +16,7 @@ import { Images } from '../Images';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
 import { DrawableCreature } from './DrawableCreature';
+import { Fireball } from './effects/Fireball';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 
 
@@ -33,7 +36,7 @@ export class Render {
   private tp: TilePainter;
   private imageData: Uint8ClampedArray | undefined;
   private readonly panels: Panels;
-
+  private effects = new Effects()
 
   constructor(
     private readonly game: Game,
@@ -77,6 +80,12 @@ export class Render {
 
       if (action instanceof ActivateTrait) {
         this.panels.activate(action);
+      }
+
+      if (action instanceof Spell) {
+        this.player!!.instantSpell();
+        this.effects.push(new Fireball(this.images, action.spell, this.game.world));
+//         p.instantSpell();
       }
       //
       // if (action instanceof StartMoving) {
@@ -135,8 +144,11 @@ export class Render {
     const o = p.orientation;
     const x = camera.toX(o.x);
     const y = camera.toY(o.y);
+    // this.drawFog(this.tp, camera);
 
-    this.drawFog(this.tp, camera);
+
+
+    this.effects.draw2(time, this.tp, camera);
     //todo debug this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
 
     this.panels.draw(time, this.tp.p)

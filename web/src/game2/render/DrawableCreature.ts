@@ -1,3 +1,4 @@
+import { Delay } from '../../anim/Animator';
 import { Animators } from '../../anim/Animators';
 import { style } from '../../game/styles';
 import { TileDrawable } from '../../game/TileDrawable';
@@ -86,10 +87,8 @@ export class DrawableCreature implements TileDrawable {
   //     () => this.meleeFactor = 0);
   // }
   //
-  // instantSpell() {
-  //   this.showInstantSpell = true;
-  //   this.animators.set("instant_spell",
-  //     new Delay(100),
-  //     () => this.showInstantSpell = false);
-  // }
+  instantSpell() {
+    this.showInstantSpell = true;
+    this.animators.set("instant_spell", new Delay(100), () => this.showInstantSpell = false);
+  }
 }

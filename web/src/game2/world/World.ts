@@ -53,7 +53,7 @@ export class World {
   getPiece(x: piecePos, y: piecePos): Piece | undefined {
     let r = this.pieces[x];
     if (r == undefined) {
-      r              = [];
+      r = [];
       this.pieces[x] = r;
 
     }
@@ -98,7 +98,7 @@ export class World {
       let pair: [uint, TileType];
 
       for (let i = 0; i < p.length; i++) {
-        pair     = p[i];
+        pair = p[i];
         lands[i] = new Land(pair[0], pair[1], x * 16 + i % 16, y * 16 + floor(i / 16))
       }
 
@@ -113,22 +113,25 @@ export class World {
     return land.type;
   }
 
-  canStep(fromX: pos, fromY: pos, dir: Dir|null) {
-
+  nextTile(fromX: pos, fromY: pos, dir: Dir | null): TileType {
     let x = fromX, y = fromY;
 
     if (dir === Dir.NORTH) {
       y--;
-    } else if (dir == Dir.SOUTH) {
+    } else if (dir === Dir.SOUTH) {
       y++;
-    } else if (dir == Dir.EAST) {
+    } else if (dir === Dir.EAST) {
       x++;
-    } else if (dir == Dir.WEST) {
+    } else if (dir === Dir.WEST) {
       x--;
     }
 
-    const type = this.tileType(x, y);
-    return type !== TileType.DEEP_WATER && type !== TileType.NOTHING;
+    return this.tileType(x, y);
+  }
+
+  canStep(fromX: pos, fromY: pos, dir: Dir | null) {
+    const type = this.nextTile(fromX, fromY, dir);
+    return type !== TileType.DEEP_WATER && type !== TileType.NOTHING && type !== TileType.WALL;
   }
 
   moveCreature(cr: Creature, toX: pos, toY: pos) {

@@ -1,3 +1,4 @@
+import { Camera } from '../game2/render/Camera';
 import { Effect } from './Effect';
 import { TileDrawable } from './TileDrawable';
 import { TilePainter } from './TilePainter';
@@ -15,8 +16,12 @@ export class Effects implements TileDrawable {
 
   draw(time: DOMHighResTimeStamp, p: TilePainter) {
 
+  }
+
+  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
+
     this.effects.forEach(it => {
-      it.draw(time, p)
+      it.draw2(time, bp, camera)
     });
 
     //fixme optimize?

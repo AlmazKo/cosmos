@@ -11,6 +11,7 @@ public enum TileType {
     SNOW(7),
     ROAD(8),
     GATE(9),
+    WALL(10),
     ;
 
     private final byte id;

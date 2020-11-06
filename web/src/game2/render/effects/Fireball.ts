@@ -3,13 +3,13 @@ import { LoopAnimator } from '../../../anim/Animator';
 import { FireballSpell } from '../../../game/actions/FireballSpell';
 import { Effect } from '../../../game/Effect';
 import { TilePainter } from '../../../game/TilePainter';
-import { get } from '../../../Module';
-import { Dir } from '../../constants';
+import { Dir, TileType } from '../../constants';
 import { Images } from '../../Images';
 import { World } from '../../world/World';
+import { Camera } from '../Camera';
 import { CELL } from '../constants';
 
-export const RES: Images = get('images');
+// export const RES: Images = get('images');
 
 export class Fireball implements Effect {
   private readonly posX: index;
@@ -17,38 +17,37 @@ export class Fireball implements Effect {
   private readonly direction: Dir;
 
   private lastAnimIndex = 0;
-  private shift: px     = 0;
+  private shift: px = 0;
   private readonly anim: LoopAnimator;
-  isFinished            = false;
-  private f: float      = 0;
+  isFinished = false;
+  private f: float = 0;
   private world: World;
   id: uint;
 
-  constructor(spec: FireballSpell, world: World) {
-    this.id        = spec.id;
+  constructor(private readonly images: Images, spec: FireballSpell, world: World) {
+    this.id = spec.id;
     this.direction = spec.direction;
-    this.posX      = spec.initX;
-    this.posY      = spec.initY;
-    this.world     = world;
-    this.anim      = new LoopAnimator(spec.duration, (f, i) => {
+    this.posX = spec.initX;
+    this.posY = spec.initY;
+    this.world = world;
+    this.anim = new LoopAnimator(spec.duration, (f, i) => {
 
         if (i > this.lastAnimIndex) {
           const from = this.getPosition(this.lastAnimIndex);
-          const to   = this.getPosition(i);
-
-          // if (!this.world.canStep(from, to, true)) {
-          //   this.isFinished = true;
-          //   return true;
-          // } else {
-          //   this.lastAnimIndex = i;
-          // }
+          const tile = this.world.nextTile(from[0], from[1], spec.direction);
+          if (tile == TileType.WALL) {
+            this.isFinished = true;
+            return true;
+          } else {
+            this.lastAnimIndex = i;
+          }
         }
 
         if (i >= spec.distance) {
           this.isFinished = true;
           return 0;
         } else {
-          this.f     = f;
+          this.f = f;
           this.shift = (i + f) * CELL;
           return spec.duration;
         }
@@ -71,6 +70,9 @@ export class Fireball implements Effect {
   }
 
   draw(time: DOMHighResTimeStamp, bp: TilePainter) {
+  }
+
+  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
 
     this.anim.run(time);
     let shiftX: px = 0, shiftY: px = 0;
@@ -78,29 +80,35 @@ export class Fireball implements Effect {
     switch (this.direction) {
       case Dir.NORTH:
         shiftY = -this.shift;
-        sy     = 32 * 2;
+        sy = 32 * 2;
         break;
       case Dir.SOUTH:
         shiftY = this.shift;
-        sy     = 32 * 6;
+        sy = 32 * 6;
         break;
       case Dir.WEST:
         shiftX = -this.shift;
-        sy     = 0;
+        sy = 0;
         break;
       case Dir.EAST:
         shiftX = this.shift;
-        sy     = 32 * 4;
+        sy = 32 * 4;
         break;
 
       default:
         return;
     }
 
-    const sx: px = 32 * Math.floor(this.f * 4);
-    const fire1  = RES.get("fireball_32");
 
-    //fixme bp.drawTile(fire1, sx, sy, 32, 32, this.posX, this.posY, shiftX, shiftY);
+    const x = camera.toX(this.posX) + shiftX;
+    const y = camera.toY(this.posY) + shiftY;
+
+    const sx: px = 32 * Math.floor(this.f * 4);
+    // const fire1 = this.images.get("fireball_32");
+
+
+    // bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, shiftX, shiftY);
+    bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, 32, 32);
   }
 
   stop(): void {
