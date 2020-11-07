@@ -1,22 +1,18 @@
 package cos.olympus.game;
 
-
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
-interface VectorObject {
+public interface Orientable {
     int x();
 
     int y();
 
-    int offset();
-
     int speed();
+
+    int offset();
 
     @Nullable Direction mv();
 
-//    fun toLong(): Long {
-//        //todo: implement it
-//        return 0L
-//    }
+
 }

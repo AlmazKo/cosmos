@@ -12,7 +12,7 @@ import static cos.ops.Direction.NORTH;
 import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
-final class Creature {
+final class Creature implements Orientable {
     final int    id;
     final String name;
 
@@ -83,6 +83,26 @@ final class Creature {
     public boolean isDead() {
         return false;
 //        val isDead get() = state.life <= 0
+    }
+
+    @Override public int x() {
+        return x;
+    }
+
+    @Override public int y() {
+        return y;
+    }
+
+    @Override public int speed() {
+        return speed;
+    }
+
+    @Override public int offset() {
+        return offset;
+    }
+
+    @Override public @Nullable Direction mv() {
+        return mv;
     }
 }
 /*) : GameObject, VectorObject {

@@ -7,6 +7,8 @@ import cos.ops.Move;
 import java.util.HashMap;
 
 import static cos.olympus.Main.toTickSpeed;
+import static cos.olympus.game.Util.nextX;
+import static cos.olympus.game.Util.nextY;
 
 final class Movements implements TickAware {
 
@@ -131,14 +133,4 @@ final class Movements implements TickAware {
         var tile = map.get(x, y);
         return tile == TileType.NOTHING || tile == TileType.DEEP_WATER || tile == TileType.WALL;
     }
-
-
-    static int nextX(Creature cr) {
-        return Util.nextX(cr, cr.mv);
-    }
-
-    static int nextY(Creature cr) {
-        return Util.nextY(cr, cr.mv);
-    }
-
 }

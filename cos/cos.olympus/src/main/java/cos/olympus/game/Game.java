@@ -38,12 +38,12 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
 
-//        settleMobs(map);
+        settleMobs(1);
     }
 
-    private void settleMobs(World map) {
-        for (int i = 0; i < 10; i++) {
-            npcRespawns.add(new RespawnStrategy(map, movements, CreatureType.NPC));
+    private void settleMobs(int amount) {
+        for (int i = 0; i < amount; i++) {
+            npcRespawns.add(new RespawnStrategy(world, movements, CreatureType.NPC));
         }
     }
 

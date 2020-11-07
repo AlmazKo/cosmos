@@ -9,6 +9,6 @@ public record Orientation(
         int speed,
         int offset,
         Direction mv
-) implements VectorObject {
+) implements Orientable {
 
 }

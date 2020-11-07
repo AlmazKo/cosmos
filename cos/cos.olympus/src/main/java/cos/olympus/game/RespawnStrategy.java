@@ -1,5 +1,7 @@
 package cos.olympus.game;
 
+import cos.logging.Logger;
+import cos.olympus.NoSpaceException;
 import cos.ops.OutOp;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,11 +11,12 @@ import static cos.olympus.game.NpcStrategy.rand;
 
 public class RespawnStrategy {
 
-    private static int          id = 10_000;
+    private final static Logger logger = new Logger(Movements.class);
+    private static       int    id     = 10_000;
 
-    private final  World        world;
-    private final  Movements    movements;
-    private final  CreatureType type;
+    private final World        world;
+    private final Movements    movements;
+    private final CreatureType type;
 
 
     private @Nullable NpcStrategy live;
@@ -33,8 +36,13 @@ public class RespawnStrategy {
                 return;
             }
             isDead = false;
-            var npc = world.createCreature(new User(id++, "Phantom", 5, 2));
-            live = new NpcStrategy(npc, world, movements);
+            try {
+                var npc = world.createCreature(new User(id++, "Phantom", 5, 2));
+                live = new NpcStrategy(npc, world, movements);
+            } catch (NoSpaceException ne) {
+                logger.warn("No space");
+                return;
+            }
         }
 
         if (live.isDead()) {

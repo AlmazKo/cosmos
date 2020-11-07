@@ -22,8 +22,6 @@ import { Player } from './Player';
 
 const NO_ACTIONS: Act[] = [];
 let ID = 1;
-const DEF_VEL: velocity = 250;
-
 
 export class Game implements MovingListener {
 
@@ -62,26 +60,15 @@ export class Game implements MovingListener {
       const dto = pkg.messages[0].data as any;
 
       const arrival: ApiCreature = {
-        id      : dto.userId,
-        isPlayer: true,¬
+        id          : dto.userId,
+        isPlayer    : true,
         x           : dto.x,
-          y
-    :
-      dto.y,
-        sight
-    :
-      dto.sight,
-        direction
-    :
-      dto.mv,
-        metrics
-    :
-      new Metrics(50, 50, "Player#" + dto.userId),
-        viewDistance
-    :
-      10
-    }
-      ;
+        y           : dto.y,
+        sight       : dto.sight,
+        direction   : dto.mv,
+        metrics     : new Metrics(50, 50, "Player#" + dto.userId),
+        viewDistance: 10
+      };
 
       this.proto = this.addPlayer(arrival) as Player;
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))

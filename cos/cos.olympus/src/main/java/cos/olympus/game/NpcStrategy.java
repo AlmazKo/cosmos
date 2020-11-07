@@ -25,7 +25,10 @@ public class NpcStrategy {
     void onTick(int tick, Collection<OutOp> consumer) {
         if (tick > nextPlannedTick) {
             var dir = Direction.values()[rand(0, 4)];
-            if (world.isFree(Util.nextX(npc, dir), Util.nextY(npc, dir))) {
+            int x = Util.nextX(npc, dir);
+            int y = Util.nextY(npc, dir);
+
+            if (world.isFree(x, y) && world.isNoMovingCreaturesIn(x, y)) {
                 var mv = new Move(0, npc.id, npc.x, npc.y, dir, dir);
                 movements.start(npc, mv);
                 movements.stop(npc);

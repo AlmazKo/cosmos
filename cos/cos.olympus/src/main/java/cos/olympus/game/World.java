@@ -6,6 +6,7 @@ import cos.map.Coord;
 import cos.map.Lands;
 import cos.map.Tile;
 import cos.map.TileType;
+import cos.olympus.NoSpaceException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import static cos.olympus.game.Util.nextX;
+import static cos.olympus.game.Util.nextY;
 import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -240,10 +243,10 @@ public final class World implements TileMap, GMap {
 
         int idx = toIndex(usr.lastX, usr.lastY);
         if (idx < 0 || idx >= basis.length) {
-            throw new IllegalStateException("Fail finding free place");
+            throw new NoSpaceException("Fail finding free place");
         }
 
-        idx = findFreeIndex(usr.lastX, usr.lastY, 3);
+        idx = findFreeIndex(usr.lastX, usr.lastY, 5);
 
         if (idx >= 0) {
 
@@ -256,7 +259,7 @@ public final class World implements TileMap, GMap {
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
             return cr;
         } else {
-            throw new IllegalStateException("Fail finding free place");
+            throw new NoSpaceException("Fail finding free place");
         }
     }
 
@@ -265,6 +268,17 @@ public final class World implements TileMap, GMap {
         if (!isValid(x, y)) return false;
 
         return creatures[toIndex(x, y)] == 0;
+    }
+
+    public boolean isNoMovingCreaturesIn(int x, int y) {
+        var crs = getCreatures(x, y, 1);
+        for (Orientable o : crs) {
+            if (o.speed() > 0 && (nextX(o) == x && nextY(o) == y)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public boolean isFree(int x, int y) {
