@@ -30,6 +30,7 @@ export class Game implements MovingListener {
   private lastTick = 0;
   // @ts-ignore
   private proto: Player;
+  public protoReal?: Orientation;
   private creatures = new Map<uint, Creature>();
   private actions: Act[] = NO_ACTIONS;
   // @ts-ignore
@@ -61,15 +62,26 @@ export class Game implements MovingListener {
       const dto = pkg.messages[0].data as any;
 
       const arrival: ApiCreature = {
-        id          : dto.id,
-        isPlayer    : true,
+        id      : dto.userId,
+        isPlayer: true,¬
         x           : dto.x,
-        y           : dto.y,
-        sight       : dto.sight,
-        direction   : dto.mv,
-        metrics     : new Metrics(50, 50, "Player#" + dto.userId),
-        viewDistance: 10
-      };
+          y
+    :
+      dto.y,
+        sight
+    :
+      dto.sight,
+        direction
+    :
+      dto.mv,
+        metrics
+    :
+      new Metrics(50, 50, "Player#" + dto.userId),
+        viewDistance
+    :
+      10
+    }
+      ;
 
       this.proto = this.addPlayer(arrival) as Player;
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
@@ -93,6 +105,10 @@ export class Game implements MovingListener {
           break
         case 'creature_moved':
           e = msg.data as CreatureMoved;
+          if (e.creatureId == proto.id) {
+            this.protoReal = new Orientation(e.mv, e.sight, e.speed, 0.0, e.x, e.y);//shift hardcoded
+            return;
+          }
 
 
           const exist = proto.zoneCreatures.get(e.creatureId);

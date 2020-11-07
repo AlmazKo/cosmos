@@ -67,6 +67,8 @@ export class Movements {
         o.sight = m.next.sight;
         o.move = m.next.mv;
         o.speed = Movements.getSpeed(newTile, o.move, o.sight);
+        //todo check it
+        m.next = undefined;
       }
 
 

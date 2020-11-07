@@ -108,6 +108,13 @@ final class Movements implements TickAware {
             logger.info("MV finished " + cr);
             return true;
         } else {
+
+            if (mv.next != null) {
+                cr.mv = mv.next.dir();
+                cr.sight = mv.next.sight();
+                mv.next = null;
+            }
+
             cr.offset = newOffset - METER;
             var tile = map.get(x, y);
             cr.speed = toTickSpeed(getSpeed(tile));
@@ -119,11 +126,10 @@ final class Movements implements TickAware {
     private boolean cannotStep(Creature cr, int x, int y) {
         var obj = map.getObject(x, y);
         if (obj != null && obj.tile().type() == TileType.WALL) {
-            logger.info("Found wall " + obj.tile());
-            return false;
+            return true;
         }
         var tile = map.get(x, y);
-        return tile == TileType.NOTHING || tile == TileType.DEEP_WATER;
+        return tile == TileType.NOTHING || tile == TileType.DEEP_WATER || tile == TileType.WALL;
     }
 
 

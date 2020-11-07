@@ -38,7 +38,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
 
-        settleMobs(map);
+//        settleMobs(map);
     }
 
     private void settleMobs(World map) {
@@ -66,6 +66,7 @@ public final class Game {
     }
 
     private void handleIncomeOp(AnyOp op) {
+        logger.info(op.toString());
         try {
             switch (op.code()) {
                 case Op.LOGIN -> onLogin((Login) op);

@@ -28,9 +28,14 @@ public class Zone {
                 consumer.add(new ObjAppear(o.id(), tick, target.id, x, y, o.tile().id()));
             }
 
-            if (target.x == x && target.y == y) return; // avoid self-detection
+//            if (target.x == x && target.y == y) return; // avoid self-detection
 
-            var cr = world.getCreature(x, y);
+            Creature cr;
+            if (target.x == x && target.y == y) {
+                cr = target;
+            } else {
+                cr = world.getCreature(x, y);
+            }
 
 
             if (cr == null) {
@@ -46,6 +51,8 @@ public class Zone {
         });
 
         target.zoneCreatures.values().removeIf(ort -> {
+            if (ort.creatureId() == target.id) return false;
+
             var cr = world.getCreature(ort.creatureId());
             if (cr == null || inNotFov(target, cr)) {
                 consumer.add(new CreatureHid(1, tick, target.id, ort.creatureId()));

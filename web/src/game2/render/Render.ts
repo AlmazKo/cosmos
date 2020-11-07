@@ -147,9 +147,8 @@ export class Render {
     this.drawFog(this.tp, camera);
 
 
-
     this.effects.draw2(time, this.tp, camera);
-    //todo debug this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
+    this.drawRealPosition();
 
     this.panels.draw(time, this.tp.p)
     // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
@@ -164,6 +163,14 @@ export class Render {
     // draw panels
   }
 
+
+  private drawRealPosition() {
+    if (!this.game.protoReal) return;
+    const o = this.game.protoReal;
+    const x = this.camera.toX(o.x);
+    const y = this.camera.toY(o.y);
+    this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
+  }
 
   private debug(o: Orientation) {
     const debugStyle = {style: 'white', font: '9px monospace'};

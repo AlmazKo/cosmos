@@ -55,9 +55,7 @@ final class Creature {
 //                ", name='" + name + '\'' +
 //                ", x=" + x +
 //                ", y=" + y +
-                ", rx=" + rx() +
-                ", ry=" + ry() +
-                ", offset=" + offset +
+                ", pos=[" + rx() + "; " + ry() + "]" +
                 ", speed=" + speed +
                 ", dir=" + mv +
                 ", sight=" + sight +
