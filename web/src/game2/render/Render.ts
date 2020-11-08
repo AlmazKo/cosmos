@@ -8,7 +8,9 @@ import { TilePainter } from '../../game/TilePainter';
 import { dirToString, stringTiles } from '../constants';
 import { ActivateTrait } from '../engine/actions/ActivateTrait';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
+import { SDamage } from '../engine/actions/SDamage';
 import { Spell } from '../engine/actions/Spell';
+import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
 import { Orientation } from '../engine/Orientation';
 import { Player } from '../engine/Player';
@@ -82,6 +84,13 @@ export class Render {
       if (action instanceof ActivateTrait) {
         this.panels.activate(action);
       }
+      if (action instanceof SDamage) {
+        const victim = (this.player!!.creature as Player).zoneCreatures.get(action.dmg.victimId);
+        if (victim) {
+          const dc = this.getDrawable(victim);
+          dc.damage()
+        }
+      }
 
       if (action instanceof Spell) {
         this.player!!.instantSpell();
@@ -130,11 +139,14 @@ export class Render {
       //debug this.p!!.rect(x, y, CELL, CELL, {style: '#fff'})
     })
 
-    crp.zoneCreatures.forEach((cr) => {
+    this.phantoms.forEach(dc => {
+      if (!crp.zoneCreatures.has(dc.creature.id)) {
+        this.phantoms.delete(dc.creature.id);
+      }
+    });
 
-      // fixme deleted creatures
-      //fixme optimize
-      let dc = new DrawableCreature(cr);
+    crp.zoneCreatures.forEach((cr) => {
+      const dc = this.getDrawable(cr);
       dc.draw2(time, this.tp, camera);
     });
 
@@ -165,6 +177,14 @@ export class Render {
     // draw panels
   }
 
+  private getDrawable(cr: Creature): DrawableCreature {
+    let dc = this.phantoms.get(cr.id);
+    if (!dc) {
+      dc = new DrawableCreature(cr);
+      this.phantoms.set(cr.id, dc)
+    }
+    return dc!!;
+  }
 
   private drawRealPosition() {
     if (!this.game.protoReal) return;
@@ -181,7 +201,13 @@ export class Render {
     const posCursorY = c.toPosY(this.cursor[1]);
     const x = c.toX(posCursorX);
     const y = c.toY(posCursorY);
-    this.p!!.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
+    const tile = this.game.world.tileType(posCursorX, posCursorY);
+
+
+    const p = this.p!!;
+    // p.fillRect(x, y + CELL, CELL, 14, '#ffffff99')
+    // p.text(stringTiles[tile].toLowerCase(), x + HCELL, y + CELL + 1, style.cellInfo)
+    p.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
   }
 
   fov(r: uint): Array<[pos, pos]> {
@@ -304,7 +330,7 @@ export class Render {
 
     const cx = this.camera.target.x;
     const cy = this.camera.target.y;
-    const fovRadius = FOV_RADIUS+14;
+    const fovRadius = FOV_RADIUS + 14;
     const zone = this.fov(FOV_RADIUS);
 
     for (let xx = cx - fovRadius; xx < cx + fovRadius; xx++) {

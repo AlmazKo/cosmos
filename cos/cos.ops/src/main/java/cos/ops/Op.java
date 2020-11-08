@@ -12,6 +12,8 @@ public interface Op {
     byte CREATURE_HID   = 108;
     byte EMMIT_FIREBALL = 109;
     byte FIREBALL_MOVED = 110;
+    byte DAMAGE         = 111;
+    byte DEATH          = 112;
 
     //infrastructure op-codes
     byte NOPE       = 0;

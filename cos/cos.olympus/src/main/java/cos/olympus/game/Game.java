@@ -2,9 +2,11 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
+import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.ops.AnyOp;
 import cos.ops.Appear;
+import cos.ops.Death;
 import cos.ops.Disconnect;
 import cos.ops.Exit;
 import cos.ops.FireballEmmit;
@@ -43,7 +45,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
 
-//        settleMobs(100);
+        settleMobs(20);
     }
 
     private void settleMobs(int amount) {
@@ -59,8 +61,19 @@ public final class Game {
 
         ops.forEach(this::handleIncomeOp);
         movements.onTick(id, tsm);
+        var damages = new ArrayList<Damage>();
+        var deaths = new ArrayList<Integer>();
+        spells.removeIf(s -> s.onTick(tick, outOps, damages));
 
-        spells.removeIf(s -> s.onTick(tick, outOps));
+
+        damages.forEach(d -> {
+            d.victim().damage(d);
+            logger.info("Damage to "+ d.victim().id);
+            if (d.victim().isDead()) {
+                logger.info("Death "+ d.victim().id);
+                deaths.add(d.victim().id);
+            }
+        });
         npcRespawns.forEach(it -> it.onTick(tick, outOps));
 
         world.getAllCreatures().forEach(cr -> {
@@ -72,6 +85,19 @@ public final class Game {
             var spell = f.spell;
 
             world.getAllCreatures().forEach(cr -> {
+
+                damages.forEach(d -> {
+                    if (cr.zoneCreatures.containsKey(d.victim().id)) {
+                        outOps.add(d.toOp(cr.id()));
+                    }
+                });
+
+                deaths.forEach(victimId -> {
+                    if (cr.zoneCreatures.containsKey(victimId)) {
+                        outOps.add(new Death(0,tick, cr.id(), victimId));
+                    }
+                });
+
                 if (s.inZone(cr)) {
                     if (cr.zoneSpells.put(s.id(), s) == null) {
                         outOps.add(new FireballMoved(id, tick, cr.id, 0, f.x, f.y, spell.speed(), spell.dir(), f.finished));

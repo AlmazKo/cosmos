@@ -47,6 +47,12 @@ export const style = {
     style   : "white",
     font    : "bold 10px Regular"
   } as Partial<FontStyle>,
+  cellInfo: {
+    align   : "center",
+    baseline: "top",
+    style   : "black",
+    font    : "12px Regular"
+  } as Partial<FontStyle>,
 
   creatureNameBg: {
     align   : "center",

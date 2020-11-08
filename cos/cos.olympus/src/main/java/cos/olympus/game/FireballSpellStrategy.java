@@ -1,6 +1,7 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
+import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.ops.OutOp;
 
@@ -12,13 +13,13 @@ public class FireballSpellStrategy implements SpellStrategy {
 
     private static int SPELL_IDS = 0;//todo move from here
 
-    public final Fireball spell;
+    public final  Fireball spell;
     private final World    world;
     private final int      id;
-    public       boolean  finished;
+    public        boolean  finished;
     private       int      passed;
-    public       int      x;
-    public       int      y;
+    public        int      x;
+    public        int      y;
 
     public FireballSpellStrategy(Fireball spell, World world) {
         this.spell = spell;
@@ -32,7 +33,7 @@ public class FireballSpellStrategy implements SpellStrategy {
         return id;
     }
 
-    public boolean onTick(int tick, Collection<OutOp> consumer) {
+    public boolean onTick(int tick, Collection<OutOp> consumer, Collection<Damage> damages) {
 
         int distance = (tick - spell.tickId()) * spell.speed() / 100;
 
@@ -45,13 +46,16 @@ public class FireballSpellStrategy implements SpellStrategy {
         }
 
         var victim = world.getCreature(x, y);
+        if (victim != null && spell.source().id != victim.id) {
+            var d = new Damage(0, tick, victim, spell, 10);
+            damages.add(d);
+            finished = true;
+        }
         if (distance >= spell.distance()) {
             finished = true;
         }
 
         if (distance > passed) {
-//            consumer.add(new FireballMoved(id, tick, spell.source().id, 0, x, y, spell.speed(), spell.dir(), finished));
-            //
             passed = distance;
         }
 

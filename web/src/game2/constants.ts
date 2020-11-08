@@ -9,7 +9,7 @@ export enum Dir {
 }
 
 
-export const dirToString = (d: Dir) => {
+export const dirToString = (d: Dir | null) => {
   switch (d) {
     case Dir.NORTH:
       return "NORTH";
@@ -63,8 +63,9 @@ export const stringTiles = [
   'DEEP_WATER',
   'ICE',
   'SNOW',
+  'ROAD',
   'GATE',
-  'ROAD'
+  'WALL'
 ];
 
 

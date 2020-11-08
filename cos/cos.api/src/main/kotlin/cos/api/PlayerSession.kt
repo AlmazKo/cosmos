@@ -5,6 +5,8 @@ import cos.ops.AnyOp
 import cos.ops.Appear
 import cos.ops.CreatureHid
 import cos.ops.CreatureMoved
+import cos.ops.Damage
+import cos.ops.Death
 import cos.ops.Direction
 import cos.ops.Disconnect
 import cos.ops.FireballEmmit
@@ -178,6 +180,8 @@ class PlayerSession(
                 Op.CREATURE_MOVED -> CreatureMoved.read(b);
                 Op.CREATURE_HID -> CreatureHid.read(b);
                 Op.FIREBALL_MOVED -> FireballMoved.read(b);
+                Op.DAMAGE -> Damage.read(b);
+                Op.DEATH -> Death.read(b);
                 else -> Unknown.read(b, len)
             }
         }

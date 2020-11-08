@@ -33,7 +33,9 @@ export class DrawableCreature implements TileDrawable {
 
   private animators = new Animators();
   private showInstantSpell = false;
+  private showDamaged = false;
   private meleeFactor: float = 0;
+  private damaged = false;
 
   constructor(c: Creature) {
     this.creature = c;
@@ -48,7 +50,7 @@ export class DrawableCreature implements TileDrawable {
 
     const o = this.orientation;
 
-    // this.animators.run(time);
+    this.animators.run(time);
 
     let x: px, y: px;
     if (this.creature instanceof Player) {
@@ -75,7 +77,12 @@ export class DrawableCreature implements TileDrawable {
         let sx = Math.floor(Math.abs(o.shift) * 4) * 16;
 
         let sw = 16, sh = 32;  //64-16=48/2=24/2=12
-        bp.drawTo("NPC_test", sx, sy, sw, sh, x + 12, y, sw, sh);
+
+        if (this.damaged) {
+          bp.drawTo("NPC_test_dmg", sx, sy, sw, sh, x + 12, y, sw, sh);
+        } else {
+          bp.drawTo("NPC_test", sx, sy, sw, sh, x + 12, y, sw, sh);
+        }
       }
       // drawLifeLine(bp.toInDirect(x, y), this);
     }
@@ -106,5 +113,12 @@ export class DrawableCreature implements TileDrawable {
   instantSpell() {
     this.showInstantSpell = true;
     this.animators.set("instant_spell", new Delay(100), () => this.showInstantSpell = false);
+  }
+
+  damage() {
+    if (this.damaged) return
+
+    this.damaged = true;
+    this.animators.set("damaged", new Delay(300), () => this.damaged = false);
   }
 }

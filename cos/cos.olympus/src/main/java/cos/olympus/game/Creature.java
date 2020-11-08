@@ -1,5 +1,6 @@
 package cos.olympus.game;
 
+import cos.olympus.game.events.Damage;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,7 @@ import static cos.ops.Direction.WEST;
 public final class Creature implements Orientable {
     final int    id;
     final String name;
+    int life = 100;
 
     int x;
     int y;
@@ -81,9 +83,17 @@ public final class Creature implements Orientable {
         mv = null;
     }
 
+    public void damage(Damage d) {
+        this.life -= d.amount();
+        if (life < 0) life = 0;
+    }
+
     public boolean isDead() {
-        return false;
-//        val isDead get() = state.life <= 0
+        return life <= 0;
+    }
+
+    public int id() {
+        return id;
     }
 
     @Override public int x() {

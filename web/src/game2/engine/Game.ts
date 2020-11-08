@@ -1,4 +1,4 @@
-import { CreatureHid, CreatureMoved, FireballMoved, ObjAppear } from '../../game/actions/ApiMessage';
+import { CreatureHid, CreatureMoved, Damage, Death, FireballMoved, ObjAppear } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
@@ -10,6 +10,7 @@ import { World } from '../world/World';
 import { Act } from './Act';
 import { ActivateTrait } from './actions/ActivateTrait';
 import { ProtoArrival } from './actions/ProtoArrival';
+import { SDamage } from './actions/SDamage';
 import { Spell } from './actions/Spell';
 import { Creature } from './Creature';
 import { CreatureObject } from './CreatureObject';
@@ -90,6 +91,26 @@ export class Game implements MovingListener {
           this.movements.interrupt(e.creatureId)
           proto.zoneCreatures.delete(e.creatureId);
           break
+
+        case 'damage':
+          e = msg.data as Damage;
+          const victim = proto.zoneCreatures.get(e.victimId);
+          if (!victim) return;
+
+          victim.metrics.life -= e.amount;
+          this.actions.push(new SDamage(ID++, proto, Date.now(), e))
+          break;
+        case 'death':
+          e = msg.data as Death;
+          proto.zoneCreatures.delete(e.victimId);
+          //todo add effect
+
+          // if (!victim) return;
+          //
+          // victim.metrics.life -= e.amount;
+          // this.actions.push(new SDamage(ID++, proto, Date.now(), e))
+          break;
+
         case 'fireball_moved':
           e = msg.data as FireballMoved;
           if (e.finished) {

@@ -1,5 +1,6 @@
 package cos.olympus.game;
 
+import cos.olympus.game.events.Damage;
 import cos.ops.OutOp;
 
 import java.util.Collection;
@@ -12,7 +13,7 @@ public interface SpellStrategy {
 //        fun handle(time: Tsm, actions: ActionConsumer, map: GameMap): Boolean
 
 
-    boolean onTick(int tick, Collection<OutOp> consumer);
+    boolean onTick(int tick, Collection<OutOp> consumer, Collection<Damage> damages);
 
     boolean inZone(Creature cr);
 }
