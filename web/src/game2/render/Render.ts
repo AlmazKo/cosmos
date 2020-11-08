@@ -36,7 +36,8 @@ export class Render {
   private tp: TilePainter;
   private imageData: Uint8ClampedArray | undefined;
   private readonly panels: Panels;
-  private effects = new Effects()
+  private effects = new Effects();
+  private cursor: [px, px] | undefined;
 
   constructor(
     private readonly game: Game,
@@ -149,6 +150,7 @@ export class Render {
 
     this.effects.draw2(time, this.tp, camera);
     this.drawRealPosition();
+    this.drawCursorPosition();
 
     this.panels.draw(time, this.tp.p)
     // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
@@ -172,6 +174,15 @@ export class Render {
     this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
   }
 
+  private drawCursorPosition() {
+    if (!this.cursor || !this.player) return;
+
+    const x = this.camera.toX(this.camera.toPosX(this.cursor[0]));
+    const y = this.camera.toY(this.camera.toPosY(this.cursor[1]));
+    // this.p!!.rect(x+1, y+1, CELL, CELL, {style: 'black'});
+    this.p!!.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
+  }
+
   private debug(o: Orientation) {
     const debugStyle = {style: 'white', font: '9px monospace'};
     this.p!!.text(`coord: ${o.x};${o.y}`, 3, 3, debugStyle);
@@ -180,6 +191,8 @@ export class Render {
     this.p!!.text(` move: ${dirToString(o.move)}`, 3, 33, debugStyle);
     this.p!!.text(`  vel: ${o.speed}`, 3, 43, debugStyle);
     this.p!!.text(' tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, 53, debugStyle);
+    this.p!!.text('curso: ' + this.cursor, 3, 63, debugStyle);
+    this.p!!.text('camer: ' + this.camera.absoluteX, 3, 73, debugStyle);
   }
 
   private drawFog(tp: TilePainter, camera: Camera) {
@@ -217,5 +230,7 @@ export class Render {
     // p.text(c.metrics.life + "", HCELL, CELL + 2, style.lifeText);
   }
 
-
+  changeCursorPosition(pos: [px, px] | undefined) {
+    this.cursor = pos;
+  }
 }

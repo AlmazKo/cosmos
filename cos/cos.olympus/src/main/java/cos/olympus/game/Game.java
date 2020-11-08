@@ -2,10 +2,13 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
+import cos.olympus.game.events.Fireball;
 import cos.ops.AnyOp;
 import cos.ops.Appear;
 import cos.ops.Disconnect;
 import cos.ops.Exit;
+import cos.ops.FireballEmmit;
+import cos.ops.FireballMoved;
 import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.Op;
@@ -18,12 +21,14 @@ import java.util.List;
 
 
 public final class Game {
-    private final static Logger                     logger      = new Logger(Game.class);
-    private final        World                      world;
-    private final        DoubleBuffer<AnyOp>        bufferOps;
-    private final        Movements                  movements;
-    private final        HashMap<Integer, User>     users       = new HashMap<>();
-    private final        ArrayList<RespawnStrategy> npcRespawns = new ArrayList<>();
+    private final static Logger logger = new Logger(Game.class);
+
+    private final World                      world;
+    private final DoubleBuffer<AnyOp>        bufferOps;
+    private final Movements                  movements;
+    private final HashMap<Integer, User>     users       = new HashMap<>();
+    private final ArrayList<RespawnStrategy> npcRespawns = new ArrayList<>();
+    private final ArrayList<SpellStrategy>   spells      = new ArrayList<>();
 //    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
 
     private final ArrayList<OutOp> outOps = new ArrayList<>();
@@ -38,7 +43,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(map);
 
-        settleMobs(1);
+//        settleMobs(100);
     }
 
     private void settleMobs(int amount) {
@@ -54,12 +59,25 @@ public final class Game {
 
         ops.forEach(this::handleIncomeOp);
         movements.onTick(id, tsm);
-        //  if (!ops.isEmpty()) logger.info("" + ops.size() + " ops");
 
+        spells.removeIf(s -> s.onTick(tick, outOps));
         npcRespawns.forEach(it -> it.onTick(tick, outOps));
 
         world.getAllCreatures().forEach(cr -> {
             zone.onTick(cr, tick, outOps);
+        });
+
+        spells.forEach((SpellStrategy s) -> {
+            var f = (FireballSpellStrategy) s;
+            var spell = f.spell;
+
+            world.getAllCreatures().forEach(cr -> {
+                if (s.inZone(cr)) {
+                    if (cr.zoneSpells.put(s.id(), s) == null) {
+                        outOps.add(new FireballMoved(id, tick, cr.id, 0, f.x, f.y, spell.speed(), spell.dir(), f.finished));
+                    }
+                }
+            });
         });
 
         return outOps;
@@ -73,6 +91,7 @@ public final class Game {
                 case Op.MOVE -> onMove((Move) op);
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
                 case Op.EXIT -> onExit((Exit) op);
+                case Op.EMMIT_FIREBALL -> onSpell((FireballEmmit) op);
             }
         } catch (Exception ex) {
             logger.warn("Error during processing " + op, ex);
@@ -97,6 +116,13 @@ public final class Game {
         if (cr == null) return;
 
         movements.start(cr, op);
+    }
+
+    private void onSpell(FireballEmmit op) {
+        var cr = world.getCreature(op.userId());
+        if (cr == null) return;
+        var str = new FireballSpellStrategy(Fireball.of(cr, tick), world);
+        spells.add(str);
     }
 
     private void onStopMove(StopMove op) {

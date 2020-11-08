@@ -3,6 +3,7 @@ import { Orientation } from '../engine/Orientation';
 import { CELL } from './constants';
 
 export class Camera {
+  //top-left corner of central cell
   absoluteX: px = 0;
   absoluteY: px = 0;
   target: Orientation;
@@ -14,6 +15,17 @@ export class Camera {
   setTarget(orientation: Orientation) {
     this.target = orientation;
     // this.target.setPosition(1, 1);
+  }
+
+  toPosX(x: px): pos {
+    const shift = Math.ceil((this.absoluteX - x) / CELL);
+    return this.target.x - shift;
+  }
+
+  toPosY(y: px): pos {
+    const shift = Math.ceil((this.absoluteY - y) / CELL);
+
+    return this.target.y - shift;
   }
 
   toX(pos: pos): px {

@@ -30,7 +30,7 @@ export class Fireball implements Effect {
     this.posX = spec.initX;
     this.posY = spec.initY;
     this.world = world;
-    this.anim = new LoopAnimator(spec.duration, (f, i) => {
+    this.anim = new LoopAnimator(10, (f, i) => {
 
         if (i > this.lastAnimIndex) {
           const from = this.getPosition(this.lastAnimIndex);
@@ -43,13 +43,13 @@ export class Fireball implements Effect {
           }
         }
 
-        if (i >= spec.distance) {
+        if (i >= 10) {
           this.isFinished = true;
           return 0;
         } else {
           this.f = f;
           this.shift = (i + f) * CELL;
-          return spec.duration;
+          return 250;
         }
       }
     );

@@ -7,6 +7,8 @@ import cos.ops.CreatureHid
 import cos.ops.CreatureMoved
 import cos.ops.Direction
 import cos.ops.Disconnect
+import cos.ops.FireballEmmit
+import cos.ops.FireballMoved
 import cos.ops.Login
 import cos.ops.Move
 import cos.ops.ObjAppear
@@ -58,7 +60,7 @@ class PlayerSession(
 
     private fun onRequest(msg: String) {
         val js = JsonObject(msg)
-        log.info("onRequest $msg")
+        //   todo debug     log.info("onRequest $msg")
         val op = parseRequest(js) ?: return
 
         log.info("Get op: $op")
@@ -80,7 +82,12 @@ class PlayerSession(
                     Direction.valueOf(dirId),
                     Direction.valueOf(sightId)
                 )
-
+            }
+            "emmit_fireball" -> {
+                FireballEmmit(
+                    cid.incrementAndGet(),
+                    userId
+                )
             }
             "stop_move" -> {
                 val sightId = js.getString("sight")
@@ -116,7 +123,7 @@ class PlayerSession(
 
                         while (buf.hasRemaining()) {
                             val op = parse(buf)
-                            if(op.userId() == userId) {
+                            if (op.userId() == userId) {
                                 log.info("#$userId Got Server response $op")
                                 messages.add(JsonMapper.toJson(op))
                             }
@@ -125,7 +132,7 @@ class PlayerSession(
                     } catch (e: Exception) {
                         log.warn("wrong op " + e)
                     }
-                    if(messages.isEmpty) return@handler
+                    if (messages.isEmpty) return@handler
 
                     val clientRes = JsonObject()
                         .put("tick", 1) //todo hardcode
@@ -170,6 +177,7 @@ class PlayerSession(
                 Op.APPEAR_OBJ -> ObjAppear.read(b);
                 Op.CREATURE_MOVED -> CreatureMoved.read(b);
                 Op.CREATURE_HID -> CreatureHid.read(b);
+                Op.FIREBALL_MOVED -> FireballMoved.read(b);
                 else -> Unknown.read(b, len)
             }
         }

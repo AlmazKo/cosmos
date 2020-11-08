@@ -1,4 +1,4 @@
-import { CreatureHid, CreatureMoved, ObjAppear } from '../../game/actions/ApiMessage';
+import { CreatureHid, CreatureMoved, FireballMoved, ObjAppear } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
@@ -90,6 +90,19 @@ export class Game implements MovingListener {
           this.movements.interrupt(e.creatureId)
           proto.zoneCreatures.delete(e.creatureId);
           break
+        case 'fireball_moved':
+          e = msg.data as FireballMoved;
+          if (e.finished) {
+            proto.zoneSpells.delete(e.id);
+          } else {
+            if (proto.zoneSpells.has(e.id)) return;
+
+            const spell = new FireballSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
+            this.actions.push(new Spell(ID++, proto, Date.now(), spell))
+            proto.zoneSpells.set(e.id, spell);
+
+          }
+          break
         case 'creature_moved':
           e = msg.data as CreatureMoved;
           if (e.creatureId == proto.id) {
@@ -130,10 +143,11 @@ export class Game implements MovingListener {
   onAction(trait: Trait) {
     const p = this.proto!!;
     if (trait instanceof TraitFireball) {
-      const fireball = new FireballSpell(Date.now(), ID++, p, 100, 10, p.orientation.x, p.orientation.y, p.orientation.sight);
-      this.actions.push(new Spell(ID++, p, Date.now(), fireball))
+      const o = p.orientation;
+      // const fireball = new FireballSpell(Date.now(), ID++, p, 100, 10, o.x, o.y, o.sight);
+      // this.actions.push(new Spell(ID++, p, Date.now(), fireball))
+      this.api.sendAction('emmit_fireball', {});
     }
-
 
     this.actions.push(new ActivateTrait(ID++, p, Date.now(), trait))
   }

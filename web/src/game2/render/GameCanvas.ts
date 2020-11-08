@@ -1,4 +1,4 @@
-import { CanvasComposer } from '../../canvas/CanvasComposer';
+import { CanvasComposer, Registrar } from '../../canvas/CanvasComposer';
 import { Render } from './Render';
 
 export class GameCanvas implements CanvasComposer {
@@ -20,11 +20,15 @@ export class GameCanvas implements CanvasComposer {
 
   }
 
+  register(register: Registrar) {
+    register('cursor', this.render);
+  }
+
   destroy(): void {
   }
 
   init(ctx: CanvasRenderingContext2D, width: px, height: px): void {
-    this.width  = width;
+    this.width = width;
     this.height = height;
     this.render.updateContext(ctx, width, height);
   }

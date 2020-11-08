@@ -13,19 +13,26 @@ public class Util {
         return Util.nextY(cr, cr.mv());
     }
 
-    public static int nextX(Orientable cr, Direction mv) {
+    public static int nextX(Orientable ort, Direction mv) {
         return switch (mv) {
-            case NORTH, SOUTH -> cr.x();
-            case WEST -> cr.x() - 1;
-            case EAST -> cr.x() + 1;
+            case NORTH, SOUTH -> ort.x();
+            case WEST -> ort.x() - 1;
+            case EAST -> ort.x() + 1;
         };
     }
 
-    public static int nextY(Orientable cr, Direction mv) {
+    public static int nextY(Orientable ort, Direction mv) {
         return switch (mv) {
-            case NORTH -> cr.y() - 1;
-            case SOUTH -> cr.y() + 1;
-            case WEST, EAST -> cr.y();
+            case NORTH -> ort.y() - 1;
+            case SOUTH -> ort.y() + 1;
+            case WEST, EAST -> ort.y();
         };
+    }
+
+
+    public static boolean inZone(Orientable ort, int x, int y, int radius) {
+        var oX = ort.x();
+        var oY = ort.y();
+        return oX <= x + radius && x >= oX - radius && oY <= y + radius && oY >= y - radius;
     }
 }

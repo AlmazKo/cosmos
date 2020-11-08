@@ -4,6 +4,7 @@ import cos.ops.AnyOp
 import cos.ops.Appear
 import cos.ops.CreatureHid
 import cos.ops.CreatureMoved
+import cos.ops.FireballMoved
 import cos.ops.ObjAppear
 import io.vertx.core.json.JsonObject
 
@@ -17,7 +18,8 @@ object JsonMapper {
             is ObjAppear -> toJ(op)
             is CreatureMoved -> toJ(op)
             is CreatureHid -> toJ(op)
-            else -> throw RuntimeException("Unknown $op")
+            is FireballMoved -> toJ(op)
+            else -> throw RuntimeException("No json serializator for $op")
         }
     }
 
@@ -61,6 +63,22 @@ object JsonMapper {
                 .put("speed", op.speed())
                 .put("mv", op.mv())
                 .put("sight", op.sight())
+        )
+
+    private fun toJ(op: FireballMoved) = JsonObject()
+        .put("id", op.id())
+        .put("action", "fireball_moved")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("spellId", op.spellId())
+                .put("sourceId", op.userId())
+                .put("x", op.x())
+                .put("y", op.y())
+                .put("speed", op.speed())
+                .put("dir", op.dir())
+                .put("finished", op.finished())
         )
 
     private fun toJ(op: CreatureHid) = JsonObject()

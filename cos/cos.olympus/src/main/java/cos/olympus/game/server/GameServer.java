@@ -5,6 +5,7 @@ import cos.olympus.DoubleBuffer;
 import cos.olympus.Responses;
 import cos.ops.AnyOp;
 import cos.ops.Exit;
+import cos.ops.FireballEmmit;
 import cos.ops.Login;
 import cos.ops.Move;
 import cos.ops.Op;
@@ -184,6 +185,7 @@ public final class GameServer {
             case Op.LOGIN -> Login.read(b);
             case Op.MOVE -> Move.read(b);
             case Op.STOP_MOVE -> StopMove.read(b);
+            case Op.EMMIT_FIREBALL -> FireballEmmit.read(b);
             default -> Unknown.read(b, length);
         };
     }

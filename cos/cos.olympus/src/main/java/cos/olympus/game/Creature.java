@@ -12,7 +12,7 @@ import static cos.ops.Direction.NORTH;
 import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
-final class Creature implements Orientable {
+public final class Creature implements Orientable {
     final int    id;
     final String name;
 
@@ -22,9 +22,10 @@ final class Creature implements Orientable {
     int speed  = 0;
     @Nullable Direction mv = null;
 
-    Direction                 sight;
-    Map<Integer, Obj>         zoneObjects   = new HashMap<>();
-    Map<Integer, Orientation> zoneCreatures = new HashMap<>();
+    Direction                   sight;
+    Map<Integer, Obj>           zoneObjects   = new HashMap<>();
+    Map<Integer, Orientation>   zoneCreatures = new HashMap<>();
+    Map<Integer, SpellStrategy> zoneSpells    = new HashMap<>();
 
     public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
         this.id = id;
@@ -46,7 +47,7 @@ final class Creature implements Orientable {
     }
 
     Orientation orientation() {
-        return new Orientation(id, x, y, speed, offset, mv);
+        return new Orientation(id, x, y, speed, offset, sight, mv);
     }
 
     @Override public String toString() {
@@ -103,6 +104,10 @@ final class Creature implements Orientable {
 
     @Override public @Nullable Direction mv() {
         return mv;
+    }
+
+    @Override public Direction sight() {
+        return sight;
     }
 }
 /*) : GameObject, VectorObject {

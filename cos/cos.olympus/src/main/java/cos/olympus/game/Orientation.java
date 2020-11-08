@@ -8,6 +8,7 @@ public record Orientation(
         int y,
         int speed,
         int offset,
+        Direction sight,
         Direction mv
 ) implements Orientable {
 
