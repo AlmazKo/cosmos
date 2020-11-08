@@ -15,7 +15,8 @@ export const style = {
 
   fireShock : "#ff4200",
   fog       : toRGBA("#000", 0.666),
-  playerZone: toRGBA("#007704", 0.2),
+  lightFog       : toRGBA("#000", 0.25),
+  playerZone: toRGBA("#007704", 0.333),
 
   player         : {
     style: "#f00",

@@ -176,11 +176,95 @@ export class Render {
 
   private drawCursorPosition() {
     if (!this.cursor || !this.player) return;
-
-    const x = this.camera.toX(this.camera.toPosX(this.cursor[0]));
-    const y = this.camera.toY(this.camera.toPosY(this.cursor[1]));
-    // this.p!!.rect(x+1, y+1, CELL, CELL, {style: 'black'});
+    const c = this.camera;
+    const posCursorX = c.toPosX(this.cursor[0]);
+    const posCursorY = c.toPosY(this.cursor[1]);
+    const x = c.toX(posCursorX);
+    const y = c.toY(posCursorY);
     this.p!!.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
+  }
+
+  fov(r: uint): Array<[pos, pos]> {
+
+    const cx = this.camera.target.x;
+    const cy = this.camera.target.y;
+    const zone: Array<[pos, pos]> = [];
+
+    for (let ix = cx - r; ix <= cx + r; ix++) {
+      this.race(cx, cy, ix, cy - r, zone);
+    }
+
+    for (let ix = cx - r; ix <= cx + r; ix++) {
+      this.race(cx, cy, ix, cy + r, zone);
+    }
+
+    for (let iy = cy - r; iy <= cy + r; iy++) {
+      this.race(cx, cy, cx - r, iy, zone);
+    }
+
+    for (let iy = cy - r; iy <= cy + r; iy++) {
+      this.race(cx, cy, cx + r, iy, zone);
+    }
+    return zone;
+  }
+
+  // https://stackoverflow.com/questions/4672279/bresenham-algorithm-in-javascript
+  private line(x0: pos, y0: pos, x1: pos, y1: pos) {
+    let dx = Math.abs(x1 - x0);
+    let dy = Math.abs(y1 - y0);
+    let sx = (x0 < x1) ? 1 : -1;
+    let sy = (y0 < y1) ? 1 : -1;
+    let err = dx - dy;
+
+    while (true) {
+
+      if (this.game.world.canSeeThrough(x0, y0)) {
+        this.p!!.fillRect(this.camera.toX(x0), this.camera.toY(y0), CELL, CELL, '#ffffff33');
+      } else {
+        return
+      }
+
+      if ((x0 === x1) && (y0 === y1)) break;
+      var e2 = 2 * err;
+      if (e2 > -dy) {
+        err -= dy;
+        x0 += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        y0 += sy;
+      }
+    }
+  }
+
+  private race(x0: pos, y0: pos, x1: pos, y1: pos, zone: Array<[pos, pos]>) {
+    let dx = Math.abs(x1 - x0);
+    let dy = Math.abs(y1 - y0);
+    let sx = (x0 < x1) ? 1 : -1;
+    let sy = (y0 < y1) ? 1 : -1;
+    let err = dx - dy;
+
+    while (true) {
+
+      if (zone.findIndex(([x, y]) => x === x0 && y == y0) === -1) {
+        if (this.game.world.canSeeThrough(x0, y0)) {
+          zone.push([x0, y0]);
+        } else {
+          return
+        }
+      }
+
+      if ((x0 === x1) && (y0 === y1)) break;
+      var e2 = 2 * err;
+      if (e2 > -dy) {
+        err -= dy;
+        x0 += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        y0 += sy;
+      }
+    }
   }
 
   private debug(o: Orientation) {
@@ -211,11 +295,30 @@ export class Render {
     const xR = x + radius + CELL;
     const yU = y - radius;
     const yD = y + radius + CELL;
+    //
+    // p.fillRect(0, 0, xL, p.height, style.fog); //LEFT
+    // p.fillRect(xL, 0, radius + radius + CELL, yU, style.fog);// TOP
+    // p.fillRect(xR, 0, p.width - xR, p.height, style.fog);//RIGHT
+    // p.fillRect(xL, yD, radius + radius + CELL, p.height - yD, style.fog);//BOTTOM
 
-    p.fillRect(0, 0, xL, p.height, style.fog); //LEFT
-    p.fillRect(xL, 0, radius + radius + CELL, yU, style.fog);// TOP
-    p.fillRect(xR, 0, p.width - xR, p.height, style.fog);//RIGHT
-    p.fillRect(xL, yD, radius + radius + CELL, p.height - yD, style.fog);//BOTTOM
+
+    const cx = this.camera.target.x;
+    const cy = this.camera.target.y;
+    const fovRadius = FOV_RADIUS+14;
+    const zone = this.fov(FOV_RADIUS);
+
+    for (let xx = cx - fovRadius; xx < cx + fovRadius; xx++) {
+      for (let yy = cy - fovRadius; yy < cy + fovRadius; yy++) {
+        if (zone.findIndex(([x, y]) => x === xx && y == yy) === -1) {
+          p.fillRect(this.camera.toX(xx), this.camera.toY(yy), CELL, CELL, style.lightFog);
+        }
+      }
+    }
+    //
+    // zone.forEach((p) => {
+    //   this.p!!.fillRect(this.camera.toX(p[0]), this.camera.toY(p[1]), CELL, CELL, '#ffffff66');
+    // });
+
 
   }
 

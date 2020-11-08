@@ -134,6 +134,11 @@ export class World {
     return type !== TileType.DEEP_WATER && type !== TileType.NOTHING && type !== TileType.WALL;
   }
 
+  canSeeThrough(x: pos, y: pos, dir: Dir | null = null) {
+    const type = this.tileType(x, y);
+    return type !== TileType.NOTHING && type !== TileType.WALL;
+  }
+
   moveCreature(cr: Creature, toX: pos, toY: pos) {
     cr.orientation.setPosition(toX, toY)
   }
