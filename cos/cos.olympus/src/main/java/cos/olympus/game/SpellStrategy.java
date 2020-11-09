@@ -6,7 +6,6 @@ import cos.ops.OutOp;
 import java.util.Collection;
 
 public interface SpellStrategy {
-
     //        val action: SpellAction
     int id();
 //        fun inZone(creature: Creature): Boolean

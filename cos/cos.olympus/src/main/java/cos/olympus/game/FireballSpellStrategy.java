@@ -9,28 +9,28 @@ import java.util.Collection;
 
 public class FireballSpellStrategy implements SpellStrategy {
 
+
     private final static Logger logger = new Logger(FireballSpellStrategy.class);
 
+    private static int DAMAGES_IDS = 0;//todo move from here
     private static int SPELL_IDS = 0;//todo move from here
 
     public final  Fireball spell;
     private final World    world;
-    private final int      id;
     public        boolean  finished;
     private       int      passed;
     public        int      x;
     public        int      y;
 
-    public FireballSpellStrategy(Fireball spell, World world) {
-        this.spell = spell;
+    public FireballSpellStrategy(int tick, Creature cr, World world) {
+        this.spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), 40, cr.sight(), 10, tick, cr);
         this.world = world;
-        this.id = ++SPELL_IDS;
         this.x = spell.x();
         this.y = spell.y();
     }
 
     @Override public int id() {
-        return id;
+        return spell.id();
     }
 
     public boolean onTick(int tick, Collection<OutOp> consumer, Collection<Damage> damages) {
@@ -47,9 +47,9 @@ public class FireballSpellStrategy implements SpellStrategy {
 
         var victim = world.getCreature(x, y);
         if (victim != null && spell.source().id != victim.id) {
-            logger.info("Damaged : " + victim.id);
-            boolean crit = Util.rand(0,10) == 1;
-            var d = new Damage(0, tick, victim, spell, crit?100:30);
+            boolean crit = Util.rand(0, 10) == 1;
+            var d = new Damage(++DAMAGES_IDS, tick, victim, spell, crit ? 100 : 30, crit);
+            logger.info("Damaged : " + d);
             damages.add(d);
             finished = true;
         }

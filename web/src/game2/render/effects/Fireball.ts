@@ -32,6 +32,11 @@ export class Fireball implements Effect {
     this.world = world;
     this.anim = new LoopAnimator(10, (f, i) => {
 
+        if (spec.finished) {
+          this.isFinished = true;
+          return true;
+        }
+
         if (i > this.lastAnimIndex) {
           const from = this.getPosition(this.lastAnimIndex);
           const tile = this.world.nextTile(from[0], from[1], spec.direction);

@@ -6,7 +6,6 @@ import cos.ops.Move;
 import cos.ops.OutOp;
 
 import java.util.Collection;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class NpcStrategy {
 
@@ -37,7 +36,7 @@ public class NpcStrategy {
 //                logger.info("Cannot move to " + dir + " #" + npc.id
 //                        + ", x=" + x + ", y=" + y + ", free=" + world.isFree(x, y) + ", smth stand=" + world.hasCreature(x, y));
             }
-            nextPlannedTick = tick + 1;//TODO rand(10, 20);
+            nextPlannedTick = tick + Util.rand(10, 20);
         }
     }
 

@@ -3,7 +3,6 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.game.events.Damage;
-import cos.olympus.game.events.Fireball;
 import cos.ops.AnyOp;
 import cos.ops.Appear;
 import cos.ops.Death;
@@ -69,7 +68,7 @@ public final class Game {
         damages.forEach(d -> {
             d.victim().damage(d);
             if (d.victim().isDead()) {
-                logger.info("Death "+ d.victim().id);
+                logger.info("Death " + d.victim().id);
                 deaths.add(d.victim().id);
             }
         });
@@ -90,7 +89,7 @@ public final class Game {
 
             deaths.forEach(victimId -> {
                 if (cr.zoneCreatures.containsKey(victimId)) {
-                    outOps.add(new Death(0,tick, cr.id(), victimId));
+                    outOps.add(new Death(0, tick, cr.id(), victimId));
                 }
             });
         });
@@ -102,7 +101,7 @@ public final class Game {
             world.getAllCreatures().forEach(cr -> {
                 if (s.inZone(cr)) {
                     if (cr.zoneSpells.put(s.id(), s) == null) {
-                        outOps.add(new FireballMoved(id, tick, cr.id, 0, f.x, f.y, spell.speed(), spell.dir(), f.finished));
+                        outOps.add(new FireballMoved(id, tick, cr.id, s.id(), f.x, f.y, spell.speed(), spell.dir(), f.finished));
                     }
                 }
             });
@@ -150,7 +149,7 @@ public final class Game {
     private void onSpell(FireballEmmit op) {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
-        var str = new FireballSpellStrategy(Fireball.of(cr, tick), world);
+        var str = new FireballSpellStrategy(tick, cr, world);
         spells.add(str);
     }
 

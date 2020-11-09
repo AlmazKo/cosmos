@@ -93,12 +93,7 @@ export class Game implements MovingListener {
           break
 
         case 'damage':
-          e = msg.data as Damage;
-          const victim = proto.zoneCreatures.get(e.victimId);
-          if (!victim) return;
-
-          victim.metrics.life -= e.amount;
-          this.actions.push(new SDamage(ID++, proto, Date.now(), e))
+          this.onDamage(msg.data as Damage);
           break;
         case 'death':
           e = msg.data as Death;
@@ -114,13 +109,13 @@ export class Game implements MovingListener {
         case 'fireball_moved':
           e = msg.data as FireballMoved;
           if (e.finished) {
-            proto.zoneSpells.delete(e.id);
+            proto.zoneSpells.delete(e.spellId);
           } else {
-            if (proto.zoneSpells.has(e.id)) return;
+            if (proto.zoneSpells.has(e.spellId)) return;
 
             const spell = new FireballSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
             this.actions.push(new Spell(ID++, proto, Date.now(), spell))
-            proto.zoneSpells.set(e.id, spell);
+            proto.zoneSpells.set(e.spellId, spell);
 
           }
           break
@@ -159,6 +154,21 @@ export class Game implements MovingListener {
           break;
       }
     })
+  }
+
+  onDamage(e: Damage) {
+    const pproto = this.proto!!;
+    const victim = pproto.zoneCreatures.get(e.victimId);
+    if (!victim) return;
+
+    victim.metrics.life -= e.amount;
+
+    this.actions.push(new SDamage(ID++, pproto, Date.now(), e, victim.orientation.x, victim.orientation.y))
+    const spell = this.proto.zoneSpells.get(e.spellId);
+    if (spell) {
+      spell.finished = true;
+      this.proto.zoneSpells.delete(e.spellId);
+    }
   }
 
   onAction(trait: Trait) {

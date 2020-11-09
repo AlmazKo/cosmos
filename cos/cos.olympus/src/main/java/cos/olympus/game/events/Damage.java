@@ -7,11 +7,22 @@ public record Damage(
         int tick,
         Creature victim,
         Spell spell,
-        int amount
+        int amount,
+        boolean crit
 ) {
 
     public cos.ops.Damage toOp(int userId) {
-        return new cos.ops.Damage(id, tick, userId, victim.id(), amount, amount);
+        return new cos.ops.Damage(id, tick, userId, victim.id(), amount, spell.id(), crit);
+    }
+
+    @Override public String toString() {
+        return "Damage{" +
+                "id=" + id +
+                ", tick=" + tick +
+                ", victim=" + victim.id() +
+                ", spell=" + spell.id() +
+                ", amount=" + amount +
+                '}';
     }
 }
 

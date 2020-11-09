@@ -104,6 +104,7 @@ object JsonMapper {
                 .put("id", op.id())
                 .put("victimId", op.victimId())
                 .put("amount", op.amount())
+                .put("crit", op.crit())
                 .put("spellId", op.spellId())
         )
 

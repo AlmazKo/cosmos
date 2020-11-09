@@ -15,5 +15,5 @@ export class FireballSpell implements Action {
   ) {
 
   }
-
+  public finished = false;
 }

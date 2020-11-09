@@ -49,7 +49,6 @@ export class DrawableCreature implements TileDrawable {
 
   draw2(time: DOMHighResTimeStamp, p: CanvasContext, bp: TilePainter, camera: Camera) {
 
-
     this.drawLifeLine(p, camera);
     const o = this.orientation;
 
@@ -59,7 +58,7 @@ export class DrawableCreature implements TileDrawable {
     if (this.creature instanceof Player) {
       x = camera.absoluteX;
       y = camera.absoluteY;
-      let sy = map[o.sight];
+      let sy = map[o.sight]+2;
       let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
       // drawLifeLine(bp.toInDirect(x, y), this);
 
@@ -104,7 +103,8 @@ export class DrawableCreature implements TileDrawable {
     const x = camera.toX2(this.creature.orientation);
     const y = camera.toY2(this.creature.orientation);
 
-    bp.ellipse(x + HCELL, y + HCELL + QCELL, HCELL, HCELL - QCELL, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
+
+    bp.ellipse(x + HCELL, y + HCELL + QCELL, HCELL - 2, HCELL - QCELL - 2, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
     // p.text(c.metrics.life + "", HCELL, CELL + 2, style.lifeText);
   }
 
@@ -135,5 +135,7 @@ export class DrawableCreature implements TileDrawable {
 
     this.damaged = true;
     this.animators.set("damaged", new Delay(200), () => this.damaged = false);
+    this.animators.set("show_amount_damage", new Delay(200), () => this.damaged = false);
+
   }
 }

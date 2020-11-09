@@ -18,6 +18,7 @@ import { Images } from '../Images';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
 import { DrawableCreature } from './DrawableCreature';
+import { DamageEffect } from './effects/DamageEffect';
 import { Fireball } from './effects/Fireball';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 
@@ -95,7 +96,12 @@ export class Render {
       if (action instanceof Spell) {
         this.player!!.instantSpell();
         this.effects.push(new Fireball(this.images, action.spell, this.game.world));
-//         p.instantSpell();
+      }
+
+
+      if (action instanceof SDamage) {
+        this.player!!.instantSpell();
+        this.effects.push(new DamageEffect(action.dmg.amount, action.dmg.crit, action.x, action.y));
       }
       //
       // if (action instanceof StartMoving) {
@@ -123,6 +129,9 @@ export class Render {
 
 
     const crp = p.creature as Player;
+
+
+    this.drawRealPosition();
 
     crp.zoneObjects.forEach((obj) => {
 
@@ -161,7 +170,7 @@ export class Render {
 
 
     this.effects.draw2(time, this.tp, camera);
-    this.drawRealPosition();
+
     this.drawCursorPosition();
 
     this.panels.draw(time, this.tp.p)
@@ -191,7 +200,7 @@ export class Render {
     const o = this.game.protoReal;
     const x = this.camera.toX(o.x);
     const y = this.camera.toY(o.y);
-    this.p!!.rect(x, y, CELL, CELL, {style: 'red'});
+    this.p!!.fillRect(x, y, CELL, CELL, '#ffffff33');
   }
 
   private drawCursorPosition() {

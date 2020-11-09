@@ -9,12 +9,13 @@ public record Damage(
         @Override int userId,
         int victimId,
         int amount,
-        int spellId
+        int spellId,
+        boolean crit
 
 ) implements OutOp {
 
-    public Damage(int id, int tick, int userId, int victimId, int amount, int spellId) {
-        this(Op.DAMAGE, id, tick, userId, victimId, amount, spellId);
+    public Damage(int id, int tick, int userId, int victimId, int amount, int spellId, boolean crit) {
+        this(Op.DAMAGE, id, tick, userId, victimId, amount, spellId, crit);
     }
 
     public static Damage read(ByteBuffer b) {
@@ -24,7 +25,9 @@ public record Damage(
                 b.getInt(),
                 b.getInt(),
                 b.getInt(),
-                b.getInt());
+                b.getInt(),
+                b.get() == 1
+        );
     }
 
     public void write(ByteBuffer buf) {
@@ -34,5 +37,6 @@ public record Damage(
         buf.putInt(victimId);
         buf.putInt(amount);
         buf.putInt(spellId);
+        buf.put((byte) (crit ? 1 : 0));
     }
 }

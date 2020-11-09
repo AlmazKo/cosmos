@@ -15,7 +15,7 @@ export const style = {
 
   fireShock : "#ff4200",
   fog       : toRGBA("#000", 0.666),
-  lightFog       : toRGBA("#000", 0.25),
+  lightFog  : toRGBA("#000", 0.25),
   playerZone: toRGBA("#007704", 0.333),
 
   player         : {
@@ -47,7 +47,7 @@ export const style = {
     style   : "white",
     font    : "bold 10px Regular"
   } as Partial<FontStyle>,
-  cellInfo: {
+  cellInfo    : {
     align   : "center",
     baseline: "top",
     style   : "black",
@@ -72,14 +72,28 @@ export const style = {
     align   : "center",
     baseline: "top",
     style   : "#fff",
-    font    : "bold 23px sans"
+    font    : " 16px sans-serif"
   } as Partial<FontStyle>,
 
   dmgText2: {
     align   : "center",
     baseline: "top",
     style   : "#000",
-    font    : "bold 24px sans"
+    font    : " 16px sans-serif"
+  } as Partial<FontStyle>,
+
+  dmgCritText: {
+    align   : "center",
+    baseline: "top",
+    style   : "#fff",
+    font    : "bold 23px sans-serif"
+  } as Partial<FontStyle>,
+
+  dmgCritText2: {
+    align   : "center",
+    baseline: "top",
+    style   : "#000",
+    font    : "bold 23px sans-serif"
   } as Partial<FontStyle>,
 
   debugText: {

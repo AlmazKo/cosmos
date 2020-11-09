@@ -7,7 +7,9 @@ export class SDamage implements Act {
   constructor(readonly id: uint,
               readonly creature: Creature,
               readonly startTime: tsm,
-              readonly dmg: Damage) {
+              readonly dmg: Damage,
+              readonly x: pos,
+              readonly y: pos) {
 
   }
 
