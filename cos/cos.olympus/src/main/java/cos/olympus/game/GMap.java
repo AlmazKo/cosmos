@@ -12,6 +12,10 @@ public interface GMap {
 
     boolean isNoCreatures(int x, int y);
 
+    default boolean hasCreature(int x, int y) {
+        return !isNoCreatures(x, y);
+    }
+
     Creature createCreature(User usr);
 
     void moveCreature(int fromX, int fromY, int toX, int toY);

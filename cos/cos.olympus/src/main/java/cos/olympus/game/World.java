@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static cos.olympus.game.Util.nextX;
 import static cos.olympus.game.Util.nextY;
@@ -22,7 +23,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public final class World implements TileMap, GMap {
-    private final static Logger  logger = new Logger(Game.class);
+    private final static Logger  logger = new Logger(World.class);
     private final        int     width;
     private final        int     height;
     private final        short[] basis;
@@ -233,10 +234,31 @@ public final class World implements TileMap, GMap {
 
     void removeCreature(int id) {
         var cr = creatureObjects.remove(id);
-        if (cr == null) return;
+        if (cr == null) {
+            logger.warn("Not found creature" + id + " for removing");
+            return;
+        }
 
         int idx = toIndex(cr.x, cr.y);
+
+        //todo debug
+        if (creatures[idx] != id) {
+            throw new RuntimeException("Wrong position #" + id);
+        }
         creatures[idx] = 0;
+    }
+
+
+    public void removeCreatureIf(Predicate<? super Creature> filter) {
+        creatureObjects.values().removeIf(cr -> {
+            if (filter.test(cr)) {
+                int idx = toIndex(cr.x, cr.y);
+                creatures[idx] = 0;
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 
     public Creature createCreature(User usr) {
@@ -246,7 +268,7 @@ public final class World implements TileMap, GMap {
             throw new NoSpaceException("Fail finding free place");
         }
 
-        idx = findFreeIndex(usr.lastX, usr.lastY, 5);
+        idx = findFreeIndex(usr.lastX, usr.lastY, 2);
 
         if (idx >= 0) {
 
@@ -255,6 +277,7 @@ public final class World implements TileMap, GMap {
 
             creatures[idx] = cr.id;
             creatureObjects.put(cr.id, cr);
+
             logger.info("Creature #" + cr.id + " set x=" + cr.x + ", y=" + cr.y);
 //            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
             return cr;
@@ -309,8 +332,15 @@ public final class World implements TileMap, GMap {
         int from = toIndex(fromX, fromY);
         int to = toIndex(toX, toY);
         int creatureId = creatures[from];
+        if (creatures[to] != 0) {
+            logger.warn("Try moving into occupied place " + toX + ", " + toY);
+        }
         creatures[to] = creatureId;
         logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
+
+        if (creatures[from] == 0) {
+            logger.warn("Try moving from free place " + toX + ", " + toY);
+        }
         creatures[from] = 0;
     }
 
@@ -420,4 +450,6 @@ public final class World implements TileMap, GMap {
     public Collection<Creature> getAllCreatures() {
         return creatureObjects.values();
     }
+
+
 }

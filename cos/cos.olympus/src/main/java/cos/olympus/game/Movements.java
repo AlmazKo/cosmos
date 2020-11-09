@@ -15,11 +15,11 @@ final class Movements implements TickAware {
     public final static  int                  HALF   = 50;
     public final static  int                  METER  = 100;
     private final static Logger               logger = new Logger(Movements.class);
-    private final        GMap                 map;
+    private final        GMap                 world;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
 
-    Movements(GMap map) {
-        this.map = map;
+    Movements(World world) {
+        this.world = world;
     }
 
     final static class Mv {
@@ -43,7 +43,7 @@ final class Movements implements TickAware {
             cr.sight = op.sight();
         }
 
-        var currentTile = map.get(cr.x, cr.y);
+        var currentTile = world.get(cr.x, cr.y);
         cr.speed = toTickSpeed(getSpeed(currentTile));
     }
 
@@ -77,15 +77,15 @@ final class Movements implements TickAware {
         var cr = mv.cr;
         var newOffset = cr.offset + cr.speed;
 
-        if (mv.rollBack) {
-            if (newOffset > 0) {
-                cr.offset = newOffset;
-                return false;
-            } else {
-                cr.stop();
-                return true;
-            }
-        }
+//        if (mv.rollBack) {
+//            if (newOffset > 0) {
+//                cr.offset = newOffset;
+//                return false;
+//            } else {
+//                cr.stop();
+//                return true;
+//            }
+//        }
 
         if (newOffset < METER) {
             cr.offset = newOffset;
@@ -95,19 +95,18 @@ final class Movements implements TickAware {
         int x = nextX(cr);
         int y = nextY(cr);
 
-        if (cannotStep(cr, x, y)) {
-            mv.rollBack = true;
-            cr.speed = -cr.speed;
-            //don't touch offset
-            logger.info("Rollback " + cr);
+        if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
+//            mv.rollBack = true;
+            cr.offset = 0;
+            logger.info("Reset " + cr);
             return false;
         }
 
-        map.moveCreature(cr, x, y);
+        world.moveCreature(cr, x, y);
 
         if (mv.stop) {
             cr.stop();
-//            logger.info("MV finished " + cr);
+            logger.info("MV finished " + cr);
             return true;
         } else {
 
@@ -118,7 +117,7 @@ final class Movements implements TickAware {
             }
 
             cr.offset = newOffset - METER;
-            var tile = map.get(x, y);
+            var tile = world.get(x, y);
             cr.speed = toTickSpeed(getSpeed(tile));
             logger.info("MV " + cr);
             return false;
@@ -126,11 +125,11 @@ final class Movements implements TickAware {
     }
 
     private boolean cannotStep(Creature cr, int x, int y) {
-        var obj = map.getObject(x, y);
+        var obj = world.getObject(x, y);
         if (obj != null && obj.tile().type() == TileType.WALL) {
             return true;
         }
-        var tile = map.get(x, y);
+        var tile = world.get(x, y);
         return tile == TileType.NOTHING || tile == TileType.DEEP_WATER || tile == TileType.WALL;
     }
 }

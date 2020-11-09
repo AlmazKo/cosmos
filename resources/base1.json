@@ -1,12 +1,29 @@
 { "columns":23,
- "image":"./map1.png",
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
+ "image":"map1.png",
  "imageheight":928,
  "imagewidth":736,
  "margin":0,
  "name":"base1",
  "spacing":0,
+ "terrains":[
+        {
+         "name":"Beach",
+         "tile":537
+        }, 
+        {
+         "name":"Swallow",
+         "tile":486
+        }],
  "tilecount":667,
- "tiledversion":"2019.05.08",
+ "tiledversion":"1.4.2",
  "tileheight":32,
  "tiles":[
         {
@@ -59,6 +76,7 @@
         }, 
         {
          "id":47,
+         "terrain":[0, 0, 0, 0],
          "type":"GRASS"
         }, 
         {
@@ -559,30 +577,37 @@
         }, 
         {
          "id":368,
+         "terrain":[-1, 1, -1, -1],
          "type":"SHALLOW"
         }, 
         {
          "id":369,
+         "terrain":[1, -1, -1, -1],
          "type":"SHALLOW"
         }, 
         {
          "id":370,
+         "terrain":[-1, -1, -1, 1],
          "type":"SHALLOW"
         }, 
         {
          "id":371,
+         "terrain":[-1, -1, 1, -1],
          "type":"SHALLOW"
         }, 
         {
          "id":374,
+         "terrain":[1, 1, 1, -1],
          "type":"SHALLOW"
         }, 
         {
          "id":375,
+         "terrain":[1, 1, -1, -1],
          "type":"SHALLOW"
         }, 
         {
          "id":376,
+         "terrain":[1, 1, -1, 1],
          "type":"SHALLOW"
         }, 
         {
@@ -611,6 +636,7 @@
         }, 
         {
          "id":397,
+         "terrain":[1, -1, 1, -1],
          "type":"SHALLOW"
         }, 
         {
@@ -619,6 +645,7 @@
         }, 
         {
          "id":399,
+         "terrain":[-1, 1, -1, 1],
          "type":"SHALLOW"
         }, 
         {
@@ -647,14 +674,17 @@
         }, 
         {
          "id":420,
+         "terrain":[1, -1, 1, 1],
          "type":"SHALLOW"
         }, 
         {
          "id":421,
+         "terrain":[-1, -1, 1, 1],
          "type":"SHALLOW"
         }, 
         {
          "id":422,
+         "terrain":[-1, 1, 1, 1],
          "type":"SHALLOW"
         }, 
         {
@@ -751,6 +781,7 @@
         }, 
         {
          "id":486,
+         "terrain":[1, 1, 1, 1],
          "type":"SHALLOW"
         }, 
         {
@@ -783,14 +814,17 @@
         }, 
         {
          "id":506,
+         "terrain":[0, 0, 0, -1],
          "type":"GRASS"
         }, 
         {
          "id":507,
+         "terrain":[0, 0, -1, -1],
          "type":"GRASS"
         }, 
         {
          "id":508,
+         "terrain":[0, 0, -1, 0],
          "type":"GRASS"
         }, 
         {
@@ -807,18 +841,22 @@
         }, 
         {
          "id":512,
+         "terrain":[-1, -1, -1, 0],
          "type":"GRASS"
         }, 
         {
          "id":513,
+         "terrain":[-1, -1, 0, 0],
          "type":"GRASS"
         }, 
         {
          "id":514,
+         "terrain":[-1, -1, 0, -1],
          "type":"GRASS"
         }, 
         {
          "id":529,
+         "terrain":[0, -1, 0, -1],
          "type":"GRASS"
         }, 
         {
@@ -827,6 +865,7 @@
         }, 
         {
          "id":531,
+         "terrain":[-1, 0, -1, 0],
          "type":"GRASS"
         }, 
         {
@@ -843,6 +882,7 @@
         }, 
         {
          "id":535,
+         "terrain":[-1, 0, -1, 0],
          "type":"GRASS"
         }, 
         {
@@ -851,18 +891,22 @@
         }, 
         {
          "id":537,
+         "terrain":[0, -1, 0, -1],
          "type":"GRASS"
         }, 
         {
          "id":552,
+         "terrain":[0, -1, 0, 0],
          "type":"GRASS"
         }, 
         {
          "id":553,
+         "terrain":[-1, -1, 0, 0],
          "type":"GRASS"
         }, 
         {
          "id":554,
+         "terrain":[-1, 0, 0, 0],
          "type":"GRASS"
         }, 
         {
@@ -879,14 +923,17 @@
         }, 
         {
          "id":558,
+         "terrain":[-1, 0, -1, -1],
          "type":"GRASS"
         }, 
         {
          "id":559,
+         "terrain":[0, 0, -1, -1],
          "type":"GRASS"
         }, 
         {
          "id":560,
+         "terrain":[0, -1, -1, -1],
          "type":"GRASS"
         }, 
         {
@@ -1004,5 +1051,5 @@
  "tilewidth":32,
  "transparentcolor":"#ff00ff",
  "type":"tileset",
- "version":1.2
+ "version":1.4
 }

@@ -55,7 +55,7 @@ export class Movements {
       const nextDir = m.next ? m.next.mv : o.move;
 
       if (!this.world.canStep(o.x, o.y, nextDir)) {
-        console.warn(`Step is blocked: ${o}`, o.move);
+        console.warn(`#${m.cr.id} Step is blocked: ${o}`, o.move);
         o.stop();
         this.data.delete(m.cr.id);
         // console.log("MOVING STOP")

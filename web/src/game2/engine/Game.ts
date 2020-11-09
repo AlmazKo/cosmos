@@ -67,7 +67,7 @@ export class Game implements MovingListener {
         y           : dto.y,
         sight       : dto.sight,
         direction   : dto.mv,
-        metrics     : new Metrics(50, 50, "Player#" + dto.userId),
+        metrics     : new Metrics(100, 100, "Player#" + dto.userId),
         viewDistance: 10
       };
 
@@ -145,7 +145,7 @@ export class Game implements MovingListener {
             y           : e.y,
             sight       : e.sight,
             direction   : e.mv,
-            metrics     : new Metrics(10, 10, "#" + e.creatureId),
+            metrics     : new Metrics(100, 100, "#" + e.creatureId),
             viewDistance: 10
           };
 

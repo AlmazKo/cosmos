@@ -147,11 +147,11 @@ export class Render {
 
     crp.zoneCreatures.forEach((cr) => {
       const dc = this.getDrawable(cr);
-      dc.draw2(time, this.tp, camera);
+      dc.draw2(time, this.p!!, this.tp, camera);
     });
 
-    this.drawLifeLine();
-    p.draw2(time, this.tp, camera);
+    // this.drawLifeLine();
+    p.draw2(time, this.p!!, this.tp, camera);
 
 
     const o = p.orientation;
@@ -205,7 +205,8 @@ export class Render {
 
 
     const p = this.p!!;
-    // p.fillRect(x, y + CELL, CELL, 14, '#ffffff99')
+    p.fillRect(x, y + CELL, CELL, 14, '#ffffff99')
+    p.text('' + posCursorX + ',' + posCursorY, x + HCELL, y + CELL + 2, style.cellInfo)
     // p.text(stringTiles[tile].toLowerCase(), x + HCELL, y + CELL + 1, style.cellInfo)
     p.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
   }

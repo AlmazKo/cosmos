@@ -39,13 +39,13 @@ public final class Game {
     int id = 0;
     private int tick = 0;
 
-    public Game(World map, DoubleBuffer<AnyOp> bufferOps) {
-        this.world = map;
-        this.zone = new Zone(map);
+    public Game(World world, DoubleBuffer<AnyOp> bufferOps) {
+        this.world = world;
+        this.zone = new Zone(world);
         this.bufferOps = bufferOps;
-        this.movements = new Movements(map);
+        this.movements = new Movements(world);
 
-        settleMobs(20);
+        settleMobs(10);
     }
 
     private void settleMobs(int amount) {
@@ -68,7 +68,6 @@ public final class Game {
 
         damages.forEach(d -> {
             d.victim().damage(d);
-            logger.info("Damage to "+ d.victim().id);
             if (d.victim().isDead()) {
                 logger.info("Death "+ d.victim().id);
                 deaths.add(d.victim().id);
@@ -80,24 +79,27 @@ public final class Game {
             zone.onTick(cr, tick, outOps);
         });
 
+
+        world.getAllCreatures().forEach(cr -> {
+
+            damages.forEach(d -> {
+                if (cr.zoneCreatures.containsKey(d.victim().id)) {
+                    outOps.add(d.toOp(cr.id()));
+                }
+            });
+
+            deaths.forEach(victimId -> {
+                if (cr.zoneCreatures.containsKey(victimId)) {
+                    outOps.add(new Death(0,tick, cr.id(), victimId));
+                }
+            });
+        });
+
         spells.forEach((SpellStrategy s) -> {
             var f = (FireballSpellStrategy) s;
             var spell = f.spell;
 
             world.getAllCreatures().forEach(cr -> {
-
-                damages.forEach(d -> {
-                    if (cr.zoneCreatures.containsKey(d.victim().id)) {
-                        outOps.add(d.toOp(cr.id()));
-                    }
-                });
-
-                deaths.forEach(victimId -> {
-                    if (cr.zoneCreatures.containsKey(victimId)) {
-                        outOps.add(new Death(0,tick, cr.id(), victimId));
-                    }
-                });
-
                 if (s.inZone(cr)) {
                     if (cr.zoneSpells.put(s.id(), s) == null) {
                         outOps.add(new FireballMoved(id, tick, cr.id, 0, f.x, f.y, spell.speed(), spell.dir(), f.finished));
@@ -106,6 +108,7 @@ public final class Game {
             });
         });
 
+        world.removeCreatureIf(Creature::isDead);
         return outOps;
     }
 

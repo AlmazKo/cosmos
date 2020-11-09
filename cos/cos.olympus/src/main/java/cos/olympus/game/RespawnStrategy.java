@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-import static cos.olympus.game.NpcStrategy.rand;
 
 public class RespawnStrategy {
 
@@ -37,7 +36,7 @@ public class RespawnStrategy {
             }
             isDead = false;
             try {
-                var npc = world.createCreature(new User(id++, "Phantom", 5, 2));
+                var npc = world.createCreature(new User(++id, "Phantom", 7, 3));
                 live = new NpcStrategy(npc, world, movements);
             } catch (NoSpaceException ne) {
                 logger.warn("No space");
@@ -48,7 +47,7 @@ public class RespawnStrategy {
         if (live.isDead()) {
             live = null;
             isDead = true;
-            respawnTime = rand(10, 60);
+            respawnTime = Util.rand(10, 60);
             return;
         }
 

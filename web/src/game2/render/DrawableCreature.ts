@@ -1,5 +1,6 @@
 import { Delay } from '../../anim/Animator';
 import { Animators } from '../../anim/Animators';
+import { CanvasContext } from '../../draw/CanvasContext';
 import { style } from '../../game/styles';
 import { TileDrawable } from '../../game/TileDrawable';
 import { TilePainter } from '../../game/TilePainter';
@@ -8,7 +9,7 @@ import { Creature } from '../engine/Creature';
 import { Orientation } from '../engine/Orientation';
 import { Player } from '../engine/Player';
 import { Camera } from './Camera';
-import { CELL, HCELL } from './constants';
+import { CELL, HCELL, QCELL } from './constants';
 
 
 const map: px[] = [];
@@ -46,8 +47,10 @@ export class DrawableCreature implements TileDrawable {
 
   }
 
-  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
+  draw2(time: DOMHighResTimeStamp, p: CanvasContext, bp: TilePainter, camera: Camera) {
 
+
+    this.drawLifeLine(p, camera);
     const o = this.orientation;
 
     this.animators.run(time);
@@ -79,9 +82,9 @@ export class DrawableCreature implements TileDrawable {
         let sw = 16, sh = 32;  //64-16=48/2=24/2=12
 
         if (this.damaged) {
-          bp.drawTo("NPC_test_dmg", sx, sy, sw, sh, x + 12, y, sw, sh);
+          bp.drawTo("NPC_test_dmg", sx, sy, sw, sh, x + 16, y + 8, sw, sh);
         } else {
-          bp.drawTo("NPC_test", sx, sy, sw, sh, x + 12, y, sw, sh);
+          bp.drawTo("NPC_test", sx, sy, sw, sh, x + 16, y + 8, sw, sh);
         }
       }
       // drawLifeLine(bp.toInDirect(x, y), this);
@@ -91,6 +94,18 @@ export class DrawableCreature implements TileDrawable {
     // bp.p.text(c.metrics.name + "", x, y, style.creatureNameBg);
     bp.p.text(c.metrics.name, x + HCELL + 0.5, y - 1.5, style.creatureNameBg)
     bp.p.text(c.metrics.name, x + HCELL, y - 2, style.creatureName)
+  }
+
+
+  drawLifeLine(bp: CanvasContext, camera: Camera) {
+    const s = this.creature.metrics.life / 100;
+    const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
+
+    const x = camera.toX2(this.creature.orientation);
+    const y = camera.toY2(this.creature.orientation);
+
+    bp.ellipse(x + HCELL, y + HCELL + QCELL, HCELL, HCELL - QCELL, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
+    // p.text(c.metrics.life + "", HCELL, CELL + 2, style.lifeText);
   }
 
 
@@ -119,6 +134,6 @@ export class DrawableCreature implements TileDrawable {
     if (this.damaged) return
 
     this.damaged = true;
-    this.animators.set("damaged", new Delay(300), () => this.damaged = false);
+    this.animators.set("damaged", new Delay(200), () => this.damaged = false);
   }
 }

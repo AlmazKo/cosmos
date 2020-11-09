@@ -119,6 +119,10 @@ public final class Creature implements Orientable {
     @Override public Direction sight() {
         return sight;
     }
+
+
+
+
 }
 /*) : GameObject, VectorObject {
 

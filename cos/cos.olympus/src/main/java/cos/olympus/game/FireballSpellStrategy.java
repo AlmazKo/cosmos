@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public class FireballSpellStrategy implements SpellStrategy {
 
-    private final static Logger logger = new Logger(Movements.class);
+    private final static Logger logger = new Logger(FireballSpellStrategy.class);
 
     private static int SPELL_IDS = 0;//todo move from here
 
@@ -47,7 +47,9 @@ public class FireballSpellStrategy implements SpellStrategy {
 
         var victim = world.getCreature(x, y);
         if (victim != null && spell.source().id != victim.id) {
-            var d = new Damage(0, tick, victim, spell, 10);
+            logger.info("Damaged : " + victim.id);
+            boolean crit = Util.rand(0,10) == 1;
+            var d = new Damage(0, tick, victim, spell, crit?100:30);
             damages.add(d);
             finished = true;
         }

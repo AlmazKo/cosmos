@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class NpcStrategy {
 
-    private final static Logger    logger          = new Logger(Movements.class);
+    private final static Logger    logger          = new Logger(NpcStrategy.class);
     private final        Creature  npc;
     private final        World     world;
     private final        Movements movements;
@@ -24,7 +24,7 @@ public class NpcStrategy {
 
     void onTick(int tick, Collection<OutOp> consumer) {
         if (tick > nextPlannedTick) {
-            var dir = Direction.values()[rand(0, 4)];
+            var dir = Direction.values()[Util.rand(0, 4)];
             int x = Util.nextX(npc, dir);
             int y = Util.nextY(npc, dir);
 
@@ -33,14 +33,12 @@ public class NpcStrategy {
                 movements.start(npc, mv);
                 movements.stop(npc);
             } else {
-                logger.info("Can not move to " + dir + " #" + npc.id);
+//                logger.info("Can not move to " + dir + " #" + npc.id);
+//                logger.info("Cannot move to " + dir + " #" + npc.id
+//                        + ", x=" + x + ", y=" + y + ", free=" + world.isFree(x, y) + ", smth stand=" + world.hasCreature(x, y));
             }
-            nextPlannedTick = tick + rand(10, 20);
+            nextPlannedTick = tick + 1;//TODO rand(10, 20);
         }
-    }
-
-    public static int rand(int origin, int bound) {
-        return ThreadLocalRandom.current().nextInt(origin, bound);
     }
 
     public boolean isDead() {

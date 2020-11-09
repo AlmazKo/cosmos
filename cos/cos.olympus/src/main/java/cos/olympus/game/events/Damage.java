@@ -11,7 +11,7 @@ public record Damage(
 ) {
 
     public cos.ops.Damage toOp(int userId) {
-        return new cos.ops.Damage(id, tick, userId, victim.id(), spell.id(), amount);
+        return new cos.ops.Damage(id, tick, userId, victim.id(), amount, amount);
     }
 }
 

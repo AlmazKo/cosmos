@@ -2,6 +2,8 @@ package cos.olympus.game;
 
 import cos.ops.Direction;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Util {
 
 
@@ -35,4 +37,9 @@ public class Util {
         var oY = ort.y();
         return oX <= x + radius && x >= oX - radius && oY <= y + radius && oY >= y - radius;
     }
+
+    public static int rand(int origin, int bound) {
+        return ThreadLocalRandom.current().nextInt(origin, bound);
+    }
+
 }
