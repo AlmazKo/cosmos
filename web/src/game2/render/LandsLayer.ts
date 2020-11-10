@@ -97,8 +97,8 @@ export class LandsLayer implements Layer {
       //debug ctx.text(debugTile(land.type), x + CELL2 - 2, y, {style: 'black', font: '20px sans-serif', align: 'right'});
     }
     //comment corner
-    ctx.text(`${piece.x}; ${piece.y}`, 1, 1, {style: 'black', font: '20px sans-serif'});
-    ctx.text(`${piece.x}; ${piece.y}`, 0, 0, {style: 'white', font: '20px sans-serif'});
+    // todo debug ctx.text(`${piece.x}; ${piece.y}`, 1, 1, {style: 'black', font: '20px sans-serif'});
+    // todo debug ctx.text(`${piece.x}; ${piece.y}`, 0, 0, {style: 'white', font: '20px sans-serif'});
 
     for (let i = 0; i < 16; i++) {
       ctx.line(0, i * CELL2, PIECE_SIZE2, i * CELL2, {style: '#333333', dash: [2, 3], width: 2});

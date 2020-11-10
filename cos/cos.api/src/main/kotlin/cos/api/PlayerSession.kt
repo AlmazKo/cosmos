@@ -15,6 +15,7 @@ import cos.ops.Login
 import cos.ops.Move
 import cos.ops.ObjAppear
 import cos.ops.Op
+import cos.ops.OutOp
 import cos.ops.StopMove
 import cos.ops.Unknown
 import io.vertx.core.Vertx
@@ -118,6 +119,7 @@ class PlayerSession(
                 onStart()
 
                 socket!!.handler {
+                    var tickId = -1
                     val messages = JsonArray()
                     try {
                         val buf = it.byteBuf.nioBuffer();
@@ -125,6 +127,7 @@ class PlayerSession(
 
                         while (buf.hasRemaining()) {
                             val op = parse(buf)
+                            tickId = op.tick()
                             if (op.userId() == userId) {
                                 log.info("#$userId Got Server response $op")
                                 messages.add(JsonMapper.toJson(op))
@@ -137,7 +140,7 @@ class PlayerSession(
                     if (messages.isEmpty) return@handler
 
                     val clientRes = JsonObject()
-                        .put("tick", 1) //todo hardcode
+                        .put("tick", tickId) //todo hardcode
                         .put("time", System.currentTimeMillis() / 1000)
                         .put("messages", messages)
                     //                    log.info("Sending ... $clientRes")
@@ -170,7 +173,7 @@ class PlayerSession(
             return Buffer.buffer(bw);
         }
 
-        fun parse(b: ByteBuffer): AnyOp {
+        fun parse(b: ByteBuffer): OutOp {
             val code = b.get();
             val len = b.get();
             return when (code) {

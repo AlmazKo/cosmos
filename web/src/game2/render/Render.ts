@@ -172,7 +172,7 @@ export class Render {
     this.effects.draw2(time, this.tp, camera);
 
     this.drawCursorPosition();
-
+    this.drawConnectionStatus();
     this.panels.draw(time, this.tp.p)
     // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
     this.debug(o);
@@ -305,14 +305,18 @@ export class Render {
 
   private debug(o: Orientation) {
     const debugStyle = {style: 'white', font: '9px monospace'};
-    this.p!!.text(`coord: ${o.x};${o.y}`, 3, 3, debugStyle);
-    this.p!!.text(`shift: ${o.shift.toFixed(3)}`, 3, 13, debugStyle);
-    this.p!!.text(`sight: ${dirToString(o.sight)}`, 3, 23, debugStyle);
-    this.p!!.text(` move: ${dirToString(o.move)}`, 3, 33, debugStyle);
-    this.p!!.text(`  vel: ${o.speed}`, 3, 43, debugStyle);
-    this.p!!.text(' tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, 53, debugStyle);
-    this.p!!.text('curso: ' + this.cursor, 3, 63, debugStyle);
-    this.p!!.text('camer: ' + this.camera.absoluteX, 3, 73, debugStyle);
+    const p = this.p!!;
+    let y = 3;
+    p.text(`    coord: ${o.x};${o.y}`, 3, y, debugStyle);
+    p.text(`    shift: ${o.shift.toFixed(3)}`, 3, y += 10, debugStyle);
+    p.text(`    sight: ${dirToString(o.sight)}`, 3, y += 10, debugStyle);
+    p.text(`     move: ${dirToString(o.move)}`, 3, y += 10, debugStyle);
+    p.text(`      vel: ${o.speed}`, 3, y += 10, debugStyle);
+    p.text('     tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, y += 10, debugStyle);
+    p.text('   cursor: ' + this.cursor, 3, y += 10, debugStyle);
+    p.text('   camera: ' + this.camera.absoluteX, 3, y += 10, debugStyle);
+    p.text('creatures: ' + this.game.getProto().zoneCreatures.size, 3, y += 10, debugStyle);
+    p.text('  objects: ' + this.game.getProto().zoneObjects.size, 3, y += 10, debugStyle);
   }
 
   private drawFog(tp: TilePainter, camera: Camera) {
@@ -356,6 +360,30 @@ export class Render {
     // });
 
 
+  }
+
+  private drawConnectionStatus() {
+    const p = this.p!!;
+    const text = this.game.getConnectionStatus();
+    const width = p.measureWidth(text, style.connectionStatus)
+    const x = this.width - width - 10;
+    const y = this.height - 8;
+
+    let color;
+    switch (this.game.getConnectionStatus()) {
+      case 'connecting':
+        color = '#ff0';
+        break;
+      case 'connected':
+        color = '#0f0';
+        break;
+      case 'disconnected':
+        color = '#f00';
+        break;
+
+    }
+    p.fillCircle(x, y, 4, color)
+    p.text(text, x + 6, y, {...style.connectionStatus, style: color})
   }
 
   drawLifeLine() {

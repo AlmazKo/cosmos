@@ -18,7 +18,5 @@ public interface GMap {
 
     Creature createCreature(User usr);
 
-    void moveCreature(int fromX, int fromY, int toX, int toY);
-
     void moveCreature(Creature cr, int toX, int toY);
 }

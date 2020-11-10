@@ -228,6 +228,10 @@
          "type":"GRASS"
         }, 
         {
+         "id":138,
+         "type":"OBSTACLE"
+        }, 
+        {
          "id":139,
          "type":"GRASS"
         }, 
@@ -264,6 +268,14 @@
          "type":"GRASS"
         }, 
         {
+         "id":161,
+         "type":"OBSTACLE"
+        }, 
+        {
+         "id":162,
+         "type":"OBSTACLE"
+        }, 
+        {
          "id":164,
          "type":"GRASS"
         }, 
@@ -294,6 +306,10 @@
         {
          "id":171,
          "type":"GRASS"
+        }, 
+        {
+         "id":184,
+         "type":"OBSTACLE"
         }, 
         {
          "id":187,
@@ -342,6 +358,10 @@
         {
          "id":202,
          "type":"GATE"
+        }, 
+        {
+         "id":207,
+         "type":"OBSTACLE"
         }, 
         {
          "id":210,
@@ -393,19 +413,19 @@
         }, 
         {
          "id":226,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":227,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":228,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":229,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":234,
@@ -449,19 +469,19 @@
         }, 
         {
          "id":249,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":250,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":251,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":252,
-         "type":"WALL"
+         "type":"OBSTACLE"
         }, 
         {
          "id":258,

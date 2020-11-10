@@ -47,7 +47,7 @@ public class RespawnStrategy {
         if (live.isDead()) {
             live = null;
             isDead = true;
-            respawnTime = Util.rand(10, 60);
+            respawnTime = tick + 10000;//Util.rand(600, 3000);
             return;
         }
 

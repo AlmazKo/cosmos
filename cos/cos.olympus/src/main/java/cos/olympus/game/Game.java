@@ -44,7 +44,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(10);
+        settleMobs(209);
     }
 
     private void settleMobs(int amount) {
@@ -70,6 +70,7 @@ public final class Game {
             if (d.victim().isDead()) {
                 logger.info("Death " + d.victim().id);
                 deaths.add(d.victim().id);
+                movements.interrupt(d.victim());
             }
         });
         npcRespawns.forEach(it -> it.onTick(tick, outOps));

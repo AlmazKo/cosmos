@@ -9,7 +9,7 @@ import { Creature } from '../engine/Creature';
 import { Orientation } from '../engine/Orientation';
 import { Player } from '../engine/Player';
 import { Camera } from './Camera';
-import { CELL, HCELL, QCELL } from './constants';
+import { CELL, HCELL } from './constants';
 
 
 const map: px[] = [];
@@ -58,7 +58,7 @@ export class DrawableCreature implements TileDrawable {
     if (this.creature instanceof Player) {
       x = camera.absoluteX;
       y = camera.absoluteY;
-      let sy = map[o.sight]+2;
+      let sy = map[o.sight] + 2;
       let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
       // drawLifeLine(bp.toInDirect(x, y), this);
 
@@ -78,25 +78,36 @@ export class DrawableCreature implements TileDrawable {
         let sy = mapNpc[o.sight];
         let sx = Math.floor(Math.abs(o.shift) * 4) * 16;
 
-        let sw = 16, sh = 32;  //64-16=48/2=24/2=12
+        let sw = 16, sh = 32;
 
+        let asset;
         if (this.damaged) {
-          bp.drawTo("NPC_test_dmg", sx, sy, sw, sh, x + 16, y + 8, sw, sh);
+          asset = "NPC_test_dmg";
         } else {
-          bp.drawTo("NPC_test", sx, sy, sw, sh, x + 16, y + 8, sw, sh);
+          asset = "NPC_test";
         }
+
+        //64-16=48/2=24
+        //64-32=32/2=16
+        bp.drawTo(asset, sx, sy, sw, sh, x + 16, y + 8, sw, sh);
       }
-      // drawLifeLine(bp.toInDirect(x, y), this);
     }
 
+    // this.drawName(bp, x, y);
+  }
+
+
+  private drawName(bp: TilePainter, x: number, y: number) {
     const c = this.creature;
     // bp.p.text(c.metrics.name + "", x, y, style.creatureNameBg);
     bp.p.text(c.metrics.name, x + HCELL + 0.5, y - 1.5, style.creatureNameBg)
     bp.p.text(c.metrics.name, x + HCELL, y - 2, style.creatureName)
   }
 
-
   drawLifeLine(bp: CanvasContext, camera: Camera) {
+    if (this.creature.metrics.life >= 100) {
+      return;
+    }
     const s = this.creature.metrics.life / 100;
     const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
 
@@ -104,8 +115,8 @@ export class DrawableCreature implements TileDrawable {
     const y = camera.toY2(this.creature.orientation);
 
 
-    bp.ellipse(x + HCELL, y + HCELL + QCELL, HCELL - 2, HCELL - QCELL - 2, 0, 0.5 * Math.PI, 0.5 * Math.PI + 2 * Math.PI * s, false, st);
-    // p.text(c.metrics.life + "", HCELL, CELL + 2, style.lifeText);
+    bp.fillRect(x + 4, y, CELL - 8, 3, '#00000066')
+    bp.fillRect(x + 4, y, (CELL - 8) * s, 3, st.style)
   }
 
 

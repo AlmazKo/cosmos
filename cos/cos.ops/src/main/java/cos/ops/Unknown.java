@@ -6,7 +6,7 @@ public record Unknown(
         @Override byte code,
         @Override int id,
         @Override int userId
-) implements AnyOp {
+) implements OutOp {
 
     public Unknown(int id, int userId) {
         this(Op.LOGIN, id, userId);
@@ -20,5 +20,9 @@ public record Unknown(
     public void write(ByteBuffer buf) {
         buf.putInt(id);
         buf.putInt(userId);
+    }
+
+    @Override public int tick() {
+        return -1;
     }
 }

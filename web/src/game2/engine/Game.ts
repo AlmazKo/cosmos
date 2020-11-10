@@ -6,6 +6,7 @@ import { Metrics } from '../../game/Metrics';
 import { Trait, TraitFireball } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
+import { ConnStatus } from '../server/WsServer';
 import { World } from '../world/World';
 import { Act } from './Act';
 import { ActivateTrait } from './actions/ActivateTrait';
@@ -45,8 +46,11 @@ export class Game implements MovingListener {
     mvg.listen(this)
   }
 
+  getConnectionStatus(): ConnStatus {
+    return this.api.status;
+  }
 
-  getProto(): Player | undefined {
+  getProto(): Player  {
     return this.proto;
   }
 

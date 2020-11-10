@@ -76,17 +76,6 @@ final class Movements implements TickAware {
     private boolean onTick(Mv mv) {
         var cr = mv.cr;
         var newOffset = cr.offset + cr.speed;
-
-//        if (mv.rollBack) {
-//            if (newOffset > 0) {
-//                cr.offset = newOffset;
-//                return false;
-//            } else {
-//                cr.stop();
-//                return true;
-//            }
-//        }
-
         if (newOffset < METER) {
             cr.offset = newOffset;
             return false;
@@ -96,7 +85,6 @@ final class Movements implements TickAware {
         int y = nextY(cr);
 
         if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
-//            mv.rollBack = true;
             cr.offset = 0;
             logger.info("Reset " + cr);
             return false;

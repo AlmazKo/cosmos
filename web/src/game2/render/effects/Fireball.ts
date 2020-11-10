@@ -113,7 +113,7 @@ export class Fireball implements Effect {
 
 
     // bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, shiftX, shiftY);
-    bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, 32, 32);
+    bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, CELL, CELL);
   }
 
   stop(): void {

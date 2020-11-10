@@ -81,7 +81,7 @@ public final class GameServer {
 
             var sess = userSessions.get(op.userId());
             if (sess == null) {
-                logger.info("Not exists connection for op: " + op);
+//                logger.info("Not exists connection for op: " + op);
             } else {
                 if (op.code() == Op.DISCONNECT) {
                     sess.close = true;

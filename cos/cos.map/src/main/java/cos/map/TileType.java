@@ -1,6 +1,7 @@
 package cos.map;
 
 public enum TileType {
+    ITEM(-1),
     NOTHING(0),
     GRASS(1),
     SAND(2),
@@ -12,6 +13,7 @@ public enum TileType {
     ROAD(8),
     GATE(9),
     WALL(10),
+    OBSTACLE(11)
     ;
 
     private final byte id;

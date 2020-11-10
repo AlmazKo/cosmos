@@ -100,5 +100,13 @@ export const style = {
     align: "left",
     style: "#000",
     font : "12px sans-serif"
-  } as Partial<FontStyle>
+  } as Partial<FontStyle>,
+
+
+  connectionStatus    : {
+    align   : "left",
+    baseline: "middle",
+    style   : "white",
+    font    : "12px Roboto"
+  } as Partial<FontStyle>,
 };

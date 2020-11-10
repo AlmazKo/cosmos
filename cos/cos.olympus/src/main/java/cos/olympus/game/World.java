@@ -50,32 +50,6 @@ public final class World implements TileMap, GMap {
         debug();
     }
 
-//
-//    private void iterate() {
-//
-//        int x = 0;
-//        int y = 0;
-//        int idx = 0;
-//        for (int i = 0; i < creatures.length; i++) {
-//            int c = creatures[i];
-//            if (c == 0) continue;
-//
-//            int speed = c << 4;
-//            if (speed == 0) continue;
-//
-//            int dir = c << 1;
-//            int offset = c << 2;
-//            int newOffset = (offset + speed) % 16;
-//            if (newOffset == 1) {
-//                if (creatures[idx + 1] == 0) {
-//                    creatures[idx + 1] = c;
-//                }
-//                //try move
-//            }
-//        }
-//    }
-
-
     public void debug() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < basis.length; i++) {
@@ -130,34 +104,6 @@ public final class World implements TileMap, GMap {
         System.out.println(sb.toString());
     }
 
-//    public Player addPlayer(int id) {
-//
-//        int idx = findFreeIndex(-18, 0, 3);
-//        if (idx == -1) throw new RuntimeException("Not found the place for player");
-//
-//        Coord coord = toCoord(idx);
-//        Player player = new Player(id, new CreatureState(50, coord.getX(), coord.getY(), Direction.SOUTH));
-//
-//        creatures[idx] = id;
-//        players.put(id, player);
-//        return player;
-//    }
-//
-//    public void removePlayer(int id) {
-//        Player removed = players.remove(id);
-//
-//        if (removed != null) {
-//            int idx = toIndex(removed.getX(), removed.getY());
-//            int inMap = creatures[idx];
-//            if (inMap != id) {
-//                throw new RuntimeException("Wrong place player=" + id);
-//            } else {
-//                creatures[idx] = 0;
-//            }
-//
-//        }
-//    }
-
     @Nullable @Override public TileType get(int x, int y) {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
@@ -172,18 +118,13 @@ public final class World implements TileMap, GMap {
 
         var objTileId = objects[idx];
         if (objTileId == 0) return null;
+
         var t = tiles[objTileId];
-        if (t == null) return null;
+        if (t == null) return new Obj(idx, new Tile(objTileId, TileType.ITEM), x, y);
+        ;
 
         return new Obj(idx, t, x, y);//todo id is hardcoded
     }
-//
-//    @Nullable public Tile getObject(int x, int y) {
-//        int idx = toIndex(x, y);
-//        if (idx < 0 || idx >= basis.length) return null;
-//
-//        return tiles[objects[idx]];
-//    }
 
     public @Nullable Creature getCreature(int uid) {
         return creatureObjects.get(uid);
@@ -320,28 +261,23 @@ public final class World implements TileMap, GMap {
     }
 
     public @Override void moveCreature(Creature cr, int toX, int toY) {
-        moveCreature(cr.x, cr.y, toX, toY);
-        cr.x = toX;
-        cr.y = toY;
-    }
-
-    public @Override void moveCreature(int fromX, int fromY, int toX, int toY) {
-        //        if (!isValid(x, y)) return false;
-        //todo add validation
-
-        int from = toIndex(fromX, fromY);
+        int from = toIndex(cr.x, cr.y);
         int to = toIndex(toX, toY);
         int creatureId = creatures[from];
+
+        if (creatureId == 0) {
+            logger.warn("Try moving from free place " + toX + ", " + toY);
+        }
         if (creatures[to] != 0) {
             logger.warn("Try moving into occupied place " + toX + ", " + toY);
         }
-        creatures[to] = creatureId;
-        logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
 
-        if (creatures[from] == 0) {
-            logger.warn("Try moving from free place " + toX + ", " + toY);
-        }
         creatures[from] = 0;
+        creatures[to] = creatureId;
+        cr.x = toX;
+        cr.y = toY;
+
+        logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
     }
 
     public @Nullable Coord findFreePlace(int x, int y, int maxDev) {
@@ -435,21 +371,7 @@ public final class World implements TileMap, GMap {
         return debugCreatures();
     }
 
-    public void cleanDeadCreatures() {
-//        npcs.values().removeIf(n -> {
-//            if (n.isDead()) {
-//
-//                this.creatures[toIndex(n.getX(), n.getY())] = 0;
-//                return true;
-//            }
-//
-//            return false;
-//        });
-    }
-
     public Collection<Creature> getAllCreatures() {
         return creatureObjects.values();
     }
-
-
 }

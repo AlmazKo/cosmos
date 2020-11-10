@@ -159,7 +159,7 @@ export class CanvasContext {
     return h;
   }
 
-  measureWidth(text: string, style: FontStyle): px {
+  measureWidth(text: string, style: Partial<FontStyle>): px {
     this.fontAcceptor.set(style);
     return this.ctx.measureText(text).width;
   }
