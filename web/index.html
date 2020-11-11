@@ -21,8 +21,22 @@
     canvas, img {
         image-rendering: pixelated;
     }
+
+    #minimap {
+        top: 5px;
+        right: 5px;
+        height: 200px;
+        width: 200px;
+        position: fixed;
+        z-index: 1000;
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 5px #000;
+        border: 2px solid white;
+        border-radius: 2px;
+    }
 </style>
 <body>
 <div id="game"></div>
+<div id="minimap"></div>
 </body>
 </html>

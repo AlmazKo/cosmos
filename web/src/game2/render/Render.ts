@@ -32,7 +32,7 @@ export class Render {
   private p: CanvasContext | undefined;
   private animators = new Animators();
 
-  private readonly camera: Camera;
+  readonly camera: Camera;
   private player: DrawableCreature | undefined;
   private phantoms = new Map<uint, DrawableCreature>();
   // @ts-ignore
@@ -43,7 +43,7 @@ export class Render {
   private cursor: [px, px] | undefined;
 
   constructor(
-    private readonly game: Game,
+    readonly game: Game,
     private readonly lands: LandsLayer,
     private readonly images: Images
   ) {

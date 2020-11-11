@@ -44,7 +44,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(209);
+        settleMobs(20);
     }
 
     private void settleMobs(int amount) {

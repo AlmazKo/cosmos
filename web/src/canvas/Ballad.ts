@@ -2,7 +2,7 @@ import { CanvasComposer, Clickable, CursorChange, Draggable, Pressable, Support,
 
 class FpsMeter {
   times = 0;
-  prev  = 0;
+  prev = 0;
   value = 0;
 
   update(now: number) {
@@ -10,14 +10,14 @@ class FpsMeter {
     if ((now - this.prev) > 1000) {
       this.value = this.times;
       this.times = 0;
-      this.prev  = now;
+      this.prev = now;
     }
   }
 }
 
 export const STOP_RENDER = "STOP_RENDER";
 
-let DEV       = true;//process.env.NODE_ENV === 'development';
+let DEV = false;//process.env.NODE_ENV === 'development';
 let INC: uint = 0;
 
 export class Ballad {
@@ -27,8 +27,8 @@ export class Ballad {
   private readonly ctx: CanvasRenderingContext2D;
   private readonly maxFps: number;
 
-  private stopped   = false;
-  private paused    = false;
+  private stopped = false;
+  private paused = false;
   private destroyed = false;
 
   private cursorPosition: [px, px] | null = null;
@@ -51,28 +51,28 @@ export class Ballad {
 
   constructor(container: HTMLElement, size: [px, px] | null = null, maxFps: number = 120) {
 
-    this.id        = ++INC;
-    this.maxFps    = maxFps;
+    this.id = ++INC;
+    this.maxFps = maxFps;
     this.container = container;
     if (size) {
       this.watchParent = false;
-      this.width       = size[0];
-      this.height      = size[1];
+      this.width = size[0];
+      this.height = size[1];
     } else {
       const posStyle = window.getComputedStyle(container).getPropertyValue('position');
       if (posStyle !== 'absolute') {
         this.error('Parent container must have an absolute position, the fixed length will be used');
         this.watchParent = false;
-        this.width       = 200;
-        this.height      = 200;
+        this.width = 200;
+        this.height = 200;
       } else {
         this.watchParent = true;
-        this.width       = container.clientWidth;
-        this.height      = container.clientHeight;
+        this.width = container.clientWidth;
+        this.height = container.clientHeight;
       }
     }
 
-    this.ratio  = window.devicePixelRatio ? Math.max(window.devicePixelRatio, 1) : 1;
+    this.ratio = window.devicePixelRatio ? Math.max(window.devicePixelRatio, 1) : 1;
     this.canvas = this.createCanvasElement();
     container.appendChild(this.canvas);
     const context = <CanvasRenderingContext2D>this.canvas.getContext('2d', {alpha: true});
@@ -92,9 +92,9 @@ export class Ballad {
     this.log('Start');
     let frameId = 0;
 
-    const fps     = new FpsMeter();
+    const fps = new FpsMeter();
     const minStep = 1000 / this.maxFps;
-    let prev      = 0;
+    let prev = 0;
 
     composer.init(this.ctx, this.width, this.height);
 
@@ -129,7 +129,7 @@ export class Ballad {
         this.tryCallEndFrame(now, e);
       }
 
-      this.debugInfo(fps);
+      if (DEV) this.debugInfo(fps);
       window.requestAnimationFrame(callback);
     };
 
@@ -137,12 +137,12 @@ export class Ballad {
   }
 
   private debugInfo(fps: FpsMeter) {
-    this.ctx.font         = 'bold 16px sans-serif';
-    this.ctx.fillStyle    = '#0f0';
-    this.ctx.textAlign    = 'right';
+    this.ctx.font = 'bold 16px sans-serif';
+    this.ctx.fillStyle = '#0f0';
+    this.ctx.textAlign = 'right';
     this.ctx.textBaseline = 'top';
-    this.ctx.strokeStyle  = '#000';
-    this.ctx.lineWidth    = 1;
+    this.ctx.strokeStyle = '#000';
+    this.ctx.lineWidth = 1;
     this.ctx.setLineDash([]);
     this.ctx.strokeText(fps.value + '', this.width - 2, 0);
     this.ctx.fillText(fps.value + '', this.width - 2, 0);
@@ -198,14 +198,14 @@ export class Ballad {
 
   destroy() {
     if (this.destroyed) return;
-    this.stopped   = false;
+    this.stopped = false;
     this.destroyed = true;
     this.composer.destroy();
     if (this.canvas.parentNode) {
       this.container.removeChild(this.canvas);
     }
     (this.container as any) = null;
-    (this.canvas as any)    = null;
+    (this.canvas as any) = null;
 
     this.log('Destroyed.');
   }
@@ -224,19 +224,19 @@ export class Ballad {
    * @return {HTMLCanvasElement}
    */
   private createCanvasElement(): HTMLCanvasElement {
-    const canvas            = document.createElement('canvas');
-    canvas.style.width      = this.width + 'px';
-    canvas.style.height     = this.height + 'px';
-    canvas.style.outline    = 'none';
+    const canvas = document.createElement('canvas');
+    canvas.style.width = this.width + 'px';
+    canvas.style.height = this.height + 'px';
+    canvas.style.outline = 'none';
     canvas.style.userSelect = 'none';
     return canvas;
   }
 
   private updateCanvasSize() {
-    this.canvas.style.width  = this.width + 'px';
+    this.canvas.style.width = this.width + 'px';
     this.canvas.style.height = this.height + 'px';
 
-    this.canvas.width  = this.width * this.ratio;
+    this.canvas.width = this.width * this.ratio;
     this.canvas.height = this.height * this.ratio;
     this.ctx.scale(this.ratio, this.ratio);
 
@@ -333,7 +333,7 @@ export class Ballad {
     const initPos = this._getPosition(e);
 
     const move = (e: MouseEvent) => {
-      const pos    = this._getPosition(e);
+      const pos = this._getPosition(e);
       const shiftX = pos[0] - initPos[0];
       this.draggable!.drag(shiftX, 0);
       e.preventDefault();  //for preventing selection
@@ -341,7 +341,7 @@ export class Ballad {
 
     document.addEventListener('mousemove', move);
     this.canvas.style.cursor = 'ew-resize';
-    let isMoving: boolean    = true;
+    let isMoving: boolean = true;
 
     document.addEventListener('mouseup', (e: MouseEvent) => {
       if (!isMoving || !this.composer) return;
@@ -349,9 +349,9 @@ export class Ballad {
       isMoving = false;
 
       this.canvas.style.cursor = 'pointer';
-      const endPos             = this._getPosition(e);
-      const shiftX             = endPos[0] - initPos[0];
-      const shiftY             = endPos[1] - initPos[1];
+      const endPos = this._getPosition(e);
+      const shiftX = endPos[0] - initPos[0];
+      const shiftY = endPos[1] - initPos[1];
       if (shiftX !== 0) this.draggable!.drop(shiftX, 0);
       //this.debug(`Drag&Drop: ${initPos[0]}x${initPos[1]} → ${endPos[0]}x${endPos[1]}, shift: [x:${shiftX}, y: ${shiftY}]`);
     });
@@ -382,7 +382,7 @@ export class Ballad {
     const [newWidth, newHeight] = this.getActualSize();
     if (this.width === newWidth && this.height === newHeight) return;
 
-    this.width  = newWidth;
+    this.width = newWidth;
     this.height = newHeight;
     this.updateCanvasSize();
     if (!this.composer || !this.composer.changeSize) return;
@@ -394,10 +394,10 @@ export class Ballad {
     let newWidth,
         newHeight;
     if (this.watchParent) {
-      newWidth  = this.container.clientWidth;
+      newWidth = this.container.clientWidth;
       newHeight = this.container.clientHeight;
     } else {
-      newWidth  = this.container.clientWidth;
+      newWidth = this.container.clientWidth;
       newHeight = this.container.clientHeight;
     }
     return [newWidth, newHeight];
@@ -413,7 +413,7 @@ export class Ballad {
   }
 
   private resetScaling() {
-    this.canvas.width  = this.width;
+    this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
