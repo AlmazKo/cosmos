@@ -31,7 +31,7 @@ export class Game implements MovingListener {
   // @ts-ignore
   private proto: Player;
   public protoReal?: Orientation;
-  private creatures = new Map<uint, Creature>();
+  // private creatures = new Map<uint, Creature>();
   private actions: Act[] = NO_ACTIONS;
   // @ts-ignore
   private movements: Movements;
@@ -50,7 +50,7 @@ export class Game implements MovingListener {
     return this.api.status;
   }
 
-  getProto(): Player  {
+  getProto(): Player | undefined {
     return this.proto;
   }
 
@@ -83,24 +83,24 @@ export class Game implements MovingListener {
 
     pkg.messages.forEach(msg => {
 
-      let e;
-      console.log(msg.action, msg.data);
+      let e = {...msg.data, tickId: pkg.tick};
+      console.log(msg.action, e);
       switch (msg.action) {
         case 'appear_obj':
-          e = msg.data as ObjAppear;
+          e as ObjAppear;
           proto.zoneObjects.set(e.id, e)
           break;
         case 'creature_hid':
-          e = msg.data as CreatureHid;
+          e as CreatureHid;
           this.movements.interrupt(e.creatureId)
           proto.zoneCreatures.delete(e.creatureId);
           break
 
         case 'damage':
-          this.onDamage(msg.data as Damage);
+          this.onDamage(e as Damage);
           break;
         case 'death':
-          e = msg.data as Death;
+          e as Death;
           proto.zoneCreatures.delete(e.victimId);
           //todo add effect
 
@@ -111,7 +111,7 @@ export class Game implements MovingListener {
           break;
 
         case 'fireball_moved':
-          e = msg.data as FireballMoved;
+          e as FireballMoved;
           if (e.finished) {
             proto.zoneSpells.delete(e.spellId);
           } else {
@@ -124,33 +124,51 @@ export class Game implements MovingListener {
           }
           break
         case 'creature_moved':
-          e = msg.data as CreatureMoved;
+          e as CreatureMoved;
+
+
+          let cr: Creature | undefined;
           if (e.creatureId == proto.id) {
-            this.protoReal = new Orientation(e.mv, e.sight, e.speed, 0.0, e.x, e.y);//shift hardcoded
-            return;
+            cr = this.proto;
+            this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset/100, e.x, e.y);//shift hardcoded
+
+
+            const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
+            if(stop) {
+              this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
+            }
+          } else {
+            cr = proto.zoneCreatures.get(e.creatureId);
+            if (!cr) {
+              const crr: ApiCreature = {
+                id          : e.creatureId,
+                isPlayer    : true,
+                x           : e.x,
+                y           : e.y,
+                sight       : e.sight,
+                direction   : e.mv,
+                metrics     : new Metrics(100, 100, "#" + e.creatureId),
+                viewDistance: 10
+              };
+              cr = this.addCreature(crr);
+              proto.zoneCreatures.set(e.creatureId, cr);
+            }
+          const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
           }
 
 
-          const exist = proto.zoneCreatures.get(e.creatureId);
-          if (exist) {
-            this.movements.on(exist, e.x, e.y, e.speed, e.mv, e.sight)
-            return;
-          }
 
-          const crr: ApiCreature = {
-            id          : e.creatureId,
-            isPlayer    : true,
-            x           : e.x,
-            y           : e.y,
-            sight       : e.sight,
-            direction   : e.mv,
-            metrics     : new Metrics(100, 100, "#" + e.creatureId),
-            viewDistance: 10
-          };
+          // cr = proto.zoneCreatures.get(e.creatureId);
+          // if (cr) {
+          //
+          // } else {
+          //
+          //   proto.zoneCreatures.set(e.creatureId, this.proto);
+          // }
 
-          const cr = this.addCreature(crr);
-          proto.zoneCreatures.set(e.creatureId, cr);
-          this.movements.on(cr, e.x, e.y, e.speed, e.mv, e.sight)
+
+          // proto.zoneCreatures.set(e.creatureId, cr);
+          // this.movements.on(cr, e.x, e.y, e.speed, e.mv, e.sight)
 
           // this.movements.onMovingChanged(cr, StatusMoving.START, e.mv, e.sight)
 
@@ -209,7 +227,7 @@ export class Game implements MovingListener {
     const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
     const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
     const c = new Player(ac.id, m, o);
-    this.creatures.set(c.id, c);
+    // this.creatures.set(c.id, c);
     return c;
   }
 
@@ -217,7 +235,7 @@ export class Game implements MovingListener {
     const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
     const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
     const c = new CreatureObject(ac.id, m, o);
-    this.creatures.set(c.id, c);
+    // this.creatures.set(c.id, c);
     return c;
   }
 

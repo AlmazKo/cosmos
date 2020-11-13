@@ -4,9 +4,10 @@ import { World } from '../world/World';
 import { Creature } from './Creature';
 import { StatusMoving } from './Moving2';
 import { Orientation } from './Orientation';
+import { Util } from './Util';
 
-const GRASS_SPEED: speed = 400;
-const WATER_SPEED: speed = 100;
+const GRASS_SPEED: speed = 40;
+const WATER_SPEED: speed = 10;
 
 interface Move {
   mv: Dir,
@@ -29,15 +30,18 @@ export class Movements {
 
   onFrame(time: DOMHighResTimeStamp) {
     this.data.forEach((m) => {
-
       if (!m.start) m.start = time;
 
       const o = m.cr.orientation;
-      const sec = (time - m.start) / 1000;
-      const shift = sec * o.speed / 100;
+      const newTicks = (time - m.start) / 100;
+      const newOffset = Math.round(o.offset + newTicks * o.speed);
 
-      if (shift < 1) {
-        o.shift = shift;
+      m.start = time;
+
+      if (newOffset < 100) {
+        o.offset = newOffset;
+        o.shift = newOffset / 100;
+        console.debug('C', o.offset)
         return;
       }
 
@@ -53,6 +57,10 @@ export class Movements {
       }
 
       const nextDir = m.next ? m.next.mv : o.move;
+
+      const nextX = Util.nextX(o);
+      const nextY = Util.nextY(o);
+
 
       if (!this.world.canStep(o.x, o.y, nextDir)) {
         console.warn(`#${m.cr.id} Step is blocked: ${o}`, o.move);
@@ -71,9 +79,11 @@ export class Movements {
       }
 
 
-      m.start = time; //todo check overlaps
+      // m.start = time; //todo check overlaps
+      o.offset -= 100;
+      console.debug('C', o.offset)
       o.shift -= 1;
-      o.speed = Movements.getSpeed(newTile, o.move, o.sight);
+      //  o.speed = Movements.getSpeed(newTile, o.move, o.sight);
     });
   }
 
@@ -102,8 +112,13 @@ export class Movements {
     this.data.delete(creatureId);
   }
 
-  on(cr: Creature, x: pos, y: pos, speed: speed, move: Dir | null, sight: Dir) {
+  on(cr: Creature, x: pos, y: pos, speed: speed, offset: uint, move: Dir | null, sight: Dir): boolean {
     const o = cr.orientation;
+
+
+    console.debug('current', JSON.stringify(cr.orientation))
+    console.debug('    new', JSON.stringify(new Orientation(move, sight, speed, offset, x, y)))
+
     if (speed == 0) {
       o.stop();
       o.sight = sight;
@@ -112,14 +127,40 @@ export class Movements {
       this.world.moveCreature(cr, x, y);
 
     } else {
-      this.data.delete(cr.id);
-      o.x = x;
-      o.y = y;
-      o.sight = sight;
-      o.speed = speed * 10;//fixme, it depends on server
-      o.move = move;
-      this.data.set(cr.id, {cr, start: 0});//fixme date
+
+      const mv = this.data.get(cr.id);
+
+      if (mv && o.x === x && o.y === y) {
+        o.x = x;
+        o.y = y;
+        o.shift = offset / 100;
+        o.offset = offset;
+        console.log('S', o.offset)
+        o.sight = sight;
+        o.speed = speed;//fixme, it depends on server
+        o.move = move;
+        // this.data.set(cr.id, {cr, start: 0});//fixme date
+
+        //patch
+      } else {
+        this.data.delete(cr.id);
+        o.x = x;
+        o.y = y;
+        o.sight = sight;
+        o.offset = offset;
+        o.shift = offset / 100;
+        o.speed = speed;//fixme, it depends on server
+        o.move = move;
+        console.debug('SS', o.offset);
+
+        if (!this.world.canStep(o.x, o.y, o.move)) {
+          console.warn(`Step is blocked: ${o}`, o.move);
+          return true;
+        }
+        this.data.set(cr.id, {cr, start: 0});//fixme date
+      }
     }
+    return false;
   }
 
   onMovingChanged(cr: Creature, status: StatusMoving, dir: Dir, sight: Dir): boolean {
@@ -141,7 +182,7 @@ export class Movements {
       }
       if (status !== StatusMoving.STOP) {
         o.move = dir;
-        o.speed = Movements.getSpeed(tile, dir, sight);
+        o.speed = 40;
         // console.log("MOVING START", {status, dir, sight})
         this.data.set(cr.id, {cr, start: 0})
       }

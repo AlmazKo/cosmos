@@ -51,7 +51,7 @@ export const style = {
     align   : "center",
     baseline: "top",
     style   : "black",
-    font    : "12px Roboto"
+    font    : "11px Roboto"
   } as Partial<FontStyle>,
 
   creatureNameBg: {

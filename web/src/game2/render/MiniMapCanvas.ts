@@ -49,8 +49,11 @@ export class MiniMapCanvas implements CanvasComposer {
   }
 
   private draw(time: DOMHighResTimeStamp) {
+    const proto = this.render.game.getProto()
+    if (!proto) return;
+
     const p = this.p;
-    const pixel = 4;
+    const pixel = 3;
     const loadRadius = Math.min(32, this.width / (pixel * 2));
     const cameraX = this.render.camera.target.x;
     const cameraY = this.render.camera.target.y;
@@ -68,14 +71,14 @@ export class MiniMapCanvas implements CanvasComposer {
         p.fillRect((x - lx) * pixel, (y - ty) * pixel, pixel, pixel, color)
       }
 
-      this.render.game.getProto().zoneCreatures.forEach((cr) => {
+      proto.zoneCreatures.forEach((cr) => {
         p.fillRect((cr.orientation.x - lx) * pixel, (cr.orientation.y - ty) * pixel, pixel, pixel, 'red')
       })
 
       if (time % 1000 < 500) {
         const centerX = cameraX - lx;
         const centerY = cameraY - ty;
-        p.fillRect(centerX * pixel, centerY * pixel, pixel, pixel, 'yellow')
+        p.fillRect(centerX * pixel, centerY * pixel, pixel, pixel, '#80ff80')
         p.rect(centerX * pixel, centerY * pixel, pixel, pixel, 'black', true)
       }
     });

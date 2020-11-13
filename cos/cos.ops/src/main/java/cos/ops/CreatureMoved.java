@@ -10,17 +10,19 @@ public record CreatureMoved(
         int creatureId,
         int x,
         int y,
+        int offset,
         int speed,
         Direction mv,
         Direction sight
 ) implements OutOp {
 
-    public CreatureMoved(int id, int tick, int userId, int creatureId, int x, int y,int speed, Direction dir, Direction sight) {
-        this(Op.CREATURE_MOVED, id, tick, userId, creatureId, x, y,speed, dir, sight);
+    public CreatureMoved(int id, int tick, int userId, int creatureId, int x, int y, int offset, int speed, Direction dir, Direction sight) {
+        this(Op.CREATURE_MOVED, id, tick, userId, creatureId, x, offset, y, speed, dir, sight);
     }
 
     public static CreatureMoved read(ByteBuffer b) {
         return new CreatureMoved(
+                b.getInt(),
                 b.getInt(),
                 b.getInt(),
                 b.getInt(),
@@ -39,6 +41,7 @@ public record CreatureMoved(
         buf.putInt(creatureId);
         buf.putInt(x);
         buf.putInt(y);
+        buf.putInt(offset);
         buf.putInt(speed);
         if (mv == null) {
             buf.put((byte) -1);

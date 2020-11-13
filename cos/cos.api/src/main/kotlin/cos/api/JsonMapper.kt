@@ -64,6 +64,7 @@ object JsonMapper {
                 .put("creatureId", op.creatureId())
                 .put("x", op.x())
                 .put("y", op.y())
+                .put("offset", op.offset())
                 .put("speed", op.speed())
                 .put("mv", op.mv())
                 .put("sight", op.sight())

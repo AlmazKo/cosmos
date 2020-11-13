@@ -45,9 +45,8 @@ public final class World implements TileMap, GMap {
         this.basis = lands.getBasis();
         this.objects = lands.getObjects();
         this.creatures = new int[basis.length];
-//        this.movements = new int[basis.length];
         this.tiles = lands.getTiles();
-        debug();
+//        debug();
     }
 
     public void debug() {

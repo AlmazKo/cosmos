@@ -12,8 +12,6 @@ public class MapParser {
     private final static int chunkSize = 16;
 
     public static Lands parse(JsObject rawMap, JsObject rawTiles) {
-
-
         var layers = rawMap.getArray("layers");
         var spec = calcSpec(layers);
         var map = readChunks(layers.getObject(0).getArray("chunks"), spec);

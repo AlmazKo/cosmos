@@ -44,7 +44,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(20);
+        settleMobs(10);
     }
 
     private void settleMobs(int amount) {
@@ -113,7 +113,7 @@ public final class Game {
     }
 
     private void handleIncomeOp(AnyOp op) {
-        logger.info(op.toString());
+        logger.info(">> #" + tick + " " + op.toString());
         try {
             switch (op.code()) {
                 case Op.LOGIN -> onLogin((Login) op);
@@ -133,10 +133,10 @@ public final class Game {
         if (usr == null) {
             usr = new User(op.userId(), "user:" + op.userId());
             var creature = world.createCreature(usr);
-            logger.info("Placed " + creature);
+            logger.info("#" + tick + " " + "Placed " + creature);
             outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight));
         } else {
-            logger.warn("User already logged in " + usr);
+            logger.warn("#" + tick + " " + "User already logged in " + usr);
         }
     }
 

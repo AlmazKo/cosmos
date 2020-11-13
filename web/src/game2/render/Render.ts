@@ -5,14 +5,13 @@ import { Effects } from '../../game/Effects';
 import { Panels } from '../../game/layers/Panels';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
-import { dirToString, stringTiles } from '../constants';
+import { Dir, dirToString, stringTiles } from '../constants';
 import { ActivateTrait } from '../engine/actions/ActivateTrait';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
 import { SDamage } from '../engine/actions/SDamage';
 import { Spell } from '../engine/actions/Spell';
 import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
-import { Orientation } from '../engine/Orientation';
 import { Player } from '../engine/Player';
 import { Images } from '../Images';
 import { Camera } from './Camera';
@@ -58,6 +57,8 @@ export class Render {
     this.tp = new TilePainter(this.p, this.images);
     this.lands.init(this.p);
     this.lands.changeSize(width, height);
+
+    ctx.imageSmoothingEnabled = false;
   }
 
 
@@ -120,17 +121,9 @@ export class Render {
 
     camera.absoluteX = this.width / 2;
     camera.absoluteY = this.height / 2;
-
-
     this.lands.draw(time, camera);
-
-
     const p = this.player!!;
-
-
     const crp = p.creature as Player;
-
-
     this.drawRealPosition();
 
     crp.zoneObjects.forEach((obj) => {
@@ -159,31 +152,13 @@ export class Render {
       dc.draw2(time, this.p!!, this.tp, camera);
     });
 
-    // this.drawLifeLine();
     p.draw2(time, this.p!!, this.tp, camera);
-
-
-    const o = p.orientation;
-    const x = camera.toX(o.x);
-    const y = camera.toY(o.y);
     this.drawFog(this.tp, camera);
-
-
     this.effects.draw2(time, this.tp, camera);
-
     this.drawCursorPosition();
     this.drawConnectionStatus();
     this.panels.draw(time, this.tp.p)
-    // this.p!!.text(`${camera.x};${camera.y + CELL}`, x + 2, CELL + y + 2, {style: 'black'});
-    this.debug(o);
-
-    // this.p!!.text(`${p.orientation.x};${p.orientation.y}`, 3, 13, {style: 'white'});
-
-    //draw lands
-    //draw creatures
-    //draw effects
-    //draw fog
-    // draw panels
+    this.debug();
   }
 
   private getDrawable(cr: Creature): DrawableCreature {
@@ -197,26 +172,49 @@ export class Render {
 
   private drawRealPosition() {
     if (!this.game.protoReal) return;
+
+
+    const p = this.p!!;
+    const a = this.game.getProto()!!;
+    let x = this.camera.toX(a.orientation.x);
+    let y = this.camera.toY(a.orientation.y);
+    p.fillRect(x, y, CELL, CELL, '#ffffff66');
+
     const o = this.game.protoReal;
-    const x = this.camera.toX(o.x);
-    const y = this.camera.toY(o.y);
-    this.p!!.fillRect(x, y, CELL, CELL, '#ffffff33');
+    x = this.camera.toX(o.x);
+    y = this.camera.toY(o.y);
+
+    p.rect(x, y, CELL, CELL, 'red');
+    switch (o.sight) {
+      case Dir.NORTH:
+        p.hline(x, x + CELL, y + 3, 'red');
+        break;
+      case Dir.WEST:
+        p.vline(x + 3, y, y + CELL, 'red');
+        break;
+      case Dir.EAST:
+        p.vline(x + CELL - 3, y, y + CELL, 'red');
+        break;
+      case Dir.SOUTH:
+        p.hline(x, x + CELL, y + CELL - 3, 'red');
+        break;
+    }
+
   }
 
   private drawCursorPosition() {
     if (!this.cursor || !this.player) return;
+
     const c = this.camera;
     const posCursorX = c.toPosX(this.cursor[0]);
     const posCursorY = c.toPosY(this.cursor[1]);
     const x = c.toX(posCursorX);
     const y = c.toY(posCursorY);
     const tile = this.game.world.tileType(posCursorX, posCursorY);
-
-
     const p = this.p!!;
-    p.fillRect(x, y + CELL, CELL, 14, '#ffffff99')
-    p.text('' + posCursorX + ',' + posCursorY, x + HCELL, y + CELL + 2, style.cellInfo)
-    // p.text(stringTiles[tile].toLowerCase(), x + HCELL, y + CELL + 1, style.cellInfo)
+    p.fillRect(x - 1, y + CELL, CELL + 2, 24, '#ffffff99')
+    p.text(stringTiles[tile].toLowerCase(), x + HCELL, y + CELL, style.cellInfo)
+    p.text(posCursorX + ',' + posCursorY, x + HCELL, y + CELL + 13, style.cellInfo)
     p.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
   }
 
@@ -303,7 +301,11 @@ export class Render {
     }
   }
 
-  private debug(o: Orientation) {
+  private debug() {
+    if (!this.player) return;
+
+    const proto = this.player!!.creature as Player;
+    const o = proto.orientation;
     const debugStyle = {style: 'white', font: '9px monospace'};
     const p = this.p!!;
     let y = 3;
@@ -315,8 +317,8 @@ export class Render {
     p.text('     tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, y += 10, debugStyle);
     p.text('   cursor: ' + this.cursor, 3, y += 10, debugStyle);
     p.text('   camera: ' + this.camera.absoluteX, 3, y += 10, debugStyle);
-    p.text('creatures: ' + this.game.getProto().zoneCreatures.size, 3, y += 10, debugStyle);
-    p.text('  objects: ' + this.game.getProto().zoneObjects.size, 3, y += 10, debugStyle);
+    p.text('creatures: ' + proto.zoneCreatures.size, 3, y += 10, debugStyle);
+    p.text('  objects: ' + proto.zoneObjects.size, 3, y += 10, debugStyle);
   }
 
   private drawFog(tp: TilePainter, camera: Camera) {
