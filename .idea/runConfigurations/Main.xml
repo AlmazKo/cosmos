@@ -7,7 +7,7 @@
     <shortenClasspath name="ARGS_FILE" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="cos.olympus.*" />
+        <option name="PATTERN" value="cos.olympus.game.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

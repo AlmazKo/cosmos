@@ -1,9 +1,9 @@
-import { CreatureHid, CreatureMoved, Damage, Death, FireballMoved, ObjAppear } from '../../game/actions/ApiMessage';
+import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, ObjAppear } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Trait, TraitFireball } from '../../game/Trait';
+import { Trait, TraitFireball, TraitMelee } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { ConnStatus } from '../server/WsServer';
@@ -55,137 +55,65 @@ export class Game implements MovingListener {
   }
 
   private onData(pkg: Package) {
-
-    // console.log("onData", pkg.messages);
-    // if (p.tick > this.lastTick) {
-    //
-    // }
-
-    if (!this.proto) {
-      const dto = pkg.messages[0].data as any;
-
-      const arrival: ApiCreature = {
-        id          : dto.userId,
-        isPlayer    : true,
-        x           : dto.x,
-        y           : dto.y,
-        sight       : dto.sight,
-        direction   : dto.mv,
-        metrics     : new Metrics(100, 100, "Player#" + dto.userId),
-        viewDistance: 10
-      };
-
-      this.proto = this.addPlayer(arrival) as Player;
-      this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
-    }
-
-    const proto = this.proto!!;
-
     pkg.messages.forEach(msg => {
-
       let e = {...msg.data, tickId: pkg.tick};
       console.log(msg.action, e);
       switch (msg.action) {
+        case 'appear':
+          this.onAppear(e)
+          break;
         case 'appear_obj':
-          e as ObjAppear;
-          proto.zoneObjects.set(e.id, e)
+          this.onObjectAppear(e);
           break;
         case 'creature_hid':
-          e as CreatureHid;
-          this.movements.interrupt(e.creatureId)
-          proto.zoneCreatures.delete(e.creatureId);
+          this.onCreatureHid(e);
           break
-
         case 'damage':
-          this.onDamage(e as Damage);
+          this.onDamage(e);
           break;
         case 'death':
-          e as Death;
-          proto.zoneCreatures.delete(e.victimId);
-          //todo add effect
-
-          // if (!victim) return;
-          //
-          // victim.metrics.life -= e.amount;
-          // this.actions.push(new SDamage(ID++, proto, Date.now(), e))
+          this.onDeath(e);
           break;
-
         case 'fireball_moved':
-          e as FireballMoved;
-          if (e.finished) {
-            proto.zoneSpells.delete(e.spellId);
-          } else {
-            if (proto.zoneSpells.has(e.spellId)) return;
-
-            const spell = new FireballSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
-            this.actions.push(new Spell(ID++, proto, Date.now(), spell))
-            proto.zoneSpells.set(e.spellId, spell);
-
-          }
+          this.onFireballMoved(e)
           break
         case 'creature_moved':
-          e as CreatureMoved;
-
-
-          let cr: Creature | undefined;
-          if (e.creatureId == proto.id) {
-            cr = this.proto;
-            this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset/100, e.x, e.y);//shift hardcoded
-
-
-            const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
-            if(stop) {
-              this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
-            }
-          } else {
-            cr = proto.zoneCreatures.get(e.creatureId);
-            if (!cr) {
-              const crr: ApiCreature = {
-                id          : e.creatureId,
-                isPlayer    : true,
-                x           : e.x,
-                y           : e.y,
-                sight       : e.sight,
-                direction   : e.mv,
-                metrics     : new Metrics(100, 100, "#" + e.creatureId),
-                viewDistance: 10
-              };
-              cr = this.addCreature(crr);
-              proto.zoneCreatures.set(e.creatureId, cr);
-            }
-          const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
-          }
-
-
-
-          // cr = proto.zoneCreatures.get(e.creatureId);
-          // if (cr) {
-          //
-          // } else {
-          //
-          //   proto.zoneCreatures.set(e.creatureId, this.proto);
-          // }
-
-
-          // proto.zoneCreatures.set(e.creatureId, cr);
-          // this.movements.on(cr, e.x, e.y, e.speed, e.mv, e.sight)
-
-          // this.movements.onMovingChanged(cr, StatusMoving.START, e.mv, e.sight)
-
-          // this.actions.push(new StartMoving(ID++, cr, Date.now(), 400, e.mv))
+          this.onCreatureMove(e)
           break;
       }
     })
   }
 
+  private onDeath(e: Death) {
+    const proto = this.proto!!;
+    proto.zoneCreatures.delete(e.victimId);
+    //todo add effect
+
+    // if (!victim) return;
+    //
+    // victim.metrics.life -= e.amount;
+    // this.actions.push(new SDamage(ID++, proto, Date.now(), e))
+  }
+
+  private onCreatureHid(e: CreatureHid) {
+    const proto = this.proto!!;
+    this.movements.interrupt(e.creatureId)
+    proto.zoneCreatures.delete(e.creatureId);
+  }
+
+  private onObjectAppear(e: ObjAppear) {
+    const proto = this.proto!!;
+    proto.zoneObjects.set(e.id, e);
+  }
+
   onDamage(e: Damage) {
-    const pproto = this.proto!!;
-    const victim = pproto.zoneCreatures.get(e.victimId);
+    const proto = this.proto!!;
+    const victim = proto.zoneCreatures.get(e.victimId);
     if (!victim) return;
 
     victim.metrics.life -= e.amount;
 
-    this.actions.push(new SDamage(ID++, pproto, Date.now(), e, victim.orientation.x, victim.orientation.y))
+    this.actions.push(new SDamage(ID++, proto, Date.now(), e, victim.orientation.x, victim.orientation.y))
     const spell = this.proto.zoneSpells.get(e.spellId);
     if (spell) {
       spell.finished = true;
@@ -196,10 +124,9 @@ export class Game implements MovingListener {
   onAction(trait: Trait) {
     const p = this.proto!!;
     if (trait instanceof TraitFireball) {
-      const o = p.orientation;
-      // const fireball = new FireballSpell(Date.now(), ID++, p, 100, 10, o.x, o.y, o.sight);
-      // this.actions.push(new Spell(ID++, p, Date.now(), fireball))
       this.api.sendAction('emmit_fireball', {});
+    } else if (trait instanceof TraitMelee) {
+      this.api.sendAction('melee_attack', {});
     }
 
     this.actions.push(new ActivateTrait(ID++, p, Date.now(), trait))
@@ -213,15 +140,6 @@ export class Game implements MovingListener {
   getActions(): Act[] {
     return this.actions.splice(0);
   }
-
-  // request(req: Request): boolean {
-  //
-  // }
-  //
-  //
-  // getVision(): Vision {
-  //
-  // }
 
   private addPlayer(ac: ApiCreature): Creature {
     const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
@@ -253,4 +171,88 @@ export class Game implements MovingListener {
     }
   }
 
+  private onAppear(e: Appear) {
+    if (!this.proto) {
+      const arrival: ApiCreature = {
+        id          : e.userId,
+        isPlayer    : true,
+        x           : e.x,
+        y           : e.y,
+        sight       : e.sight,
+        direction   : e.mv,
+        metrics     : new Metrics(e.life, e.life, "Player#" + e.userId),
+        viewDistance: 10
+      };
+
+      this.proto = this.addPlayer(arrival) as Player;
+      this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
+    } else {
+      this.proto.orientation.x = e.x
+      this.proto.orientation.y = e.y
+      // this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
+    }
+  }
+
+  private onFireballMoved(e: FireballMoved) {
+    const proto = this.proto!!;
+    if (e.finished) {
+      proto.zoneSpells.delete(e.spellId);
+    } else {
+      if (proto.zoneSpells.has(e.spellId)) return;
+
+      const spell = new FireballSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
+      this.actions.push(new Spell(ID++, proto, Date.now(), spell))
+      proto.zoneSpells.set(e.spellId, spell);
+
+    }
+  }
+
+  private onCreatureMove(e: CreatureMoved) {
+    const proto = this.proto!!;
+    let cr: Creature | undefined;
+    if (e.creatureId == proto.id) {
+      cr = this.proto;
+      this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset / 100, e.x, e.y);//shift hardcoded
+
+
+      const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
+      if (stop) {
+        this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
+      }
+    } else {
+      cr = proto.zoneCreatures.get(e.creatureId);
+      if (!cr) {
+        const crr: ApiCreature = {
+          id          : e.creatureId,
+          isPlayer    : true,
+          x           : e.x,
+          y           : e.y,
+          sight       : e.sight,
+          direction   : e.mv,
+          metrics     : new Metrics(100, 100, "#" + e.creatureId),
+          viewDistance: 10
+        };
+        cr = this.addCreature(crr);
+        proto.zoneCreatures.set(e.creatureId, cr);
+      }
+      const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
+    }
+
+
+    // cr = proto.zoneCreatures.get(e.creatureId);
+    // if (cr) {
+    //
+    // } else {
+    //
+    //   proto.zoneCreatures.set(e.creatureId, this.proto);
+    // }
+
+
+    // proto.zoneCreatures.set(e.creatureId, cr);
+    // this.movements.on(cr, e.x, e.y, e.speed, e.mv, e.sight)
+
+    // this.movements.onMovingChanged(cr, StatusMoving.START, e.mv, e.sight)
+
+    // this.actions.push(new StartMoving(ID++, cr, Date.now(), 400, e.mv))
+  }
 }

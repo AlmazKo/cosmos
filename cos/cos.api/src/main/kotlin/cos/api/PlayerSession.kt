@@ -12,6 +12,7 @@ import cos.ops.Disconnect
 import cos.ops.FireballEmmit
 import cos.ops.FireballMoved
 import cos.ops.Login
+import cos.ops.MeleeAttack
 import cos.ops.Move
 import cos.ops.ObjAppear
 import cos.ops.Op
@@ -92,6 +93,7 @@ class PlayerSession(
                     userId
                 )
             }
+            "melee_attack" -> MeleeAttack(cid.incrementAndGet(), userId)
             "stop_move" -> {
                 val sightId = js.getString("sight")
                 StopMove(

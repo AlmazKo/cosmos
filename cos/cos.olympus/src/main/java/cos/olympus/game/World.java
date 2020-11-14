@@ -201,25 +201,21 @@ public final class World implements TileMap, GMap {
         });
     }
 
-    public Creature createCreature(User usr) {
+    public Creature createCreature(Avatar usr, int life, int maxDev ) {
 
-        int idx = toIndex(usr.lastX, usr.lastY);
+        int idx = toIndex(usr.x(), usr.y());
         if (idx < 0 || idx >= basis.length) {
             throw new NoSpaceException("Fail finding free place");
         }
 
-        idx = findFreeIndex(usr.lastX, usr.lastY, 2);
+        idx = findFreeIndex(usr.x(), usr.y(), maxDev);
 
         if (idx >= 0) {
-
             var coord = toCoord(idx);
-            var cr = new Creature(usr.id, usr.name, coord.getX(), coord.getY(), (byte) 0, (byte) 0, null, SOUTH);
-
-            creatures[idx] = cr.id;
-            creatureObjects.put(cr.id, cr);
-
-            logger.info("Creature #" + cr.id + " set x=" + cr.x + ", y=" + cr.y);
-//            if (c instanceof Npc) npcs.put(c.getId(), (Npc) c);
+            var cr = new Creature(usr, coord.getX(), coord.getY(), (byte) 0, (byte) 0, null, SOUTH, life);
+            creatures[idx] = cr.id();
+            creatureObjects.put(cr.id(), cr);
+            logger.info("Creature #" + cr.id() + " set x=" + cr.x + ", y=" + cr.y);
             return cr;
         } else {
             throw new NoSpaceException("Fail finding free place");
@@ -355,7 +351,7 @@ public final class World implements TileMap, GMap {
 
     //    @Contract(pure = true)
     private boolean isValid(int x, int y) {
-        return x >= offsetX && x < (offsetX + width) && y >= offsetY && x < (offsetY + height);
+        return x >= offsetX && x < (offsetX + width) && y >= offsetY && y < (offsetY + height);
     }
 
     private int toIndex(int x, int y) {

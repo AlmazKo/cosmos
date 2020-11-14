@@ -7,13 +7,7 @@ import cos.ops.OutOp;
 
 import java.util.Collection;
 
-public class FireballSpellStrategy implements SpellStrategy {
-
-
-    private final static Logger logger = new Logger(FireballSpellStrategy.class);
-
-    private static int DAMAGES_IDS = 0;//todo move from here
-    private static int SPELL_IDS = 0;//todo move from here
+public class FireballSpellStrategy extends AbstractSpellStrategy {
 
     public final  Fireball spell;
     private final World    world;
@@ -46,7 +40,7 @@ public class FireballSpellStrategy implements SpellStrategy {
         }
 
         var victim = world.getCreature(x, y);
-        if (victim != null && spell.source().id != victim.id) {
+        if (victim != null && spell.source().id() != victim.id()) {
             boolean crit = Util.rand(0, 10) == 1;
             var d = new Damage(++DAMAGES_IDS, tick, victim, spell, crit ? 100 : 30, crit);
             logger.info("Damaged : " + d);
@@ -71,36 +65,3 @@ public class FireballSpellStrategy implements SpellStrategy {
 
 }
 
-
-/*
-
-    val currentX: Int get() = x + (if (direction === WEST) -distanceTravelled else if (direction == EAST) distanceTravelled else 0)
-
-    val currentY: Int get() = y + (if (direction === NORTH) -distanceTravelled else if (direction == SOUTH) distanceTravelled else 0)
-
-
-      val distance = Math.min(action.distance, Math.round((time - action.time) / action.speed.toFloat()))
-        action.distanceTravelled = distance
-
-        val x = action.currentX
-        val y = action.currentY
-
-        val victim = map.getCreature(x, y)
-        if (victim !== null && victim.id != action.source.id) {
-            val d = Damage(x, y, time, victim, action.source, 25, action.id)
-            victim.damage(d)
-            actions.add(d)
-
-            if (victim.state.life == 0) {
-                actions.add(Death(d))
-            }
-
-            action.finished = true
-        }
-
-        if (distance >= action.distance) {
-            action.finished = true
-        }
-
-        return action.finished
- */

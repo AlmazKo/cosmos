@@ -7,6 +7,7 @@ import cos.ops.AnyOp;
 import cos.ops.Exit;
 import cos.ops.FireballEmmit;
 import cos.ops.Login;
+import cos.ops.MeleeAttack;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
@@ -186,6 +187,7 @@ public final class GameServer {
             case Op.MOVE -> Move.read(b);
             case Op.STOP_MOVE -> StopMove.read(b);
             case Op.EMMIT_FIREBALL -> FireballEmmit.read(b);
+            case Op.MELEE_ATTACK -> MeleeAttack.read(b);
             default -> Unknown.read(b, length);
         };
     }

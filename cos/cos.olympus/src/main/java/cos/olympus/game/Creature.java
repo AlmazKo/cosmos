@@ -14,47 +14,45 @@ import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
 public final class Creature implements Orientable {
-    final int    id;
-    final String name;
-    int life = 100;
-
+    final Avatar avatar;
     int x;
     int y;
-    int offset = 0;
-    int speed  = 0;
+    int offset;
+    int speed;
     @Nullable Direction mv = null;
+    Direction sight;
+    int       life;
 
-    Direction                   sight;
     Map<Integer, Obj>           zoneObjects   = new HashMap<>();
     Map<Integer, Orientation>   zoneCreatures = new HashMap<>();
     Map<Integer, SpellStrategy> zoneSpells    = new HashMap<>();
 
-    public Creature(int id, String name, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight) {
-        this.id = id;
-        this.name = name;
+    public Creature(Avatar avatar, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight, int life) {
+        this.avatar = avatar;
         this.x = x;
         this.y = y;
         this.offset = offset;
         this.speed = speed;
         this.mv = dir;
         this.sight = sight;
+        this.life = life;
     }
-
-    public Creature(int id, String name, int x, int y, Direction sight) {
-        this.id = id;
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.sight = sight;
-    }
+//
+//    public Creature(int id, String name, int x, int y, Direction sight) {
+//        this.id = id;
+//        this.name = name;
+//        this.x = x;
+//        this.y = y;
+//        this.sight = sight;
+//    }
 
     Orientation orientation() {
-        return new Orientation(id, x, y, speed, offset, sight, mv);
+        return new Orientation(avatar.id(), x, y, speed, offset, sight, mv);
     }
 
     @Override public String toString() {
         return "Creature{" +
-                "id=" + id +
+                "id=" + avatar.id() +
 //                ", name='" + name + '\'' +
 //                ", x=" + x +
 //                ", y=" + y +
@@ -93,7 +91,7 @@ public final class Creature implements Orientable {
     }
 
     public int id() {
-        return id;
+        return avatar.id();
     }
 
     @Override public int x() {
@@ -119,8 +117,6 @@ public final class Creature implements Orientable {
     @Override public Direction sight() {
         return sight;
     }
-
-
 
 
 }

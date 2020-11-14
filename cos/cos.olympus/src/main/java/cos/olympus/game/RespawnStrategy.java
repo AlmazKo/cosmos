@@ -36,7 +36,7 @@ public class RespawnStrategy {
             }
             isDead = false;
             try {
-                var npc = world.createCreature(new User(++id, "Phantom", 7, 3));
+                var npc = world.createCreature(new Npc(++id, "Phantom", 7, 3), 80, 6);
                 live = new NpcStrategy(npc, world, movements);
             } catch (NoSpaceException ne) {
                 logger.warn("No space");

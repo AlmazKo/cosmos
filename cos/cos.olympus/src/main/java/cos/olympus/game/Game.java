@@ -11,6 +11,7 @@ import cos.ops.Exit;
 import cos.ops.FireballEmmit;
 import cos.ops.FireballMoved;
 import cos.ops.Login;
+import cos.ops.MeleeAttack;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
@@ -24,12 +25,13 @@ import java.util.List;
 public final class Game {
     private final static Logger logger = new Logger(Game.class);
 
-    private final World                      world;
-    private final DoubleBuffer<AnyOp>        bufferOps;
-    private final Movements                  movements;
-    private final HashMap<Integer, User>     users       = new HashMap<>();
-    private final ArrayList<RespawnStrategy> npcRespawns = new ArrayList<>();
-    private final ArrayList<SpellStrategy>   spells      = new ArrayList<>();
+    private final World                            world;
+    private final DoubleBuffer<AnyOp>              bufferOps;
+    private final Movements                        movements;
+    private final HashMap<Integer, Player>         users           = new HashMap<>();
+    private final ArrayList<RespawnStrategy>       npcRespawns     = new ArrayList<>();
+    private final ArrayList<RespawnClientStrategy> playersRespawns = new ArrayList<>();
+    private final ArrayList<SpellStrategy>         spells          = new ArrayList<>();
 //    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
 
     private final ArrayList<OutOp> outOps = new ArrayList<>();
@@ -44,7 +46,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(10);
+        settleMobs(1);
     }
 
     private void settleMobs(int amount) {
@@ -58,6 +60,8 @@ public final class Game {
         outOps.clear();
         var ops = bufferOps.getAndSwap();
 
+        playersRespawns.removeIf(it -> it.onTick(tick, outOps));
+
         ops.forEach(this::handleIncomeOp);
         movements.onTick(id, tsm);
         var damages = new ArrayList<Damage>();
@@ -68,9 +72,13 @@ public final class Game {
         damages.forEach(d -> {
             d.victim().damage(d);
             if (d.victim().isDead()) {
-                logger.info("Death " + d.victim().id);
-                deaths.add(d.victim().id);
+                logger.info("Death " + d.victim().id());
+                deaths.add(d.victim().id());
                 movements.interrupt(d.victim());
+
+                if (d.victim().avatar instanceof Player) {
+                    this.playersRespawns.add(new RespawnClientStrategy(world, (Player) d.victim().avatar));
+                }
             }
         });
         npcRespawns.forEach(it -> it.onTick(tick, outOps));
@@ -83,7 +91,7 @@ public final class Game {
         world.getAllCreatures().forEach(cr -> {
 
             damages.forEach(d -> {
-                if (cr.zoneCreatures.containsKey(d.victim().id)) {
+                if (cr.zoneCreatures.containsKey(d.victim().id())) {
                     outOps.add(d.toOp(cr.id()));
                 }
             });
@@ -102,7 +110,7 @@ public final class Game {
             world.getAllCreatures().forEach(cr -> {
                 if (s.inZone(cr)) {
                     if (cr.zoneSpells.put(s.id(), s) == null) {
-                        outOps.add(new FireballMoved(id, tick, cr.id, s.id(), f.x, f.y, spell.speed(), spell.dir(), f.finished));
+                        outOps.add(new FireballMoved(id, tick, cr.id(), s.id(), f.x, f.y, spell.speed(), spell.dir(), f.finished));
                     }
                 }
             });
@@ -121,6 +129,7 @@ public final class Game {
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
                 case Op.EXIT -> onExit((Exit) op);
                 case Op.EMMIT_FIREBALL -> onSpell((FireballEmmit) op);
+                case Op.MELEE_ATTACK -> onMeleeAttack((MeleeAttack) op);
             }
         } catch (Exception ex) {
             logger.warn("Error during processing " + op, ex);
@@ -131,10 +140,9 @@ public final class Game {
     private void onLogin(Login op) {
         var usr = users.get(op.userId());
         if (usr == null) {
-            usr = new User(op.userId(), "user:" + op.userId());
-            var creature = world.createCreature(usr);
-            logger.info("#" + tick + " " + "Placed " + creature);
-            outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight));
+            usr = new Player(op.userId(), "user:" + op.userId());
+            var creature = world.createCreature(usr, 100, 4);
+            outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.life));
         } else {
             logger.warn("#" + tick + " " + "User already logged in " + usr);
         }
@@ -154,6 +162,13 @@ public final class Game {
         spells.add(str);
     }
 
+    private void onMeleeAttack(MeleeAttack op) {
+        var cr = world.getCreature(op.userId());
+        if (cr == null) return;
+        var str = new MeleeAttackStrategy(tick, cr, world);
+        spells.add(str);
+    }
+
     private void onStopMove(StopMove op) {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
@@ -167,7 +182,7 @@ public final class Game {
 
         //todo allow finish step
         movements.interrupt(cr);
-        world.removeCreature(cr.id);
+        world.removeCreature(cr.id());
     }
 }
 

@@ -28,7 +28,7 @@ public class NpcStrategy {
             int y = Util.nextY(npc, dir);
 
             if (world.isFree(x, y) && world.isNoMovingCreaturesIn(x, y)) {
-                var mv = new Move(0, npc.id, npc.x, npc.y, dir, dir);
+                var mv = new Move(0, npc.id(), npc.x, npc.y, dir, dir);
                 movements.start(npc, mv);
                 movements.stop(npc);
             } else {

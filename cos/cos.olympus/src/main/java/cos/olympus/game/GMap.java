@@ -16,7 +16,6 @@ public interface GMap {
         return !isNoCreatures(x, y);
     }
 
-    Creature createCreature(User usr);
 
     void moveCreature(Creature cr, int toX, int toY);
 }

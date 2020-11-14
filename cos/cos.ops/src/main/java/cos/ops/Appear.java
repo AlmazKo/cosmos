@@ -10,11 +10,12 @@ public record Appear(
         int x,
         int y,
         Direction mv,
-        Direction sight
+        Direction sight,
+        int life
 ) implements OutOp {
 
-    public Appear(int id, int tick, int userId, int x, int y, Direction mv, Direction sight) {
-        this(Op.APPEAR, id, tick, userId, x, y, mv, sight);
+    public Appear(int id, int tick, int userId, int x, int y, Direction mv, Direction sight, int life) {
+        this(Op.APPEAR, id, tick, userId, x, y, mv, sight, life);
     }
 
     public void write(ByteBuffer buf) {
@@ -30,6 +31,7 @@ public record Appear(
         }
 
         buf.put((byte) sight.ordinal());
+        buf.putInt(life);
     }
 
     public static Appear read(ByteBuffer b) {
@@ -41,7 +43,8 @@ public record Appear(
                 b.getInt(),
                 b.getInt(),
                 Direction.of(b.get()),
-                Direction.of(b.get())
+                Direction.of(b.get()),
+                b.getInt()
         );
     }
 //

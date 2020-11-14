@@ -39,6 +39,7 @@ object JsonMapper {
                 .put("y", op.y())
                 .put("mv", op.mv())
                 .put("sight", op.sight())
+                .put("life", op.sight())
         )
 
     private fun toJ(op: ObjAppear) = JsonObject()

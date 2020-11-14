@@ -71,7 +71,7 @@ export class Render {
 
 
     const actions = this.game.getActions();
-    // if (actions.length > 0) return;
+    // if (actions.length === 0) return;
     //start actions
     //?
 

@@ -34,11 +34,11 @@ final class Movements implements TickAware {
     }
 
     void start(Creature cr, Move op) {
-        var mv = mvs.get(cr.id);
+        var mv = mvs.get(cr.id());
         if (mv != null) {
             mv.next = op;
         } else {
-            mvs.put(cr.id, new Mv(cr));
+            mvs.put(cr.id(), new Mv(cr));
             cr.mv = op.dir();
             cr.sight = op.sight();
         }
@@ -57,11 +57,11 @@ final class Movements implements TickAware {
 
 
     void interrupt(Creature cr) {
-        mvs.remove(cr.id);
+        mvs.remove(cr.id());
     }
 
     void stop(Creature cr) {
-        var mv = mvs.get(cr.id);
+        var mv = mvs.get(cr.id());
         if (mv != null) {
             mv.stop = true;
         }
