@@ -5,10 +5,13 @@ import { Effects } from '../../game/Effects';
 import { Panels } from '../../game/layers/Panels';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
+import { TraitFireball, TraitMelee } from '../../game/Trait';
 import { Dir, dirToString, stringTiles } from '../constants';
+import { Act } from '../engine/Act';
 import { ActivateTrait } from '../engine/actions/ActivateTrait';
+import { OnDamage } from '../engine/actions/OnDamage';
+import { OnMeleeAttack } from '../engine/actions/OnMeleeAttack';
 import { ProtoArrival } from '../engine/actions/ProtoArrival';
-import { SDamage } from '../engine/actions/SDamage';
 import { Spell } from '../engine/actions/Spell';
 import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
@@ -23,6 +26,7 @@ import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 
 
 const FOV_RADIUS = 8;
+const DEBUG = false;
 
 export class Render {
 
@@ -68,52 +72,8 @@ export class Render {
     const player = this.game.getProto();
     const camera = this.camera;
     if (!player) return;
-
-
     const actions = this.game.getActions();
-    // if (actions.length === 0) return;
-    //start actions
-    //?
-
-    for (const action of actions) {
-      console.log("Processing action", action)
-
-      if (action instanceof ProtoArrival) {
-        camera.setTarget(action.creature.orientation);
-        this.player = new DrawableCreature(action.creature)
-      }
-
-      if (action instanceof ActivateTrait) {
-        this.panels.activate(action);
-      }
-      if (action instanceof SDamage) {
-        const victim = (this.player!!.creature as Player).zoneCreatures.get(action.dmg.victimId);
-        if (victim) {
-          const dc = this.getDrawable(victim);
-          dc.damage()
-        }
-      }
-
-      if (action instanceof Spell) {
-        this.player!!.instantSpell();
-        this.effects.push(new Fireball(this.images, action.spell, this.game.world));
-      }
-
-
-      if (action instanceof SDamage) {
-        this.player!!.instantSpell();
-        this.effects.push(new DamageEffect(action.dmg.amount, action.dmg.crit, action.x, action.y));
-      }
-      //
-      // if (action instanceof StartMoving) {
-      //   if (!this.phantoms.has(action.creature.id)) {
-      //     this.phantoms.set(action.creature.id, new DrawableCreature(action.creature))
-      //   }
-      //   //fixme
-      //   // this.player!!.startMoving(action)
-      // }
-
-    }
+    this.processActions(actions, camera);
 
     this.animators.run(time);
 
@@ -124,7 +84,7 @@ export class Render {
     this.lands.draw(time, camera);
     const p = this.player!!;
     const crp = p.creature as Player;
-    this.drawRealPosition();
+    if (DEBUG) this.drawRealPosition();
 
     crp.zoneObjects.forEach((obj) => {
 
@@ -153,12 +113,69 @@ export class Render {
     });
 
     p.draw2(time, this.p!!, this.tp, camera);
-    this.drawFog(this.tp, camera);
+    if (p.creature.isDead()) {
+      this.drawDeath(this.tp, camera);
+    } else {
+      this.drawFog(this.tp, camera);
+    }
+
     this.effects.draw2(time, this.tp, camera);
     this.drawCursorPosition();
     this.drawConnectionStatus();
     this.panels.draw(time, this.tp.p)
-    this.debug();
+    if (DEBUG) this.debug();
+  }
+
+  private processActions(actions: Act[], camera: Camera) {
+    for (const action of actions) {
+      console.log("Processing action", action)
+
+      if (action instanceof ProtoArrival) {
+        camera.setTarget(action.creature.orientation);
+        this.player = new DrawableCreature(action.creature)
+      }
+
+      if (action instanceof ActivateTrait) {
+        this.panels.activate(action);
+
+        if (action.trait instanceof TraitMelee) {
+          this.player!!.melee();
+        } else if (action.trait instanceof TraitFireball) {
+          this.player!!.instantSpell();
+        }
+      }
+
+      if (action instanceof OnDamage) {
+
+        const victim = (this.player!!.creature as Player).zoneCreatures.get(action.victim.id);
+        if (victim) {
+          const dc = this.getDrawable(victim);
+          dc.damage()
+        }
+        this.effects.push(new DamageEffect(action));
+      }
+
+      if (action instanceof Spell) {
+        this.effects.push(new Fireball(this.images, action.spell, this.game.world));
+      }
+
+
+      if (action instanceof OnMeleeAttack) {
+        const dc = this.getDrawable(action.creature);
+        dc.melee();
+      }
+
+
+      //
+      // if (action instanceof StartMoving) {
+      //   if (!this.phantoms.has(action.creature.id)) {
+      //     this.phantoms.set(action.creature.id, new DrawableCreature(action.creature))
+      //   }
+      //   //fixme
+      //   // this.player!!.startMoving(action)
+      // }
+
+    }
   }
 
   private getDrawable(cr: Creature): DrawableCreature {
@@ -321,9 +338,15 @@ export class Render {
     p.text('  objects: ' + proto.zoneObjects.size, 3, y += 10, debugStyle);
   }
 
+  private drawDeath(tp: TilePainter, camera: Camera) {
+    const p = new BasePainter(tp.ctx);
+    p.fillRect(0, 0, p.width, p.height, style.death);
+    p.text("You are dead", this.width / 2, this.height / 2, style.protoDeathTitle);
+  }
+
   private drawFog(tp: TilePainter, camera: Camera) {
 
-    const p = new BasePainter(tp.ctx);
+    const p = new BasePainter(tp.ctx); //todo optimize!!!!!
 
     // if (this.proto.isDead) {
     //   p.fillRect(0, 0, p.width, p.height, style.fog);

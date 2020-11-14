@@ -19,6 +19,13 @@ map[Dir.SOUTH] = 128;
 map[Dir.EAST] = 196;
 map[Dir.WEST] = 64;
 
+const mapSmall: px[] = [];
+
+mapSmall[Dir.NORTH] = 64;
+mapSmall[Dir.SOUTH] = 0;
+mapSmall[Dir.EAST] = 32;
+mapSmall[Dir.WEST] = 96;
+
 const mapNpc: px[] = [];
 
 mapNpc[Dir.NORTH] = 64;
@@ -26,6 +33,13 @@ mapNpc[Dir.SOUTH] = 0;
 mapNpc[Dir.EAST] = 32;
 mapNpc[Dir.WEST] = 96;
 
+enum State {
+  RUN,
+  STAND,
+  MELEE,
+  CAST,
+  DEAD
+}
 
 export class DrawableCreature implements TileDrawable {
 
@@ -37,6 +51,7 @@ export class DrawableCreature implements TileDrawable {
   private showDamaged = false;
   private meleeFactor: float = 0;
   private damaged = false;
+  private state: State = State.RUN;
 
   constructor(c: Creature) {
     this.creature = c;
@@ -49,59 +64,67 @@ export class DrawableCreature implements TileDrawable {
 
   draw2(time: DOMHighResTimeStamp, p: CanvasContext, bp: TilePainter, camera: Camera) {
 
+    let shift = (time % 400) / 400;
     this.drawLifeLine(p, camera);
     const o = this.orientation;
+    if (this.state == State.RUN && o.offset === 0) {
+      shift = 0;
+    }
 
     this.animators.run(time);
 
     let x: px, y: px;
+
+    let sy = mapSmall[o.sight];
+    let sx = Math.floor(Math.abs(shift) * 4) * 32;
+    if (this.state === State.MELEE) {
+      sy += 128;
+    } else if (this.state === State.CAST) {
+      sx += 128;
+    }
+
     if (this.creature instanceof Player) {
       x = camera.absoluteX;
       y = camera.absoluteY;
-      let sy = map[o.sight] + 2;
-      let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
-      // drawLifeLine(bp.toInDirect(x, y), this);
-
-      let sw = 64, sh = 64;
-      bp.drawTo("ch", sx, sy, sw, sh, x, y, CELL, CELL);
-    } else {
+      let sw = 32, sh = 32;
+      bp.drawTo("character", sx, sy, sw, sh, x, y, CELL, CELL);
+    } else if (this.creature.id < 10000) {
       x = camera.toX2(this.creature.orientation);
       y = camera.toY2(this.creature.orientation);
 
-      if (this.creature.id < 10000) {
-        let sy = map[o.sight];
-        let sx = Math.floor(Math.abs(o.shift) * 9) * 64;
+      let sw = 32, sh = 32;
+      bp.drawTo("character_2", sx, sy, sw, sh, x, y, CELL, CELL);
+    } else {
+      let sy = mapNpc[o.sight];
+      let sx = Math.floor(Math.abs(o.shift) * 4) * 16;
 
-        let sw = 64, sh = 64;
-        bp.drawTo("ch_alien", sx, sy, sw, sh, x, y, CELL, CELL);
+      let sw = 16, sh = 32;
+
+      let asset;
+      if (this.damaged) {
+        asset = "NPC_test_dmg";
       } else {
-        let sy = mapNpc[o.sight];
-        let sx = Math.floor(Math.abs(o.shift) * 4) * 16;
-
-        let sw = 16, sh = 32;
-
-        let asset;
-        if (this.damaged) {
-          asset = "NPC_test_dmg";
-        } else {
-          asset = "NPC_test";
-        }
-
-        //64-16=48/2=24
-        //64-32=32/2=16
-        bp.drawTo(asset, sx, sy, sw, sh, x + 16, y + 8, sw, sh);
+        asset = "NPC_test";
       }
+
+      x = camera.toX2(this.creature.orientation);
+      y = camera.toY2(this.creature.orientation);
+
+      //64-16=48/2=24
+      //64-32=32/2=16
+      bp.drawTo(asset, sx, sy, sw, sh, x + 16, y + 8, sw, sh);
     }
 
-    this.drawName(bp, x, y);
+
+  //  this.drawName(bp, x, y);
   }
 
 
   private drawName(bp: TilePainter, x: number, y: number) {
     const c = this.creature;
     // bp.p.text(c.metrics.name + "", x, y, style.creatureNameBg);
-    bp.p.text(c.metrics.name, x + HCELL + 0.5, y - 1.5, style.creatureNameBg)
-    bp.p.text(c.metrics.name, x + HCELL, y - 2, style.creatureName)
+    bp.p.text(c.metrics.name, x + HCELL, y, style.creatureNameBg)
+    bp.p.text(c.metrics.name, x + HCELL - 1, y - 1, style.creatureName)
   }
 
   drawLifeLine(bp: CanvasContext, camera: Camera) {
@@ -123,22 +146,15 @@ export class DrawableCreature implements TileDrawable {
   // onRotated(rotated: boolean) {
   //   this.rotated = rotated;
   // }
-  //
-  //
-  // onStep(step: Step): void {
-  //
-  //   //todo add server sync
-  // }
-  //
-  // melee() {
-  //   this.animators.set("melee",
-  //     new Animator(250, f => this.meleeFactor = f),
-  //     () => this.meleeFactor = 0);
-  // }
-  //
+
+  melee() {
+    this.state = State.MELEE;
+    this.animators.set("instant_spell", new Delay(400), () => this.state = State.RUN);
+  }
+
   instantSpell() {
-    this.showInstantSpell = true;
-    this.animators.set("instant_spell", new Delay(100), () => this.showInstantSpell = false);
+    this.state = State.CAST;
+    this.animators.set("instant_spell", new Delay(200), () => this.state = State.RUN);
   }
 
   damage() {

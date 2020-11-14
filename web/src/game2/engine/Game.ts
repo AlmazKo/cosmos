@@ -1,4 +1,4 @@
-import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, ObjAppear } from '../../game/actions/ApiMessage';
+import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, MeleeAttacked, ObjAppear } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
@@ -10,8 +10,9 @@ import { ConnStatus } from '../server/WsServer';
 import { World } from '../world/World';
 import { Act } from './Act';
 import { ActivateTrait } from './actions/ActivateTrait';
+import { OnDamage } from './actions/OnDamage';
+import { OnMeleeAttack } from './actions/OnMeleeAttack';
 import { ProtoArrival } from './actions/ProtoArrival';
-import { SDamage } from './actions/SDamage';
 import { Spell } from './actions/Spell';
 import { Creature } from './Creature';
 import { CreatureObject } from './CreatureObject';
@@ -77,6 +78,9 @@ export class Game implements MovingListener {
         case 'fireball_moved':
           this.onFireballMoved(e)
           break
+        case 'melee_attacked':
+          this.onMeleeAttacked(e)
+          break
         case 'creature_moved':
           this.onCreatureMove(e)
           break;
@@ -92,7 +96,7 @@ export class Game implements MovingListener {
     // if (!victim) return;
     //
     // victim.metrics.life -= e.amount;
-    // this.actions.push(new SDamage(ID++, proto, Date.now(), e))
+    // this.actions.push(new OnDamage(ID++, proto, Date.now(), e))
   }
 
   private onCreatureHid(e: CreatureHid) {
@@ -108,12 +112,19 @@ export class Game implements MovingListener {
 
   onDamage(e: Damage) {
     const proto = this.proto!!;
-    const victim = proto.zoneCreatures.get(e.victimId);
+    let victim: Creature | undefined;
+    if (proto.id === e.victimId) {
+      victim = proto;
+    } else {
+      victim = proto.zoneCreatures.get(e.victimId);
+    }
     if (!victim) return;
 
+    const isProto = proto.id === victim.id;
     victim.metrics.life -= e.amount;
+    this.actions.push(new OnDamage(ID++, proto, Date.now(), victim, e.amount, e.crit, isProto));
 
-    this.actions.push(new SDamage(ID++, proto, Date.now(), e, victim.orientation.x, victim.orientation.y))
+    // ???
     const spell = this.proto.zoneSpells.get(e.spellId);
     if (spell) {
       spell.finished = true;
@@ -187,9 +198,9 @@ export class Game implements MovingListener {
       this.proto = this.addPlayer(arrival) as Player;
       this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
     } else {
-      this.proto.orientation.x = e.x
-      this.proto.orientation.y = e.y
-      // this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
+      this.proto.metrics.life = this.proto.metrics.maxLife;
+      this.proto.orientation.x = e.x;
+      this.proto.orientation.y = e.y;
     }
   }
 
@@ -203,8 +214,17 @@ export class Game implements MovingListener {
       const spell = new FireballSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
       this.actions.push(new Spell(ID++, proto, Date.now(), spell))
       proto.zoneSpells.set(e.spellId, spell);
-
     }
+  }
+
+  private onMeleeAttacked(e: MeleeAttacked) {
+    const proto = this.proto!!;
+    if (e.sourceId === proto.id) return;
+
+    const source = proto.zoneCreatures.get(e.sourceId);
+    if (!source) return;
+
+    this.actions.push(new OnMeleeAttack(ID++, source, Date.now()))
   }
 
   private onCreatureMove(e: CreatureMoved) {

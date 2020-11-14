@@ -1,28 +1,25 @@
 import { Animator } from '../../../anim/Animator';
+import { FontStyle } from '../../../draw/FontStyleAcceptor';
 import { Effect } from '../../../game/Effect';
 import { style } from '../../../game/styles';
 import { TilePainter } from '../../../game/TilePainter';
+import { OnDamage } from '../../engine/actions/OnDamage';
 import { Camera } from '../Camera';
-import { HCELL } from '../constants';
+import { CELL, HCELL } from '../constants';
 
 export class DamageEffect implements Effect {
   readonly id = 0;
   isFinished = false;
   private readonly posX: pos;
   private readonly posY: pos;
-  private readonly amount: uint;
 
-  private shift: px = 0;
   private anim: Animator;
   private f: float = 0;
-  private crit: boolean;
 
-  constructor(dmg: uint, crit: boolean, x: pos, y: pos) {
-    this.amount = dmg;
-    this.crit = crit;
-    this.posX = x;
-    this.posY = y;
-    this.anim = new Animator(300, f => {
+  constructor(private event: OnDamage) {
+    this.posX = event.victim.orientation.x;
+    this.posY = event.victim.orientation.y;
+    this.anim = new Animator(event.crit ? 500 : 300, f => {
       this.f = f;
       if (f >= 1) this.isFinished = true;
     });
@@ -35,20 +32,21 @@ export class DamageEffect implements Effect {
   draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
     const x = camera.toX(this.posX) + HCELL;
     const y = camera.toY(this.posY);
-
+    const amount = this.event.amount;
     this.anim.run(time);
 
-    if (this.crit) {
-      const shiftY = this.f * 40; //set pixels clearly
-      bp.p.text("" + this.amount, x + 1, y - shiftY + 1, style.dmgCritText2);
-      bp.p.text("" + this.amount, x, y - shiftY, style.dmgCritText);
+    if (this.event.crit) {
+      const shiftY = this.f * CELL; //set pixels clearly
+
+      const txtStyle: Partial<FontStyle> = this.event.isProto ? {...style.dmgCritText, style: '#ff5252'} : style.dmgCritText;
+      bp.p.text("" + amount, x + 1, y - shiftY + 1, style.dmgCritText2);
+      bp.p.text("" + amount, x, y - shiftY, txtStyle);
     } else {
-      const shiftY = this.f * 20; //set pixels clearly
-      bp.p.text("" + this.amount, x + 1, y - shiftY + 1, style.dmgText2);
-      bp.p.text("" + this.amount, x, y - shiftY, style.dmgText);
+      const shiftY = this.f * HCELL; //set pixels clearly
+      const txtStyle: Partial<FontStyle> = this.event.isProto ? {...style.dmgText, style: '#ff5252'} : style.dmgText;
+      bp.p.text("" + amount, x + 1, y - shiftY + 1, style.dmgText2);
+      bp.p.text("" + amount, x, y - shiftY, txtStyle);
     }
-
-
   }
 
 

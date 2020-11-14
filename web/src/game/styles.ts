@@ -15,6 +15,7 @@ export const style = {
 
   fireShock : "#ff4200",
   fog       : toRGBA("#000", 0.666),
+  death       : toRGBA("#fff", 0.666),
   lightFog  : toRGBA("#000", 0.25),
   playerZone: toRGBA("#007704", 0.333),
 
@@ -40,25 +41,31 @@ export const style = {
     style   : "blue",
     font    : "15px"
   } as Partial<FontStyle>,
+  protoDeathTitle    : {
+    align   : "center",
+    baseline: "bottom",
+    style   : "#000",
+    font    : "600 35px sans-serif"
+  } as Partial<FontStyle>,
 
   creatureName: {
     align   : "center",
     baseline: "top",
     style   : "white",
-    font    : "bold 10px Regular"
+    font    : "600 12px serif"
   } as Partial<FontStyle>,
+  creatureNameBg: {
+    align   : "center",
+    baseline: "top",
+    style   : "black",
+    font    : "600 12px serif"
+  } as Partial<FontStyle>,
+
   cellInfo    : {
     align   : "center",
     baseline: "top",
     style   : "black",
     font    : "11px Roboto"
-  } as Partial<FontStyle>,
-
-  creatureNameBg: {
-    align   : "center",
-    baseline: "top",
-    style   : "black",
-    font    : "bold 10px Regular"
   } as Partial<FontStyle>,
 
   lifeText: {

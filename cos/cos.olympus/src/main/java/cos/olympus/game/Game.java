@@ -3,6 +3,7 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.game.events.Damage;
+import cos.olympus.game.events.Fireball;
 import cos.ops.AnyOp;
 import cos.ops.Appear;
 import cos.ops.Death;
@@ -12,6 +13,7 @@ import cos.ops.FireballEmmit;
 import cos.ops.FireballMoved;
 import cos.ops.Login;
 import cos.ops.MeleeAttack;
+import cos.ops.MeleeAttacked;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
@@ -46,7 +48,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(1);
+        settleMobs(10);
     }
 
     private void settleMobs(int amount) {
@@ -66,8 +68,7 @@ public final class Game {
         movements.onTick(id, tsm);
         var damages = new ArrayList<Damage>();
         var deaths = new ArrayList<Integer>();
-        spells.removeIf(s -> s.onTick(tick, outOps, damages));
-
+        spells.forEach(s -> s.onTick(tick, outOps, damages));
 
         damages.forEach(d -> {
             d.victim().damage(d);
@@ -77,11 +78,29 @@ public final class Game {
                 movements.interrupt(d.victim());
 
                 if (d.victim().avatar instanceof Player) {
-                    this.playersRespawns.add(new RespawnClientStrategy(world, (Player) d.victim().avatar));
+                    this.playersRespawns.add(new RespawnClientStrategy(tick,world, (Player) d.victim().avatar));
                 }
             }
         });
+
+        spells.forEach((SpellStrategy strategy) -> {
+            var spell = strategy.spell();
+
+            world.getAllCreatures().forEach(cr -> {
+                if (strategy.inZone(cr)) {
+                    if (cr.zoneSpells.put(strategy.id(), strategy) == null) {
+                        if (spell instanceof Fireball s) {
+                            outOps.add(new FireballMoved(id, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinish()));
+
+                        } else if (spell instanceof cos.olympus.game.events.MeleeAttack s) {
+                            outOps.add(new MeleeAttacked(id, tick, cr.id(), s.id(), s.source().id()));
+                        }
+                    }
+                }
+            });
+        });
         npcRespawns.forEach(it -> it.onTick(tick, outOps));
+
 
         world.getAllCreatures().forEach(cr -> {
             zone.onTick(cr, tick, outOps);
@@ -92,7 +111,7 @@ public final class Game {
 
             damages.forEach(d -> {
                 if (cr.zoneCreatures.containsKey(d.victim().id())) {
-                    outOps.add(d.toOp(cr.id()));
+                    outOps.add(d.toUserOp(cr.id()));
                 }
             });
 
@@ -103,19 +122,8 @@ public final class Game {
             });
         });
 
-        spells.forEach((SpellStrategy s) -> {
-            var f = (FireballSpellStrategy) s;
-            var spell = f.spell;
 
-            world.getAllCreatures().forEach(cr -> {
-                if (s.inZone(cr)) {
-                    if (cr.zoneSpells.put(s.id(), s) == null) {
-                        outOps.add(new FireballMoved(id, tick, cr.id(), s.id(), f.x, f.y, spell.speed(), spell.dir(), f.finished));
-                    }
-                }
-            });
-        });
-
+        spells.removeIf(SpellStrategy::isFinish);
         world.removeCreatureIf(Creature::isDead);
         return outOps;
     }

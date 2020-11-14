@@ -1,8 +1,8 @@
 package cos.olympus.game;
 
-import cos.logging.Logger;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
+import cos.olympus.game.events.Spell;
 import cos.ops.OutOp;
 
 import java.util.Collection;
@@ -11,10 +11,10 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
 
     public final  Fireball spell;
     private final World    world;
-    public        boolean  finished;
-    private       int      passed;
-    public        int      x;
-    public        int      y;
+
+    private int passed;
+    public  int x;
+    public  int y;
 
     public FireballSpellStrategy(int tick, Creature cr, World world) {
         this.spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), 40, cr.sight(), 10, tick, cr);
@@ -61,6 +61,10 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
 
     @Override public boolean inZone(Creature cr) {
         return Util.inZone(cr, x, y, 8);
+    }
+
+    @Override public Spell spell() {
+        return spell;
     }
 
 }

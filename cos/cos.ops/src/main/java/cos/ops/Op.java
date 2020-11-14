@@ -14,7 +14,8 @@ public interface Op {
     byte FIREBALL_MOVED = 110;
     byte DAMAGE         = 111;
     byte DEATH          = 112;
-    byte MELEE_ATTACK    = 113;
+    byte MELEE_ATTACK   = 113;
+    byte MELEE_ATTACKED = 114;
 
     //infrastructure op-codes
     byte NOPE       = 0;

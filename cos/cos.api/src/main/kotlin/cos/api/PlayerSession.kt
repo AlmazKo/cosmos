@@ -13,6 +13,7 @@ import cos.ops.FireballEmmit
 import cos.ops.FireballMoved
 import cos.ops.Login
 import cos.ops.MeleeAttack
+import cos.ops.MeleeAttacked
 import cos.ops.Move
 import cos.ops.ObjAppear
 import cos.ops.Op
@@ -185,6 +186,7 @@ class PlayerSession(
                 Op.CREATURE_MOVED -> CreatureMoved.read(b);
                 Op.CREATURE_HID -> CreatureHid.read(b);
                 Op.FIREBALL_MOVED -> FireballMoved.read(b);
+                Op.MELEE_ATTACKED -> MeleeAttacked.read(b);
                 Op.DAMAGE -> Damage.read(b);
                 Op.DEATH -> Death.read(b);
                 else -> Unknown.read(b, len)

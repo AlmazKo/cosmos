@@ -11,7 +11,7 @@ public record Damage(
         boolean crit
 ) {
 
-    public cos.ops.Damage toOp(int userId) {
+    public cos.ops.Damage toUserOp(int userId) {
         return new cos.ops.Damage(id, tick, userId, victim.id(), amount, spell.id(), crit);
     }
 

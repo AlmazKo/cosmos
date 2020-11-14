@@ -7,6 +7,7 @@ import cos.ops.CreatureMoved
 import cos.ops.Damage
 import cos.ops.Death
 import cos.ops.FireballMoved
+import cos.ops.MeleeAttacked
 import cos.ops.ObjAppear
 import io.vertx.core.json.JsonObject
 
@@ -23,6 +24,7 @@ object JsonMapper {
             is FireballMoved -> toJ(op)
             is Damage -> toJ(op)
             is Death -> toJ(op)
+            is MeleeAttacked -> toJ(op)
             else -> throw RuntimeException("No json serializator for $op")
         }
     }
@@ -39,7 +41,7 @@ object JsonMapper {
                 .put("y", op.y())
                 .put("mv", op.mv())
                 .put("sight", op.sight())
-                .put("life", op.sight())
+                .put("life", op.life())
         )
 
     private fun toJ(op: ObjAppear) = JsonObject()
@@ -107,6 +109,17 @@ object JsonMapper {
                 .put("victimId", op.victimId())
                 .put("amount", op.amount())
                 .put("crit", op.crit())
+                .put("spellId", op.spellId())
+        )
+
+    private fun toJ(op: MeleeAttacked) = JsonObject()
+        .put("id", op.id())
+        .put("action", "melee_attacked")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("sourceId", op.sourceId())
                 .put("spellId", op.spellId())
         )
 

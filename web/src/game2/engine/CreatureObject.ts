@@ -10,5 +10,9 @@ export class CreatureObject implements Creature {
     public readonly orientation: Orientation) {
   }
 
+  isDead(): boolean {
+    return this.metrics.life <= 0;
+  }
+
 
 }

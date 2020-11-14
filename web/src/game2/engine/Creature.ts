@@ -5,4 +5,6 @@ export interface Creature {
   readonly id: uint;
   readonly orientation: Orientation;
   readonly metrics: Metrics;
+
+  isDead(): boolean;
 }
