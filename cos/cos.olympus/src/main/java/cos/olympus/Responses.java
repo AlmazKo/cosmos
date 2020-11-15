@@ -4,6 +4,7 @@ import cos.ops.OutOp;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Responses {
     public volatile ArrayList<OutOp> ops = new ArrayList<>();

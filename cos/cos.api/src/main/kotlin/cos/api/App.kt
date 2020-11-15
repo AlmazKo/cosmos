@@ -29,6 +29,7 @@ class App(val vertx: Vertx) {
         val lands = Land.load(Paths.get("", "../../resources").toAbsolutePath())
 
         val opts = HttpServerOptions().apply {
+            host = "0.0.0.0"
             isUseAlpn = true
             isSsl = true
             port = 443
@@ -68,13 +69,13 @@ class App(val vertx: Vertx) {
         //        router.route().handler(WebLogger())
         initCors(router)
 
-//
-//        val t = lands.basis.asSequence()
-//            .map { tileId ->
-//                val typeId = lands.tiles[tileId.toInt()]?.type?.id ?: TileType.NOTHING.id
-//                JsonArray(listOf(tileId, typeId))
-//            }
-//            .toList()
+        //
+        //        val t = lands.basis.asSequence()
+        //            .map { tileId ->
+        //                val typeId = lands.tiles[tileId.toInt()]?.type?.id ?: TileType.NOTHING.id
+        //                JsonArray(listOf(tileId, typeId))
+        //            }
+        //            .toList()
 
         val cc = Splitter.split16(lands)
         val basis = cc.mapValues { (k, v) ->
@@ -140,8 +141,6 @@ class App(val vertx: Vertx) {
 
 
     companion object {
-
-
 
 
     }

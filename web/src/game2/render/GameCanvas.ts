@@ -17,7 +17,7 @@ export class GameCanvas implements CanvasComposer {
 
   changeSize(width: px, height: px): void {
 
-
+    this.render.changeSize(width, height);
   }
 
   register(register: Registrar) {

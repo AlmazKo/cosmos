@@ -48,7 +48,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(10);
+        settleMobs(1);
     }
 
     private void settleMobs(int amount) {
@@ -61,7 +61,11 @@ public final class Game {
         tick = id;
         outOps.clear();
         var ops = bufferOps.getAndSwap();
+        onTick(id, tsm, ops);
+        return outOps;
+    }
 
+    private void onTick(int id, long tsm, List<AnyOp> ops) {
         playersRespawns.removeIf(it -> it.onTick(tick, outOps));
 
         ops.forEach(this::handleIncomeOp);
@@ -85,13 +89,11 @@ public final class Game {
 
         spells.forEach((SpellStrategy strategy) -> {
             var spell = strategy.spell();
-
             world.getAllCreatures().forEach(cr -> {
                 if (strategy.inZone(cr)) {
                     if (cr.zoneSpells.put(strategy.id(), strategy) == null) {
                         if (spell instanceof Fireball s) {
                             outOps.add(new FireballMoved(id, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinish()));
-
                         } else if (spell instanceof cos.olympus.game.events.MeleeAttack s) {
                             outOps.add(new MeleeAttacked(id, tick, cr.id(), s.id(), s.source().id()));
                         }
@@ -99,16 +101,14 @@ public final class Game {
                 }
             });
         });
-        npcRespawns.forEach(it -> it.onTick(tick, outOps));
 
+        npcRespawns.forEach(it -> it.onTick(tick, outOps));
 
         world.getAllCreatures().forEach(cr -> {
             zone.onTick(cr, tick, outOps);
         });
 
-
         world.getAllCreatures().forEach(cr -> {
-
             damages.forEach(d -> {
                 if (cr.zoneCreatures.containsKey(d.victim().id())) {
                     outOps.add(d.toUserOp(cr.id()));
@@ -125,7 +125,6 @@ public final class Game {
 
         spells.removeIf(SpellStrategy::isFinish);
         world.removeCreatureIf(Creature::isDead);
-        return outOps;
     }
 
     private void handleIncomeOp(AnyOp op) {

@@ -5,11 +5,12 @@ import java.nio.ByteBuffer;
 public record Exit(
         @Override byte code,
         @Override int id,
-        @Override int userId
-) implements AnyOp {
+        @Override int userId,
+        @Override int tick
+) implements OutOp {
 
     public Exit(int id, int userId) {
-        this(Op.EXIT, id, userId);
+        this(Op.EXIT, id, userId, 0);
     }
 
     public static Exit read(ByteBuffer b) {

@@ -20,7 +20,6 @@ public class Main {
 
         logger.info("Started ");
 
-//        val bb = ByteBuffer.wrap(byteArrayOf(10, 20, 30, 40, 50, 60))
         var requests = new DoubleBuffer<AnyOp>();
         var responses = new Responses();
         var lands = Land.load(Paths.get("", "../../resources").toAbsolutePath());
@@ -29,15 +28,12 @@ public class Main {
 
 
         GameServer.run(requests, responses);
-//        requests.add(new Login(1, 99));
-//        requests.add(new Move(2, 99, 0, 0, NORTH, NORTH));
-
         var id = 0;
         while (true) {
 
             var oo = game.onTick(++id, tsm());
             if (!oo.isEmpty()) {
-               // logger.info("OOOPS");
+                //logger.info(oo.size() + " ops");
                 responses.ops.addAll(oo);
             }
 

@@ -26,7 +26,7 @@ import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 
 
 const FOV_RADIUS = 8;
-const DEBUG = false;
+const DEBUG = true;
 
 export class Render {
 
@@ -424,5 +424,10 @@ export class Render {
 
   changeCursorPosition(pos: [px, px] | undefined) {
     this.cursor = pos;
+  }
+
+  changeSize(width: px, height: px) {
+    this.width = width;
+    this.height = height;
   }
 }

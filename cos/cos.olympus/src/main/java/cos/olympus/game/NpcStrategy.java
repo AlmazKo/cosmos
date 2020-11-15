@@ -36,7 +36,7 @@ public class NpcStrategy {
 //                logger.info("Cannot move to " + dir + " #" + npc.id
 //                        + ", x=" + x + ", y=" + y + ", free=" + world.isFree(x, y) + ", smth stand=" + world.hasCreature(x, y));
             }
-            nextPlannedTick = tick + Util.rand(1000, 2000);
+            nextPlannedTick = tick + Util.rand(10, 20);
         }
     }
 

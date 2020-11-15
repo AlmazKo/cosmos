@@ -9,6 +9,7 @@ import cos.ops.Damage
 import cos.ops.Death
 import cos.ops.Direction
 import cos.ops.Disconnect
+import cos.ops.Exit
 import cos.ops.FireballEmmit
 import cos.ops.FireballMoved
 import cos.ops.Login
@@ -119,25 +120,20 @@ class PlayerSession(
 
                 log.info("Connected to Olympus!!")
                 socket = res.result()
-                onStart()
+                onStart();
+
+                val buf = ByteBuffer.allocate(32 * 1024)
 
                 socket!!.handler {
-                    var tickId = -1
                     val messages = JsonArray()
-                    try {
-                        val buf = it.byteBuf.nioBuffer();
-                        buf.rewind()
-
-                        while (buf.hasRemaining()) {
-                            val op = parse(buf)
-                            tickId = op.tick()
-                            if (op.userId() == userId) {
-                                log.info("#$userId Got Server response $op")
-                                messages.add(JsonMapper.toJson(op))
-                            }
-                        }
-
+                    val tickId = try {
+                        val bufOrigin = it.byteBuf.nioBuffer();
+                        //println("Receive " + it.length() + " bytes")
+                        bufOrigin.rewind()
+                        buf.put(bufOrigin)
+                        read(buf, messages)
                     } catch (e: Exception) {
+                        e.printStackTrace()
                         log.warn("wrong op " + e)
                     }
                     if (messages.isEmpty) return@handler
@@ -146,7 +142,7 @@ class PlayerSession(
                         .put("tick", tickId) //todo hardcode
                         .put("time", System.currentTimeMillis() / 1000)
                         .put("messages", messages)
-                    //                    log.info("Sending ... $clientRes")
+                    //log.info("Sending ... ${messages.size()} ops")
                     ws.writeTextMessage(clientRes.toString())
                 }
                 socket!!.closeHandler {
@@ -164,6 +160,28 @@ class PlayerSession(
         }
     }
 
+    private fun read(buf: ByteBuffer, messages: JsonArray): Int {
+        buf.flip()
+        var tick = -1
+        while (buf.hasRemaining()) {
+            val op = parse(buf)
+            // log.info("#$userId Got Server response $op, left: " + buf.remaining())
+            if (op === null) {
+                log.info("Left in msg " + buf.remaining() + " bytes")
+                //                buf.compact();
+                break;
+            } else {
+                tick = op.tick()
+                if (op.userId() == userId) {
+                    // log.info("#$userId Got Server response $op")
+                    messages.add(JsonMapper.toJson(op))
+                }
+            }
+        }
+        buf.compact();
+        return tick
+    }
+
     companion object {
         private fun serialize(op: AnyOp): Buffer {
             val bb = ByteBuffer.allocate(256)
@@ -176,9 +194,17 @@ class PlayerSession(
             return Buffer.buffer(bw);
         }
 
-        fun parse(b: ByteBuffer): OutOp {
+        fun parse(b: ByteBuffer): OutOp? {
+            b.mark()
             val code = b.get();
             val len = b.get();
+
+            if (b.remaining() < len || code == 0.toByte()) {
+                System.err.println("Unfinished opcode $code")
+                b.reset()
+                return null
+            }
+
             return when (code) {
                 Op.APPEAR -> Appear.read(b);
                 Op.DISCONNECT -> Disconnect.read(b);
@@ -189,7 +215,11 @@ class PlayerSession(
                 Op.MELEE_ATTACKED -> MeleeAttacked.read(b);
                 Op.DAMAGE -> Damage.read(b);
                 Op.DEATH -> Death.read(b);
-                else -> Unknown.read(b, len)
+                Op.EXIT -> Exit.read(b);
+                else -> {
+                    System.err.println("Unknown opcode: $code")
+                    Unknown.read(b, len)
+                }
             }
         }
     }

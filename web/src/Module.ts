@@ -44,7 +44,7 @@ export function get<T>(c: Constructor<T> | string): T {
   return f()
 }
 
-setCached('api', () => new WsServer("wss://localhost/ws"));
+setCached('api', () => new WsServer("wss://192.168.1.28/ws"));
 setCached('map', () => new ResourcesServer());
 setCached('images', () => new ImageAssets(HOST));
 // setCached(LocalServer, () => new LocalServer());

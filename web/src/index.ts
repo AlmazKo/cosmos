@@ -10,8 +10,8 @@ import { Render } from './game2/render/Render';
 import { World } from './game2/world/World';
 import { get } from './Module';
 
-export const HOST = "https://localhost";
-export const WS_HOST = "wss://localhost";
+export const HOST = "https://192.168.1.28";
+export const WS_HOST = "wss://192.168.1.28";
 
 window.onload = () => {
   let div = document.getElementById("game")!!;

@@ -73,7 +73,7 @@ public final class GameServer {
     }
 
 
-    private void prepareResponses() {
+    private  void prepareResponses() {
         if (responses.ops.isEmpty()) return;
 
 //        logger.info("Writing ops to buffer ...");
@@ -82,7 +82,7 @@ public final class GameServer {
 
             var sess = userSessions.get(op.userId());
             if (sess == null) {
-//                logger.info("Not exists connection for op: " + op);
+//                logger.info"Not exists connection for op: " + op);
             } else {
                 if (op.code() == Op.DISCONNECT) {
                     sess.close = true;
@@ -93,13 +93,16 @@ public final class GameServer {
         responses.ops.clear();
     }
 
+
     private void write(ByteBuffer bb, OutOp op) {
         bb.put(op.code());
         int pos = bb.position();
         bb.position(pos + 1);
         op.write(bb);
-        bb.put(pos, (byte) (bb.position() - 2));//write the length
+        byte opLength = (byte) (bb.position() - pos-1);
+        bb.put(pos, opLength);//write the length
     }
+
 
     private void accept(SelectionKey key, Selector selector) throws IOException {
         var ch = ((ServerSocketChannel) key.channel()).accept();
@@ -132,7 +135,8 @@ public final class GameServer {
         //logger.info("Reading... " + session);
         var ch = (SocketChannel) key.channel();
         var in = session.in;
-        var read = ch.read(in);
+
+        var read = ch.read(in);//todo handle  SocketException
 
         //ogger.info("Read " + read);
         if (read == -1) {
