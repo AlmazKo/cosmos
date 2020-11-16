@@ -12,7 +12,7 @@ export type CreatureMoved = { id: uint, mv: Dir | null, sight: Dir, x: pos, y: p
 export type FireballMoved = { spellId: uint, dir: Dir, x: pos, y: pos, speed: speed, sourceId: uid, finished: boolean }
 export type MeleeAttacked = { spellId: uint, sourceId: uid }
 export type CreatureHid = { id: uint, creatureId: uid }
-export type Damage = { id: uint, victimId: uid, amount:uint, spellId:uint, crit: boolean}
+export type Damage = { id: uint, sourceId: uid, victimId: uid, amount:uint, spellId:uint, crit: boolean}
 export type Death = { id: uint, victimId: uid}
 
 export interface ApiMessage {

@@ -25,6 +25,12 @@ import { Player } from './Player';
 
 const NO_ACTIONS: Act[] = [];
 let ID = 1;
+const dt = Intl.DateTimeFormat('en', {
+  hour  : 'numeric',
+  minute: 'numeric',
+  hour12: false
+});
+
 
 export class Game implements MovingListener {
 
@@ -36,6 +42,8 @@ export class Game implements MovingListener {
   private actions: Act[] = NO_ACTIONS;
   // @ts-ignore
   private movements: Movements;
+  private chat: HTMLElement;
+  private chat_in: HTMLInputElement;
 
   constructor(
     private readonly api: Api,
@@ -45,6 +53,26 @@ export class Game implements MovingListener {
     this.movements = new Movements(world)
     api.listen(p => this.onData(p))
     mvg.listen(this)
+
+
+    this.chat = document.getElementById("chat_history")!!;
+    this.chat_in = document.getElementById("chat_input") as any;
+
+    document.addEventListener("keyup", event => {
+      if (event.code === "Tab") {
+        event.stopPropagation();
+        return false;
+      }
+    });
+    this.chat_in.addEventListener("keyup", event => {
+      console.warn(event)
+      if (event.keyCode === 13) {
+        this.onChatMessage(`You says ${this.chat_in.value}`);
+        this.chat_in.value = '';
+        event.preventDefault();
+        this.chat_in.blur();
+      }
+    });
   }
 
   getConnectionStatus(): ConnStatus {
@@ -124,12 +152,24 @@ export class Game implements MovingListener {
     victim.metrics.life -= e.amount;
     this.actions.push(new OnDamage(ID++, proto, Date.now(), victim, e.amount, e.crit, isProto));
 
+    const msgSubject = e.sourceId == proto.id ? 'You' : `<a>#${e.sourceId}</a>`;//todo fix
+    this.onChatMessage(`${msgSubject} hits <a>#${e.victimId}</a> for ${e.amount}`);
+
     // ???
     const spell = this.proto.zoneSpells.get(e.spellId);
     if (spell) {
       spell.finished = true;
       this.proto.zoneSpells.delete(e.spellId);
     }
+  }
+
+  private onChatMessage(msg: string) {
+    let p: HTMLParagraphElement = document.createElement("p");
+    const time = new Date();
+    // p.innerHTML = `${dt.format(time)} <a>#${e.id}</a> hits <a>#${e.victimId}</a> for ${e.amount}`
+    p.innerHTML = msg
+    this.chat.append(p);
+    this.chat.scrollTo(0, this.chat.scrollHeight);
   }
 
   onAction(trait: Trait) {

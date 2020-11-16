@@ -28,15 +28,86 @@
         height: 180px;
         width: 180px;
         position: fixed;
-        z-index: 1000;
+        z-index: 10;
         background-color: rgba(255, 255, 255, 1);
         box-shadow: 0 0 5px #000;
         border: 2px solid white;
         border-radius: 2px;
     }
+
+    #chat {
+        background-color: #00000066;
+        position: fixed;
+        bottom: 0;
+        width: 400px;
+        height: 150px;
+        z-index: 10;
+        margin: 0 40%;
+        color: #fff;
+        font-family: sans-serif;
+    }
+
+    #chat > #chat_history {
+        height: 100px;
+        overflow: scroll;
+    }
+
+    #chat > #chat_history > p {
+        margin: 2px 4px;
+        padding: 0;
+        font-size: 12px;
+    }
+
+    #chat a {
+        font-style: italic;
+        color: cyan;
+    }
+
+
+    #chat_in {
+        border-top: 1px solid #ffffff88;
+        padding: 0;
+        height: 40px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+
+    #chat_in > input {
+        background: none;
+        border: 0;
+        margin: 0;
+        color: white;
+        font-size: 15px;
+        padding: 10px 7px;
+        width: 100%;
+    }
+
+    #chat_in > input:focus {
+        outline: none;
+        background: none;
+        border: 0;
+    }
+
+
+    #chat_in > input::placeholder {
+        color: #dddddd;
+    }
 </style>
 <body>
 <div id="game"></div>
 <div id="minimap"></div>
+<div id="chat">
+
+
+    <div id="chat_history">
+
+    </div>
+    <div id="chat_in">
+        <input id="chat_input" type="text" placeholder="...">
+    </div>
+</div>
+
 </body>
 </html>
