@@ -7,6 +7,7 @@ public record Damage(
         @Override int id,
         @Override int tick,
         @Override int userId,
+        int creatureId,
         int victimId,
         int amount,
         int spellId,
@@ -14,12 +15,13 @@ public record Damage(
 
 ) implements OutOp {
 
-    public Damage(int id, int tick, int userId, int victimId, int amount, int spellId, boolean crit) {
-        this(Op.DAMAGE, id, tick, userId, victimId, amount, spellId, crit);
+    public Damage(int id, int tick, int userId, int creatureId, int victimId, int amount, int spellId, boolean crit) {
+        this(Op.DAMAGE, id, tick, userId,creatureId, victimId, amount, spellId, crit);
     }
 
     public static Damage read(ByteBuffer b) {
         return new Damage(
+                b.getInt(),
                 b.getInt(),
                 b.getInt(),
                 b.getInt(),
@@ -34,6 +36,7 @@ public record Damage(
         buf.putInt(id);
         buf.putInt(tick);
         buf.putInt(userId);
+        buf.putInt(creatureId);
         buf.putInt(victimId);
         buf.putInt(amount);
         buf.putInt(spellId);

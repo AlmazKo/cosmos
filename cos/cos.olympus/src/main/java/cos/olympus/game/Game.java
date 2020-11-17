@@ -3,10 +3,10 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.olympus.DoubleBuffer;
 import cos.olympus.game.events.Damage;
+import cos.olympus.game.events.Death;
 import cos.olympus.game.events.Fireball;
 import cos.ops.AnyOp;
 import cos.ops.Appear;
-import cos.ops.Death;
 import cos.ops.Disconnect;
 import cos.ops.Exit;
 import cos.ops.FireballEmmit;
@@ -48,7 +48,7 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(50);
+        settleMobs(5);
     }
 
     private void settleMobs(int amount) {
@@ -71,18 +71,19 @@ public final class Game {
         ops.forEach(this::handleIncomeOp);
         movements.onTick(id, tsm);
         var damages = new ArrayList<Damage>();
-        var deaths = new ArrayList<Integer>();
+        var deaths = new ArrayList<Death>();
         spells.forEach(s -> s.onTick(tick, outOps, damages));
 
         damages.forEach(d -> {
             d.victim().damage(d);
             if (d.victim().isDead()) {
-                logger.info("Death " + d.victim().id());
-                deaths.add(d.victim().id());
+                var death = new Death(0, tick, d.spell(), d.victim());
+                logger.info(death.toString());
+                deaths.add(death);
                 movements.interrupt(d.victim());
 
                 if (d.victim().avatar instanceof Player) {
-                    this.playersRespawns.add(new RespawnClientStrategy(tick,world, (Player) d.victim().avatar));
+                    this.playersRespawns.add(new RespawnClientStrategy(tick, world, (Player) d.victim().avatar));
                 }
             }
         });
@@ -115,9 +116,9 @@ public final class Game {
                 }
             });
 
-            deaths.forEach(victimId -> {
-                if (cr.zoneCreatures.containsKey(victimId)) {
-                    outOps.add(new Death(0, tick, cr.id(), victimId));
+            deaths.forEach(death -> {
+                if (cr.zoneCreatures.containsKey(death.victim().id())) {
+                    outOps.add(death.toUserOp(cr.id()));
                 }
             });
         });

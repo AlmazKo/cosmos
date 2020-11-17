@@ -106,6 +106,7 @@ object JsonMapper {
         .put(
             "data", JsonObject()
                 .put("id", op.id())
+                .put("creatureId", op.creatureId())
                 .put("victimId", op.victimId())
                 .put("amount", op.amount())
                 .put("crit", op.crit())
@@ -119,7 +120,7 @@ object JsonMapper {
         .put(
             "data", JsonObject()
                 .put("id", op.id())
-                .put("sourceId", op.sourceId())
+                .put("creatureId", op.sourceId())
                 .put("spellId", op.spellId())
         )
 
@@ -130,6 +131,7 @@ object JsonMapper {
         .put(
             "data", JsonObject()
                 .put("id", op.id())
+                .put("creatureId", op.creatureId())
                 .put("victimId", op.victimId())
         )
 }

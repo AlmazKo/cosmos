@@ -11,7 +11,7 @@ public record Fireball(
         Direction dir,
         int distance,
         int tickId,
-        Creature source
+        @Override Creature source
 
 ) implements Spell {
 //

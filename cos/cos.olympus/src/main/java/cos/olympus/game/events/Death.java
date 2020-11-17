@@ -2,26 +2,23 @@ package cos.olympus.game.events;
 
 import cos.olympus.game.Creature;
 
-public record Damage(
+public record Death(
         int id,
         int tick,
-        Creature victim,
         Spell spell,
-        int amount,
-        boolean crit
+        Creature victim
 ) {
 
-    public cos.ops.Damage toUserOp(int userId) {
-        return new cos.ops.Damage(id, tick, userId, spell.source().id(), victim.id(), amount, spell.id(), crit);
+    public cos.ops.Death toUserOp(int userId) {
+        return new cos.ops.Death(id, tick, userId, spell.source().id(), victim.id());
     }
 
     @Override public String toString() {
-        return "Damage{" +
+        return "Death{" +
                 "id=" + id +
                 ", tick=" + tick +
                 ", victim=" + victim.id() +
                 ", spell=" + spell.id() +
-                ", amount=" + amount +
                 '}';
     }
 }

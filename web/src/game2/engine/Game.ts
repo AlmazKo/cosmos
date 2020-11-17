@@ -118,6 +118,12 @@ export class Game implements MovingListener {
 
   private onDeath(e: Death) {
     const proto = this.proto!!;
+
+    const msgSubject = e.creatureId == proto.id ? 'You' : `<a>#${e.creatureId}</a>`;//todo fix
+    const msgVictim = e.victimId == proto.id ? 'You' : `<a>#${e.victimId}</a>`;
+    this.onChatMessage(`${msgSubject} kills ${msgVictim} ☠️`);
+
+
     proto.zoneCreatures.delete(e.victimId);
     //todo add effect
 
@@ -152,8 +158,9 @@ export class Game implements MovingListener {
     victim.metrics.life -= e.amount;
     this.actions.push(new OnDamage(ID++, proto, Date.now(), victim, e.amount, e.crit, isProto));
 
-    const msgSubject = e.sourceId == proto.id ? 'You' : `<a>#${e.sourceId}</a>`;//todo fix
-    this.onChatMessage(`${msgSubject} hits <a>#${e.victimId}</a> for ${e.amount}`);
+    const msgSubject = e.creatureId == proto.id ? 'You' : `<a>#${e.creatureId}</a>`;//todo fix
+    const msgVictim = e.victimId == proto.id ? 'You' : `<a>#${e.victimId}</a>`;
+    this.onChatMessage(`${msgSubject} hits ${msgVictim} for ${e.crit ? '💥' : ''}${e.amount}`);
 
     // ???
     const spell = this.proto.zoneSpells.get(e.spellId);
@@ -259,9 +266,9 @@ export class Game implements MovingListener {
 
   private onMeleeAttacked(e: MeleeAttacked) {
     const proto = this.proto!!;
-    if (e.sourceId === proto.id) return;
+    if (e.creatureId === proto.id) return;
 
-    const source = proto.zoneCreatures.get(e.sourceId);
+    const source = proto.zoneCreatures.get(e.creatureId);
     if (!source) return;
 
     this.actions.push(new OnMeleeAttack(ID++, source, Date.now()))

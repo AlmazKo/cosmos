@@ -10,7 +10,7 @@ public record MeleeAttack(
         int x,
         int y,
         Direction dir,
-        Creature source
+        @Override Creature source
 ) implements Spell {
 
 }
