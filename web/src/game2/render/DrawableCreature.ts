@@ -116,7 +116,7 @@ export class DrawableCreature implements TileDrawable {
     }
 
 
-   this.drawName(bp, x, y);
+   // this.drawName(bp, x, y);
   }
 
 

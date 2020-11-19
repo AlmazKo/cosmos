@@ -6,10 +6,8 @@ import { ActivateTrait } from '../../game2/engine/actions/ActivateTrait';
 import { Trait } from '../../game2/engine/Trait';
 import { Images } from '../../game2/Images';
 import { Drawable } from '../Drawable';
-import { BTN_1, BTN_2, BTN_3, Slot } from '../Slot';
+import { BTN_1, BTN_2, BTN_3, BTN_4, Slot } from '../Slot';
 import { Traits } from '../Trait';
-
-// export const RES = get<Images>('images');
 
 export class Panels implements Drawable {
   private slots: Array<Slot | null> = [null, null, null, null, null];
@@ -22,6 +20,7 @@ export class Panels implements Drawable {
     this.slots[0] = new Slot(0, BTN_1, Traits.melee);
     this.slots[1] = new Slot(1, BTN_2, Traits.fireball);
     this.slots[2] = new Slot(2, BTN_3, Traits.fireshock);
+    this.slots[3] = new Slot(3, BTN_4, Traits.shot);
   }
 
   draw(time: DOMHighResTimeStamp, p: CanvasContext): void {

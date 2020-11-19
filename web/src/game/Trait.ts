@@ -8,8 +8,8 @@ export interface Trait {
 
 
 export class TraitStep implements Trait {
-  readonly resName  = "";
-  readonly name     = "Step";
+web:  readonly resName = "";
+  readonly name = "Step";
   readonly isMoving = true;
 
   constructor(public readonly dir: Dir) {
@@ -18,32 +18,38 @@ export class TraitStep implements Trait {
 }
 
 export class TraitCharge implements Trait {
-  readonly resName  = "";
-  readonly name     = "Charge";
+  readonly resName = "";
+  readonly name = "Charge";
   readonly isMoving = true;
 }
 
 export class TraitRun implements Trait {
-  readonly resName  = "";
-  readonly name     = "Run";
+  readonly resName = "";
+  readonly name = "Run";
   readonly isMoving = true;
 }
 
 export class TraitMelee implements Trait {
-  readonly resName  = "ico_melee";
-  readonly name     = "Melee attack";
+  readonly resName = "ico_melee";
+  readonly name = "Melee attack";
+  readonly isMoving = false;
+}
+
+export class TraitShot implements Trait {
+  readonly resName = "ico_shot";
+  readonly name = "Shot";
   readonly isMoving = false;
 }
 
 export class TraitFireball implements Trait {
-  readonly resName  = "ico_fireball";
-  readonly name     = "Cast fireball";
+  readonly resName = "ico_fireball";
+  readonly name = "Cast fireball";
   readonly isMoving = false;
 }
 
 export class TraitFireshock implements Trait {
-  readonly resName  = "ico_fireshock";
-  readonly name     = "Cast fireshock";
+  readonly resName = "ico_fireshock";
+  readonly name = "Cast fireshock";
   readonly isMoving = false;
 }
 
@@ -56,5 +62,6 @@ export const Traits = {
   run      : new TraitRun(),
   melee    : new TraitMelee(),
   fireball : new TraitFireball(),
+  shot     : new TraitShot(),
   fireshock: new TraitFireshock(),
 };

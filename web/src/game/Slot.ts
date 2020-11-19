@@ -30,6 +30,7 @@ export class Key {
 export const BTN_1 = new Key(49, "1");
 export const BTN_2 = new Key(50, "2");
 export const BTN_3 = new Key(51, "3");
+export const BTN_4 = new Key(52, "4");
 
 export const BTN_LEFT  = new Key(37, "◁");
 export const BTN_RIGHT = new Key(39, "▷");
@@ -47,12 +48,14 @@ hotKeys.set(BTN_RIGHT, new HotKey(BTN_RIGHT, Traits.stepEast));
 hotKeys.set(BTN_1, new HotKey(BTN_1, Traits.melee));
 hotKeys.set(BTN_2, new HotKey(BTN_2, Traits.fireball));
 hotKeys.set(BTN_3, new HotKey(BTN_3, Traits.fireshock));
+hotKeys.set(BTN_4, new HotKey(BTN_4, Traits.shot));
 
 
 export const Buttons: { [index: number]: Key } = {
   49: BTN_1,
   50: BTN_2,
   51: BTN_3,
+  52: BTN_4,
   37: BTN_LEFT,
   38: BTN_UP,
   39: BTN_RIGHT,

@@ -3,7 +3,7 @@ import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Trait, TraitFireball, TraitMelee } from '../../game/Trait';
+import { Trait, TraitFireball, TraitMelee, TraitShot } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { ConnStatus } from '../server/WsServer';
@@ -185,6 +185,8 @@ export class Game implements MovingListener {
       this.api.sendAction('emmit_fireball', {});
     } else if (trait instanceof TraitMelee) {
       this.api.sendAction('melee_attack', {});
+    } else if (trait instanceof TraitShot) {
+      this.api.sendAction('shot_attack', {});
     }
 
     this.actions.push(new ActivateTrait(ID++, p, Date.now(), trait))

@@ -1,4 +1,4 @@
-import { HotKey } from '../../game/Slot';
+import { BTN_4, HotKey } from '../../game/Slot';
 import { Traits, TraitStep } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Game } from '../engine/Game';
@@ -36,12 +36,14 @@ hotKeys.set(BTN_RIGHT, new HotKey(BTN_RIGHT, Traits.stepEast));
 hotKeys.set(BTN_1, new HotKey(BTN_1, Traits.melee));
 hotKeys.set(BTN_2, new HotKey(BTN_2, Traits.fireball));
 hotKeys.set(BTN_3, new HotKey(BTN_3, Traits.fireshock));
+hotKeys.set(BTN_4, new HotKey(BTN_4, Traits.shot));
 
 
 const Buttons: { [index: number]: Key } = {
   49: BTN_1,
   50: BTN_2,
   51: BTN_3,
+  52: BTN_4,
   37: BTN_LEFT,
   38: BTN_UP,
   39: BTN_RIGHT,
