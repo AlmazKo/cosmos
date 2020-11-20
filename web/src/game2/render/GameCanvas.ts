@@ -11,7 +11,7 @@ export class GameCanvas implements CanvasComposer {
   // @ts-ignore
   // private p: BasePainter;
 
-  constructor(private  render: Render) {
+  constructor(public readonly render: Render) {
 
   }
 

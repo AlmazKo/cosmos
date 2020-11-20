@@ -1,17 +1,15 @@
 import { Ballad } from './canvas/Ballad';
 import './ext/array/ext';
 import './ext/promiser/ext';
-import { GamePad } from './game2/controller/GamePad';
-import { Keyboard } from './game2/controller/Keyboard';
-import { Game } from './game2/engine/Game';
+import { GamePad, gamepadSchema } from './game2/controller/GamePad';
+import { Keyboard, keyboardSchema } from './game2/controller/Keyboard';
 import { GameCanvas } from './game2/render/GameCanvas';
 import { MiniMapCanvas } from './game2/render/MiniMapCanvas';
 import { Render } from './game2/render/Render';
-import { World } from './game2/world/World';
 import { get } from './Module';
 
-export const HOST = "https://192.168.1.28";
-export const WS_HOST = "wss://192.168.1.28";
+export const HOST = "https://localhost";
+export const WS_HOST = "wss://localhost/ws";
 
 window.onload = () => {
   let div = document.getElementById("game")!!;
@@ -26,7 +24,17 @@ window.onload = () => {
   let p2 = new Ballad(div2);
   p2.start(new MiniMapCanvas(get(Render)));
 
-  window.addEventListener('gamepadconnected', e => get(GamePad));
+  gc.render.panels.onHotKeysUpdate(keyboardSchema);
+  window.addEventListener('gamepadconnected', e => {
+    console.log('Gamepad connected');
+    get(GamePad);
+    gc.render.panels.onHotKeysUpdate(gamepadSchema);
+  });
+  window.addEventListener('ongamepaddisconnected', e => {
+    //fixme it doesnt work
+    console.log('Gamepad disconnected');
+    gc.render.panels.onHotKeysUpdate(keyboardSchema);
+  });
 
   var myWorker = new Worker('worker.ts');
 

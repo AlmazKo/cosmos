@@ -1,5 +1,5 @@
 import { CanvasContext } from '../../draw/CanvasContext';
-import { Layer } from '../../game/layers/Layer';
+import { Layer } from './layers/Layer';
 import { Images } from '../Images';
 import { floor, Piece, World } from '../world/World';
 import { Camera } from './Camera';

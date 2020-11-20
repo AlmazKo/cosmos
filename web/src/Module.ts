@@ -1,4 +1,3 @@
-import { HOST } from '.';
 import { GamePad } from './game2/controller/GamePad';
 import { Keyboard } from './game2/controller/Keyboard';
 import { Game } from './game2/engine/Game';
@@ -10,6 +9,7 @@ import { ImageAssets } from './game2/server/ImageAssets';
 import { ResourcesServer } from './game2/server/ResourcesServer';
 import { WsServer } from './game2/server/WsServer';
 import { World } from './game2/world/World';
+import { WS_HOST, HOST } from './index';
 
 
 interface Constructor<T = any> {
@@ -44,7 +44,7 @@ export function get<T>(c: Constructor<T> | string): T {
   return f()
 }
 
-setCached('api', () => new WsServer("wss://192.168.1.28/ws"));
+setCached('api', () => new WsServer(WS_HOST));
 setCached('map', () => new ResourcesServer());
 setCached('images', () => new ImageAssets(HOST));
 // setCached(LocalServer, () => new LocalServer());

@@ -1,40 +1,43 @@
-import { HotKey } from '../../game/Slot';
-import { Traits } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Game } from '../engine/Game';
-import { Key } from './Keyboard';
+import { Trait, Traits } from '../Trait';
+import { HotKey, Key } from './controls';
 import { MovingAggregator } from './MovingAggregator';
 
-const Buttons: { [index: number]: Dir } = {
+
+console.log("Gamepad")
+const movingButtons: { [index: number]: Dir } = {
   14: Dir.WEST,
   12: Dir.NORTH,
   15: Dir.EAST,
   13: Dir.SOUTH
 };
 
+// //dualShock buttons
+const TRIANGLE = new Key(3, '∆', 'ico_btn_triangle');
+const CIRCLE = new Key(1, '○', 'ico_btn_circle');
+const CROSS = new Key(0, '×', 'ico_btn_cross');
+const SQUARE = new Key(2, '□', 'ico_btn_square');
 
-export const BTN_TRIANGLE = new Key(1, "∆");
-export const BTN_CIRCLE = new Key(2, "○");
-export const BTN_CROSS = new Key(3, "×");
-export const BTN_SQUARE = new Key(4, "□");
+const hotKeys = new Map<uint, HotKey>();
+hotKeys.set(TRIANGLE.code, new HotKey(TRIANGLE, Traits.melee));
+hotKeys.set(CIRCLE.code, new HotKey(CIRCLE, Traits.shot));
+hotKeys.set(CROSS.code, new HotKey(CROSS, Traits.fireshock));
+hotKeys.set(SQUARE.code, new HotKey(SQUARE, Traits.fireball));
 
-
-export const hotKeys = new Map<uint, HotKey>();
-hotKeys.set(0, new HotKey(BTN_TRIANGLE, Traits.fireshock));
-hotKeys.set(1, new HotKey(BTN_CIRCLE, Traits.shot));
-hotKeys.set(2, new HotKey(BTN_CROSS, Traits.melee));
-hotKeys.set(3, new HotKey(BTN_SQUARE, Traits.fireball));
+export const gamepadSchema = new Map<Key, Trait>();
+gamepadSchema.set(TRIANGLE, Traits.fireshock);
+gamepadSchema.set(CIRCLE, Traits.shot);
+gamepadSchema.set(CROSS, Traits.melee);
+gamepadSchema.set(SQUARE, Traits.fireball);
 
 export class GamePad {
-  private _presses: uint[] = [];
+  private readonly _presses: uint[] = [];
 
   constructor(
     private readonly moving: MovingAggregator,
     private readonly game: Game
   ) {
-
-    console.log("Start Gamepad");
-
     setInterval(() => {
       const g = navigator.getGamepads()[0];
       if (!g) return;
@@ -62,9 +65,10 @@ export class GamePad {
 
   private onPress(b: uint) {
     if (b >= 12 && b <= 15) {
-      this.moving.press(Buttons[b]);
+      this.moving.press(movingButtons[b]);
     } else {
       const key = hotKeys.get(b);
+      console.log(key)
       if (key) {
         this.game.onAction(key.trait);
       }
@@ -73,7 +77,7 @@ export class GamePad {
 
   private onKeyup(b: uint) {
     if (b >= 12 && b <= 15) {
-      this.moving.release(Buttons[b]);
+      this.moving.release(movingButtons[b]);
     }
   }
 }

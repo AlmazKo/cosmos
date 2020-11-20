@@ -1,3 +1,5 @@
+export type asset = string;
+
 export interface Images {
-  get(name: string): HTMLImageElement | undefined
+  get(name: asset): HTMLImageElement | undefined
 }

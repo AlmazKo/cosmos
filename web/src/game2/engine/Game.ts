@@ -3,7 +3,7 @@ import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
-import { Trait, TraitFireball, TraitMelee, TraitShot } from '../../game/Trait';
+import { Trait, TraitFireball, TraitMelee, TraitShot } from '../Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { ConnStatus } from '../server/WsServer';

@@ -2,10 +2,8 @@ import { Animators } from '../../anim/Animators';
 import { BasePainter } from '../../draw/BasePainter';
 import { CanvasContext } from '../../draw/CanvasContext';
 import { Effects } from '../../game/Effects';
-import { Panels } from '../../game/layers/Panels';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
-import { TraitFireball, TraitMelee } from '../../game/Trait';
 import { Dir, dirToString, stringTiles } from '../constants';
 import { Act } from '../engine/Act';
 import { ActivateTrait } from '../engine/actions/ActivateTrait';
@@ -17,12 +15,14 @@ import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
 import { Player } from '../engine/Player';
 import { Images } from '../Images';
+import { TraitFireball, TraitMelee } from '../Trait';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
 import { DrawableCreature } from './DrawableCreature';
 import { DamageEffect } from './effects/DamageEffect';
 import { Fireball } from './effects/Fireball';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
+import { Panels } from './layers/Panels';
 
 
 const FOV_RADIUS = 8;
@@ -41,7 +41,7 @@ export class Render {
   // @ts-ignore
   private tp: TilePainter;
   private imageData: Uint8ClampedArray | undefined;
-  private readonly panels: Panels;
+  readonly panels: Panels;
   private effects = new Effects();
   private cursor: [px, px] | undefined;
 

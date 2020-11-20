@@ -1,4 +1,4 @@
-import { Trait } from '../../../game/Trait';
+import { Trait } from '../../Trait';
 import { Act } from '../Act';
 import { Creature } from '../Creature';
 

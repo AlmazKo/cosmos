@@ -1,38 +1,28 @@
-import { BTN_4, HotKey } from '../../game/Slot';
-import { Traits, TraitStep } from '../../game/Trait';
 import { Dir } from '../constants';
 import { Game } from '../engine/Game';
+import { Trait, Traits } from '../Trait';
+import { HotKey, Key } from './controls';
 import { MovingAggregator } from './MovingAggregator';
 
-export class Key {
-  constructor(
-    public readonly code: uint,
-    public readonly name: string) {
-  }
-
-  toString() {
-    return name;
-  }
-}
+console.log("Keyboard", Key)
+const movingButtons: { [index: number]: Dir } = {
+  37: Dir.WEST,
+  38: Dir.NORTH,
+  39: Dir.EAST,
+  40: Dir.SOUTH
+};
 
 
-export const BTN_1 = new Key(49, "1");
-export const BTN_2 = new Key(50, "2");
-export const BTN_3 = new Key(51, "3");
+const BTN_1 = new Key(49, '1');
+const BTN_2 = new Key(50, '2');
+const BTN_3 = new Key(51, '3');
+const BTN_4 = new Key(52, '4');
+const BTN_LEFT = new Key(37, '◁');
+const BTN_RIGHT = new Key(39, '▷');
+const BTN_UP = new Key(38, '△');
+const BTN_DOWN = new Key(40, '▽');
 
-export const BTN_LEFT = new Key(37, "◁");
-export const BTN_RIGHT = new Key(39, "▷");
-export const BTN_UP = new Key(38, "△");
-export const BTN_DOWN = new Key(40, "▽");
-
-export const MovingButtons = [BTN_LEFT.code, BTN_RIGHT.code, BTN_UP.code, BTN_DOWN.code];
-
-export const hotKeys = new Map<Key, HotKey>();
-hotKeys.set(BTN_UP, new HotKey(BTN_UP, Traits.stepNorth));
-hotKeys.set(BTN_DOWN, new HotKey(BTN_DOWN, Traits.stepSouth));
-hotKeys.set(BTN_LEFT, new HotKey(BTN_LEFT, Traits.stepWest));
-hotKeys.set(BTN_RIGHT, new HotKey(BTN_RIGHT, Traits.stepEast));
-
+const hotKeys = new Map<Key, HotKey>();
 hotKeys.set(BTN_1, new HotKey(BTN_1, Traits.melee));
 hotKeys.set(BTN_2, new HotKey(BTN_2, Traits.fireball));
 hotKeys.set(BTN_3, new HotKey(BTN_3, Traits.fireshock));
@@ -51,6 +41,13 @@ const Buttons: { [index: number]: Key } = {
 };
 
 
+export const keyboardSchema = new Map<Key, Trait>();
+keyboardSchema.set(BTN_3, Traits.fireshock);
+keyboardSchema.set(BTN_4, Traits.shot);
+keyboardSchema.set(BTN_1, Traits.melee);
+keyboardSchema.set(BTN_2, Traits.fireball);
+
+
 export class Keyboard {
 
   constructor(
@@ -60,49 +57,33 @@ export class Keyboard {
     window.addEventListener('keyup', e => this.onKeyup(e));
   }
 
-  private onKeypress(e: KeyboardEvent) {
-    console.log('PRESS', e.key, e.keyCode)
-  }
-
   private lastKeyDowns: Dir[] = [];
-
 
   private onKeydown(e: KeyboardEvent) {
     const btn = Buttons[e.keyCode];
-    if (btn == undefined) return;
+    if (!btn) return;
 
-
-    // console.log('DOWN ', e.key, e.keyCode);
-
-    // if (MovingButtons.contains(btn.code)) {
-
-    const t = hotKeys.get(btn)!!.trait;
-    if (t instanceof TraitStep) {
-
-      if (!this.lastKeyDowns.contains(t.dir)) {
-        this.lastKeyDowns.push(t.dir);
-        this.moving.press(t.dir);
+    const dir = movingButtons[btn.code]
+    if (dir) {
+      if (!this.lastKeyDowns.contains(dir)) {
+        this.lastKeyDowns.push(dir);
+        this.moving.press(dir);
       }
     } else {
-      this.game.onAction(t);
+      const hotkey = hotKeys.get(btn)!!;
+      this.game.onAction(hotkey.trait);
     }
-
-
-    //fixme return the code
-    // this.move.press(btn.code);
-
   }
 
   private onKeyup(e: KeyboardEvent) {
-
     const btn = Buttons[e.keyCode];
-    if (btn == undefined) return;
+    if (!btn) return;
     // console.log('onKeyup   ', e.keyCode, btn);
 
-    const t = hotKeys.get(btn)!!.trait;
-    if (t instanceof TraitStep) {
-      this.lastKeyDowns.remove(t.dir);
-      this.moving.release(t.dir);
+    const dir = movingButtons[btn.code]
+    if (dir) {
+      this.lastKeyDowns.remove(dir);
+      this.moving.release(dir);
     }
   }
 

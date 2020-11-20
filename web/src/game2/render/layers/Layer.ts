@@ -1,4 +1,4 @@
-import { CanvasContext } from '../../draw/CanvasContext';
+import { CanvasContext } from '../../../draw/CanvasContext';
 
 export interface Layer {
   init(ctx: CanvasContext): void;
