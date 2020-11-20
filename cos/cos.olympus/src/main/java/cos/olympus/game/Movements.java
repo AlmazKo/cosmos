@@ -22,22 +22,26 @@ final class Movements implements TickAware {
         this.world = world;
     }
 
-    final static class Mv {
+    private final static class Mv {
         final Creature cr;
         Move    next;
-        boolean stop     = false;
-        boolean rollBack = false;
+        boolean stop = false;
 
         Mv(Creature cr) {
             this.cr = cr;
         }
     }
 
-    void start(Creature cr, Move op) {
+    void change(Creature cr, Move op) {
         var mv = mvs.get(cr.id());
         if (mv != null) {
             mv.next = op;
         } else {
+            if (op.dir() == null) {
+                cr.sight = op.sight();
+                return;
+            }
+
             mvs.put(cr.id(), new Mv(cr));
             cr.mv = op.dir();
             cr.sight = op.sight();

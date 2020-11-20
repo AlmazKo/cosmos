@@ -42,7 +42,7 @@ public class Zone {
                 //disappear or /nothing
             } else {
                 var ort = target.zoneCreatures.get(cr.id());
-                if (ort == null || (ort.x() != cr.x || ort.y() != cr.y) || ort.speed() != cr.speed) {
+                if (ort == null || (ort.x() != cr.x || ort.y() != cr.y) || ort.speed() != cr.speed|| ort.sight() != cr.sight) {
                     target.zoneCreatures.put(cr.id(), cr.orientation());
                     consumer.add(new CreatureMoved(1, tick, target.id(), cr.id(), x, y, cr.offset, cr.speed, cr.mv, cr.sight));
                 }

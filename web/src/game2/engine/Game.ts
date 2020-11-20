@@ -217,7 +217,7 @@ export class Game implements MovingListener {
     return c;
   }
 
-  onMovingChanged(status: StatusMoving, dir: Dir, sight: Dir) {
+  onMovingChanged(status: StatusMoving, dir: Dir|undefined, sight: Dir) {
 
     const accepted = this.movements.onMovingChanged(this.proto!!, status, dir, sight);
 

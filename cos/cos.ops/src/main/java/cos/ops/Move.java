@@ -22,8 +22,8 @@ public record Move(
                 b.getInt(),
                 b.getInt(),
                 b.getInt(),
-                Direction.values()[b.get()],
-                Direction.values()[b.get()]);
+                Direction.of(b.get()),
+                Direction.of(b.get()));
     }
 
     public void write(ByteBuffer buf) {
@@ -31,7 +31,7 @@ public record Move(
         buf.putInt(userId);
         buf.putInt(x);
         buf.putInt(y);
-        buf.put((byte) dir.ordinal());
+        buf.put(dir == null ? -1 : (byte) dir.ordinal());
         buf.put((byte) sight.ordinal());
     }
 }

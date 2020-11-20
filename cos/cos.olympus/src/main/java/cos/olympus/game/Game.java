@@ -160,7 +160,7 @@ public final class Game {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
-        movements.start(cr, op);
+        movements.change(cr, op);
     }
 
     private void onSpell(FireballEmmit op) {

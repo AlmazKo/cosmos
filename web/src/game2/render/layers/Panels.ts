@@ -18,7 +18,7 @@ class Slot {
 }
 
 export class Panels implements Drawable {
-  private slots: Array<Slot | null> = [null, null, null, null, null];
+  private slots: Array<Slot | null> = [null, null, null, null];
   private coolDownFraction = 1.0;
   private lastRequestedAction?: Trait;
   private slotAnimatedFraction: float = 0.0;
@@ -50,7 +50,7 @@ export class Panels implements Drawable {
 
     let x = 60;
     const y = height - 45;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
 
       x = 60 + 60 * i;
 

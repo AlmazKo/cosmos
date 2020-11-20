@@ -174,7 +174,7 @@ export class Movements {
       mv.next = {mv: dir, sight}
     } else {
       o.sight = sight;
-      if (dir === null) return false;
+      if (dir === null) return true;
 
       if (!this.world.canStep(o.x, o.y, dir)) {
         console.warn(`Step is blocked: ${o}`, dir);

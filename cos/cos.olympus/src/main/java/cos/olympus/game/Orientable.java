@@ -1,9 +1,10 @@
 package cos.olympus.game;
 
 import cos.ops.Direction;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Orientable {
+public interface Orientable{
     int x();
 
     int y();
@@ -15,6 +16,5 @@ public interface Orientable {
     @Nullable Direction mv();
 
     Direction sight();
-
 
 }

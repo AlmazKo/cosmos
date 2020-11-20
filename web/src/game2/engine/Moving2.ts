@@ -23,17 +23,15 @@ export interface Mv {
 
 
 export class Moving2 {
-  private _moving: Dir | null = null;
+  _moving: Dir | null = null;
   private _sight: Dir | null = null;
 
   press(dir: Dir): Mv | null {
     if (this._moving === null) {
       this._moving = dir;
-      //debug  console.log("onStartMoving " + this);
       return {status: StatusMoving.START, move: this._moving, sight: this._moving};
     } else if (this._sight === null) {
       this._sight = dir;
-      //debug  console.log("onChangeSight " + this);
       return {status: StatusMoving.CHANGE_SIGHT, move: this._moving, sight: this._sight};
     } else {
       //ignore the 3d action
@@ -44,20 +42,22 @@ export class Moving2 {
   release(dir: Dir): Mv | null {
     if (this._moving === dir && this._sight === null) {
       this._moving = null;
-      //debug  console.log("onStopMoving " + this);
-      return {status: StatusMoving.STOP, move: this._moving, sight: dir};
+      return {status: StatusMoving.STOP, move: null, sight: dir};
     } else if (this._sight === dir) {
       this._sight = null;
-      //debug  console.log("onChangeSight " + this);
       return {status: StatusMoving.CHANGE_SIGHT, move: this._moving, sight: this._moving};
     } else if (this._moving === dir) {
       this._moving = this._sight;
       this._sight = null;
-    //debug  console.log("onChangeMoving " + this);
       return {status: StatusMoving.CHANGE_MOVE, move: this._moving, sight: this._moving};
     }
 
     return null
+  }
+
+  changeSight(dir: Dir) {
+    // this._sight = dir;
+    return {status: StatusMoving.CHANGE_SIGHT, move: this._moving, sight: dir};
   }
 
   toString() {

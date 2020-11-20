@@ -3,13 +3,6 @@ import { MovingAggregator } from '../controller/MovingAggregator';
 import { Moving2 } from './Moving2';
 import { MovingListener } from './MovingListener';
 
-
-export interface Focus {
-  moving: Dir,
-  sight: Dir,
-  vel: velocity
-}
-
 export class Moving implements MovingAggregator {
   private listener: MovingListener = null!!;
   private mv: Moving2 = new Moving2();
@@ -24,6 +17,12 @@ export class Moving implements MovingAggregator {
     if (m) {
       this.listener.onMovingChanged(m.status, m.move, m.sight)
     }
+  }
+
+  direction(dir: Dir) {
+    console.log(dir)
+    const m = this.mv.changeSight(dir);
+    this.listener.onMovingChanged(m.status, m.move, m.sight);
   }
 
   release(dir: Dir) {

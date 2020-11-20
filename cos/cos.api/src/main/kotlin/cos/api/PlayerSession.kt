@@ -76,16 +76,17 @@ class PlayerSession(
     private fun parseRequest(js: JsonObject): AnyOp? {
         return when (js.getString("op")) {
             "move" -> {
-                val dirId = js.getString("dir")
+                val dirId: String? = js.getString("dir")
                 var sightId = js.getString("sight")
                 if (sightId == null) sightId = dirId;
+                if (dirId == null && sightId == null) throw IllegalArgumentException("Wrong move request")
 
                 Move(
                     cid.incrementAndGet(),
                     userId,
                     js.getInteger("x"),
                     js.getInteger("y"),
-                    Direction.valueOf(dirId),
+                    if (dirId === null) null else Direction.valueOf(dirId),
                     Direction.valueOf(sightId)
                 )
             }

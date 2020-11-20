@@ -33,6 +33,7 @@ gamepadSchema.set(SQUARE, Traits.fireball);
 
 export class GamePad {
   private readonly _presses: uint[] = [];
+  private dir: Dir | undefined;
 
   constructor(
     private readonly moving: MovingAggregator,
@@ -41,6 +42,23 @@ export class GamePad {
     setInterval(() => {
       const g = navigator.getGamepads()[0];
       if (!g) return;
+
+      const leftX = g.axes[0];
+      const leftY = g.axes[1];
+      const barrier = 0.5;
+      if (leftX > barrier && this.dir != Dir.EAST && leftX > Math.abs(leftY)) {
+        this.moving.direction(Dir.EAST)
+        this.dir = Dir.EAST;
+      } else if (leftX < -barrier && this.dir != Dir.WEST && -leftX > Math.abs(leftY)) {
+        this.moving.direction(Dir.WEST)
+        this.dir = Dir.WEST;
+      } else if (leftY > barrier && this.dir != Dir.SOUTH && leftY > Math.abs(leftX)) {
+        this.moving.direction(Dir.SOUTH)
+        this.dir = Dir.SOUTH;
+      } else if (leftY < -barrier && this.dir != Dir.NORTH && -leftY > Math.abs(leftX)) {
+        this.moving.direction(Dir.NORTH)
+        this.dir = Dir.NORTH;
+      }
 
       const btns = g.buttons;
 
