@@ -46,7 +46,7 @@ public final class World implements TileMap, GMap {
         this.objects = lands.getObjects();
         this.creatures = new int[basis.length];
         this.tiles = lands.getTiles();
-//        debug();
+        debug();
     }
 
     public void debug() {
@@ -68,32 +68,17 @@ public final class World implements TileMap, GMap {
                     continue;
                 }
 
-                char b;
-                switch (tile.type()) {
-
-                    case SHALLOW:
-                        b = '~';
-                        break;
-                    case DEEP_WATER:
-                        b = '≈';
-                        break;
-
-                    case GRASS:
-                        b = '.';
-                        break;
-//                    case WALL:
-//                        b = '#';
-//                        break;
-                    case GATE:
-                        b = 'П';
-                        break;
-                    case NOTHING:
-                        b = 'x';
-                        break;
-
-                    default:
-                        b = 'N';
-                }
+                char b = switch (tile.type()) {
+                    case WALL -> '#';
+                    case TIMBER -> 'T';
+                    case SHALLOW -> '~';
+                    case DEEP_WATER -> '≈';
+                    case GRASS -> 'v';
+                    case SAND -> '.';
+                    case GATE -> 'П';
+                    case NOTHING -> 'x';
+                    default -> 'N';
+                };
 
                 sb.append(b);
             }

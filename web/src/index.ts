@@ -4,7 +4,7 @@ import './ext/promiser/ext';
 import { GamePad, gamepadSchema } from './game2/controller/GamePad';
 import { Keyboard, keyboardSchema } from './game2/controller/Keyboard';
 import { GameCanvas } from './game2/render/GameCanvas';
-import { MiniMapCanvas } from './game2/render/MiniMapCanvas';
+import { MiniMapCanvas } from './game2/render/layers/MiniMapCanvas';
 import { Render } from './game2/render/Render';
 import { get } from './Module';
 

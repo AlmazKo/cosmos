@@ -13,13 +13,12 @@ public enum TileType {
     ROAD(8),
     GATE(9),
     WALL(10),
-    OBSTACLE(11)
+    TIMBER(11)
     ;
 
     private final byte id;
 
     private TileType(int id) {
-
         this.id = (byte) id;
     }
 

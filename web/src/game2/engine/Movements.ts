@@ -192,6 +192,7 @@ export class Movements {
 
   static getSpeed(tile: TileType, moving: Dir | null, sight: Dir): speed {
     if (tile === TileType.GRASS) return GRASS_SPEED;
+    if (tile === TileType.SAND) return GRASS_SPEED;
     if (tile === TileType.SHALLOW) return WATER_SPEED;
     if (tile === TileType.GATE) return WATER_SPEED;
     return 0;

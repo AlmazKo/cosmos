@@ -52,6 +52,7 @@ export enum TileType {
   ROAD       = 8,
   GATE       = 9,
   WALL       = 10,
+  TIMBER     = 11,
 }
 
 export const stringTiles = [
@@ -65,7 +66,8 @@ export const stringTiles = [
   'SNOW',
   'ROAD',
   'GATE',
-  'WALL'
+  'WALL',
+  'TIMBER'
 ];
 
 

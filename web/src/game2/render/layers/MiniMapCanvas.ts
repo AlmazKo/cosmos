@@ -1,9 +1,9 @@
-import { CanvasComposer } from '../../canvas/CanvasComposer';
-import { BasePainter } from '../../draw/BasePainter';
-import { TileType } from '../constants';
-import { Land } from '../world/Land';
-import { floor } from '../world/World';
-import { Render } from './Render';
+import { CanvasComposer } from '../../../canvas/CanvasComposer';
+import { BasePainter } from '../../../draw/BasePainter';
+import { TileType } from '../../constants';
+import { Land } from '../../world/Land';
+import { floor } from '../../world/World';
+import { Render } from '../Render';
 
 export class MiniMapCanvas implements CanvasComposer {
   // @ts-ignore
@@ -23,6 +23,10 @@ export class MiniMapCanvas implements CanvasComposer {
         return '#0099f9'
       case TileType.GATE:
         return '#ffcf73'
+      case TileType.TIMBER:
+        return '#cb972a'
+      case TileType.SAND:
+        return '#ffea66'
       case TileType.WALL:
         return '#4d5d46'
     }

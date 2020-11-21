@@ -23,7 +23,7 @@
          "tile":486
         }],
  "tilecount":667,
- "tiledversion":"1.4.2",
+ "tiledversion":"1.4.3",
  "tileheight":32,
  "tiles":[
         {
@@ -56,19 +56,19 @@
         }, 
         {
          "id":30,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":31,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":32,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":33,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":46,
@@ -101,19 +101,19 @@
         }, 
         {
          "id":53,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":54,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":55,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":56,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":69,
@@ -145,15 +145,15 @@
         }, 
         {
          "id":76,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":77,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":78,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":92,
@@ -197,35 +197,35 @@
         }, 
         {
          "id":118,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":119,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":120,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":121,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":122,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":123,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":124,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":125,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":138,
@@ -237,35 +237,35 @@
         }, 
         {
          "id":141,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":142,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":143,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":144,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":145,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":146,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":147,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":148,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":161,
@@ -277,35 +277,35 @@
         }, 
         {
          "id":164,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":165,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":166,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":167,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":168,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":169,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":170,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":171,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":184,
@@ -313,35 +313,35 @@
         }, 
         {
          "id":187,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":188,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":189,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":190,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":191,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":192,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":193,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":194,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":199,
@@ -365,35 +365,35 @@
         }, 
         {
          "id":210,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":211,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":212,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":213,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":214,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":215,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":216,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":217,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":222,
@@ -429,27 +429,27 @@
         }, 
         {
          "id":234,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":236,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":237,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":238,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":239,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":240,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":245,
@@ -485,27 +485,27 @@
         }, 
         {
          "id":258,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":259,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":260,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":261,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":262,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":263,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":268,
@@ -525,75 +525,75 @@
         }, 
         {
          "id":281,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":282,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":283,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":284,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":285,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":286,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":304,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":305,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":306,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":307,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":308,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":309,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":327,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":328,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":329,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":330,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":331,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":332,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":368,
@@ -640,19 +640,19 @@
         }, 
         {
          "id":393,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":394,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":395,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":396,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":397,
@@ -678,19 +678,19 @@
         }, 
         {
          "id":416,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":417,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":418,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":419,
-         "type":"GRASS"
+         "type":"TIMBER"
         }, 
         {
          "id":420,
@@ -733,15 +733,15 @@
         }, 
         {
          "id":443,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":444,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":445,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":451,
@@ -777,15 +777,15 @@
         }, 
         {
          "id":466,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":467,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":468,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":474,
@@ -814,15 +814,15 @@
         }, 
         {
          "id":489,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":490,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":491,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":497,
@@ -835,238 +835,254 @@
         {
          "id":506,
          "terrain":[0, 0, 0, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":507,
          "terrain":[0, 0, -1, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":508,
          "terrain":[0, 0, -1, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":509,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":510,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":511,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":512,
          "terrain":[-1, -1, -1, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":513,
          "terrain":[-1, -1, 0, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":514,
          "terrain":[-1, -1, 0, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":529,
          "terrain":[0, -1, 0, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":530,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":531,
          "terrain":[-1, 0, -1, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":532,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":533,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":534,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":535,
          "terrain":[-1, 0, -1, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":536,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":537,
          "terrain":[0, -1, 0, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":552,
          "terrain":[0, -1, 0, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":553,
          "terrain":[-1, -1, 0, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":554,
          "terrain":[-1, 0, 0, 0],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":555,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":556,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":557,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":558,
          "terrain":[-1, 0, -1, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":559,
          "terrain":[0, 0, -1, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":560,
          "terrain":[0, -1, -1, -1],
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":575,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":576,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":577,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":578,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":579,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":580,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":581,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":582,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":598,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":599,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":600,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":601,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":602,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":603,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":604,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":605,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":621,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":622,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":623,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":624,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":625,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":626,
-         "type":"GRASS"
+         "type":"SAND"
+        }, 
+        {
+         "id":627,
+         "type":"SAND"
+        }, 
+        {
+         "id":628,
+         "type":"SAND"
         }, 
         {
          "id":644,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":645,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":646,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":647,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":648,
-         "type":"GRASS"
+         "type":"SAND"
         }, 
         {
          "id":649,
-         "type":"GRASS"
+         "type":"SAND"
+        }, 
+        {
+         "id":650,
+         "type":"SAND"
+        }, 
+        {
+         "id":651,
+         "type":"SAND"
         }],
  "tilewidth":32,
  "transparentcolor":"#ff00ff",
