@@ -1,5 +1,5 @@
 import { CanvasContext } from '../draw/CanvasContext';
-import { Images } from '../game2/Images';
+import { Images } from '../game2/render/Images';
 import { coord } from '../game2/render/constants';
 
 export interface Closure {

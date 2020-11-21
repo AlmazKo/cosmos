@@ -3,6 +3,7 @@ import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
+import { Audios } from '../audio/Audios';
 import { Trait, TraitFireball, TraitMelee, TraitShot } from '../Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
@@ -49,6 +50,7 @@ export class Game implements MovingListener {
     private readonly api: Api,
     readonly world: World,
     private readonly mvg: Moving,
+    private readonly audio: Audios,
   ) {
     this.movements = new Movements(world)
     api.listen(p => this.onData(p))
@@ -167,6 +169,7 @@ export class Game implements MovingListener {
     if (spell) {
       spell.finished = true;
       this.proto.zoneSpells.delete(e.spellId);
+      this.audio.play('damage_fireball.ogg')
     }
   }
 
@@ -189,6 +192,7 @@ export class Game implements MovingListener {
       this.api.sendAction('shot_attack', {});
     }
 
+    this.audio.play(trait.audio)
     this.actions.push(new ActivateTrait(ID++, p, Date.now(), trait))
   }
 

@@ -1,27 +1,30 @@
-import { asset } from './Images';
+import { asset } from './render/Images';
 
 export interface Trait {
-  readonly asset: asset
-  readonly  name: string
+  readonly ico: asset
+  readonly audio?: asset
+  readonly name: string
 }
 
 export class TraitMelee implements Trait {
-  readonly asset = "ico_melee";
+  readonly ico = "ico_melee";
   readonly name = "Melee attack";
+  readonly audio = "melee.wav";
 }
 
 export class TraitShot implements Trait {
-  readonly asset = "ico_shot";
+  readonly ico = "ico_shot";
   readonly name = "Shot";
 }
 
 export class TraitFireball implements Trait {
-  readonly asset = "ico_fireball";
+  readonly ico = "ico_fireball";
   readonly name = "Cast fireball";
+  readonly audio = "fireball.wav";
 }
 
 export class TraitFireshock implements Trait {
-  readonly asset = "ico_fireshock";
+  readonly ico = "ico_fireshock";
   readonly name = "Cast fireshock";
 }
 

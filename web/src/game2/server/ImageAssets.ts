@@ -1,4 +1,4 @@
-import { Images } from '../Images';
+import { Images } from '../render/Images';
 
 const basicResources: string[] = [
   // todo characters & spell images
@@ -15,11 +15,6 @@ export class ImageAssets implements Images {
 
   constructor(private readonly host: string) {
 
-  }
-  loadBasic(): Promise<void> {
-    return Promise
-      .all(basicResources.map(n => this.load(n).do(i => this.data[n] = i)))
-      .ignore()
   }
 
   get(name: string): HTMLImageElement | undefined {
@@ -40,11 +35,11 @@ export class ImageAssets implements Images {
 
   load(name: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
-      let img         = new Image();
+      let img = new Image();
       img.crossOrigin = "Anonymous";
-      img.src         = `${this.host}/r/${name}.png`;
-      img.onerror     = reject;
-      img.onload      = () => {
+      img.src = `${this.host}/r/${name}.png`;
+      img.onerror = reject;
+      img.onload = () => {
         resolve(img)
       };
     });

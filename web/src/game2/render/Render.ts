@@ -14,7 +14,7 @@ import { Spell } from '../engine/actions/Spell';
 import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
 import { Player } from '../engine/Player';
-import { Images } from '../Images';
+import { Images } from './Images';
 import { TraitFireball, TraitMelee } from '../Trait';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
@@ -146,7 +146,6 @@ export class Render {
       }
 
       if (action instanceof OnDamage) {
-
         const victim = (this.player!!.creature as Player).zoneCreatures.get(action.victim.id);
         if (victim) {
           const dc = this.getDrawable(victim);
@@ -164,17 +163,6 @@ export class Render {
         const dc = this.getDrawable(action.creature);
         dc.melee();
       }
-
-
-      //
-      // if (action instanceof StartMoving) {
-      //   if (!this.phantoms.has(action.creature.id)) {
-      //     this.phantoms.set(action.creature.id, new DrawableCreature(action.creature))
-      //   }
-      //   //fixme
-      //   // this.player!!.startMoving(action)
-      // }
-
     }
   }
 

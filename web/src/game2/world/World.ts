@@ -1,6 +1,7 @@
 import { Dir, TileType } from '../constants';
 import { Creature } from '../engine/Creature';
 import { MapApi } from '../server/MapApi';
+import { Loading } from '../server/util';
 import { Land } from './Land';
 
 
@@ -12,10 +13,6 @@ export const floor = Math.floor;
 
 const PIECE_SIZE = 16;
 
-
-export enum Loading {
-  REQUESTING = 1, FAIL, ABSENCE
-}
 
 export class Piece {
   constructor(

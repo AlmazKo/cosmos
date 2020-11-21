@@ -4,7 +4,7 @@ import { FireballSpell } from '../../../game/actions/FireballSpell';
 import { Effect } from '../../../game/Effect';
 import { TilePainter } from '../../../game/TilePainter';
 import { Dir, TileType } from '../../constants';
-import { Images } from '../../Images';
+import { Images } from '../Images';
 import { World } from '../../world/World';
 import { Camera } from '../Camera';
 import { CELL } from '../constants';

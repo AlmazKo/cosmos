@@ -5,7 +5,7 @@ import { CanvasContext } from '../../../draw/CanvasContext';
 import { Drawable } from '../../../game/Drawable';
 import { Key } from '../../controller/controls';
 import { ActivateTrait } from '../../engine/actions/ActivateTrait';
-import { Images } from '../../Images';
+import { Images } from '../Images';
 import { Trait, Traits } from '../../Trait';
 
 class Slot {
@@ -56,7 +56,7 @@ export class Panels implements Drawable {
 
       const slot = this.slots[i];
       if (slot) {
-        const slotImg = this.images.get(slot.trait.asset);
+        const slotImg = this.images.get(slot.trait.ico);
         if (slotImg)
           ctx.drawImage(slotImg, 0, 0, slotImg.width, slotImg.height, x - 25, y - 25, 50, 50);
 

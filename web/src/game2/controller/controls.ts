@@ -1,4 +1,4 @@
-import { asset } from '../Images';
+import { asset } from '../render/Images';
 import { Trait } from '../Trait';
 import { keyboardSchema } from './Keyboard';
 

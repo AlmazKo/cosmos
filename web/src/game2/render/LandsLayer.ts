@@ -1,6 +1,6 @@
 import { CanvasContext } from '../../draw/CanvasContext';
 import { Layer } from './layers/Layer';
-import { Images } from '../Images';
+import { Images } from './Images';
 import { floor, Piece, World } from '../world/World';
 import { Camera } from './Camera';
 import { CELL } from './constants';

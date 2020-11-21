@@ -3,7 +3,7 @@ import { FireShockSpell } from '../../../game/actions/FireShockSpell';
 import { Effect } from '../../../game/Effect';
 import { TilePainter } from '../../../game/TilePainter';
 import { get } from '../../../Module';
-import { Images } from '../../Images';
+import { Images } from '../Images';
 import { CELL } from '../constants';
 
 export const RES = get<Images>('images');
