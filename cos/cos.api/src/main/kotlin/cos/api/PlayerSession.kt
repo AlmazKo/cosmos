@@ -15,6 +15,7 @@ import cos.ops.FireballMoved
 import cos.ops.Login
 import cos.ops.MeleeAttack
 import cos.ops.MeleeAttacked
+import cos.ops.Metrics
 import cos.ops.Move
 import cos.ops.ObjAppear
 import cos.ops.Op
@@ -217,6 +218,7 @@ class PlayerSession(
                 Op.DAMAGE -> Damage.read(b);
                 Op.DEATH -> Death.read(b);
                 Op.EXIT -> Exit.read(b);
+                Op.METRICS -> Metrics.read(b);
                 else -> {
                     System.err.println("Unknown opcode: $code")
                     Unknown.read(b, len)

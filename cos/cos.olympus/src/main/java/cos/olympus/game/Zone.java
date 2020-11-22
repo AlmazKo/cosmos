@@ -3,6 +3,7 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.ops.CreatureHid;
 import cos.ops.CreatureMoved;
+import cos.ops.Metrics;
 import cos.ops.ObjAppear;
 import cos.ops.OutOp;
 
@@ -42,9 +43,16 @@ public class Zone {
                 //disappear or /nothing
             } else {
                 var ort = target.zoneCreatures.get(cr.id());
-                if (ort == null || (ort.x() != cr.x || ort.y() != cr.y) || ort.speed() != cr.speed|| ort.sight() != cr.sight) {
+                if (ort == null || (ort.x() != cr.x || ort.y() != cr.y) || ort.speed() != cr.speed || ort.sight() != cr.sight) {
                     target.zoneCreatures.put(cr.id(), cr.orientation());
                     consumer.add(new CreatureMoved(1, tick, target.id(), cr.id(), x, y, cr.offset, cr.speed, cr.mv, cr.sight));
+                }
+
+                var met = target.zoneMetrics.get(cr.id());
+                if (met == null || (met.life() != cr.life() || met.maxLife() != cr.metrics.maxLife())) {
+                    var n = cr.copyMetrics();
+                    target.zoneMetrics.put(cr.id(), n);
+                    consumer.add(new Metrics(1, tick, target.id(), cr.id(), n.life(), n.maxLife()));
                 }
             }
 
@@ -56,6 +64,7 @@ public class Zone {
             var cr = world.getCreature(ort.creatureId());
             if (cr == null || inNotFov(target, cr)) {
                 consumer.add(new CreatureHid(1, tick, target.id(), ort.creatureId()));
+                target.zoneMetrics.remove(ort.creatureId());
                 return true;
             } else {
                 return false;

@@ -150,7 +150,7 @@ public final class Game {
         if (usr == null) {
             usr = new Player(op.userId(), "user:" + op.userId());
             var creature = world.createCreature(usr, 100, 4);
-            outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.life));
+            outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.metrics.life()));
         } else {
             logger.warn("#" + tick + " " + "User already logged in " + usr);
         }

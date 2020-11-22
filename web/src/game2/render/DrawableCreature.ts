@@ -128,15 +128,16 @@ export class DrawableCreature implements TileDrawable {
   }
 
   drawLifeLine(bp: CanvasContext, camera: Camera) {
-    if (this.creature.metrics.life >= 100) {
+
+    const cr = this.creature;
+    if (cr.metrics.life >= cr.metrics.maxLife) {
       return;
     }
-    const s = this.creature.metrics.life / 100;
+    const s = cr.metrics.life / cr.metrics.maxLife;
     const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
 
-    const x = camera.toX2(this.creature.orientation);
-    const y = camera.toY2(this.creature.orientation);
-
+    const x = camera.toX2(cr.orientation);
+    const y = camera.toY2(cr.orientation);
 
     bp.fillRect(x + 4, y, CELL - 8, 3, '#00000066')
     bp.fillRect(x + 4, y, (CELL - 8) * s, 3, st.style)

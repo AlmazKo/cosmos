@@ -21,12 +21,11 @@ public final class Creature implements Orientable {
     int speed;
     @Nullable Direction mv = null;
 
-    Direction sight;
-
-    int               life;
-    Map<Integer, Obj> zoneObjects = new HashMap<>();
-
+    Direction                   sight;
+    Metrics                     metrics;
+    Map<Integer, Obj>           zoneObjects   = new HashMap<>();
     Map<Integer, Orientation>   zoneCreatures = new HashMap<>();
+    Map<Integer, Metrics>       zoneMetrics   = new HashMap<>();
     Map<Integer, SpellStrategy> zoneSpells    = new HashMap<>();
 
     public Creature(Avatar avatar, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight, int life) {
@@ -37,7 +36,7 @@ public final class Creature implements Orientable {
         this.speed = speed;
         this.mv = dir;
         this.sight = sight;
-        this.life = life;
+        this.metrics = new Metrics(avatar.id(), life);
     }
 
     public void setSight(Direction sight) {
@@ -46,6 +45,9 @@ public final class Creature implements Orientable {
 
     Orientation orientation() {
         return new Orientation(avatar.id(), x, y, speed, offset, sight, mv);
+    }
+    Metrics copyMetrics() {
+        return metrics.copy();
     }
 
     @Override public String toString() {
@@ -80,12 +82,11 @@ public final class Creature implements Orientable {
     }
 
     public void damage(Damage d) {
-        this.life -= d.amount();
-        if (life < 0) life = 0;
+        this.metrics.minus(d.amount());
     }
 
     public boolean isDead() {
-        return life <= 0;
+        return metrics.isDead();
     }
 
     public int id() {
@@ -116,5 +117,8 @@ public final class Creature implements Orientable {
         return sight;
     }
 
+    public int life() {
+        return metrics.life();
+    }
 
 }

@@ -1,7 +1,6 @@
+import { OpMetrics } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Metrics } from '../../game/Metrics';
-import { Dir } from '../constants';
-import { Spell } from './actions/Spell';
 import { Creature } from './Creature';
 import { Orientation } from './Orientation';
 
@@ -17,7 +16,21 @@ export class Player implements Creature {
     public readonly orientation: Orientation) {
   }
 
+  update(e: OpMetrics) {
+    this.metrics.life = e.life;
+    this.metrics.maxLife = e.maxLife;
+  }
+
   isDead(): boolean {
     return this.metrics.life <= 0;
   }
+
+  x(): pos {
+    return this.orientation.x;
+  }
+
+  y(): pos {
+    return this.orientation.y;
+  }
+
 }

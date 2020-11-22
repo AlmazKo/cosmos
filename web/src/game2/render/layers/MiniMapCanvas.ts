@@ -1,5 +1,6 @@
 import { CanvasComposer } from '../../../canvas/CanvasComposer';
 import { BasePainter } from '../../../draw/BasePainter';
+import { style } from '../../../game/styles';
 import { TileType } from '../../constants';
 import { Land } from '../../world/Land';
 import { floor } from '../../world/World';
@@ -86,6 +87,10 @@ export class MiniMapCanvas implements CanvasComposer {
         p.rect(centerX * pixel, centerY * pixel, pixel, pixel, 'black', true)
       }
     });
+
+    const txt = proto.x() + "; " + proto.y();
+    p.text(txt, this.width - 1.5, this.height - .5, {...style.minimapDetails, style: 'black'})
+    p.text(txt, this.width - 2, this.height - 1, style.minimapDetails)
   }
 
   onEndFrame(time: DOMHighResTimeStamp, error?: Error): void {

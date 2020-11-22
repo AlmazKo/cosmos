@@ -8,6 +8,7 @@ import cos.ops.Damage
 import cos.ops.Death
 import cos.ops.FireballMoved
 import cos.ops.MeleeAttacked
+import cos.ops.Metrics
 import cos.ops.ObjAppear
 import io.vertx.core.json.JsonObject
 
@@ -19,6 +20,7 @@ object JsonMapper {
         return when (op) {
             is Appear -> toJ(op)
             is ObjAppear -> toJ(op)
+            is Metrics -> toJ(op)
             is CreatureMoved -> toJ(op)
             is CreatureHid -> toJ(op)
             is FireballMoved -> toJ(op)
@@ -42,6 +44,19 @@ object JsonMapper {
                 .put("mv", op.mv())
                 .put("sight", op.sight())
                 .put("life", op.life())
+        )
+
+    private fun toJ(op: Metrics) = JsonObject()
+        .put("id", op.id())
+        .put("action", "metrics")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("userId", op.userId())
+                .put("creatureId", op.creatureId())
+                .put("life", op.life())
+                .put("maxLife", op.maxLife())
         )
 
     private fun toJ(op: ObjAppear) = JsonObject()

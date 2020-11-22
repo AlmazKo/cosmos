@@ -17,7 +17,7 @@ class FpsMeter {
 
 export const STOP_RENDER = "STOP_RENDER";
 
-let DEV = true;//process.env.NODE_ENV === 'development';
+let DEV = false;//process.env.NODE_ENV === 'development';
 let INC: uint = 0;
 
 export class Ballad {

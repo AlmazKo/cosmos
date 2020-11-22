@@ -1,3 +1,4 @@
+import { OpMetrics } from '../../game/actions/ApiMessage';
 import { Metrics } from '../../game/Metrics';
 import { Creature } from './Creature';
 import { Orientation } from './Orientation';
@@ -14,5 +15,18 @@ export class CreatureObject implements Creature {
     return this.metrics.life <= 0;
   }
 
+  x(): pos {
+    return this.orientation.x;
+  }
+
+  y(): pos {
+    return this.orientation.y;
+  }
+
+
+  update(e: OpMetrics) {
+    this.metrics.life = e.life;
+    this.metrics.maxLife = e.maxLife;
+  }
 
 }

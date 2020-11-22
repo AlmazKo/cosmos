@@ -1,13 +1,13 @@
-import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, MeleeAttacked, ObjAppear } from '../../game/actions/ApiMessage';
+import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, MeleeAttacked, ObjAppear, OpMetrics } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
 import { Audios } from '../audio/Audios';
-import { Trait, TraitFireball, TraitMelee, TraitShot } from '../Trait';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { ConnStatus } from '../server/WsServer';
+import { Trait, TraitFireball, TraitMelee, TraitShot } from '../Trait';
 import { World } from '../world/World';
 import { Act } from './Act';
 import { ActivateTrait } from './actions/ActivateTrait';
@@ -34,14 +34,10 @@ const dt = Intl.DateTimeFormat('en', {
 
 
 export class Game implements MovingListener {
-
-  private lastTick = 0;
   // @ts-ignore
   private proto: Player;
   public protoReal?: Orientation;
-  // private creatures = new Map<uint, Creature>();
   private actions: Act[] = NO_ACTIONS;
-  // @ts-ignore
   private movements: Movements;
   private chat: HTMLElement;
   private chat_in: HTMLInputElement;
@@ -96,6 +92,9 @@ export class Game implements MovingListener {
         case 'appear_obj':
           this.onObjectAppear(e);
           break;
+        case 'metrics':
+          this.onMetrics(e);
+          break;
         case 'creature_hid':
           this.onCreatureHid(e);
           break
@@ -146,6 +145,14 @@ export class Game implements MovingListener {
     proto.zoneObjects.set(e.id, e);
   }
 
+  private onMetrics(e: OpMetrics) {
+    const proto = this.proto!!;
+    const cr = proto.zoneCreatures.get(e.creatureId);
+    if (cr) {
+      cr.update(e)
+    }
+  }
+
   onDamage(e: Damage) {
     const proto = this.proto!!;
     let victim: Creature | undefined;
@@ -157,7 +164,6 @@ export class Game implements MovingListener {
     if (!victim) return;
 
     const isProto = proto.id === victim.id;
-    victim.metrics.life -= e.amount;
     this.actions.push(new OnDamage(ID++, proto, Date.now(), victim, e.amount, e.crit, isProto));
 
     const msgSubject = e.creatureId == proto.id ? 'You' : `<a>#${e.creatureId}</a>`;//todo fix
@@ -221,7 +227,7 @@ export class Game implements MovingListener {
     return c;
   }
 
-  onMovingChanged(status: StatusMoving, dir: Dir|undefined, sight: Dir) {
+  onMovingChanged(status: StatusMoving, dir: Dir | undefined, sight: Dir) {
 
     const accepted = this.movements.onMovingChanged(this.proto!!, status, dir, sight);
 
