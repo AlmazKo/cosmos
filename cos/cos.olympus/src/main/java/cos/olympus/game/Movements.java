@@ -2,6 +2,7 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.TileType;
+import cos.ops.Direction;
 import cos.ops.Move;
 
 import java.util.HashMap;
@@ -64,10 +65,12 @@ final class Movements implements TickAware {
         mvs.remove(cr.id());
     }
 
-    void stop(Creature cr) {
+    void stop(Creature cr, Direction sight) {
         var mv = mvs.get(cr.id());
         if (mv != null) {
             mv.stop = true;
+        } else {
+            cr.sight = sight;
         }
     }
 

@@ -181,7 +181,7 @@ public final class Game {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
-        movements.stop(cr);
+        movements.stop(cr, op.sight());
     }
 
     private void onExit(Exit op) {

@@ -4,10 +4,10 @@ import { Orientation } from './Orientation';
 
 export class Util {
 
-  public static nextX(o: Orientation): pos {
-    if (o.move === Dir.EAST) {
+  public static nextX(o: Orientation, dir: Dir | null = o.move): pos {
+    if (dir === Dir.EAST) {
       return o.x + 1;
-    } else if (o.move === Dir.WEST) {
+    } else if (dir === Dir.WEST) {
       return o.x - 1;
     }
 
@@ -15,10 +15,10 @@ export class Util {
   }
 
 
-  public static nextY(o: Orientation): pos {
-    if (o.move === Dir.NORTH) {
+  public static nextY(o: Orientation, dir: Dir | null = o.move): pos {
+    if (dir === Dir.NORTH) {
       return o.y - 1;
-    } else if (o.move === Dir.SOUTH) {
+    } else if (dir === Dir.SOUTH) {
       return o.y + 1
     }
     return o.y;

@@ -52,7 +52,7 @@ export class Game implements MovingListener {
     private readonly mvg: Moving,
     private readonly audio: Audios,
   ) {
-    this.movements = new Movements(world)
+    this.movements = new Movements(world, this)
     api.listen(p => this.onData(p))
     mvg.listen(this)
 

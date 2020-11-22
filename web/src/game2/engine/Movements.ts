@@ -2,6 +2,7 @@ import { uid } from '../../game/actions/ApiMessage';
 import { Dir, TileType } from '../constants';
 import { World } from '../world/World';
 import { Creature } from './Creature';
+import { Game } from './Game';
 import { StatusMoving } from './Moving2';
 import { Orientation } from './Orientation';
 import { Util } from './Util';
@@ -25,7 +26,7 @@ export class Movements {
 
   private readonly data = new Map<uid, Mv>()
 
-  constructor(readonly world: World) {
+  constructor(readonly world: World, private readonly game: Game) {
   }
 
   onFrame(time: DOMHighResTimeStamp) {
@@ -58,11 +59,7 @@ export class Movements {
 
       const nextDir = m.next ? m.next.mv : o.move;
 
-      const nextX = Util.nextX(o);
-      const nextY = Util.nextY(o);
-
-
-      if (!this.world.canStep(o.x, o.y, nextDir)) {
+      if (this.isBlocked(o, nextDir)) {
         console.warn(`#${m.cr.id} Step is blocked: ${o}`, o.move);
         o.stop();
         this.data.delete(m.cr.id);
@@ -153,7 +150,8 @@ export class Movements {
         o.move = move;
         console.debug('SS', o.offset);
 
-        if (!this.world.canStep(o.x, o.y, o.move)) {
+
+        if (this.isBlocked(o, o.move)) {
           console.warn(`Step is blocked: ${o}`, o.move);
           return true;
         }
@@ -165,9 +163,6 @@ export class Movements {
 
   onMovingChanged(cr: Creature, status: StatusMoving, dir: Dir, sight: Dir): boolean {
     const o = cr.orientation;
-    const tile = this.world.tileType(o.x, o.y);
-
-
     const mv = this.data.get(cr.id);
 
     if (mv) {
@@ -176,9 +171,9 @@ export class Movements {
       o.sight = sight;
       if (dir === null) return true;
 
-      if (!this.world.canStep(o.x, o.y, dir)) {
+      if (this.isBlocked(o, dir)) {
         console.warn(`Step is blocked: ${o}`, dir);
-        return false;
+        return cr.orientation.sight !== sight;
       }
       if (status !== StatusMoving.STOP) {
         o.move = dir;
@@ -207,5 +202,28 @@ export class Movements {
     // }
   }
 
+  private isBlocked(o: Orientation, dir: Dir | null): boolean {
+    if (!this.world.canStep(o.x, o.y, dir)) return true;
 
+    const nextX = Util.nextX(o, dir);
+    const nextY = Util.nextY(o, dir);
+    const proto = this.game.getProto()!!;
+
+    for (let [_, v] of proto.zoneCreatures) {
+      if (v.id === proto.id) continue;
+
+      if (v.orientation.x == nextX && v.orientation.y === nextY) {
+        return true;
+      }
+    }
+
+    // todo
+    // for (let [_, v] of proto.zoneObjects) {
+    //   if (v.x == nextX && v.y === nextY) {
+    //     return true;
+    //   }
+    // }
+
+    return false;
+  }
 }

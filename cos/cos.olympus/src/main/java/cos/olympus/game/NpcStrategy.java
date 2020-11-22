@@ -30,7 +30,7 @@ public class NpcStrategy {
             if (world.isFree(x, y) && world.isNoMovingCreaturesIn(x, y)) {
                 var mv = new Move(0, npc.id(), npc.x, npc.y, dir, dir);
                 movements.change(npc, mv);
-                movements.stop(npc);
+                movements.stop(npc, npc.sight);
             } else {
 //                logger.info("Can not move to " + dir + " #" + npc.id);
 //                logger.info("Cannot move to " + dir + " #" + npc.id

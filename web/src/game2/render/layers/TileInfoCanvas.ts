@@ -49,7 +49,8 @@ export class TileInfoCanvas implements CanvasComposer {
 
     //todo add cache
     const {x, y} = proto.orientation;
-    const land = this.render.game.world.get(x, y)!!;
+    const land = this.render.game.world.get(x, y);
+    if (!land) return;
     const {sx, sy} = this.getTileCoord(land.tileId);
 
     this.p.ctx.imageSmoothingEnabled = false;
