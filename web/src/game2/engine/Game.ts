@@ -147,6 +147,11 @@ export class Game implements MovingListener {
 
   private onMetrics(e: OpMetrics) {
     const proto = this.proto!!;
+    if (proto.id === e.creatureId) {
+      proto.update(e)
+      return;
+    }
+
     const cr = proto.zoneCreatures.get(e.creatureId);
     if (cr) {
       cr.update(e)
