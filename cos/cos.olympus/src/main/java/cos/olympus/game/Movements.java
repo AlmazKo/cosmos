@@ -39,13 +39,13 @@ final class Movements implements TickAware {
             mv.next = op;
         } else {
             if (op.dir() == null) {
-                cr.sight = op.sight();
+                cr.setSight(op.sight());
                 return;
             }
 
             mvs.put(cr.id(), new Mv(cr));
             cr.mv = op.dir();
-            cr.sight = op.sight();
+            cr.setSight(op.sight());
         }
 
         var currentTile = world.get(cr.x, cr.y);
@@ -70,7 +70,7 @@ final class Movements implements TickAware {
         if (mv != null) {
             mv.stop = true;
         } else {
-            cr.sight = sight;
+            cr.setSight(sight);
         }
     }
 
@@ -113,7 +113,7 @@ final class Movements implements TickAware {
 
             if (mv.next != null) {
                 cr.mv = mv.next.dir();
-                cr.sight = mv.next.sight();
+                cr.setSight(mv.next.sight());
                 mv.next = null;
             }
 

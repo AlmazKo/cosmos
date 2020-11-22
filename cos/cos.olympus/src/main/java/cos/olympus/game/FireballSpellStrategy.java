@@ -33,10 +33,12 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
 
         x = spell.x();
         y = spell.y();
-        if (spell.dir().isX()) {
-            x += distance;
-        } else {
-            y += distance;
+
+        switch (spell.dir()) {
+            case NORTH -> y -= distance;
+            case EAST -> x += distance;
+            case SOUTH -> y += distance;
+            case WEST -> x -= distance;
         }
 
         var victim = world.getCreature(x, y);
@@ -55,7 +57,7 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
             passed = distance;
         }
 
-//        logger.info("Spell distance: " + distance);
+        logger.info("Spell distance: " + this);
         return finished;
     }
 
@@ -67,5 +69,12 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
         return spell;
     }
 
+    @Override public String toString() {
+        return "FireballSpellStrategy{" +
+                "passed=" + passed +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }
 

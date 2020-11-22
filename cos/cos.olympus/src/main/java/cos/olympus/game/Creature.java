@@ -20,10 +20,12 @@ public final class Creature implements Orientable {
     int offset;
     int speed;
     @Nullable Direction mv = null;
-    Direction sight;
-    int       life;
 
-    Map<Integer, Obj>           zoneObjects   = new HashMap<>();
+    Direction sight;
+
+    int               life;
+    Map<Integer, Obj> zoneObjects = new HashMap<>();
+
     Map<Integer, Orientation>   zoneCreatures = new HashMap<>();
     Map<Integer, SpellStrategy> zoneSpells    = new HashMap<>();
 
@@ -37,14 +39,10 @@ public final class Creature implements Orientable {
         this.sight = sight;
         this.life = life;
     }
-//
-//    public Creature(int id, String name, int x, int y, Direction sight) {
-//        this.id = id;
-//        this.name = name;
-//        this.x = x;
-//        this.y = y;
-//        this.sight = sight;
-//    }
+
+    public void setSight(Direction sight) {
+        this.sight = sight;
+    }
 
     Orientation orientation() {
         return new Orientation(avatar.id(), x, y, speed, offset, sight, mv);
@@ -120,20 +118,3 @@ public final class Creature implements Orientable {
 
 
 }
-/*) : GameObject, VectorObject {
-
-    fun startMove(dir: Direction, sight: Direction, speed: Speed) {
-        this.dir = dir
-        this.sight = sight
-        this.speed = speed
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        return id == (other as Creature).id
-    }
-
-    override fun hashCode() = id
-}*/
