@@ -35,14 +35,37 @@
         border-radius: 2px;
     }
 
+    #tileinfo {
+        top: 5px;
+        left: 5px;
+        height: 100px;
+        width: 100px;
+        position: fixed;
+        z-index: 10;
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 5px #000;
+        border: 2px solid white;
+        border-radius: 2px;
+    }
+
+    #tileinfo_name {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        font: 400 12px 'Roboto';
+        background-color: rgba(255, 255, 255, 0.75);
+        padding: 2px 4px;
+        left: 0;
+    }
+
     #chat {
         background-color: #00000066;
         position: fixed;
         bottom: 0;
+        right: 0;
         width: 400px;
         height: 150px;
         z-index: 10;
-        margin: 0 40%;
         color: #fff;
         font-family: sans-serif;
     }
@@ -102,11 +125,13 @@
 <body>
 <div id="game"></div>
 <div id="minimap"></div>
+<div id="tileinfo">
+    <div id="tileinfo_name">Grass</div>
+</div>
+
+
 <div id="chat">
-
-
     <div id="chat_history">
-
     </div>
     <div id="chat_in">
         <input id="chat_input" type="text" placeholder="...">

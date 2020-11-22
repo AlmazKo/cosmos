@@ -14,13 +14,13 @@ import { Spell } from '../engine/actions/Spell';
 import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
 import { Player } from '../engine/Player';
-import { Images } from './Images';
 import { TraitFireball, TraitMelee } from '../Trait';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
 import { DrawableCreature } from './DrawableCreature';
 import { DamageEffect } from './effects/DamageEffect';
 import { Fireball } from './effects/Fireball';
+import { Images } from './Images';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 import { Panels } from './layers/Panels';
 
@@ -314,16 +314,17 @@ export class Render {
     const debugStyle = {style: 'white', font: '9px monospace'};
     const p = this.p!!;
     let y = 3;
-    p.text(`    coord: ${o.x};${o.y}`, 3, y, debugStyle);
-    p.text(`    shift: ${o.shift.toFixed(3)}`, 3, y += 10, debugStyle);
-    p.text(`    sight: ${dirToString(o.sight)}`, 3, y += 10, debugStyle);
-    p.text(`     move: ${dirToString(o.move)}`, 3, y += 10, debugStyle);
-    p.text(`      vel: ${o.speed}`, 3, y += 10, debugStyle);
-    p.text('     tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], 3, y += 10, debugStyle);
-    p.text('   cursor: ' + this.cursor, 3, y += 10, debugStyle);
-    p.text('   camera: ' + this.camera.absoluteX, 3, y += 10, debugStyle);
-    p.text('creatures: ' + proto.zoneCreatures.size, 3, y += 10, debugStyle);
-    p.text('  objects: ' + proto.zoneObjects.size, 3, y += 10, debugStyle);
+    let x = 150;
+    p.text(`    coord: ${o.x};${o.y}`, x, y, debugStyle);
+    p.text(`    shift: ${o.shift.toFixed(3)}`, x, y += 10, debugStyle);
+    p.text(`    sight: ${dirToString(o.sight)}`, x, y += 10, debugStyle);
+    p.text(`     move: ${dirToString(o.move)}`, x, y += 10, debugStyle);
+    p.text(`      vel: ${o.speed}`, x, y += 10, debugStyle);
+    p.text('     tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], x, y += 10, debugStyle);
+    p.text('   cursor: ' + this.cursor, x, y += 10, debugStyle);
+    p.text('   camera: ' + this.camera.absoluteX, x, y += 10, debugStyle);
+    p.text('creatures: ' + proto.zoneCreatures.size, x, y += 10, debugStyle);
+    p.text('  objects: ' + proto.zoneObjects.size, x, y += 10, debugStyle);
   }
 
   private drawDeath(tp: TilePainter, camera: Camera) {
@@ -377,9 +378,7 @@ export class Render {
 
   private drawConnectionStatus() {
     const p = this.p!!;
-    const text = this.game.getConnectionStatus();
-    const width = p.measureWidth(text, style.connectionStatus)
-    const x = this.width - width - 10;
+    const x = this.width - 8;
     const y = this.height - 8;
 
     let color;
@@ -396,7 +395,6 @@ export class Render {
 
     }
     p.fillCircle(x, y, 4, color)
-    p.text(text, x + 6, y, {...style.connectionStatus, style: color})
   }
 
   drawLifeLine() {
