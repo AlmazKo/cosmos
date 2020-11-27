@@ -4,7 +4,7 @@ import cos.ops.Direction;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Util {
+public final class Util {
 
 
     public static int nextX(Orientable cr) {

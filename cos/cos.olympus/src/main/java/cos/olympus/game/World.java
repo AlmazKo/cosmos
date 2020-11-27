@@ -7,6 +7,7 @@ import cos.map.Lands;
 import cos.map.Tile;
 import cos.map.TileType;
 import cos.olympus.NoSpaceException;
+import cos.olympus.util.IntIntConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public final class World implements TileMap, GMap {
+public final class World {
     private final static Logger  logger = new Logger(World.class);
     private final        int     width;
     private final        int     height;
@@ -46,7 +47,7 @@ public final class World implements TileMap, GMap {
         this.objects = lands.getObjects();
         this.creatures = new int[basis.length];
         this.tiles = lands.getTiles();
-      //  debug();
+        debug();
     }
 
     public void debug() {
@@ -88,7 +89,7 @@ public final class World implements TileMap, GMap {
         System.out.println(sb.toString());
     }
 
-    @Nullable @Override public TileType get(int x, int y) {
+    @Nullable public TileType get(int x, int y) {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
         var b = basis[idx];
@@ -102,6 +103,7 @@ public final class World implements TileMap, GMap {
 
         var objTileId = objects[idx];
         if (objTileId == 0) return null;
+        if (objTileId >= tiles.length) return null;
 
         var t = tiles[objTileId];
         if (t == null) return new Obj(idx, new Tile(objTileId, TileType.ITEM), x, y);
@@ -114,7 +116,7 @@ public final class World implements TileMap, GMap {
         return creatureObjects.get(uid);
     }
 
-    public @Override @Nullable Creature getCreature(int x, int y) {
+    public @Nullable Creature getCreature(int x, int y) {
         if (!isValid(x, y)) return null;
 
         return _getCreature(x, y);
@@ -186,7 +188,7 @@ public final class World implements TileMap, GMap {
         });
     }
 
-    public Creature createCreature(Avatar usr, int life, int maxDev ) {
+    public Creature createCreature(Avatar usr, int life, int maxDev) {
 
         int idx = toIndex(usr.x(), usr.y());
         if (idx < 0 || idx >= basis.length) {
@@ -197,7 +199,7 @@ public final class World implements TileMap, GMap {
 
         if (idx >= 0) {
             var coord = toCoord(idx);
-            var cr = new Creature(usr, coord.getX(), coord.getY(), (byte) 0, (byte) 0, null, SOUTH, life);
+            var cr = new Creature(usr, coord.x(), coord.y(), (byte) 0, (byte) 0, null, SOUTH, life);
             creatures[idx] = cr.id();
             creatureObjects.put(cr.id(), cr);
             logger.info("Creature #" + cr.id() + " set x=" + cr.x + ", y=" + cr.y);
@@ -207,8 +209,11 @@ public final class World implements TileMap, GMap {
         }
     }
 
+    public boolean hasCreature(int x, int y) {
+        return !isNoCreatures(x, y);
+    }
 
-    public @Override boolean isNoCreatures(int x, int y) {
+    public boolean isNoCreatures(int x, int y) {
         if (!isValid(x, y)) return false;
 
         return creatures[toIndex(x, y)] == 0;
@@ -240,7 +245,7 @@ public final class World implements TileMap, GMap {
         return creatures[idx] == 0;
     }
 
-    public @Override void moveCreature(Creature cr, int toX, int toY) {
+    public void moveCreature(Creature cr, int toX, int toY) {
         int from = toIndex(cr.x, cr.y);
         int to = toIndex(toX, toY);
         int creatureId = creatures[from];
@@ -257,7 +262,7 @@ public final class World implements TileMap, GMap {
         cr.x = toX;
         cr.y = toY;
 
-        logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
+        //  logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
     }
 
     public @Nullable Coord findFreePlace(int x, int y, int maxDev) {

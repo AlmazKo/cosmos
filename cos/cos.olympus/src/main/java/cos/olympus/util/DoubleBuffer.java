@@ -1,4 +1,4 @@
-package cos.olympus;
+package cos.olympus.util;
 
 import cos.logging.Logger;
 

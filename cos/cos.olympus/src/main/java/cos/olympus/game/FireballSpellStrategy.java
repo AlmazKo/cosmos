@@ -3,7 +3,6 @@ package cos.olympus.game;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.olympus.game.events.Spell;
-import cos.ops.OutOp;
 
 import java.util.Collection;
 
@@ -16,9 +15,9 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
     public  int x;
     public  int y;
 
-    public FireballSpellStrategy(int tick, Creature cr, World world) {
-        this.spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), 40, cr.sight(), 10, tick, cr);
+    public FireballSpellStrategy(Fireball spell, World world) {
         this.world = world;
+        this.spell = spell;
         this.x = spell.x();
         this.y = spell.y();
     }
@@ -27,7 +26,7 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
         return spell.id();
     }
 
-    public boolean onTick(int tick, Collection<OutOp> consumer, Collection<Damage> damages) {
+    public boolean onTick(int tick, Collection<Damage> damages) {
 
         int distance = (tick - spell.tickId()) * spell.speed() / 100;
 

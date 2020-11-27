@@ -1,4 +1,4 @@
-package cos.olympus.game;
+package cos.olympus.util;
 
 @FunctionalInterface
 public interface IntIntConsumer {

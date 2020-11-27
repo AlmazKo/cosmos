@@ -3,12 +3,11 @@ package cos.olympus.game;
 final class Player implements Avatar {
     final int    id;
     final String name;
-    int lastX;
-    int lastY;
+    final int    lastX;
+    final int    lastY;
 
     public Player(int id, String name) {
-        this.id = id;
-        this.name = name;
+        this(id, name, 0, 0);
     }
 
     public Player(int id, String name, int lastX, int lastY) {

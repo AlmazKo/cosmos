@@ -6,5 +6,6 @@ public record Obj(
         int id,
         Tile tile,
         int x,
-        int y) {
+        int y
+) {
 }

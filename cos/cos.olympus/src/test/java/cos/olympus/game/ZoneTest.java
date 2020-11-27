@@ -21,7 +21,7 @@ class ZoneTest {
     void infinityMoving() throws IOException {
         var lands = Land.load(Paths.get("", "../../resources").toAbsolutePath());
         var world = new World(lands);
-        var player = world.createCreature(new User(200, "Player", -2, 1));
+        var player = world.createCreature(new  User(200, "Player", -2, 1));
         var log = world.createCreature(new User(30000, "Log", 2, 2));
         var zone = new Zone(world);
 

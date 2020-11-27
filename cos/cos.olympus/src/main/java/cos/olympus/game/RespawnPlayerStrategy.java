@@ -7,12 +7,12 @@ import cos.ops.OutOp;
 import java.util.Collection;
 
 
-public class RespawnClientStrategy {
+public class RespawnPlayerStrategy {
     private final World  world;
     private final Player player;
     private final int    respawnTime;
 
-    public RespawnClientStrategy(int tick, World world, Player player) {
+    public RespawnPlayerStrategy(int tick, World world, Player player) {
         this.world = world;
         this.player = player;
         this.respawnTime = tick + Util.rand(20, 40);

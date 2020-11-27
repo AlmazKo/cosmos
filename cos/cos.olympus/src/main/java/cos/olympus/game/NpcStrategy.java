@@ -3,9 +3,6 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.ops.Direction;
 import cos.ops.Move;
-import cos.ops.OutOp;
-
-import java.util.Collection;
 
 public class NpcStrategy {
 
@@ -21,7 +18,7 @@ public class NpcStrategy {
         this.movements = movements;
     }
 
-    void onTick(int tick, Collection<OutOp> consumer) {
+    void onTick(int tick) {
         if (tick > nextPlannedTick) {
             var dir = Direction.values()[Util.rand(0, 4)];
             int x = Util.nextX(npc, dir);

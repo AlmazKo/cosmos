@@ -3,8 +3,6 @@ package cos.olympus.game;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.MeleeAttack;
 import cos.olympus.game.events.Spell;
-import cos.ops.MeleeAttacked;
-import cos.ops.OutOp;
 
 import java.util.Collection;
 
@@ -18,9 +16,10 @@ public class MeleeAttackStrategy extends AbstractSpellStrategy {
     public        int         targetX;
     public        int         targetY;
 
-    public MeleeAttackStrategy(int tick, Creature cr, World world) {
-        this.spell = new MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);
+    public MeleeAttackStrategy(MeleeAttack spell, World world) {
         this.world = world;
+        this.spell = spell;
+        var cr = spell.source();
         this.targetX = nextX(cr, cr.sight);
         this.targetY = nextY(cr, cr.sight);
     }
@@ -29,7 +28,7 @@ public class MeleeAttackStrategy extends AbstractSpellStrategy {
         return spell.id();
     }
 
-    public boolean onTick(int tick, Collection<OutOp> consumer, Collection<Damage> damages) {
+    public boolean onTick(int tick, Collection<Damage> damages) {
         var victim = world.getCreature(targetX, targetY);
         if (victim != null && spell.source().id() != victim.id()) {
             boolean crit = rand(0, 10) == 1;

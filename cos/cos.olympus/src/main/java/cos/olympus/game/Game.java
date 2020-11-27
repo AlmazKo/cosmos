@@ -1,26 +1,23 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
-import cos.olympus.DoubleBuffer;
+import cos.map.Coord;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
-import cos.olympus.game.events.Fireball;
+import cos.olympus.util.DoubleBuffer;
 import cos.ops.AnyOp;
-import cos.ops.Appear;
 import cos.ops.Disconnect;
 import cos.ops.Exit;
 import cos.ops.FireballEmmit;
-import cos.ops.FireballMoved;
 import cos.ops.Login;
 import cos.ops.MeleeAttack;
-import cos.ops.MeleeAttacked;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
 import cos.ops.StopMove;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -30,20 +27,20 @@ public final class Game {
     private final World                            world;
     private final DoubleBuffer<AnyOp>              bufferOps;
     private final Movements                        movements;
-    private final HashMap<Integer, Player>         users           = new HashMap<>();
+    private final Spells                           spells;
+    private final Users                            users;
     private final ArrayList<RespawnStrategy>       npcRespawns     = new ArrayList<>();
-    private final ArrayList<RespawnClientStrategy> playersRespawns = new ArrayList<>();
-    private final ArrayList<SpellStrategy>         spells          = new ArrayList<>();
-//    private final        HashMap<Integer, Creature> creatures = new HashMap<>();
-
-    private final ArrayList<OutOp> outOps = new ArrayList<>();
-    private final Zone             zone;
+    private final ArrayList<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
+    private final ArrayList<@NotNull OutOp>        outOps          = new ArrayList<>();
+    private final Zone                      zone;
 
     int id = 0;
     private int tick = 0;
 
     public Game(World world, DoubleBuffer<AnyOp> bufferOps) {
         this.world = world;
+        this.spells = new Spells(world);
+        this.users = new Users(world);
         this.zone = new Zone(world);
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
@@ -53,7 +50,7 @@ public final class Game {
 
     private void settleMobs(int amount) {
         for (int i = 0; i < amount; i++) {
-            npcRespawns.add(new RespawnStrategy(world, movements, CreatureType.NPC));
+            npcRespawns.add(new RespawnStrategy(world, movements, new Coord(-26, -6)));
         }
     }
 
@@ -61,18 +58,17 @@ public final class Game {
         tick = id;
         outOps.clear();
         var ops = bufferOps.getAndSwap();
-        onTick(id, tsm, ops);
+        onTick(ops);
         return outOps;
     }
 
-    private void onTick(int id, long tsm, List<AnyOp> ops) {
+    private void onTick(List<AnyOp> ops) {
         playersRespawns.removeIf(it -> it.onTick(tick, outOps));
-
         ops.forEach(this::handleIncomeOp);
-        movements.onTick(id, tsm);
+        movements.onTick(tick);
         var damages = new ArrayList<Damage>();
         var deaths = new ArrayList<Death>();
-        spells.forEach(s -> s.onTick(tick, outOps, damages));
+        spells.onTick(tick, damages, outOps);
 
         damages.forEach(d -> {
             d.victim().damage(d);
@@ -83,31 +79,14 @@ public final class Game {
                 movements.interrupt(d.victim());
 
                 if (d.victim().avatar instanceof Player) {
-                    this.playersRespawns.add(new RespawnClientStrategy(tick, world, (Player) d.victim().avatar));
+                    this.playersRespawns.add(new RespawnPlayerStrategy(tick, world, (Player) d.victim().avatar));
                 }
             }
         });
 
-        spells.forEach((SpellStrategy strategy) -> {
-            var spell = strategy.spell();
-            world.getAllCreatures().forEach(cr -> {
-                if (strategy.inZone(cr)) {
-                    if (cr.zoneSpells.put(strategy.id(), strategy) == null) {
-                        if (spell instanceof Fireball s) {
-                            outOps.add(new FireballMoved(id, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinish()));
-                        } else if (spell instanceof cos.olympus.game.events.MeleeAttack s) {
-                            outOps.add(new MeleeAttacked(id, tick, cr.id(), s.id(), s.source().id()));
-                        }
-                    }
-                }
-            });
-        });
 
-        npcRespawns.forEach(it -> it.onTick(tick, outOps));
-
-        world.getAllCreatures().forEach(cr -> {
-            zone.onTick(cr, tick, outOps);
-        });
+        npcRespawns.forEach(it -> it.onTick(tick));
+        world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, outOps));
 
         world.getAllCreatures().forEach(cr -> {
             damages.forEach(d -> {
@@ -123,8 +102,7 @@ public final class Game {
             });
         });
 
-
-        spells.removeIf(SpellStrategy::isFinish);
+        spells.onAfterTick();
         world.removeCreatureIf(Creature::isDead);
     }
 
@@ -146,42 +124,24 @@ public final class Game {
     }
 
     private void onLogin(Login op) {
-        var usr = users.get(op.userId());
-        if (usr == null) {
-            usr = new Player(op.userId(), "user:" + op.userId());
-            var creature = world.createCreature(usr, 100, 4);
-            outOps.add(new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.metrics.life()));
-        } else {
-            logger.warn("#" + tick + " " + "User already logged in " + usr);
-        }
+        var out = users.onLogin(tick, op);
+        if (out != null) outOps.add(out);
     }
 
     private void onMove(Move op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
-
-        movements.change(cr, op);
+        this.movements.onMove(op);
     }
 
     private void onSpell(FireballEmmit op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
-        var str = new FireballSpellStrategy(tick, cr, world);
-        spells.add(str);
+        this.spells.onSpell(tick, op);
     }
 
     private void onMeleeAttack(MeleeAttack op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
-        var str = new MeleeAttackStrategy(tick, cr, world);
-        spells.add(str);
+        this.spells.onMeleeAttack(tick, op);
     }
 
     private void onStopMove(StopMove op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
-
-        movements.stop(cr, op.sight());
+        this.movements.onStopMove(op);
     }
 
     private void onExit(Exit op) {

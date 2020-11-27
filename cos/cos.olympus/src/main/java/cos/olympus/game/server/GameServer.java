@@ -1,7 +1,7 @@
 package cos.olympus.game.server;
 
 import cos.logging.Logger;
-import cos.olympus.DoubleBuffer;
+import cos.olympus.util.DoubleBuffer;
 import cos.olympus.Responses;
 import cos.ops.AnyOp;
 import cos.ops.Exit;

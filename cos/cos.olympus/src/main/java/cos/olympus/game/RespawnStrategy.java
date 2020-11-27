@@ -1,11 +1,9 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
+import cos.map.Coord;
 import cos.olympus.NoSpaceException;
-import cos.ops.OutOp;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 
 public class RespawnStrategy {
@@ -13,30 +11,28 @@ public class RespawnStrategy {
     private final static Logger logger = new Logger(Movements.class);
     private static       int    id     = 10_000;
 
-    private final World        world;
-    private final Movements    movements;
-    private final CreatureType type;
-
+    private final World     world;
+    private final Movements movements;
+    private final Coord     spot;
 
     private @Nullable NpcStrategy live;
+    private           boolean     isDead      = false;
+    private           int         respawnTime = Integer.MAX_VALUE;
 
-    private boolean isDead      = false;
-    private int     respawnTime = Integer.MAX_VALUE;
-
-    public RespawnStrategy(World world, Movements movements, CreatureType type) {
+    public RespawnStrategy(World world, Movements movements, Coord spot) {
         this.world = world;
         this.movements = movements;
-        this.type = type;
+        this.spot = spot;
     }
 
-    void onTick(int tick, Collection<OutOp> consumer) {
+    void onTick(int tick) {
         if (live == null) {
             if (isDead && tick < respawnTime) {
                 return;
             }
             isDead = false;
             try {
-                var npc = world.createCreature(new Npc(++id, "Phantom", 7, 3), 80, 12);
+                var npc = world.createCreature(new Npc(++id, "Phantom", spot.x(), spot.y()), 80, 4);
                 live = new NpcStrategy(npc, world, movements);
             } catch (NoSpaceException ne) {
                 logger.warn("No space");
@@ -51,6 +47,6 @@ public class RespawnStrategy {
             return;
         }
 
-        live.onTick(tick, consumer);
+        live.onTick(tick);
     }
 }

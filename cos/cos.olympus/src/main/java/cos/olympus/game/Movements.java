@@ -4,6 +4,8 @@ import cos.logging.Logger;
 import cos.map.TileType;
 import cos.ops.Direction;
 import cos.ops.Move;
+import cos.ops.StopMove;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -16,11 +18,25 @@ final class Movements implements TickAware {
     public final static  int                  HALF   = 50;
     public final static  int                  METER  = 100;
     private final static Logger               logger = new Logger(Movements.class);
-    private final        GMap                 world;
+    private final        World                world;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
 
     Movements(World world) {
         this.world = world;
+    }
+
+    public void onMove(Move op) {
+        var cr = world.getCreature(op.userId());
+        if (cr == null) return;
+
+        change(cr, op);
+    }
+
+    public void onStopMove(StopMove op) {
+        var cr = world.getCreature(op.userId());
+        if (cr == null) return;
+
+        stop(cr, op.sight());
     }
 
     private final static class Mv {
@@ -52,7 +68,9 @@ final class Movements implements TickAware {
         cr.speed = toTickSpeed(getSpeed(currentTile));
     }
 
-    private static int getSpeed(TileType currentTile) {
+    private static int getSpeed(@Nullable TileType currentTile) {
+        if (currentTile == null) throw new IllegalStateException("Null title");
+
         return switch (currentTile) {
             case GRASS, SAND, TIMBER -> 400;
             case SHALLOW, GATE -> 100;
@@ -75,8 +93,7 @@ final class Movements implements TickAware {
     }
 
 
-    public void onTick(int tickId, long time) {
-        //todo remove allocations
+    public void onTick(int tickId) {
         mvs.values().removeIf(this::onTick);
     }
 

@@ -5,6 +5,7 @@ import cos.map.Land;
 import cos.olympus.game.Game;
 import cos.olympus.game.World;
 import cos.olympus.game.server.GameServer;
+import cos.olympus.util.DoubleBuffer;
 import cos.ops.AnyOp;
 
 import java.io.IOException;
@@ -20,9 +21,10 @@ public class Main {
 
         logger.info("Started ");
 
+        var res = (args.length>0) ? Paths.get("", args[0]) : Paths.get("", "../../resources");
         var requests = new DoubleBuffer<AnyOp>();
         var responses = new Responses();
-        var lands = Land.load(Paths.get("", "../../resources").toAbsolutePath());
+        var lands = Land.load(res.toAbsolutePath());
         var gameMap = new World(lands);
         var game = new Game(gameMap, requests);
 

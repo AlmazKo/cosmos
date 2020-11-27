@@ -16,5 +16,4 @@ public interface Orientable{
     @Nullable Direction mv();
 
     Direction sight();
-
 }
