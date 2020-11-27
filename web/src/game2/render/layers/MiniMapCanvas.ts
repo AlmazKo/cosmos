@@ -89,8 +89,11 @@ export class MiniMapCanvas implements CanvasComposer {
     });
 
     const txt = proto.x() + "; " + proto.y();
-    p.text(txt, this.width - 1.5, this.height - .5, {...style.minimapDetails, style: 'black'})
+    p.ctx.shadowBlur = 3;
+    p.ctx.shadowColor = '#000';
     p.text(txt, this.width - 2, this.height - 1, style.minimapDetails)
+    p.ctx.shadowBlur = 0;
+    p.ctx.shadowColor = '#00000000';
   }
 
   onEndFrame(time: DOMHighResTimeStamp, error?: Error): void {
