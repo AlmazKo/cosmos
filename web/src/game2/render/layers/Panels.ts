@@ -92,7 +92,7 @@ export class Panels implements Drawable {
           const img = this.images.get(slot.key.asset)!!;
           ctx.drawImage(img, 0, 0, 32, 32, x - 8, y + 20, 16, 16);
         } else {
-          p.fillRect(x - 8, y + 17, 16, 16, '#cc0100');
+          p.fillRect(x - 8, y + 17, 16, 16, '#1c1c1c');
           p.text(slot.key.name, x, y + 18, {align: 'center', font: 'bold 12px sans-serif', style: '#fff'})
         }
       }

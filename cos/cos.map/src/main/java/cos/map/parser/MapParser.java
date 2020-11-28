@@ -3,9 +3,12 @@ package cos.map.parser;
 import almazko.microjson.JsArray;
 import almazko.microjson.JsObject;
 import cos.map.Lands;
+import cos.map.RespawnSpot;
 import cos.map.Tile;
 import cos.map.TileType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 public class MapParser {
 
@@ -14,12 +17,24 @@ public class MapParser {
     public static Lands parse(JsObject rawMap, JsObject rawTiles) {
         var layers = rawMap.getArray("layers");
         var spec = calcSpec(layers);
-        var map = readChunks(layers.getObject(0).getArray("chunks"), spec);
-        var objects = readChunks(layers.getObject(1).getArray("chunks"), spec);
+        short[] map = null;
+        short[] objects = null;
+        ArrayList<RespawnSpot> respawns = null;
+        for (Object l : layers) {
+            if (l == null) continue;
+
+            var layer = (JsObject) l;
+            switch (layer.getString("name")) {
+                case "basic" -> map = readChunks(layer.getArray("chunks"), spec);
+                case "objects" -> objects = readChunks(layer.getArray("chunks"), spec);
+                case "respawns" -> respawns = readRespawnSpots(layer.getArray("objects"));
+            }
+        }
         var tiles = readTiles(rawTiles);
 
-        return new Lands(spec.width, spec.height, spec.shiftX, spec.shiftY, map, objects, tiles);
+        return new Lands(spec.width, spec.height, spec.shiftX, spec.shiftY, map, objects, tiles, respawns);
     }
+
 
     private static Tile[] readTiles(JsObject rawTiles) {
         var tilesColumns = rawTiles.getInt("columns");
@@ -65,6 +80,18 @@ public class MapParser {
         var height = maxShiftY - minShiftY + chunkSize;
 
         return new Spec(width, height, minShiftX, minShiftY);
+    }
+
+    private static ArrayList<RespawnSpot> readRespawnSpots(JsArray objects) {
+        var result = new ArrayList<RespawnSpot>();
+
+        for (Object o : objects) {
+            var obj = (JsObject) o;
+            int size = obj.getArray("properties").getObject(0).getInt("value");
+            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size);
+            result.add(spot);
+        }
+        return result;
     }
 
     private static short[] readChunks(JsArray layers, Spec spec) {

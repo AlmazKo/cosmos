@@ -32,7 +32,7 @@ public final class Game {
     private final ArrayList<RespawnStrategy>       npcRespawns     = new ArrayList<>();
     private final ArrayList<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
     private final ArrayList<@NotNull OutOp>        outOps          = new ArrayList<>();
-    private final Zone                      zone;
+    private final Zone                             zone;
 
     int id = 0;
     private int tick = 0;
@@ -45,13 +45,15 @@ public final class Game {
         this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
-        settleMobs(10);
+        settleMobs();
     }
 
-    private void settleMobs(int amount) {
-        for (int i = 0; i < amount; i++) {
-            npcRespawns.add(new RespawnStrategy(world, movements, new Coord(-26, -6)));
-        }
+    private void settleMobs() {
+        world.respawns.forEach(resp -> {
+            for (int i = 0; i < resp.size(); i++) {
+                npcRespawns.add(new RespawnStrategy(world, movements, new Coord(resp.x(), resp.y())));
+            }
+        });
     }
 
     public List<OutOp> onTick(int id, long tsm) {

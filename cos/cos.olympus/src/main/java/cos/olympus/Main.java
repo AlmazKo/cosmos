@@ -25,12 +25,13 @@ public class Main {
         var requests = new DoubleBuffer<AnyOp>();
         var responses = new Responses();
         var lands = Land.load(res.toAbsolutePath());
-        var gameMap = new World(lands);
-        var game = new Game(gameMap, requests);
+        var world = new World(lands);
+        var game = new Game(world, requests);
 
 
         GameServer.run(requests, responses);
         var id = 0;
+        //noinspection InfiniteLoopStatement
         while (true) {
 
             var oo = game.onTick(++id, tsm());

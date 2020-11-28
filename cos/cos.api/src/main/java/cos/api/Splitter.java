@@ -16,11 +16,11 @@ public class Splitter {
         var result = new HashMap<Pair<Integer, Integer>, Tile[]>();
 
         Tile t;
-        int width = lands.getWidth();
-        int height = lands.getHeight();
+        int width = lands.width();
+        int height = lands.height();
         int x, y, idx;
-        var basis = lands.getBasis();
-        var tiles = lands.getTiles();
+        var basis = lands.basis();
+        var tiles = lands.tiles();
 
         for (int i = 0; i < basis.length; i++) {
 
@@ -29,8 +29,8 @@ public class Splitter {
                 continue;
             }
 
-            x = i % width + lands.getOffsetX();
-            y = i / width + lands.getOffsetY();
+            x = i % width + lands.offsetX();
+            y = i / width + lands.offsetY();
 
             var xx = floorDiv(x, 16);
             var yy = floorDiv(y, 16);
@@ -48,11 +48,11 @@ public class Splitter {
         var result = new HashMap<Pair<Integer, Integer>, Tile[]>();
 
         Tile t;
-        int width = lands.getWidth();
-        int height = lands.getHeight();
+        int width = lands.width();
+        int height = lands.height();
         int x, y, idx;
-        var objects = lands.getObjects();
-        var tiles = lands.getTiles();
+        var objects = lands.objects();
+        var tiles = lands.tiles();
 
         for (int i = 0; i < objects.length; i++) {
 
@@ -61,8 +61,8 @@ public class Splitter {
                 continue;
             }
 
-            x = i % width + lands.getOffsetX();
-            y = i / width + lands.getOffsetY();
+            x = i % width + lands.offsetX();
+            y = i / width + lands.offsetY();
 
             var xx = floorDiv(x, 16);
             var yy = floorDiv(y, 16);

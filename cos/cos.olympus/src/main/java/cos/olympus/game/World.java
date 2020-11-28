@@ -4,6 +4,7 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.map.Coord;
 import cos.map.Lands;
+import cos.map.RespawnSpot;
 import cos.map.Tile;
 import cos.map.TileType;
 import cos.olympus.NoSpaceException;
@@ -35,18 +36,19 @@ public final class World {
     private final HashMap<Integer, Creature> creatureObjects = new HashMap<>();
 
     private final int offsetX;
-    private final int offsetY;
-
+    private final int                    offsetY;
+    final ArrayList<RespawnSpot> respawns;
 
     public World(Lands lands) {
-        this.offsetX = lands.getOffsetX();
-        this.offsetY = lands.getOffsetY();
-        this.width = lands.getWidth();
-        this.height = lands.getHeight();
-        this.basis = lands.getBasis();
-        this.objects = lands.getObjects();
+        this.offsetX = lands.offsetX();
+        this.offsetY = lands.offsetY();
+        this.width = lands.width();
+        this.height = lands.height();
+        this.basis = lands.basis();
+        this.objects = lands.objects();
         this.creatures = new int[basis.length];
-        this.tiles = lands.getTiles();
+        this.tiles = lands.tiles();
+        this.respawns = lands.respawns();
         debug();
     }
 
