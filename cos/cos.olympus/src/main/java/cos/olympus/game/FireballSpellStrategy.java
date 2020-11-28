@@ -43,7 +43,7 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
         var victim = world.getCreature(x, y);
         if (victim != null && spell.source().id() != victim.id()) {
             boolean crit = Util.rand(0, 10) == 1;
-            var d = new Damage(++DAMAGES_IDS, tick, victim, spell, crit ? 100 : 30, crit);
+            var d = new Damage(++DAMAGES_IDS, tick, victim, spell, crit ? 100 : 50, crit);
             logger.info("Damaged : " + d);
             damages.add(d);
             finished = true;

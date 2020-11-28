@@ -1,5 +1,6 @@
 package cos.olympus.game;
 
+import cos.logging.Logger;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.ops.FireballEmmit;
@@ -11,9 +12,14 @@ import cos.ops.OutOp;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Spells {
+import static cos.olympus.Main.toTickSpeed;
+import static cos.olympus.Main.toTicks;
 
-    protected static       int    SPELL_IDS   = 0;
+public class Spells {
+    private final static Logger logger = new Logger(Spells.class);
+
+    protected static int SPELL_IDS = 0;
+    private          int pause     = toTicks(1);
 
     private final ArrayList<SpellStrategy> spells = new ArrayList<>();
     private final World                    world;
@@ -27,7 +33,14 @@ public class Spells {
         if (cr == null) return;
         //todo validate cooldown
 
-        var spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), 40, cr.sight(), 10, tick, cr);
+        if (tick - cr.lastSpellTick < pause) {
+            logger.info("Ignore spell " + op);
+            return;
+        }
+
+        cr.lastSpellTick = tick;
+
+        var spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), toTickSpeed(400), cr.sight(), 10, tick, cr);
         var str = new FireballSpellStrategy(spell, world);
         spells.add(str);
     }
@@ -35,6 +48,9 @@ public class Spells {
     void onMeleeAttack(int tick, MeleeAttack op) {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
+        if (tick - cr.lastSpellTick < pause) {
+            return;
+        }
 
 
         var spell = new cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);

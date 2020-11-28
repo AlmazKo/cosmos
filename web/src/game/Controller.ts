@@ -20,7 +20,7 @@
 // import { FireShock } from './effects/FireShock';
 // import { Lands } from './Lands';
 // import { Orientation } from '../game2/controller/MovingKeys';
-// import { Trait, TraitFireball, TraitFireshock, TraitMelee } from './Trait';
+// import { Trait, TFireball, TFireshock, TMelee } from './Trait';
 //
 // let INC: uint = 0;
 //
@@ -180,7 +180,7 @@
 //     const time = Date.now();
 //     const p    = this.proto;
 //     switch (action.constructor) {
-//       case TraitFireball:
+//       case TFireball:
 //         // if (p.movement) return;
 //         if (time - this.lastSpellTime < 1000) return undefined;
 //         this.lastSpellTime = time;
@@ -191,7 +191,7 @@
 //         p.instantSpell();
 //         return fireball;
 //
-//       case TraitMelee:
+//       case TMelee:
 //         // if (p.movement) return;
 //         if (time - this.lastSpellTime < 1000) return undefined;
 //         this.lastSpellTime = time;
@@ -199,7 +199,7 @@
 //         p.melee();
 //         return undefined;
 //
-//       case TraitFireshock:
+//       case TFireshock:
 //         if (time - this.lastSpellTime < 1000) return undefined;
 //         this.lastSpellTime = time;
 //         const fireshok     = new FireShockSpell(time, this.nextId(), p, 400, 2);

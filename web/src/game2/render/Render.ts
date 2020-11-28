@@ -14,7 +14,8 @@ import { Spell } from '../engine/actions/Spell';
 import { Creature } from '../engine/Creature';
 import { Game } from '../engine/Game';
 import { Player } from '../engine/Player';
-import { TraitFireball, TraitMelee } from '../Trait';
+import { Spells } from '../engine/Spells';
+import { TFireball, TMelee } from '../Trait';
 import { Camera } from './Camera';
 import { CELL, HCELL, QCELL } from './constants';
 import { DrawableCreature } from './DrawableCreature';
@@ -48,10 +49,11 @@ export class Render {
   constructor(
     readonly game: Game,
     private readonly lands: LandsLayer,
+    private readonly spells: Spells,
     private readonly images: Images
   ) {
     this.camera = new Camera();
-    this.panels = new Panels(images);
+    this.panels = new Panels(images, spells);
   }
 
   updateContext(ctx: CanvasRenderingContext2D, width: px, height: px): void {
@@ -62,6 +64,7 @@ export class Render {
     this.lands.init(this.p);
     this.lands.changeSize(width, height);
 
+    //todo remove from here
     ctx.imageSmoothingEnabled = false;
   }
 
@@ -72,9 +75,9 @@ export class Render {
     const player = this.game.getProto();
     const camera = this.camera;
     if (!player) return;
+
     const actions = this.game.getActions();
     this.processActions(actions, camera);
-
     this.animators.run(time);
 
     if (this.p) this.p.clear();
@@ -90,7 +93,6 @@ export class Render {
 
       const x = camera.toX(obj.x);
       const y = camera.toY(obj.y);
-
       const tileX = obj.tileId % TILESET_SIZE;
       const tileY = Math.floor(obj.tileId / TILESET_SIZE);
       const sx = TILE_SIZE * tileX;
@@ -138,9 +140,9 @@ export class Render {
       if (action instanceof ActivateTrait) {
         this.panels.activate(action);
 
-        if (action.trait instanceof TraitMelee) {
+        if (action.trait instanceof TMelee) {
           this.player!!.melee();
-        } else if (action.trait instanceof TraitFireball) {
+        } else if (action.trait instanceof TFireball) {
           this.player!!.instantSpell();
         }
       }
@@ -218,7 +220,11 @@ export class Render {
     const tile = this.game.world.tileType(posCursorX, posCursorY);
     const p = this.p!!;
     p.fillRect(x - 1, y + CELL, CELL + 2, 24, '#ffffff99')
-    p.text(stringTiles[tile].toLowerCase(), x + HCELL, y + CELL, style.cellInfo)
+    if (stringTiles[tile]) {
+      p.text(stringTiles[tile].toLowerCase(), x + HCELL, y + CELL, style.cellInfo)
+    } else {
+      p.text('???', x + HCELL, y + CELL, style.cellInfo)
+    }
     p.text(posCursorX + ',' + posCursorY, x + HCELL, y + CELL + 13, style.cellInfo)
     p.rect(x, y, CELL, CELL, {style: 'white', width: 1.5});
   }

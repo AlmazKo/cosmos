@@ -51,4 +51,8 @@ public class Main {
         return v / TICKS_PER_SECOND;
     }
 
+    public static int toTicks(int sec) {
+        return sec * TICKS_PER_SECOND;
+    }
+
 }

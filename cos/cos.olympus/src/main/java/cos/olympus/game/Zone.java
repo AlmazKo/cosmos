@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class Zone {
 
-    private final static Logger logger = new Logger(Game.class);
+    private final static Logger logger = new Logger(Zone.class);
     private final static int    radius = 8;
 
     private final World world;

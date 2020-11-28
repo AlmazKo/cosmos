@@ -7,10 +7,9 @@ import { Audios } from '../audio/Audios';
 import { Dir } from '../constants';
 import { Api } from '../server/Api';
 import { ConnStatus } from '../server/WsServer';
-import { Trait, TraitFireball, TraitMelee, TraitShot } from '../Trait';
+import { Trait, TFireball, TMelee, TShot } from '../Trait';
 import { World } from '../world/World';
 import { Act } from './Act';
-import { ActivateTrait } from './actions/ActivateTrait';
 import { OnDamage } from './actions/OnDamage';
 import { OnMeleeAttack } from './actions/OnMeleeAttack';
 import { ProtoArrival } from './actions/ProtoArrival';
@@ -23,6 +22,7 @@ import { StatusMoving } from './Moving2';
 import { MovingListener } from './MovingListener';
 import { Orientation } from './Orientation';
 import { Player } from './Player';
+import { Spells } from './Spells';
 
 const NO_ACTIONS: Act[] = [];
 let ID = 1;
@@ -46,6 +46,7 @@ export class Game implements MovingListener {
     private readonly api: Api,
     readonly world: World,
     private readonly mvg: Moving,
+    private readonly spells: Spells,
     private readonly audio: Audios,
   ) {
     this.movements = new Movements(world, this)
@@ -195,22 +196,37 @@ export class Game implements MovingListener {
 
   onAction(trait: Trait) {
     const p = this.proto!!;
-    if (trait instanceof TraitFireball) {
+
+
+   const result = this.spells.onAction(this.proto!!, trait)
+
+
+    if(!result) {
+      //ignores
+      return;
+    }
+
+
+
+    const t = result.trait;
+    // const now = Date.now()
+
+    if (t instanceof TFireball) {
       this.api.sendAction('emmit_fireball', {});
-    } else if (trait instanceof TraitMelee) {
+    } else if (t instanceof TMelee) {
       this.api.sendAction('melee_attack', {});
-    } else if (trait instanceof TraitShot) {
+    } else if (t instanceof TShot) {
       this.api.sendAction('shot_attack', {});
     }
 
     this.audio.play(trait.audio)
-    this.actions.push(new ActivateTrait(ID++, p, Date.now(), trait))
+    this.actions.push(result)
   }
 
   onFrame(time: DOMHighResTimeStamp) {
     this.movements.onFrame(time)
+    this.spells.onFrame(time);
   }
-
 
   getActions(): Act[] {
     return this.actions.splice(0);

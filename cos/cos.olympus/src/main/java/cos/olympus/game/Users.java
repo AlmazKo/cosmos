@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 
 public class Users {
-    private final static Logger logger = new Logger(Game.class);
+    private final static Logger logger = new Logger(Users.class);
 
     private final HashMap<Integer, Player> users = new HashMap<>();
     private final World                    world;

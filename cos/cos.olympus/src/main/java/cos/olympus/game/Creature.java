@@ -15,6 +15,7 @@ import static cos.ops.Direction.WEST;
 
 public final class Creature implements Orientable {
     final Avatar avatar;
+    int lastSpellTick;
     int x;
     int y;
     int offset;

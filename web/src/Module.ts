@@ -3,6 +3,7 @@ import { GamePad } from './game2/controller/GamePad';
 import { Keyboard } from './game2/controller/Keyboard';
 import { Game } from './game2/engine/Game';
 import { Moving } from './game2/engine/Moving';
+import { Spells } from './game2/engine/Spells';
 import { GameCanvas } from './game2/render/GameCanvas';
 import { LandsLayer } from './game2/render/LandsLayer';
 import { Render } from './game2/render/Render';
@@ -11,7 +12,7 @@ import { ImageAssets } from './game2/server/ImageAssets';
 import { ResourcesServer } from './game2/server/ResourcesServer';
 import { WsServer } from './game2/server/WsServer';
 import { World } from './game2/world/World';
-import { WS_HOST, HOST } from './index';
+import { HOST, WS_HOST } from './index';
 
 
 interface Constructor<T = any> {
@@ -56,9 +57,10 @@ setCached(AudioAssets, () => new AudioAssets(HOST, get(AudioContext)));
 setCached(Audios, () => new Audios(get(AudioContext), get(AudioAssets)));
 setCached(Keyboard, () => new Keyboard(get(Moving), get(Game)));
 setCached(GamePad, () => new GamePad(get(Moving), get(Game)));
+setCached(Spells, () => new Spells());
 setCached(World, () => new World(get('map')));
-setCached(Game, () => new Game(get('api'), get(World), get(Moving), get(Audios)));
+setCached(Game, () => new Game(get('api'), get(World), get(Moving), get(Spells), get(Audios)));
 setCached(LandsLayer, () => new LandsLayer(get(World), get('images')));
-setCached(Render, () => new Render(get(Game), get(LandsLayer), get('images')));
+setCached(Render, () => new Render(get(Game), get(LandsLayer), get(Spells), get('images')));
 setCached(GameCanvas, () => new GameCanvas(get(Render)));
 

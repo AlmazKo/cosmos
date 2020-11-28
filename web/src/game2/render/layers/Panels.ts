@@ -1,12 +1,12 @@
-import { Animator } from '../../../anim/Animator';
 import { Animators } from '../../../anim/Animators';
 import { toRGBA } from '../../../canvas/utils';
 import { CanvasContext } from '../../../draw/CanvasContext';
 import { Drawable } from '../../../game/Drawable';
 import { Key } from '../../controller/controls';
 import { ActivateTrait } from '../../engine/actions/ActivateTrait';
-import { Images } from '../Images';
+import { Spells } from '../../engine/Spells';
 import { Trait, Traits } from '../../Trait';
+import { Images } from '../Images';
 
 class Slot {
   public key: Key | undefined
@@ -24,7 +24,7 @@ export class Panels implements Drawable {
   private slotAnimatedFraction: float = 0.0;
   private animators = new Animators();
 
-  constructor(private readonly images: Images) {
+  constructor(private readonly images: Images, private readonly spells: Spells) {
     this.slots[0] = new Slot(0, Traits.melee);
     this.slots[1] = new Slot(1, Traits.fireball);
     this.slots[2] = new Slot(2, Traits.fireshock);
@@ -60,34 +60,40 @@ export class Panels implements Drawable {
         if (slotImg)
           ctx.drawImage(slotImg, 0, 0, slotImg.width, slotImg.height, x - 25, y - 25, 50, 50);
 
-        if (this.coolDownFraction) {
-          p.fill(toRGBA("#000", 0.66));
+        const share = this.spells.state(slot.trait)
+        if (share < 1) {
+          p.fill(toRGBA('#000', 0.66));
           ctx.beginPath();
-          ctx.arc(x, y, 25, 1.5 * Math.PI, (1.5 + this.coolDownFraction * 2) * Math.PI, true);
+          ctx.arc(x, y, 25, 1.5 * Math.PI, (1.5 + share * 2) * Math.PI, true);
           ctx.lineTo(x, y);
           ctx.fill();
+          p.circle(x, y, 25, {style: '#999', width: 1});
+        } else {
+          p.circle(x, y, 25, {style: '#fff', width: 2});
         }
+
+
       } else {
-        p.fill(toRGBA("#000", 0.2));
+        p.fill(toRGBA('#000', 0.2));
         ctx.beginPath();
         ctx.arc(x, y, 25, 0, 2 * Math.PI);
         ctx.fill();
       }
+      //
+      // if (slot && this.lastRequestedAction === slot.trait && this.slotAnimatedFraction) {
+      //   p.circle(x, y, 23.5, {style: 'yellow', width: 4});
+      // } else {
+      //   p.circle(x, y, 25, {style: 'white', width: 2});
+      // }
 
-      if (slot && this.lastRequestedAction === slot.trait && this.slotAnimatedFraction) {
-        p.circle(x, y, 23.5, {style: "yellow", width: 4});
-      } else {
-        p.circle(x, y, 25, {style: "white", width: 2});
-      }
 
       if (slot && slot.key) {
-
         if (slot.key.asset) {
           const img = this.images.get(slot.key.asset)!!;
-          ctx.drawImage(img, 0, 0, 32, 32, x-8, y+20, 16, 16);
+          ctx.drawImage(img, 0, 0, 32, 32, x - 8, y + 20, 16, 16);
         } else {
-          p.fillRect(x - 8, y + 17, 16, 16, "#cc0100");
-          p.text(slot.key.name, x, y + 18, {align: 'center', font: "bold 12px sans-serif", style: "#fff"})
+          p.fillRect(x - 8, y + 17, 16, 16, '#cc0100');
+          p.text(slot.key.name, x, y + 18, {align: 'center', font: 'bold 12px sans-serif', style: '#fff'})
         }
       }
     }
@@ -95,8 +101,10 @@ export class Panels implements Drawable {
 
 
   activate(action: ActivateTrait) {
-    this.lastRequestedAction = action.trait;
-    this.animators.set("slot_activate", new Animator(200, f => this.slotAnimatedFraction = f), () => this.slotAnimatedFraction = 0);
-    this.animators.set("global_cooldown", new Animator(500, f => this.coolDownFraction = f));
+    // this.lastRequestedAction = action.trait;
+    // this.animators.set('slot_activate', new Animator(200, f => this.slotAnimatedFraction = f), () => this.slotAnimatedFraction = 0);
+    //
+    // const cooldown = (action.trait instanceof TMelee) ? 500 : 1000;
+    // this.animators.set('global_cooldown', new Animator(cooldown, f => this.coolDownFraction = f));
   }
 }
