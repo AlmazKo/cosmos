@@ -4,6 +4,7 @@ import cos.logging.Logger;
 import cos.map.Coord;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
+import cos.olympus.game.events.Shot;
 import cos.olympus.util.DoubleBuffer;
 import cos.ops.AnyOp;
 import cos.ops.Disconnect;
@@ -14,6 +15,7 @@ import cos.ops.MeleeAttack;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
+import cos.ops.ShotEmmit;
 import cos.ops.StopMove;
 import org.jetbrains.annotations.NotNull;
 
@@ -117,6 +119,7 @@ public final class Game {
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
                 case Op.EXIT -> onExit((Exit) op);
                 case Op.EMMIT_FIREBALL -> onSpell((FireballEmmit) op);
+                case Op.EMMIT_SHOT -> onShot((ShotEmmit) op);
                 case Op.MELEE_ATTACK -> onMeleeAttack((MeleeAttack) op);
             }
         } catch (Exception ex) {
@@ -132,6 +135,10 @@ public final class Game {
 
     private void onMove(Move op) {
         this.movements.onMove(op);
+    }
+
+    private void onShot(ShotEmmit op) {
+        this.spells.onShot(tick, op);
     }
 
     private void onSpell(FireballEmmit op) {

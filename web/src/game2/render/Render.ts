@@ -1,6 +1,8 @@
 import { Animators } from '../../anim/Animators';
 import { BasePainter } from '../../draw/BasePainter';
 import { CanvasContext } from '../../draw/CanvasContext';
+import { FireballSpell } from '../../game/actions/FireballSpell';
+import { ShotSpell } from '../../game/actions/ShotSpell';
 import { Effects } from '../../game/Effects';
 import { style } from '../../game/styles';
 import { TilePainter } from '../../game/TilePainter';
@@ -21,6 +23,7 @@ import { CELL, HCELL, QCELL } from './constants';
 import { DrawableCreature } from './DrawableCreature';
 import { DamageEffect } from './effects/DamageEffect';
 import { Fireball } from './effects/Fireball';
+import { Shot } from './effects/Shot';
 import { Images } from './Images';
 import { LandsLayer, TILE_SIZE, TILESET_SIZE } from './LandsLayer';
 import { Panels } from './layers/Panels';
@@ -157,7 +160,13 @@ export class Render {
       }
 
       if (action instanceof Spell) {
-        this.effects.push(new Fireball(this.images, action.spell, this.game.world));
+        if (action.spell instanceof FireballSpell) {
+          this.effects.push(new Fireball(this.images, action.spell, this.game.world));
+
+        } else if (action.spell instanceof ShotSpell) {
+          this.effects.push(new Shot(this.images, action.spell, this.game.world));
+        }
+
       }
 
 

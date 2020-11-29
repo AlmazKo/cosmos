@@ -3,11 +3,14 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
+import cos.olympus.game.events.Shot;
 import cos.ops.FireballEmmit;
 import cos.ops.FireballMoved;
 import cos.ops.MeleeAttack;
 import cos.ops.MeleeAttacked;
 import cos.ops.OutOp;
+import cos.ops.ShotEmmit;
+import cos.ops.ShotMoved;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +31,23 @@ public class Spells {
         this.world = world;
     }
 
+    void onShot(int tick, ShotEmmit op) {
+        var cr = world.getCreature(op.userId());
+        if (cr == null) return;
+        //todo validate cooldown
+
+        if (tick - cr.lastSpellTick < pause) {
+            logger.info("Ignore spell " + op);
+            return;
+        }
+
+        cr.lastSpellTick = tick;
+
+        var spell = new Shot(++SPELL_IDS, cr.x(), cr.y(), toTickSpeed(1000), cr.sight(), 10, tick, cr);
+        var str = new ShotSpellStrategy(spell, world);
+        spells.add(str);
+    }
+
     void onSpell(int tick, FireballEmmit op) {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
@@ -40,7 +60,7 @@ public class Spells {
 
         cr.lastSpellTick = tick;
 
-        var spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), toTickSpeed(400), cr.sight(), 10, tick, cr);
+        var spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), toTickSpeed(400), cr.sight(), 8, tick, cr);
         var str = new FireballSpellStrategy(spell, world);
         spells.add(str);
     }
@@ -70,6 +90,8 @@ public class Spells {
                             outOps.add(new FireballMoved(SPELL_IDS++, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinished()));
                         } else if (spell instanceof cos.olympus.game.events.MeleeAttack s) {
                             outOps.add(new MeleeAttacked(SPELL_IDS++, tick, cr.id(), s.id(), s.source().id()));
+                        } else if (spell instanceof cos.olympus.game.events.Shot s) {
+                            outOps.add(new ShotMoved(SPELL_IDS++, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinished()));
                         }
                     }
                 }

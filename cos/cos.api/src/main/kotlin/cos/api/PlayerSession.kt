@@ -20,6 +20,8 @@ import cos.ops.Move
 import cos.ops.ObjAppear
 import cos.ops.Op
 import cos.ops.OutOp
+import cos.ops.ShotEmmit
+import cos.ops.ShotMoved
 import cos.ops.StopMove
 import cos.ops.Unknown
 import io.vertx.core.Vertx
@@ -93,6 +95,12 @@ class PlayerSession(
             }
             "emmit_fireball" -> {
                 FireballEmmit(
+                    cid.incrementAndGet(),
+                    userId
+                )
+            }
+            "emmit_shot" -> {
+                ShotEmmit(
                     cid.incrementAndGet(),
                     userId
                 )
@@ -214,6 +222,7 @@ class PlayerSession(
                 Op.CREATURE_MOVED -> CreatureMoved.read(b);
                 Op.CREATURE_HID -> CreatureHid.read(b);
                 Op.FIREBALL_MOVED -> FireballMoved.read(b);
+                Op.SHOT_MOVED -> ShotMoved.read(b);
                 Op.MELEE_ATTACKED -> MeleeAttacked.read(b);
                 Op.DAMAGE -> Damage.read(b);
                 Op.DEATH -> Death.read(b);

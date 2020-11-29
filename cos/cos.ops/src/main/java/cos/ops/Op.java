@@ -17,6 +17,8 @@ public interface Op {
     byte MELEE_ATTACK   = 113;
     byte MELEE_ATTACKED = 114;
     byte METRICS        = 115;
+    byte EMMIT_SHOT     = 116;
+    byte SHOT_MOVED     = 117;
 
     //infrastructure op-codes
     byte NOPE       = 0;

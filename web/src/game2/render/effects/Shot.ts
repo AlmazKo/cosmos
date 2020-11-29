@@ -11,7 +11,7 @@ import { CELL } from '../constants';
 
 // export const RES: Images = get('images');
 
-export class Fireball implements Effect {
+export class Shot implements Effect {
   private readonly posX: index;
   private readonly posY: index;
   private readonly direction: Dir;
@@ -30,7 +30,7 @@ export class Fireball implements Effect {
     this.posX = spec.initX;
     this.posY = spec.initY;
     this.world = world;
-    this.anim = new LoopAnimator(8, (f, i) => {
+    this.anim = new LoopAnimator(10, (f, i) => {
 
         if (spec.finished) {
           this.isFinished = true;
@@ -48,13 +48,13 @@ export class Fireball implements Effect {
           }
         }
 
-        if (i >= 8) {
+        if (i >= 10) {
           this.isFinished = true;
           return 0;
         } else {
           this.f = f;
           this.shift = (i + f) * CELL;
-          return 250;
+          return 100;
         }
       }
     );
@@ -85,19 +85,15 @@ export class Fireball implements Effect {
     switch (this.direction) {
       case Dir.NORTH:
         shiftY = -this.shift;
-        sy = 32 * 2;
         break;
       case Dir.SOUTH:
         shiftY = this.shift;
-        sy = 32 * 6;
         break;
       case Dir.WEST:
         shiftX = -this.shift;
-        sy = 0;
         break;
       case Dir.EAST:
         shiftX = this.shift;
-        sy = 32 * 4;
         break;
 
       default:
@@ -108,13 +104,10 @@ export class Fireball implements Effect {
     const x = camera.toX(this.posX) + shiftX;
     const y = camera.toY(this.posY) + shiftY;
 
-    const sx: px = 32 * Math.floor(this.f * 4);
-    // const fire1 = this.images.get("fireball_32");
 
 
     // bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, shiftX, shiftY);
-    bp.drawTo("fireball_32", sx, sy, 32, 32, x, y, CELL, CELL);
-
+      bp.drawTo("objects", 128+48, 32+16, 16, 16, x+16, y+12, CELL/2, CELL/2);
   }
 
   stop(): void {

@@ -11,6 +11,7 @@ import cos.ops.MeleeAttack;
 import cos.ops.Move;
 import cos.ops.Op;
 import cos.ops.OutOp;
+import cos.ops.ShotEmmit;
 import cos.ops.StopMove;
 import cos.ops.Unknown;
 import org.jetbrains.annotations.NotNull;
@@ -191,6 +192,7 @@ public final class GameServer {
             case Op.MOVE -> Move.read(b);
             case Op.STOP_MOVE -> StopMove.read(b);
             case Op.EMMIT_FIREBALL -> FireballEmmit.read(b);
+            case Op.EMMIT_SHOT -> ShotEmmit.read(b);
             case Op.MELEE_ATTACK -> MeleeAttack.read(b);
             default -> Unknown.read(b, length);
         };

@@ -10,6 +10,7 @@ import cos.ops.FireballMoved
 import cos.ops.MeleeAttacked
 import cos.ops.Metrics
 import cos.ops.ObjAppear
+import cos.ops.ShotMoved
 import io.vertx.core.json.JsonObject
 
 object JsonMapper {
@@ -22,6 +23,7 @@ object JsonMapper {
             is ObjAppear -> toJ(op)
             is Metrics -> toJ(op)
             is CreatureMoved -> toJ(op)
+            is ShotMoved -> toJ(op)
             is CreatureHid -> toJ(op)
             is FireballMoved -> toJ(op)
             is Damage -> toJ(op)
@@ -91,6 +93,22 @@ object JsonMapper {
     private fun toJ(op: FireballMoved) = JsonObject()
         .put("id", op.id())
         .put("action", "fireball_moved")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("spellId", op.spellId())
+                .put("sourceId", op.userId())
+                .put("x", op.x())
+                .put("y", op.y())
+                .put("speed", op.speed())
+                .put("dir", op.dir())
+                .put("finished", op.finished())
+        )
+
+    private fun toJ(op: ShotMoved) = JsonObject()
+        .put("id", op.id())
+        .put("action", "shot_moved")
         .put("type", "")
         .put(
             "data", JsonObject()

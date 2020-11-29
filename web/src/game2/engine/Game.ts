@@ -1,6 +1,7 @@
-import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, MeleeAttacked, ObjAppear, OpMetrics } from '../../game/actions/ApiMessage';
+import { Appear, CreatureHid, CreatureMoved, Damage, Death, FireballMoved, MeleeAttacked, ObjAppear, OpMetrics, ShotMoved } from '../../game/actions/ApiMessage';
 import { FireballSpell } from '../../game/actions/FireballSpell';
 import { Package } from '../../game/actions/Package';
+import { ShotSpell } from '../../game/actions/ShotSpell';
 import { ApiCreature } from '../../game/api/ApiCreature';
 import { Metrics } from '../../game/Metrics';
 import { Audios } from '../audio/Audios';
@@ -107,10 +108,13 @@ export class Game implements MovingListener {
           break;
         case 'fireball_moved':
           this.onFireballMoved(e)
-          break
+          break;
+        case 'shot_moved':
+          this.onShotMoved(e)
+          break;
         case 'melee_attacked':
           this.onMeleeAttacked(e)
-          break
+          break;
         case 'creature_moved':
           this.onCreatureMove(e)
           break;
@@ -216,7 +220,7 @@ export class Game implements MovingListener {
     } else if (t instanceof TMelee) {
       this.api.sendAction('melee_attack', {});
     } else if (t instanceof TShot) {
-      this.api.sendAction('shot_attack', {});
+      this.api.sendAction('emmit_shot', {});
     }
 
     this.audio.play(trait.audio)
@@ -292,6 +296,19 @@ export class Game implements MovingListener {
       if (proto.zoneSpells.has(e.spellId)) return;
 
       const spell = new FireballSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
+      this.actions.push(new Spell(ID++, proto, Date.now(), spell))
+      proto.zoneSpells.set(e.spellId, spell);
+    }
+  }
+
+  private onShotMoved(e: ShotMoved) {
+    const proto = this.proto!!;
+    if (e.finished) {
+      proto.zoneSpells.delete(e.spellId);
+    } else {
+      if (proto.zoneSpells.has(e.spellId)) return;
+
+      const spell = new ShotSpell(Date.now(), ID++, proto, e.speed, e.x, e.y, e.dir);
       this.actions.push(new Spell(ID++, proto, Date.now(), spell))
       proto.zoneSpells.set(e.spellId, spell);
     }
