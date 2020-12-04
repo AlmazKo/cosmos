@@ -1,6 +1,7 @@
 package cos.olympus.game;
 
 import cos.olympus.NoSpaceException;
+import cos.olympus.util.OpConsumer;
 import cos.ops.Appear;
 import cos.ops.OutOp;
 
@@ -18,7 +19,7 @@ public class RespawnPlayerStrategy {
         this.respawnTime = tick + Util.rand(20, 40);
     }
 
-    boolean onTick(int tick, Collection<OutOp> outOps) {
+    boolean onTick(int tick, OpConsumer outOps) {
         if (tick < respawnTime) return false;
         try {
             var cr = world.createCreature(new Npc(player.id, player.name, 34, -24), 100, 1);

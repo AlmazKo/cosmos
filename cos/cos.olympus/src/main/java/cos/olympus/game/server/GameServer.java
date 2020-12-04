@@ -1,61 +1,58 @@
 package cos.olympus.game.server;
 
 import cos.logging.Logger;
-import cos.olympus.util.DoubleBuffer;
 import cos.olympus.Responses;
+import cos.olympus.util.DoubleBuffer;
 import cos.ops.AnyOp;
-import cos.ops.Exit;
-import cos.ops.FireballEmmit;
-import cos.ops.Login;
-import cos.ops.MeleeAttack;
-import cos.ops.Move;
-import cos.ops.Op;
-import cos.ops.OutOp;
-import cos.ops.ShotEmmit;
-import cos.ops.StopMove;
-import cos.ops.Unknown;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.StandardSocketOptions;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
+import static java.lang.Boolean.TRUE;
 import static java.nio.channels.SelectionKey.OP_ACCEPT;
 import static java.nio.channels.SelectionKey.OP_READ;
-import static java.nio.channels.SelectionKey.OP_WRITE;
 
 public final class GameServer {
-    private volatile     boolean                             running      = true;
-    private final        AtomicInteger                       inc          = new AtomicInteger();
-    private final static Logger                              logger       = new Logger(GameServer.class);
-    private final        DoubleBuffer<AnyOp>                 actionsBuffer;
-    private final        Responses                           responses;
-    private              HashMap<Integer, @Nullable Session> userSessions = new HashMap<>();
+//    private final        BiConsumer<GameChannel, Boolean> listener;
+    private final Sessions sessions;
+    volatile             boolean                          running = true;
+    //    private final        AtomicInteger                       inc          = new AtomicInteger();
+    private final static Logger                           logger  = new Logger(GameServer.class);
+//    private final        DoubleBuffer<AnyOp>                 actionsBuffer;
+//    private final        Responses                           responses;
+//    private              HashMap<Integer, @Nullable Session> userSessions = new HashMap<>();
+//    private              HashMap<SelectionKey, GameChannel>  channels     = new HashMap<>();
 
-    public GameServer(DoubleBuffer<AnyOp> actionsBuffer, Responses responses) {
-        this.actionsBuffer = actionsBuffer;
-        this.responses = responses;
+    public GameServer(Sessions sessions) {
+//        this.actionsBuffer = actionsBuffer;
+//        this.responses = responses;
+        this.sessions = sessions;
     }
 
-    void start(final int port) throws IOException {
+    void start(final int port) throws IOException, InterruptedException {
         var selector = setupServerSocket(port);
         logger.info("Server started");
 
-        while (running) {
-            selector.select();
+        while (selector.isOpen() && running) {
+            try {
+                if (selector.select(500) == 0) break;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                // handle exception
+                break;
+            }
+
             var keys = selector.selectedKeys().iterator();
 
             while (keys.hasNext()) {
                 var key = keys.next();
                 keys.remove();
+                logger.info("readable=" + key.isReadable() + " writable=" + key.isWritable());
 
                 if (!key.isValid()) {
                     logger.warn("NOT isValid");
@@ -63,113 +60,125 @@ public final class GameServer {
                 } else if (key.isAcceptable()) {
                     accept(key, selector);
                 } else if (key.isReadable()) {
-                    read(key);
+                    ((GameChannel) key.attachment()).read();
                 } else if (key.isWritable()) {
-                    write(key);
+                    ((GameChannel) key.attachment()).onWrite();
+                    logger.info("OP_READ");
                 }
             }
-
-            prepareResponses();
         }
     }
 
+    /*
 
-    private  void prepareResponses() {
-        if (responses.ops.isEmpty()) return;
+        private void prepareResponses(Selector selector) {
+            if (responses.ops.isEmpty()) return;
 
-//        logger.info("Writing ops to buffer ...");
-        for (OutOp op : responses.ops) {
-            if (op.userId() >= 10000) continue;
+            logger.info("Writing ops to buffer ...");
+            for (OutOp op : responses.ops) {
+                if (op.userId() >= 10000) continue;
 
-            var sess = userSessions.get(op.userId());
-            if (sess == null) {
-//                logger.info"Not exists connection for op: " + op);
-            } else {
-                if (op.code() == Op.DISCONNECT) {
-                    sess.close = true;
+                var sess = userSessions.get(op.userId());
+                if (sess == null) {
+    //                logger.info"Not exists connection for op: " + op);
+                } else {
+                    if (op.code() == Op.DISCONNECT) {
+                        sess.close = true;
+                    }
+                    write(sess.out, op);
                 }
-                write(sess.out, op);
+            }
+
+            selector.keys().forEach(key -> {
+                if (key.isValid() && key.channel() instanceof SocketChannel) {
+                    logger.info(key.attachment() + " OP_WRITE");
+                    //todo check session
+                    //may be write here
+                    key.interestOps(OP_READ | OP_WRITE);
+                }
+            });
+            responses.ops.clear();
+        }
+
+
+        private void write(ByteBuffer bb, OutOp op) {
+            bb.put(op.code());
+            int pos = bb.position();
+            bb.position(pos + 1);
+            op.write(bb);
+            byte opLength = (byte) (bb.position() - pos - 1);
+            bb.put(pos, opLength);//write the length
+        }
+
+
+
+        private void write(SelectionKey key) throws IOException {
+            var session = (Session) key.attachment();
+            var out = session.out;
+
+            if (out.position() > 0) {
+                //logger.info("Writing... " + session);
+                out.flip();
+                SocketChannel socketChannel = (SocketChannel) key.channel();
+                socketChannel.write(out);
+                out.clear();
+            }
+
+            if (session.close) {
+                logger.info("Closing(internally) ... " + session);
+                key.channel().close();
             }
         }
-        responses.ops.clear();
-    }
 
+        private void read(SelectionKey key) throws IOException {
+            var session = (Session) key.attachment();
+            //logger.info("Reading... " + session);
+            var ch = (SocketChannel) key.channel();
+            var in = session.in;
+            var read = ch.read(in);//todo handle  SocketException
 
-    private void write(ByteBuffer bb, OutOp op) {
-        bb.put(op.code());
-        int pos = bb.position();
-        bb.position(pos + 1);
-        op.write(bb);
-        byte opLength = (byte) (bb.position() - pos-1);
-        bb.put(pos, opLength);//write the length
-    }
+            //ogger.info("Read " + read);
+            if (read == -1) {
+                userSessions.remove(session.userId);
+                actionsBuffer.add(new Exit(0, session.userId));//todo hardcoded id
+                logger.info("Closing ... " + session);
+                ch.close();
+                return;
+            }
 
+            if (in.remaining() < 2 || in.remaining() < in.get(1)) {
+                //not enough data
+                logger.warn("not enough data " + session);
+                return;
+            }
 
+            in.flip();
+            while (in.hasRemaining()) {
+                var op = parseOp(in);
+                if (session.userId == 0 && op instanceof Login) {
+                    session.userId = op.userId();
+                    userSessions.put(op.userId(), session);
+    //                logger.info("Authorized: " + session);
+                }
+
+    //            logger.info("Op: " + op);
+                if (op.code() != Op.NOPE) {
+                    actionsBuffer.add(op);
+                }
+            }
+            in.clear();
+            // if data exists then call       in.compact();
+        }
+    */
     private void accept(SelectionKey key, Selector selector) throws IOException {
         var ch = ((ServerSocketChannel) key.channel()).accept();
         ch.configureBlocking(false);
-        var session = new Session(inc.incrementAndGet(), ch.getRemoteAddress());
-        ch.register(selector, OP_READ | OP_WRITE, session);
-//        logger.info("Accepted: " + session);
-    }
-
-    private void write(SelectionKey key) throws IOException {
-        var session = (Session) key.attachment();
-        var out = session.out;
-
-        if (out.position() > 0) {
-            //  logger.info("Writing... " + session);
-            out.flip();
-            SocketChannel socketChannel = (SocketChannel) key.channel();
-            socketChannel.write(out);
-            out.clear();
-        }
-
-        if (session.close) {
-            logger.info("Closing(internally) ... " + session);
-            key.channel().close();
-        }
-    }
-
-    private void read(SelectionKey key) throws IOException {
-        var session = (Session) key.attachment();
-        //logger.info("Reading... " + session);
-        var ch = (SocketChannel) key.channel();
-        var in = session.in;
-
-        var read = ch.read(in);//todo handle  SocketException
-
-        //ogger.info("Read " + read);
-        if (read == -1) {
-            userSessions.remove(session.userId);
-            actionsBuffer.add(new Exit(0, session.userId));//todo hardcoded id
-            logger.info("Closing ... " + session);
-            ch.close();
-            return;
-        }
-
-        if (in.remaining() < 2 || in.remaining() < in.get(1)) {
-            //not enough data
-            logger.warn("not enough data " + session);
-            return;
-        }
-
-        in.flip();
-        while (in.hasRemaining()) {
-            var op = parseOp(in);
-            if (session.userId == 0 && op instanceof Login) {
-                session.userId = op.userId();
-                userSessions.put(op.userId(), session);
-//                logger.info("Authorized: " + session);
-            }
-
-//            logger.info("Op: " + op);
-            if (op.code() != Op.NOPE) {
-                actionsBuffer.add(op);
-            }
-        }
-        in.clear();
-        // if data exists then call       in.compact();
+//        var session = new Session(inc.incrementAndGet(), ch.getRemoteAddress());
+        var gc = new GameChannel(key, ch);
+        ch.register(selector, OP_READ, gc);
+        sessions.register(gc);
+//        listener.accept(gc, TRUE);
+        // logger.info("Accepted: " + session);
     }
 
     private Selector setupServerSocket(int port) throws IOException {
@@ -183,28 +192,12 @@ public final class GameServer {
         return selector;
     }
 
-
-    private @NotNull AnyOp parseOp(ByteBuffer b) {
-        var opCode = b.get();
-        var length = b.get();
-        return switch (opCode) {
-            case Op.LOGIN -> Login.read(b);
-            case Op.MOVE -> Move.read(b);
-            case Op.STOP_MOVE -> StopMove.read(b);
-            case Op.EMMIT_FIREBALL -> FireballEmmit.read(b);
-            case Op.EMMIT_SHOT -> ShotEmmit.read(b);
-            case Op.MELEE_ATTACK -> MeleeAttack.read(b);
-            default -> Unknown.read(b, length);
-        };
-    }
-
-
-    public static void run(DoubleBuffer<AnyOp> requests, Responses responses) {
+    public static void run(Sessions sessions) {
 
         new Thread(() -> {
             try {
-                new GameServer(requests, responses).start(6666);
-            } catch (IOException e) {
+                new GameServer(sessions).start(6666);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }, "GameServer").start();

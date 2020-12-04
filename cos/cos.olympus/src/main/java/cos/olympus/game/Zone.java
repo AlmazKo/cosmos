@@ -1,6 +1,7 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
+import cos.olympus.util.OpConsumer;
 import cos.ops.CreatureHid;
 import cos.ops.CreatureMoved;
 import cos.ops.Metrics;
@@ -20,7 +21,7 @@ public class Zone {
         this.world = world;
     }
 
-    void onTick(Creature target, int tick, Collection<OutOp> consumer) {
+    void onTick(Creature target, int tick, OpConsumer consumer) {
         //todo hardcode radius
         world.iterate(target.x, target.y, radius, (x, y) -> {
             var o = world.getObject(x, y);

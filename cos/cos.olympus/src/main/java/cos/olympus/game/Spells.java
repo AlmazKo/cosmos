@@ -4,6 +4,7 @@ import cos.logging.Logger;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.olympus.game.events.Shot;
+import cos.olympus.util.OpConsumer;
 import cos.ops.FireballEmmit;
 import cos.ops.FireballMoved;
 import cos.ops.MeleeAttack;
@@ -78,7 +79,7 @@ public class Spells {
         spells.add(str);
     }
 
-    public void onTick(int tick, ArrayList<Damage> damages, Collection<OutOp> outOps) {
+    public void onTick(int tick, ArrayList<Damage> damages, OpConsumer outOps) {
         spells.forEach(s -> s.onTick(tick, damages));
 
         spells.forEach((SpellStrategy strategy) -> {

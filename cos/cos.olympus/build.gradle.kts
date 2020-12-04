@@ -9,6 +9,12 @@ java {
     modularity.inferModulePath.set(true)
 }
 
+
+
+tasks.withType<JavaExec> {
+    args = listOf("/Users/aleksandrsuslov/projects/cosmos/resources")
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
     jvmArgs = listOf("--enable-preview")
@@ -28,6 +34,7 @@ dependencies {
 
 application {
     mainClassName = "cos.olympus.Main"
+
     applicationDefaultJvmArgs = listOf(
         //        "-Xmx128m",
         //        "-XX:+UnlockExperimentalVMOptions",
@@ -40,40 +47,41 @@ application {
 }
 
 
-//tasks.withType<ShadowJar> {
-//    archiveFileName.set("olympus.jar")
-//    mergeServiceFiles()
-//    manifest {
-//        attributes(
-//            mapOf(
-//                "Main-Class" to "$moduleName/cos.olympus.Main",
-//                "Specification-Title" to "Olympus core server"
-//            )
-//        )
+tasks {
+//    register<Exec>("afterJlink") {
+//        this.
+//        into("build/libs/")
+//        from(configurations.compileClasspath)
 //    }
-//}
+    register<Copy>("libs") {
+        into("build/libs/")
+        from(configurations.compileClasspath)
+    }
 
-//tasks {
-//    register<Exec>("jlink") {
-//        group = "Build"
-//        description = "Generate custom Java runtime image"
-//        dependsOn("classes")
-//        delete("image")
-//
-//        val javaHome = System.getProperty("java.home")
-//        val buildDir = "build/classes/java/main/"
-//        commandLine(
-//            "$javaHome/bin/jlink",
-//            "--module-path",
+    register<Exec>("jlink") {
+        group = "Build"
+        description = "Generate custom Java runtime image"
+        dependsOn("classes", "libs")
+        delete("image")
+
+        val javaHome = System.getProperty("java.home")
+        val buildDir = "build/classes/java/main/"
+        commandLine(
+            "$javaHome/bin/jlink",
+            "--module-path",
 //            "$buildDir:../cos.logging/$buildDir:../cos.map/$buildDir:../cos.json/$buildDir:../libs/:$javaHome/jmods",
-//            "--strip-debug",
-//            "--no-header-files",
-//            "--no-man-pages",
-//            "--add-modules", "cos.olympus",
-//            "--launcher",
-//            "launch=cos.olympus/cos.olympus.Main",
-//            "--output", "image"
-//        )
-//    }
-//}
-//// '--enable-preview -Xmx32m -verbose:class'
+            "libs:build/libs:$buildDir:../cos.logging/$buildDir:../cos.map/$buildDir:../cos.json/$buildDir:../libs/:$javaHome/jmods",
+//            join(":","$buildDir:../cos.logging/",
+//                "$buildDir:../cos.map/",
+//                "$buildDir:../cos.json/$buildDir:../libs/:$javaHome/jmods"),
+            "--strip-debug",
+            "--no-header-files",
+            "--no-man-pages",
+            "--add-modules", "cos.olympus",
+            "--launcher",
+            "launch=cos.olympus/cos.olympus.Main",
+            "--output", "image"
+        )
+    }
+}
+////// '--enable-preview -Xmx32m -verbose:class'
