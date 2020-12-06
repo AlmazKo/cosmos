@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="15">
-      <module name="cos.cos.agent" target="15" />
-      <module name="cos.cos.agent.main" target="15" />
-      <module name="cos.cos.agent.test" target="15" />
-      <module name="cos.cos.api.jmh" target="13" />
-      <module name="cos.cos.json" target="14" />
-      <module name="cos.cos.json.jmh" target="14" />
-      <module name="cos.cos.json.main" target="14" />
-      <module name="cos.cos.json.test" target="14" />
-      <module name="cos.cos.logging.jmh" target="13" />
-      <module name="cos.cos.map.jmh" target="13" />
-      <module name="cos.cos.olympus.jmh" target="13" />
-      <module name="cos.fx" target="14" />
-      <module name="cos.fx.main" target="14" />
-      <module name="cos.fx.test" target="14" />
-      <module name="cos.jmh" target="13" />
-      <module name="cos.ops" target="14" />
-      <module name="cos.ops.main" target="14" />
-      <module name="cos.ops.test" target="14" />
+    <bytecodeTargetLevel>
+      <module name="cos.cos.logging" target="15" />
+      <module name="cos.cos.logging.main" target="15" />
+      <module name="cos.cos.logging.test" target="15" />
+      <module name="cos.main" target="15" />
+      <module name="cos.test" target="15" />
     </bytecodeTargetLevel>
   </component>
 </project>

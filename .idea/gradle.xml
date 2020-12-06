@@ -4,19 +4,19 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="delegatedBuild" value="true" />
+        <option name="delegatedBuild" value="false" />
         <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/cos" />
-        <option name="gradleHome" value="/usr/local/Cellar/gradle/4.6/libexec" />
+        <option name="gradleJvm" value="15" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/cos" />
-            <option value="$PROJECT_DIR$/cos/cos.api" />
-            <option value="$PROJECT_DIR$/cos/cos.logging" />
-            <option value="$PROJECT_DIR$/cos/cos.map" />
-            <option value="$PROJECT_DIR$/cos/cos.olympus" />
-            <option value="$PROJECT_DIR$/cos/cos.ops" />
+            <option value="$PROJECT_DIR$/cos/api" />
+            <option value="$PROJECT_DIR$/cos/logging" />
+            <option value="$PROJECT_DIR$/cos/map" />
+            <option value="$PROJECT_DIR$/cos/olympus" />
+            <option value="$PROJECT_DIR$/cos/ops" />
           </set>
         </option>
       </GradleProjectSettings>

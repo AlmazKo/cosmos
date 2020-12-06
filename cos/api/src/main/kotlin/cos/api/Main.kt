@@ -1,12 +1,12 @@
 package cos.api
 
 import io.vertx.core.Vertx
-import kotlinx.serialization.ImplicitReflectionSerializer
+import java.time.Instant
 
 object Main {
-    @ImplicitReflectionSerializer
     @JvmStatic
     fun main(args: Array<String>) {
+        println("Starting... " + Instant.now())
         System.setProperty("user.timezone", "UTC")
         App(Vertx.vertx())
     }

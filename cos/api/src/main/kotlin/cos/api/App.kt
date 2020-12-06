@@ -14,18 +14,17 @@ import io.vertx.core.net.PemKeyCertOptions
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.StaticHandler
-import kotlinx.serialization.ImplicitReflectionSerializer
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-@ImplicitReflectionSerializer
 class App(val vertx: Vertx) {
     var cid = AtomicInteger(0)
     private val log = Logger(javaClass)
     private val playerInc = AtomicInteger(0)
 
     init {
+        log.info("Vertx started!")
         val lands = Land.load(Paths.get("", "../../resources").toAbsolutePath())
 
         val opts = HttpServerOptions().apply {

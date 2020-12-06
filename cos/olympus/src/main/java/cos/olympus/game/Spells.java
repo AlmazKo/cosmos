@@ -89,7 +89,7 @@ public class Spells {
                             outOps.add(new FireballMoved(SPELL_IDS++, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinished()));
                         } else if (spell instanceof cos.olympus.game.events.MeleeAttack s) {
                             outOps.add(new MeleeAttacked(SPELL_IDS++, tick, cr.id(), s.id(), s.source().id()));
-                        } else if (spell instanceof cos.olympus.game.events.Shot s) {
+                        } else if (spell instanceof Shot s) {
                             outOps.add(new ShotMoved(SPELL_IDS++, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinished()));
                         }
                     }
