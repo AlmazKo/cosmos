@@ -175,7 +175,7 @@ class PlayerSession(
             val op = parse(buf)
             // log.info("#$userId Got Server response $op, left: " + buf.remaining())
             if (op === null) {
-                log.info("Left in msg " + buf.remaining() + " bytes")
+                log.debug("Left in msg " + buf.remaining() + " bytes")
                 //                buf.compact();
                 break;
             } else {

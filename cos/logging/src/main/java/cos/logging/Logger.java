@@ -8,11 +8,11 @@ public class Logger {
 
     private final static String  loggerClassName = Logger.class.getName();
     private              boolean errorsOnly      = false;
-    private final        boolean debug           = true;
+    private final        boolean debug           = false;
     private final        String  name;
     private final        String  className;
     private final        byte[]  buf             = new byte[256];
-    private final        boolean appendFile      = true;
+    private final        boolean appendFile      = false;
 
     public Logger(Class<?> klass) {
         name = klass.getSimpleName();
