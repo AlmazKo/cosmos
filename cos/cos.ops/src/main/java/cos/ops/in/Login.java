@@ -1,4 +1,7 @@
-package cos.ops;
+package cos.ops.in;
+
+import cos.ops.InOp;
+import cos.ops.Op;
 
 import java.nio.ByteBuffer;
 
@@ -6,7 +9,7 @@ public record Login(
         @Override byte code,
         @Override int id,
         @Override int userId
-) implements AnyOp {
+) implements InOp {
 
     public Login(int id, int userId) {
         this(Op.LOGIN, id, userId);

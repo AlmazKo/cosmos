@@ -1,16 +1,16 @@
 package cos.api
 
 import cos.ops.AnyOp
-import cos.ops.Appear
-import cos.ops.CreatureHid
-import cos.ops.CreatureMoved
-import cos.ops.Damage
-import cos.ops.Death
-import cos.ops.FireballMoved
-import cos.ops.MeleeAttacked
-import cos.ops.Metrics
-import cos.ops.ObjAppear
-import cos.ops.ShotMoved
+import cos.ops.out.Appear
+import cos.ops.out.CreatureHid
+import cos.ops.out.CreatureMoved
+import cos.ops.out.Damage
+import cos.ops.out.Death
+import cos.ops.out.FireballMoved
+import cos.ops.out.MeleeAttacked
+import cos.ops.out.Metrics
+import cos.ops.out.ObjAppear
+import cos.ops.out.ShotMoved
 import io.vertx.core.json.JsonObject
 
 object JsonMapper {

@@ -11,8 +11,8 @@ public record Damage(
         boolean crit
 ) {
 
-    public cos.ops.Damage toUserOp(int userId) {
-        return new cos.ops.Damage(id, tick, userId, spell.source().id(), victim.id(), amount, spell.id(), crit);
+    public cos.ops.out.Damage toUserOp(int userId) {
+        return new cos.ops.out.Damage(id, tick, userId, spell.source().id(), victim.id(), amount, spell.id(), crit);
     }
 
     @Override public String toString() {

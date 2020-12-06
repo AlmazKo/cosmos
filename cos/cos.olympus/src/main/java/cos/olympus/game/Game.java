@@ -4,20 +4,18 @@ import cos.logging.Logger;
 import cos.map.Coord;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
-import cos.olympus.game.events.Shot;
-import cos.olympus.util.DoubleBuffer;
+import cos.olympus.util.OpConsumer;
+import cos.olympus.util.OpsConsumer;
 import cos.ops.AnyOp;
-import cos.ops.Disconnect;
-import cos.ops.Exit;
-import cos.ops.FireballEmmit;
-import cos.ops.Login;
-import cos.ops.MeleeAttack;
-import cos.ops.Move;
+import cos.ops.out.Disconnect;
+import cos.ops.in.ForcedExit;
+import cos.ops.in.FireballEmmit;
+import cos.ops.in.Login;
+import cos.ops.in.MeleeAttack;
+import cos.ops.in.Move;
 import cos.ops.Op;
-import cos.ops.OutOp;
-import cos.ops.ShotEmmit;
-import cos.ops.StopMove;
-import org.jetbrains.annotations.NotNull;
+import cos.ops.in.ShotEmmit;
+import cos.ops.in.StopMove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,24 +25,22 @@ public final class Game {
     private final static Logger logger = new Logger(Game.class);
 
     private final World                            world;
-    private final DoubleBuffer<AnyOp>              bufferOps;
     private final Movements                        movements;
     private final Spells                           spells;
     private final Users                            users;
     private final ArrayList<RespawnStrategy>       npcRespawns     = new ArrayList<>();
     private final ArrayList<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
-    private final ArrayList<@NotNull OutOp>        outOps          = new ArrayList<>();
     private final Zone                             zone;
 
     int id = 0;
     private int tick = 0;
+    private OpConsumer outOps = new OpsConsumer();
 
-    public Game(World world, DoubleBuffer<AnyOp> bufferOps) {
+    public Game(World world) {
         this.world = world;
         this.spells = new Spells(world);
         this.users = new Users(world);
         this.zone = new Zone(world);
-        this.bufferOps = bufferOps;
         this.movements = new Movements(world);
 
         settleMobs();
@@ -58,21 +54,16 @@ public final class Game {
         });
     }
 
-    public List<OutOp> onTick(int id, long tsm) {
-        tick = id;
-        outOps.clear();
-        var ops = bufferOps.getAndSwap();
-        onTick(ops);
-        return outOps;
-    }
+    public void onTick(int tickId, List<AnyOp> in, OpConsumer out) {
+        tick = tickId;
+        outOps = out;
 
-    private void onTick(List<AnyOp> ops) {
-        playersRespawns.removeIf(it -> it.onTick(tick, outOps));
-        ops.forEach(this::handleIncomeOp);
+        playersRespawns.removeIf(it -> it.onTick(tick, out));
+        in.forEach(this::handleIncomeOp);
         movements.onTick(tick);
         var damages = new ArrayList<Damage>();
         var deaths = new ArrayList<Death>();
-        spells.onTick(tick, damages, outOps);
+        spells.onTick(tick, damages, out);
 
         damages.forEach(d -> {
             d.victim().damage(d);
@@ -90,18 +81,18 @@ public final class Game {
 
 
         npcRespawns.forEach(it -> it.onTick(tick));
-        world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, outOps));
+        world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, out));
 
         world.getAllCreatures().forEach(cr -> {
             damages.forEach(d -> {
                 if (cr.zoneCreatures.containsKey(d.victim().id())) {
-                    outOps.add(d.toUserOp(cr.id()));
+                    out.add(d.toUserOp(cr.id()));
                 }
             });
 
             deaths.forEach(death -> {
                 if (cr.zoneCreatures.containsKey(death.victim().id())) {
-                    outOps.add(death.toUserOp(cr.id()));
+                    out.add(death.toUserOp(cr.id()));
                 }
             });
         });
@@ -111,13 +102,13 @@ public final class Game {
     }
 
     private void handleIncomeOp(AnyOp op) {
-        logger.info(">> #" + tick + " " + op.toString());
+        logger.debug(">> #" + tick + " " + op.toString());
         try {
             switch (op.code()) {
                 case Op.LOGIN -> onLogin((Login) op);
                 case Op.MOVE -> onMove((Move) op);
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
-                case Op.EXIT -> onExit((Exit) op);
+                case Op.EXIT -> onExit((ForcedExit) op);
                 case Op.EMMIT_FIREBALL -> onSpell((FireballEmmit) op);
                 case Op.EMMIT_SHOT -> onShot((ShotEmmit) op);
                 case Op.MELEE_ATTACK -> onMeleeAttack((MeleeAttack) op);
@@ -153,7 +144,7 @@ public final class Game {
         this.movements.onStopMove(op);
     }
 
-    private void onExit(Exit op) {
+    private void onExit(ForcedExit op) {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
 

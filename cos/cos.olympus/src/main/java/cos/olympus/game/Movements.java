@@ -3,13 +3,13 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.map.TileType;
 import cos.ops.Direction;
-import cos.ops.Move;
-import cos.ops.StopMove;
+import cos.ops.in.Move;
+import cos.ops.in.StopMove;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
-import static cos.olympus.Main.toTickSpeed;
+import static cos.olympus.util.TimeUtil.toTickSpeed;
 import static cos.olympus.game.Util.nextX;
 import static cos.olympus.game.Util.nextY;
 
@@ -110,11 +110,11 @@ final class Movements implements TickAware {
 
         if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
             cr.offset = 0;
-            logger.info("Reset " + cr);
+        //    logger.info("Reset " + cr);
 
             if (mv.stop) {
                 cr.stop();
-                logger.info("MV finished " + cr);
+//                logger.info("MV finished " + cr);
                 return true;
             }
             return false;

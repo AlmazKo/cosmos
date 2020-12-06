@@ -9,8 +9,8 @@ public record Death(
         Creature victim
 ) {
 
-    public cos.ops.Death toUserOp(int userId) {
-        return new cos.ops.Death(id, tick, userId, spell.source().id(), victim.id());
+    public cos.ops.out.Death toUserOp(int userId) {
+        return new cos.ops.out.Death(id, tick, userId, spell.source().id(), victim.id());
     }
 
     @Override public String toString() {

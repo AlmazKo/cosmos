@@ -41,7 +41,6 @@ class App(val vertx: Vertx) {
 
         val server = vertx.createHttpServer(opts)
         initApi(vertx, lands, server)
-
         server.listen {
             if (it.failed()) {
                 log.warn("Fail!", it.cause())

@@ -2,7 +2,7 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.ops.Direction;
-import cos.ops.Move;
+import cos.ops.in.Move;
 
 public class NpcStrategy {
 

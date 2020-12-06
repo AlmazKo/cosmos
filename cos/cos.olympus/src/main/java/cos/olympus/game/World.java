@@ -49,7 +49,7 @@ public final class World {
         this.creatures = new int[basis.length];
         this.tiles = lands.tiles();
         this.respawns = lands.respawns();
-        debug();
+//        debug();
     }
 
     public void debug() {
@@ -204,7 +204,7 @@ public final class World {
             var cr = new Creature(usr, coord.x(), coord.y(), (byte) 0, (byte) 0, null, SOUTH, life);
             creatures[idx] = cr.id();
             creatureObjects.put(cr.id(), cr);
-            logger.info("Creature #" + cr.id() + " set x=" + cr.x + ", y=" + cr.y);
+//            logger.info("Creature #" + cr.id() + " set x=" + cr.x + ", y=" + cr.y);
             return cr;
         } else {
             throw new NoSpaceException("Fail finding free place");

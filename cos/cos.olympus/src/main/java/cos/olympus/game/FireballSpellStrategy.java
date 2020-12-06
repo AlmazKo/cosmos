@@ -56,7 +56,7 @@ public class FireballSpellStrategy extends AbstractSpellStrategy {
             passed = distance;
         }
 
-        logger.info("Spell distance: " + this);
+        //logger.info("Spell distance: " + this);
         return finished;
     }
 

@@ -1,8 +1,8 @@
 package cos.olympus.game;
 
 import cos.map.Land;
-import cos.ops.CreatureHid;
-import cos.ops.CreatureMoved;
+import cos.ops.out.CreatureHid;
+import cos.ops.out.CreatureMoved;
 import cos.ops.OutOp;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

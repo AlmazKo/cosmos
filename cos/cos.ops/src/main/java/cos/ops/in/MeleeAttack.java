@@ -1,19 +1,22 @@
-package cos.ops;
+package cos.ops.in;
+
+import cos.ops.InOp;
+import cos.ops.Op;
 
 import java.nio.ByteBuffer;
 
-public record ShotEmmit(
+public record MeleeAttack(
         @Override byte code,
         @Override int id,
         @Override int userId
-) implements AnyOp {
+) implements InOp {
 
-    public ShotEmmit(int id, int userId) {
-        this(Op.EMMIT_SHOT, id, userId);
+    public MeleeAttack(int id, int userId) {
+        this(Op.MELEE_ATTACK, id, userId);
     }
 
-    public static ShotEmmit read(ByteBuffer b) {
-        return new ShotEmmit(
+    public static MeleeAttack read(ByteBuffer b) {
+        return new MeleeAttack(
                 b.getInt(),
                 b.getInt());
     }

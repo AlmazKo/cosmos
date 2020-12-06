@@ -1,8 +1,8 @@
 package cos.olympus.game;
 
 import cos.logging.Logger;
-import cos.ops.Appear;
-import cos.ops.Login;
+import cos.ops.out.Appear;
+import cos.ops.in.Login;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;

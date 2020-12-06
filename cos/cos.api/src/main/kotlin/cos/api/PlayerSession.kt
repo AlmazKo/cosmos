@@ -2,28 +2,27 @@ package cos.api
 
 import cos.logging.Logger
 import cos.ops.AnyOp
-import cos.ops.Appear
-import cos.ops.CreatureHid
-import cos.ops.CreatureMoved
-import cos.ops.Damage
-import cos.ops.Death
 import cos.ops.Direction
-import cos.ops.Disconnect
-import cos.ops.Exit
-import cos.ops.FireballEmmit
-import cos.ops.FireballMoved
-import cos.ops.Login
-import cos.ops.MeleeAttack
-import cos.ops.MeleeAttacked
-import cos.ops.Metrics
-import cos.ops.Move
-import cos.ops.ObjAppear
 import cos.ops.Op
 import cos.ops.OutOp
-import cos.ops.ShotEmmit
-import cos.ops.ShotMoved
-import cos.ops.StopMove
-import cos.ops.Unknown
+import cos.ops.`in`.FireballEmmit
+import cos.ops.`in`.Login
+import cos.ops.`in`.MeleeAttack
+import cos.ops.`in`.Move
+import cos.ops.`in`.ShotEmmit
+import cos.ops.`in`.StopMove
+import cos.ops.out.Appear
+import cos.ops.out.CreatureHid
+import cos.ops.out.CreatureMoved
+import cos.ops.out.Damage
+import cos.ops.out.Death
+import cos.ops.out.Disconnect
+import cos.ops.out.FireballMoved
+import cos.ops.out.MeleeAttacked
+import cos.ops.out.Metrics
+import cos.ops.out.ObjAppear
+import cos.ops.out.ShotMoved
+import cos.ops.out.Unknown
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
@@ -41,10 +40,8 @@ class PlayerSession(
     val userId: Int
 ) {
 
-
     private val cid = AtomicInteger(0)
     private var socket: NetSocket? = null
-    private val log = Logger(javaClass)
 
     init {
         log.info("Connected player: #$userId")
@@ -72,7 +69,7 @@ class PlayerSession(
         //   todo debug     log.info("onRequest $msg")
         val op = parseRequest(js) ?: return
 
-        log.info("Get op: $op")
+        //        log.info("Get op: $op")
         send(op)
     }
 
@@ -138,7 +135,7 @@ class PlayerSession(
                     val messages = JsonArray()
                     val tickId = try {
                         val bufOrigin = it.byteBuf.nioBuffer();
-                        //println("Receive " + it.length() + " bytes")
+                     //   log.info("Receive " + it.length() + " bytes")
                         bufOrigin.rewind()
                         buf.put(bufOrigin)
                         read(buf, messages)
@@ -157,7 +154,7 @@ class PlayerSession(
                 }
                 socket!!.closeHandler {
                     log.info("Server socket is closing ... ")
-                    ws.close()
+                    //                    ws.close()
                 }
                 socket!!.exceptionHandler {
                     log.warn("exceptionHandler " + it, it)
@@ -173,6 +170,7 @@ class PlayerSession(
     private fun read(buf: ByteBuffer, messages: JsonArray): Int {
         buf.flip()
         var tick = -1
+        //log.info("Read: " + buf.remaining() + " bytes")
         while (buf.hasRemaining()) {
             val op = parse(buf)
             // log.info("#$userId Got Server response $op, left: " + buf.remaining())
@@ -193,6 +191,7 @@ class PlayerSession(
     }
 
     companion object {
+        private val log = Logger(javaClass)
         private fun serialize(op: AnyOp): Buffer {
             val bb = ByteBuffer.allocate(256)
             bb.put(op.code())
@@ -209,8 +208,8 @@ class PlayerSession(
             val code = b.get();
             val len = b.get();
 
-            if (b.remaining() < len || code == 0.toByte()) {
-                System.err.println("Unfinished opcode $code")
+            if (b.remaining() < len) {
+                //log.warn("Unfinished opcode $code, len=" + (len + 2))
                 b.reset()
                 return null
             }
@@ -226,7 +225,6 @@ class PlayerSession(
                 Op.MELEE_ATTACKED -> MeleeAttacked.read(b);
                 Op.DAMAGE -> Damage.read(b);
                 Op.DEATH -> Death.read(b);
-                Op.EXIT -> Exit.read(b);
                 Op.METRICS -> Metrics.read(b);
                 else -> {
                     System.err.println("Unknown opcode: $code")

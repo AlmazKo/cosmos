@@ -3,10 +3,10 @@ package cos.olympus.game.server;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
-class Session {
+final class Session {
     int userId = 0;
-    volatile boolean       close = false;
-    final    int           id;
+    volatile boolean closing = false;
+    final    int     id;
     final    SocketAddress remoteAddress;
     final    ByteBuffer    in;
     final    ByteBuffer    out;
@@ -16,7 +16,6 @@ class Session {
         this.remoteAddress = remoteAddress;
         this.in = ByteBuffer.allocate(4096);
         this.out = ByteBuffer.allocate(32 * 1024);
-//        this.out.flip();
     }
 
     @Override public String toString() {
@@ -26,5 +25,9 @@ class Session {
                 ", in=" + in +
                 ", out=" + out +
                 '}';
+    }
+
+    public String toShortString() {
+        return "#" + userId + ", " + remoteAddress;
     }
 }

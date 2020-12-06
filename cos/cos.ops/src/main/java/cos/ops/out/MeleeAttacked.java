@@ -1,4 +1,7 @@
-package cos.ops;
+package cos.ops.out;
+
+import cos.ops.Op;
+import cos.ops.OutOp;
 
 import java.nio.ByteBuffer;
 

@@ -1,20 +1,23 @@
-package cos.ops;
+package cos.ops.in;
+
+import cos.ops.InOp;
+import cos.ops.Op;
 
 import java.nio.ByteBuffer;
 
-public record Exit(
+public record ForcedExit(
         @Override byte code,
         @Override int id,
         @Override int userId,
         @Override int tick
-) implements OutOp {
+) implements InOp {
 
-    public Exit(int id, int userId) {
+    public ForcedExit(int id, int userId) {
         this(Op.EXIT, id, userId, 0);
     }
 
-    public static Exit read(ByteBuffer b) {
-        return new Exit(b.getInt(), b.getInt());
+    public static ForcedExit read(ByteBuffer b) {
+        return new ForcedExit(b.getInt(), b.getInt());
     }
 
     public void write(ByteBuffer buf) {

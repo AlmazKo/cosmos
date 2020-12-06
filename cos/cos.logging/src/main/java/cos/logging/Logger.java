@@ -25,7 +25,7 @@ public class Logger {
 
     public void warn(String msg, Throwable t) {
         log(System.err, msg);
-        t.printStackTrace(System.err);
+        if (t != null) t.printStackTrace(System.err);
     }
 
     public void info(String msg) {
@@ -168,5 +168,9 @@ public class Logger {
             p = 10 * p;
         }
         return 10 + d;
+    }
+
+    public void debug(String s) {
+        //todo nothing
     }
 }

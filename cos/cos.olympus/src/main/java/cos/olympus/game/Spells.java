@@ -4,19 +4,18 @@ import cos.logging.Logger;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.olympus.game.events.Shot;
-import cos.ops.FireballEmmit;
-import cos.ops.FireballMoved;
-import cos.ops.MeleeAttack;
-import cos.ops.MeleeAttacked;
-import cos.ops.OutOp;
-import cos.ops.ShotEmmit;
-import cos.ops.ShotMoved;
+import cos.olympus.util.OpConsumer;
+import cos.ops.in.FireballEmmit;
+import cos.ops.out.FireballMoved;
+import cos.ops.in.MeleeAttack;
+import cos.ops.out.MeleeAttacked;
+import cos.ops.in.ShotEmmit;
+import cos.ops.out.ShotMoved;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-import static cos.olympus.Main.toTickSpeed;
-import static cos.olympus.Main.toTicks;
+import static cos.olympus.util.TimeUtil.toTickSpeed;
+import static cos.olympus.util.TimeUtil.toTicks;
 
 public class Spells {
     private final static Logger logger = new Logger(Spells.class);
@@ -78,7 +77,7 @@ public class Spells {
         spells.add(str);
     }
 
-    public void onTick(int tick, ArrayList<Damage> damages, Collection<OutOp> outOps) {
+    public void onTick(int tick, ArrayList<Damage> damages, OpConsumer outOps) {
         spells.forEach(s -> s.onTick(tick, damages));
 
         spells.forEach((SpellStrategy strategy) -> {
