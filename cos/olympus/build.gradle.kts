@@ -51,7 +51,7 @@ tasks {
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:HeapDumpPath=/tmp",
            // "-Xlog:gc",
-            "-XX:+UseG1GC"
+            "-XX:+UseZGC"
         ).joinToString(" ")
 
         doLast {
