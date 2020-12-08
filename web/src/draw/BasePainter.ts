@@ -10,11 +10,19 @@ export class BasePainter implements Painter {
   private readonly fontAcceptor: FontStyleAcceptor;
   private readonly baseFillColor: FillStyle;
 
-  private hMeasuringCache: { [key: string]: px | undefined } = {};
+  private hMeasuringCache: {
+    [key: string]: px | undefined;
+  } = {};
+  /** @deprecated use other ways - it's dynamic values*/
   width: number;
+  /** @deprecated use other ways - it's dynamic values*/
   height: number;
 
-  constructor(ctx: CanvasRenderingContext2D, baseColor: color = '#000', baseFillColor: color = '#fff') {
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    baseColor: color     = '#000',
+    baseFillColor: color = '#fff',
+  ) {
     this.ctx            = ctx;
     this.baseFillColor  = baseFillColor;
     this.strokeAcceptor = new StrokeStyleAcceptor(ctx, baseColor);
@@ -27,7 +35,6 @@ export class BasePainter implements Painter {
    * Draw a vertical line
    */
   vline(x: px, y1: px, y2: px, style: StringStokeStyle, pixelPerfect = true) {
-
     this.stroke(style);
     if (pixelPerfect && this.ctx.lineWidth % 2 === 1) {
       x = hround(x);
@@ -43,7 +50,6 @@ export class BasePainter implements Painter {
    * Draw a horizontal line
    */
   hline(x1: px, x2: px, y: px, style: StringStokeStyle, pixelPerfect = true) {
-
     this.stroke(style);
     if (pixelPerfect && this.ctx.lineWidth % 2 === 1) {
       y = hround(y);
@@ -88,6 +94,35 @@ export class BasePainter implements Painter {
     } else {
       this.ctx.fillRect(x, y, w, h);
     }
+  }
+
+  roundRect(x: px, y: px, w: px, h: px, style: StringStokeStyle, radius: px) {
+    this.stroke(style);
+    this.roundRectPath(x, y, w, h, radius);
+    this.ctx.stroke();
+  }
+
+  roundFillRect(x: px, y: px, w: px, h: px, style: FillStyle, radius: px) {
+    this.fill(style);
+    this.roundRectPath(x, y, w, h, radius);
+    this.ctx.fill();
+  }
+
+  private roundRectPath(x: px, y: px, w: px, h: px, radius: px | [px, px, px, px]) {
+    const r   = typeof radius === 'number' ? [radius, radius, radius, radius] : radius;
+    const ctx = this.ctx;
+    const p   = ctx.beginPath();
+    ctx.moveTo(x + r[0], y);
+    ctx.lineTo(x + w - r[1], y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r[1]);
+    ctx.lineTo(x + w, y + h - r[2]);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r[2], y + h);
+    ctx.lineTo(x + r[3], y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r[3]);
+    ctx.lineTo(x, y + r[0]);
+    ctx.quadraticCurveTo(x, y, x + r[0], y);
+    ctx.closePath();
+    return p;
   }
 
   fillCircle(x: px, y: px, radius: px, style?: FillStyle) {
@@ -151,7 +186,7 @@ export class BasePainter implements Painter {
     return h;
   }
 
-  measureWidth(text: string, style: FontStyle): px {
+  measureWidth(text: string, style: Partial<FontStyle>): px {
     this.fontAcceptor.set(style);
     return this.ctx.measureText(text).width;
   }
@@ -178,19 +213,16 @@ export class BasePainter implements Painter {
     return this.ctx;
   }
 
-
   closePath(strokeStyle?: Partial<StringStokeStyle>, style?: FillStyle) {
-
     if (strokeStyle) {
-      this.closeStrokePath(strokeStyle)
+      this.closeStrokePath(strokeStyle);
     }
     if (style) {
-      this.closeFillPath(style)
+      this.closeFillPath(style);
     }
   }
 
   closeFillPath(style: FillStyle) {
-
     this.ctx.fillStyle = style;
     this.ctx.closePath();
     this.ctx.fill();
@@ -206,6 +238,24 @@ export class BasePainter implements Painter {
     this.ctx.stroke();
   }
 
-  ellipse(x: px, y: px, radiusX: px, radiusY: px, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void {
+  ellipse(
+    x: px,
+    y: px,
+    radiusX: px,
+    radiusY: px,
+    rotation: number,
+    startAngle: number,
+    endAngle: number,
+    anticlockwise?: boolean,
+  ): void {
+  }
+
+  vGradient(y1: px, y2: px, levels: Array<[number, color]>): CanvasGradient {
+    const gr = this.ctx.createLinearGradient(0, y1, 0, y2);
+
+    levels.forEach(([offset, color]) => {
+      gr.addColorStop(offset, color);
+    });
+    return gr;
   }
 }

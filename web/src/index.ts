@@ -1,4 +1,4 @@
-import { Ballad } from './canvas/Ballad';
+import { Player } from './canvas/Player';
 import './ext/array/ext';
 import './ext/promiser/ext';
 import { GamePad, gamepadSchema } from './game2/controller/GamePad';
@@ -17,16 +17,16 @@ window.onload = () => {
   let div2 = document.getElementById("minimap")!!;
   let div3 = document.getElementById("tileinfo")!!;
   console.info(div);
-  let p = new Ballad(div);
+  let p = new Player(div);
   const gc = get(GameCanvas);
   get(Keyboard);
   p.start(gc);
 
 
-  let p2 = new Ballad(div2, null, 24);
+  let p2 = new Player(div2, undefined, 24);
   p2.start(new MiniMapCanvas(get(Render)));
 
-  let p3 = new Ballad(div3, null, 30);
+  let p3 = new Player(div3, undefined, 30);
   p3.start(new TileInfoCanvas(get(Render), get('images')));
 
   gc.render.panels.onHotKeysUpdate(keyboardSchema);
@@ -41,7 +41,7 @@ window.onload = () => {
     gc.render.panels.onHotKeysUpdate(keyboardSchema);
   });
 
-  var myWorker = new Worker('worker.ts');
+  const myWorker = new Worker('worker.ts');
 
   myWorker.onmessage = function (e) {
     console.log('Message received from worker', e);

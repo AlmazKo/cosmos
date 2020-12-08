@@ -1,24 +1,25 @@
 import { Animated } from './Animator';
 
 export class Animators {
-
-  private animators: { [name: string]: Animated } = {};
-  private finishCallbacks: { [name: string]: () => void } = {};
+  private animators: { [name: string]: Animated; }         = {};
+  private finishCallbacks: { [name: string]: () => void; } = {};
 
   finish(name: string) {
     if (this.animators[name]) {
       this.animators[name].finish();
       delete this.animators[name];
+      // console.debug('finish(1) animator: ', name)
     }
   }
 
   interrupt(name: string) {
     delete this.animators[name];
     delete this.finishCallbacks[name];
+    //  console.debug('interrupt animator: ', name)
   }
 
   interruptAll() {
-    this.animators = {};
+    this.animators       = {};
     this.finishCallbacks = {};
   }
 
@@ -29,20 +30,24 @@ export class Animators {
   }
 
   run(time: number) {
-    for (let key in this.animators) {
-      if (this.animators[key].run(time)) {
-        delete this.animators[key];
+    for (let name in this.animators) {
+      if (this.animators[name].run(time)) {
+        delete this.animators[name];
 
-        const finisher = this.finishCallbacks[key];
+        const finisher = this.finishCallbacks[name];
         if (finisher) finisher();
-        delete this.finishCallbacks[key];
-        console.debug('Finished animator: ', key)
+        delete this.finishCallbacks[name];
+        //     console.debug('Finished animator: ', name)
       }
     }
   }
 
   has(name: string): boolean {
     return this.animators[name] != null;
+  }
+
+  isActive(): boolean {
+    return Object.keys(this.animators).length !== 0;
   }
 
   set(name: string, animator: Animated, onFinish?: () => void) {

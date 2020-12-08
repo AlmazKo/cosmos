@@ -6,19 +6,19 @@ export interface Handler {
   /**
    * @param {number} factor Number is changed from  0 to 1  inclusive
    */
-  (factor: number): void;
+  (factor: float): void;
 }
 
 export interface ValueHandler {
-  (value: number): void;
+  (value: number, factor: float): void;
 }
 
-export const linear: Interpolator     = t => t;
-export const reverse: Interpolator    = t => 1 - t;
-export const accelerate: Interpolator = t => Math.cos((t + 1) * Math.PI) / 2.0 + 0.5;
-export const sin: Interpolator        = t => Math.sin(2 * 3 * Math.PI * t);
+export const linear: Interpolator     = (t) => t;
+export const reverse: Interpolator    = (t) => 1 - t;
+export const accelerate: Interpolator = (t) => Math.cos((t + 1) * Math.PI) / 2.0 + 0.5;
+export const sin: Interpolator        = (t) => Math.sin(2 * 3 * Math.PI * t);
 const _bounce                         = (t: number) => t * t * 8.0;
-export const bounce: Interpolator     = t => {
+export const bounce: Interpolator     = (t) => {
   t *= 1.1226;
   if (t < 0.3535) return _bounce(t);
   else if (t < 0.7408) return _bounce(t - 0.54719) + 0.7;
@@ -26,6 +26,12 @@ export const bounce: Interpolator     = t => {
   else return _bounce(t - 1.0435) + 0.95;
 };
 
+export const ripple: Interpolator = (t) => {
+  if (t < 0.3535) return _bounce(t);
+  else if (t < 0.7408) return _bounce(t - 0.54719) + 0.7;
+  else if (t < 0.9644) return _bounce(t - 0.8526) + 0.9;
+  else return _bounce(t - 1.0435) + 0.95;
+};
 
 export interface Animated {
   run(now: DOMHighResTimeStamp): boolean;
@@ -34,7 +40,6 @@ export interface Animated {
 
   finish(): void;
 }
-
 
 export class Animator implements Animated {
   private readonly interpolator: Interpolator;
@@ -59,14 +64,14 @@ export class Animator implements Animated {
     if (!this.start) this.start = now;
     this.lastNow = now;
     if (this.finished) {
-      this.callback(1);
+      this.callback(this.interpolator(1));
       return true;
     }
 
-    let fraction = this.interpolator((now - this.start) / this.duration);
-    if (fraction >= 1) fraction = 1;
+    const left   = Math.min(1, (now - this.start) / this.duration);
+    let fraction = this.interpolator(left);
     this.callback(fraction);
-    if (fraction >= 1) {
+    if (now - this.start >= this.duration) {
       this.finished = true;
     }
 
@@ -127,15 +132,18 @@ export class Delay implements Animated {
 
 export class LoopAnimator implements Animated {
   private readonly interpolator: Interpolator;
-  private readonly callback: (f: float, i: index, isNew: boolean) => uint;
+  private readonly callback: (f: float, i: index, isNew: Boolean) => uint;
   private duration: number;
   private finished = false;
 
   private start: DOMHighResTimeStamp = 0;
   private times: index               = 0;
 
-
-  constructor(duration: ms, callback: (f: float, i: index, isNew: boolean) => uint, interpolator: Interpolator = linear) {
+  constructor(
+    duration: ms,
+    callback: (f: float, i: index, isNew: Boolean) => any,
+    interpolator: Interpolator = linear,
+  ) {
     this.duration     = duration;
     this.callback     = callback;
     this.interpolator = interpolator;
@@ -152,14 +160,15 @@ export class LoopAnimator implements Animated {
     let fraction = this.interpolator((now - this.start) / this.duration) - this.times;
     const isNew  = fraction >= 1;
     if (fraction >= 1) {
-      this.times++;
-      fraction -= 1;
+      this.times += Math.floor(fraction);
+      fraction = fraction % 1;
     }
 
     const newDuration = this.callback(fraction, this.times, isNew);
-    if (this.duration !== newDuration) {
+
+    if (newDuration && this.duration !== newDuration) {
       this.times    = 0;
-      this.start    = 0;//fixme: may be need exclude overrun
+      this.start    = 0; //fixme: may be need exclude overrun
       this.duration = newDuration;
     }
     this.finished = this.duration === 0;
@@ -214,13 +223,22 @@ export class AnimatorsChain implements Animated {
     this.finished = true;
     this.animators[this.currentIdx].finish();
   }
-
 }
 
 export class ValueAnimator extends Animator {
-  constructor(duration: ms, readonly from: number, readonly to: number, callback: ValueHandler, interpolator?: Interpolator) {
-    super(duration, f => {
-      callback(from + f * (to - from));
-    }, interpolator);
+  constructor(
+    duration: ms,
+    readonly from: number,
+    readonly to: number,
+    callback: ValueHandler,
+    interpolator?: Interpolator,
+  ) {
+    super(
+      duration,
+      (f) => {
+        callback(from + f * (to - from), f);
+      },
+      interpolator,
+    );
   }
 }

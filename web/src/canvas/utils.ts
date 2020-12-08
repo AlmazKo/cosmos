@@ -11,18 +11,6 @@ export function hround(v: px): px {
 export function round(v: px): px {
   return Math.round(v);
 }
-
-export const generateId = (): string => {
-  const chars     = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let res: string = '';
-
-  for (let i = 0; i < 10; i++) {
-    res += chars[Math.floor(Math.random() * chars.length)];
-  }
-
-  return res;
-};
-
 /**
  * Convert HEX colors to rgba colors
  * Support 3 and 6 base colors
@@ -39,4 +27,16 @@ export function toRGBA(color: string, opacity: float = 1): color {
            + ',' + opacity + ')';
   }
   return 'rgba(' + (i >> 16 & 0xff) + ',' + (i >> 8 & 0xff) + ',' + (i & 0xff) + ',' + opacity + ')';
+}
+
+export const transparent: color = '#00000000';
+
+export function isMobileDevice() {
+  return (
+    typeof window.orientation !== 'undefined' || navigator.userAgent.indexOf('IEMobile') !== -1
+  );
+}
+
+export function isTouchDevice(): boolean {
+  return 'ontouchstart' in document.documentElement;
 }
