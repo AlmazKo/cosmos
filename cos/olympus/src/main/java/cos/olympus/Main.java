@@ -12,16 +12,32 @@ import cos.olympus.util.TimeUtil;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static cos.olympus.util.TimeUtil.sleepUntil;
 import static java.lang.System.nanoTime;
+import static java.lang.Thread.sleep;
 
 public class Main {
 
-    private final static Logger logger = new Logger(Main.class);
+    private final static    Logger  logger      = new Logger(Main.class);
+    private volatile static boolean running     = true;
+    private volatile static boolean appFinished = false;
+
 
     public static void main(String[] args) throws InterruptedException, IOException {
         logger.info("Started");
         var res = (args.length > 0) ? Paths.get("", args[0]) : Paths.get("", "../../resources");
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("SIGTERM");
+            running = false;
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!appFinished)
+                Runtime.getRuntime().halt(143);
+        }));
+
         var s = new Sessions();
         Server.run(s);
 
@@ -32,15 +48,16 @@ public class Main {
         TimeUtil.sleepUntil(100);
         var id = 0;
         long start;
-        //noinspection InfiniteLoopStatement
-        while (true) {
+        while (running) {
             start = nanoTime();
             var in = s.collect();
             var out = new OpsConsumer();
             game.onTick(++id, in, out);
             s.write(out);
-//            logger.info("" + (nanoTime() - start) / 1000 + "us, in/out: " + in.size() + "/" + out.size());
+            logger.info("" + (nanoTime() - start) / 1000 + "us, in/out: " + in.size() + "/" + out.size());
             TimeUtil.sleepUntil(100);
         }
+        appFinished = true;
+        logger.info("Stopped");
     }
 }

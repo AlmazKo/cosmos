@@ -1,0 +1,14 @@
+version: '3'
+services:
+  olympus:
+    build:
+      context: .
+      dockerfile: olympus.dockerfile
+    ports:
+      - "6666:6666"
+#  api:
+#    build:
+#      context: .
+#      dockerfile: api.dockerfile
+#    ports:
+#      - "80:80"

@@ -24,11 +24,12 @@ application {
     mainClass.set(mainClazz)
 
     applicationDefaultJvmArgs = listOf(
+        "-verbose:class",
         "--enable-preview",
         "-Xmx100m"
         //        "-verbose:class"
         //        "-XX:+UnlockExperimentalVMOptions",
-        //        "-XX:+UseEpsilonGC",
+//                "-XX:+UseEpsilonGC"
     )
 }
 
@@ -36,7 +37,7 @@ application {
 
 tasks {
     val imageDir = "image"
-    register<Copy>("libs") {
+    register<Copy>("moveLibs") {
         into("build/libs/")
         from(configurations.compileClasspath)
     }
@@ -44,14 +45,15 @@ tasks {
     register("patchImage") {
         dependsOn("jlink")
         val opts = listOf(
+//            "-verbose:class",
             "--enable-preview",
             "-Duser.timezone=UTC",
             "-Xmx64m",
             "-XX:+CrashOnOutOfMemoryError",
             "-XX:+HeapDumpOnOutOfMemoryError",
-            "-XX:HeapDumpPath=/tmp",
+            "-XX:HeapDumpPath=/tmp"
            // "-Xlog:gc",
-            "-XX:+UseZGC"
+//            "-XX:+UseZGC"
         ).joinToString(" ")
 
         doLast {
@@ -69,7 +71,7 @@ tasks {
     register<Exec>("jlink") {
         group = "Build"
         description = "Generate runtime image"
-        dependsOn("classes", "libs")
+        dependsOn("assemble", "moveLibs")
         delete(imageDir)
 
         val javaHome = System.getProperty("java.home")
@@ -78,7 +80,7 @@ tasks {
             "$javaHome/bin/jlink",
             "--module-path", join(
                 ":",
-                "../libs", // contains java9 modules
+                "../mods", // contains java9 modules
                 "build/libs/",
                 "../ops/$buildDir",
                 "../logging/$buildDir",
