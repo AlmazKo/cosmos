@@ -6,7 +6,7 @@ import cos.ops.Direction;
 import cos.ops.in.Move;
 import org.jetbrains.annotations.Nullable;
 
-public class NpcStrategy {
+public class NpcStrategy implements TickAware {
 
     private final static Logger logger = Logger.get(NpcStrategy.class);
     private final Creature npc;
@@ -23,7 +23,8 @@ public class NpcStrategy {
         this.movements = movements;
     }
 
-    void onTick(int tick) {
+    @Override
+    public void onTick(int tick) {
         if (tick <= nextPlannedTick) return;
 
         if (!tryToAttract(tick)) {

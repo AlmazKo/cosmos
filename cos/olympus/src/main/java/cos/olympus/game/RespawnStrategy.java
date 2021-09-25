@@ -2,28 +2,28 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.Coord;
-import cos.map.NpcType;
+import cos.map.CreatureType;
 import cos.olympus.NoSpaceException;
 import cos.olympus.Util;
 import org.jetbrains.annotations.Nullable;
 
 
-public class RespawnStrategy {
+public class RespawnStrategy implements TickAware {
 
     private final static Logger logger = Logger.get(Movements.class);
-    private static       int    id     = 10_000;
+    private static int id = 10_000;
 
-    private final World     world;
+    private final World world;
     private final Spells spells;
     private final Movements movements;
-    private final Coord     spot;
-    private final NpcType type;
+    private final Coord spot;
+    private final CreatureType type;
 
     private @Nullable NpcStrategy live;
-    private           boolean     isDead      = false;
-    private           int         respawnTime = Integer.MAX_VALUE;
+    private boolean isDead = false;
+    private int respawnTime = Integer.MAX_VALUE;
 
-    public RespawnStrategy(World world, Spells spells, Movements movements, Coord spot, NpcType type) {
+    public RespawnStrategy(World world, Spells spells, Movements movements, Coord spot, CreatureType type) {
         this.world = world;
         this.spells = spells;
         this.movements = movements;
@@ -31,7 +31,8 @@ public class RespawnStrategy {
         this.type = type;
     }
 
-    void onTick(int tick) {
+    @Override
+    public void onTick(int tick) {
         if (live == null) {
             if (isDead && tick < respawnTime) {
                 return;

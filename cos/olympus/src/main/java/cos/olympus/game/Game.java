@@ -2,7 +2,6 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.Coord;
-import cos.map.NpcType;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.olympus.util.OpConsumer;

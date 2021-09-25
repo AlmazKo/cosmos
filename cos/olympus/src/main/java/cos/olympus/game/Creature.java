@@ -1,6 +1,6 @@
 package cos.olympus.game;
 
-import cos.map.NpcType;
+import cos.map.CreatureType;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.ops.Direction;
@@ -98,7 +98,7 @@ public final class Creature implements Orientable {
         return avatar.id();
     }
 
-    public NpcType type() {
+    public CreatureType type() {
         return avatar.type();
     }
 

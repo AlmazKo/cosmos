@@ -1,6 +1,6 @@
 package cos.map;
 
-public enum NpcType {
+public enum CreatureType {
     PLAYER, SHEEP, WOLF;
 
     public boolean isAggressive() {

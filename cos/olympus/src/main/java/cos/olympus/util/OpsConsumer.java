@@ -16,4 +16,8 @@ public class OpsConsumer implements OpConsumer {
     public int size() {
         return data.size();
     }
+
+    public void clear() {
+        data.clear();
+    }
 }

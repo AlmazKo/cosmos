@@ -1,12 +1,12 @@
 package cos.olympus.game;
 
-import cos.map.NpcType;
+import cos.map.CreatureType;
 
 public interface Avatar extends Placeable {
 
     int id();
 
-    NpcType type();
+    CreatureType type();
     String name();
 
     int x();

@@ -13,6 +13,7 @@ public class Metrics {
 
     public Metrics(int creatureId, int lvl, int life, int maxLife, int exp) {
         this.creatureId = creatureId;
+        this.lvl = lvl;
         this.life = life;
         this.maxLife = maxLife;
         this.exp = exp;

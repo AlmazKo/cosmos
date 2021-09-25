@@ -1,10 +1,10 @@
 package cos.olympus.game;
 
-import cos.map.NpcType;
+import cos.map.CreatureType;
 
 public record Npc(
         @Override int id,
-        @Override   NpcType type,
+        @Override CreatureType type,
         @Override String name,
         @Override int x,
         @Override int y

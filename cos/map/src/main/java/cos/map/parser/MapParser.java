@@ -87,7 +87,7 @@ public class MapParser {
             var props = obj.getArray("properties");
             int size = findIntProp(props, "size");
             String type = findStringProp(props, "npc_type");
-            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size, NpcType.valueOf(type.toUpperCase()));
+            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size, CreatureType.valueOf(type.toUpperCase()));
             result.add(spot);
         }
         return result;

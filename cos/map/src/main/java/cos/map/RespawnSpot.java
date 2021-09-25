@@ -4,6 +4,6 @@ public record RespawnSpot(
         int x,
         int y,
         int size,
-        NpcType type
+        CreatureType type
 ) {
 }
