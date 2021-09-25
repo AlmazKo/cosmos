@@ -15,11 +15,12 @@ public record Appear(
         int y,
         Direction mv,
         Direction sight,
+        int lvl,
         int life
 ) implements OutOp {
 
-    public Appear(int id, int tick, int userId, int x, int y, Direction mv, Direction sight, int life) {
-        this(Op.APPEAR, id, tick, userId, x, y, mv, sight, life);
+    public Appear(int id, int tick, int userId, int x, int y, Direction mv, Direction sight, int lvl, int life) {
+        this(Op.APPEAR, id, tick, userId, x, y, mv, sight, lvl, life);
     }
 
     public void write(ByteBuffer buf) {
@@ -35,6 +36,7 @@ public record Appear(
         }
 
         buf.put((byte) sight.ordinal());
+        buf.putInt(lvl);
         buf.putInt(life);
     }
 
@@ -48,6 +50,7 @@ public record Appear(
                 b.getInt(),
                 Direction.of(b.get()),
                 Direction.of(b.get()),
+                b.getInt(),
                 b.getInt()
         );
     }

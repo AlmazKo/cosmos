@@ -6,15 +6,15 @@ import cos.olympus.game.events.Spell;
 
 import java.util.Collection;
 
+import static cos.olympus.Util.rand;
 import static cos.olympus.game.MapUtil.nextX;
 import static cos.olympus.game.MapUtil.nextY;
-import static cos.olympus.Util.rand;
 
 public class MeleeAttackStrategy extends AbstractSpellStrategy {
-    public final  MeleeAttack spell;
-    private final World       world;
-    public        int         targetX;
-    public        int         targetY;
+    public final MeleeAttack spell;
+    private final World world;
+    public int targetX;
+    public int targetY;
 
     public MeleeAttackStrategy(MeleeAttack spell, World world) {
         this.world = world;
@@ -33,7 +33,8 @@ public class MeleeAttackStrategy extends AbstractSpellStrategy {
         if (victim != null && spell.source().id() != victim.id()) {
             boolean crit = rand(0, 10) == 1;
             int amount = crit ? rand(40, 60) : rand(10, 20);
-            var d = new Damage(++DAMAGES_IDS, tick, victim, spell, amount, crit);
+            var coef = -0.1 + Math.pow(1.5, spell.source().level);
+            var d = new Damage(++DAMAGES_IDS, tick, victim, spell, (int) (coef * amount), crit);
             logger.info("Damaged : " + d);
             damages.add(d);
         }

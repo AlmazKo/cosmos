@@ -17,6 +17,7 @@ export class Player implements Creature {
   }
 
   update(e: OpMetrics) {
+    this.metrics.lvl = e.lvl;
     this.metrics.life = e.life;
     this.metrics.maxLife = e.maxLife;
   }

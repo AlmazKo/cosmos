@@ -50,7 +50,7 @@ public class Zone {
                 if (met == null || (met.life() != cr.life() || met.maxLife() != cr.metrics.maxLife())) {
                     var n = cr.copyMetrics();
                     target.zoneMetrics.put(cr.id(), n);
-                    consumer.add(new Metrics(1, tick, target.id(), cr.id(), n.life(), n.maxLife()));
+                    consumer.add(new Metrics(1, tick, target.id(), cr.id(), cr.level, n.life(), n.maxLife()));
                 }
             }
 

@@ -238,7 +238,7 @@ export class Game implements MovingListener {
 
   private addPlayer(ac: ApiCreature): Creature {
     const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
-    const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
+    const m = new Metrics(ac.metrics.lvl, ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
     const c = new Player(ac.id, m, o);
     // this.creatures.set(c.id, c);
     return c;
@@ -246,7 +246,7 @@ export class Game implements MovingListener {
 
   private addCreature(ac: ApiCreature): Creature {
     const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
-    const m = new Metrics(ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
+    const m = new Metrics(ac.metrics.lvl, ac.metrics.maxLife, ac.metrics.life, ac.metrics.name);
     const c = new CreatureObject(ac.id, m, o);
     // this.creatures.set(c.id, c);
     return c;
@@ -275,7 +275,7 @@ export class Game implements MovingListener {
         y           : e.y,
         sight       : e.sight,
         direction   : e.mv,
-        metrics     : new Metrics(e.life, e.life, "Player#" + e.userId),
+        metrics     : new Metrics(e.lvl, e.life, e.life, "Player#" + e.userId),
         viewDistance: 10
       };
 
@@ -346,7 +346,7 @@ export class Game implements MovingListener {
           y           : e.y,
           sight       : e.sight,
           direction   : e.mv,
-          metrics     : new Metrics(100, 100, "#" + e.creatureId),
+          metrics     : new Metrics(-1, 100, 100, "#" + e.creatureId),
           viewDistance: 10
         };
         cr = this.addCreature(crr);

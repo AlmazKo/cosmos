@@ -22,7 +22,7 @@ public class RespawnPlayerStrategy {
         if (tick < respawnTime) return false;
         try {
             var cr = world.createCreature(new Npc(player.id, NpcType.PLAYER, player.name, 34, -24), 100, 1);
-            outOps.add(new Appear(0, tick, cr.id(), cr.x(), cr.y(), cr.mv(), cr.sight(), cr.life()));
+            outOps.add(new Appear(0, tick, cr.id(), cr.x(), cr.y(), cr.mv(), cr.sight(), cr.level, cr.life()));
         } catch (NoSpaceException e) {
             return false;
         }

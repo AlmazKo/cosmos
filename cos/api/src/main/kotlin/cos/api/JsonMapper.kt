@@ -45,6 +45,7 @@ object JsonMapper {
                 .put("y", op.y())
                 .put("mv", op.mv())
                 .put("sight", op.sight())
+                .put("lvl", op.lvl())
                 .put("life", op.life())
         )
 
@@ -58,6 +59,7 @@ object JsonMapper {
                 .put("userId", op.userId())
                 .put("creatureId", op.creatureId())
                 .put("life", op.life())
+                .put("lvl", op.lvl())
                 .put("maxLife", op.maxLife())
         )
 

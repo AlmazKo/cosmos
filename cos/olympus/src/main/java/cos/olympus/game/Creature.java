@@ -2,6 +2,7 @@ package cos.olympus.game;
 
 import cos.map.NpcType;
 import cos.olympus.game.events.Damage;
+import cos.olympus.game.events.Death;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,8 +21,10 @@ public final class Creature implements Orientable {
     int speed;
     @Nullable Direction mv = null;
 
+    int level = 1;
     Direction sight;
     Metrics metrics;
+    Bag bag = new Bag();
     Map<Integer, Obj> zoneObjects = new HashMap<>();
     Map<Integer, Orientation> zoneCreatures = new HashMap<>();
     Map<Integer, Metrics> zoneMetrics = new HashMap<>();
@@ -53,6 +56,9 @@ public final class Creature implements Orientable {
     @Override public String toString() {
         return "Creature{" +
                "id=" + avatar.id() +
+               ", lvl=" + level +
+               ", life=" + metrics.life +
+               ", type=" + type() +
 //                ", name='" + name + '\'' +
 //                ", x=" + x +
 //                ", y=" + y +
@@ -125,4 +131,12 @@ public final class Creature implements Orientable {
         return metrics.life();
     }
 
+    public void onKill(Death death) {
+        if (death.victim().level >= level) {
+            level++;
+            metrics.maxLife = metrics.maxLife + 10;
+            metrics.life = metrics.maxLife;
+            System.out.println("" + this + " level up");
+        }
+    }
 }

@@ -1,5 +1,7 @@
 export class Metrics {
-  constructor(public maxLife: int,
+  constructor(
+      public lvl: int,
+      public maxLife: int,
               public life: int,
               public readonly name: string) {
 

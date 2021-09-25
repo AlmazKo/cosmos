@@ -2,8 +2,8 @@ package cos.olympus.game;
 
 public class Metrics {
     public final int creatureId;
-    private      int life;
-    private      int maxLife;
+    public int life;
+    public int maxLife;
 
     public Metrics(int creatureId, int life) {
         this(creatureId, life, life);

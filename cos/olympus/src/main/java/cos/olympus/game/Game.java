@@ -2,6 +2,7 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.Coord;
+import cos.map.NpcType;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.olympus.util.OpConsumer;
@@ -39,6 +40,8 @@ public final class Game {
         this.zone = new Zone(world);
         this.movements = new Movements(world);
 
+//        npcRespawns.add(new RespawnStrategy(world, spells, movements, new Coord(5, 5), NpcType.WOLF));
+
         if (settleMobs) settleMobs();
     }
 
@@ -72,6 +75,8 @@ public final class Game {
                 if (d.victim().avatar instanceof Player) {
                     this.playersRespawns.add(new RespawnPlayerStrategy(tick, world, (Player) d.victim().avatar));
                 }
+
+                d.spell().source().onKill(death);
             }
         });
 

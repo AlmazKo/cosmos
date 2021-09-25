@@ -41,6 +41,18 @@ export const style = {
     style   : "blue",
     font    : "15px"
   } as Partial<FontStyle>,
+  creatureLvl    : {
+    align   : "left",
+    baseline: "top",
+    style   : "#ffff00",
+    font    : "600 15px sans-serif"
+  } as Partial<FontStyle>,
+  creatureLvlBg    : {
+    align   : "left",
+    baseline: "top",
+    style   : "#000",
+    font    : "600 15px sans-serif"
+  } as Partial<FontStyle>,
   protoDeathTitle: {
     align   : "center",
     baseline: "bottom",

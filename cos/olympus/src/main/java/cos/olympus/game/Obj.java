@@ -7,5 +7,5 @@ public record Obj(
         Tile tile,
         int x,
         int y
-) {
+) implements Placeable {
 }

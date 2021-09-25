@@ -23,8 +23,8 @@ export class CreatureObject implements Creature {
     return this.orientation.y;
   }
 
-
   update(e: OpMetrics) {
+    this.metrics.lvl = e.lvl;
     this.metrics.life = e.life;
     this.metrics.maxLife = e.maxLife;
   }

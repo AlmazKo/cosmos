@@ -1,15 +1,15 @@
-import { Delay } from '../../anim/Animator';
-import { Animators } from '../../anim/Animators';
-import { CanvasContext } from '../../draw/CanvasContext';
-import { style } from '../../game/styles';
-import { TileDrawable } from '../../game/TileDrawable';
-import { TilePainter } from '../../game/TilePainter';
-import { Dir } from '../constants';
-import { Creature } from '../engine/Creature';
-import { Orientation } from '../engine/Orientation';
-import { Player } from '../engine/Player';
-import { Camera } from './Camera';
-import { CELL, HCELL } from './constants';
+import {Delay} from '../../anim/Animator';
+import {Animators} from '../../anim/Animators';
+import {CanvasContext} from '../../draw/CanvasContext';
+import {style} from '../../game/styles';
+import {TileDrawable} from '../../game/TileDrawable';
+import {TilePainter} from '../../game/TilePainter';
+import {Dir} from '../constants';
+import {Creature} from '../engine/Creature';
+import {Orientation} from '../engine/Orientation';
+import {Player} from '../engine/Player';
+import {Camera} from './Camera';
+import {CELL, HCELL} from './constants';
 
 
 const map: px[] = [];
@@ -130,17 +130,19 @@ export class DrawableCreature implements TileDrawable {
   drawLifeLine(bp: CanvasContext, camera: Camera) {
 
     const cr = this.creature;
-    if (cr.metrics.life >= cr.metrics.maxLife) {
-      return;
-    }
-    const s = cr.metrics.life / cr.metrics.maxLife;
-    const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
-
     const x = camera.toX2(cr.orientation);
     const y = camera.toY2(cr.orientation);
 
-    bp.fillRect(x + 4, y, CELL - 8, 3, '#00000066')
-    bp.fillRect(x + 4, y, (CELL - 8) * s, 3, st.style)
+    if (cr.metrics.life < cr.metrics.maxLife) {
+      const s = cr.metrics.life / cr.metrics.maxLife;
+      const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
+      bp.fillRect(x + 4, y, CELL - 8, 3, '#00000066')
+      bp.fillRect(x + 4, y, (CELL - 8) * s, 3, st.style)
+    }
+
+
+    bp.text("" + cr.metrics.lvl, x+1, y+1, style.creatureLvlBg)
+    bp.text("" + cr.metrics.lvl, x, y, style.creatureLvl)
   }
 
 
