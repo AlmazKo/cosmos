@@ -32,6 +32,7 @@ class App(val vertx: Vertx) {
             isUseAlpn = true
             isSsl = true
             port = 443
+            //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
             pemKeyCertOptions = PemKeyCertOptions().apply {
                 keyPath = "localhost+2-key.pem"
                 certPath = "localhost+2.pem"

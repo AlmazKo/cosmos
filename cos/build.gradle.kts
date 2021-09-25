@@ -12,9 +12,11 @@ subprojects {
     apply(plugin = "org.gradle.java")
     apply(plugin = "org.gradle.java-library")
 
-    configure<JavaPluginConvention> {
-        sourceCompatibility = JavaVersion.VERSION_15
-        targetCompatibility = JavaVersion.VERSION_15
+    configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of("16"))
+        }
+
     }
 
     repositories {
