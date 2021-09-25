@@ -13,7 +13,7 @@ import io.vertx.ext.web.RoutingContext;
 
 public class WebLogger implements Handler<RoutingContext> {
 
-    private Logger logger = new Logger(WebLogger.class);
+    private Logger logger = Logger.get(WebLogger.class);
 
     private void log(RoutingContext ctx, long startLts, HttpMethod method, String uri) {
         var request = ctx.request();

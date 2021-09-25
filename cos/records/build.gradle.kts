@@ -1,8 +1,4 @@
-plugins {
-    java
-}
-
 dependencies {
     implementation(files("../mods/annotations-20.1.0.jar"))
-    implementation(project(":records"))
+    implementation(files("../mods/microjson-0.6.3.jar"))
 }

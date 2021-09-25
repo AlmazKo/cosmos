@@ -17,7 +17,7 @@ import static java.lang.Thread.sleep;
 
 public class Main {
 
-    private final static    Logger  logger      = new Logger(Main.class);
+    private final static    Logger  logger      = Logger.get(Main.class);
     private volatile static boolean running     = true;
     private volatile static boolean appFinished = false;
 

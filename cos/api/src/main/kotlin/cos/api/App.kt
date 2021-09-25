@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class App(val vertx: Vertx) {
     var cid = AtomicInteger(0)
-    private val log = Logger(javaClass)
+    private val log = Logger.get(javaClass)
     private val playerInc = AtomicInteger(0)
 
     init {

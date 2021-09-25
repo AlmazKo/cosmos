@@ -18,7 +18,7 @@ import static cos.olympus.util.TimeUtil.toTickSpeed;
 import static cos.olympus.util.TimeUtil.toTicks;
 
 public class Spells {
-    private final static Logger logger = new Logger(Spells.class);
+    private final static Logger logger = Logger.get(Spells.class);
 
     protected static int SPELL_IDS = 0;
     private          int pause     = toTicks(1);

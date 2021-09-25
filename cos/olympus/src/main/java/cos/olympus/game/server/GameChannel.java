@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class GameChannel {
-    private final static Logger        logger = new Logger(GameChannel.class);
+    private final static Logger        logger = Logger.get(GameChannel.class);
     private final static AtomicInteger inc    = new AtomicInteger();
 
     private final SocketChannel    ch;

@@ -191,7 +191,7 @@ class PlayerSession(
     }
 
     companion object {
-        private val log = Logger(javaClass)
+        private val log = Logger.get(javaClass)
         private fun serialize(op: AnyOp): Buffer {
             val bb = ByteBuffer.allocate(256)
             bb.put(op.code())

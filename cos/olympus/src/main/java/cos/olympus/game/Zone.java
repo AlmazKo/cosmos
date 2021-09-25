@@ -9,7 +9,7 @@ import cos.ops.out.ObjAppear;
 
 public class Zone {
 
-    private final static Logger logger = new Logger(Zone.class);
+    private final static Logger logger = Logger.get(Zone.class);
     private final static int    radius = 8;
 
     private final World world;

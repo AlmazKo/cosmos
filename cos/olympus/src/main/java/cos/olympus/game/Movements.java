@@ -17,7 +17,7 @@ final class Movements implements TickAware {
 
     public final static  int                  HALF   = 50;
     public final static  int                  METER  = 100;
-    private final static Logger               logger = new Logger(Movements.class);
+    private final static Logger               logger = Logger.get(Movements.class);
     private final        World                world;
     private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
 

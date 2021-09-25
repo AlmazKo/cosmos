@@ -6,7 +6,7 @@ import cos.ops.in.Move;
 
 public class NpcStrategy {
 
-    private final static Logger    logger          = new Logger(NpcStrategy.class);
+    private final static Logger    logger          = Logger.get(NpcStrategy.class);
     private final        Creature  npc;
     private final        World     world;
     private final        Movements movements;

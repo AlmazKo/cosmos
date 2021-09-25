@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RespawnStrategy {
 
-    private final static Logger logger = new Logger(Movements.class);
+    private final static Logger logger = Logger.get(Movements.class);
     private static       int    id     = 10_000;
 
     private final World     world;

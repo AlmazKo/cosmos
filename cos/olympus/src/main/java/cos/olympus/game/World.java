@@ -25,7 +25,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public final class World {
-    private final static Logger  logger = new Logger(World.class);
+    private final static Logger  logger = Logger.get(World.class);
     private final        int     width;
     private final        int     height;
     private final        short[] basis;

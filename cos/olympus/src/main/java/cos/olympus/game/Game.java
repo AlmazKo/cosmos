@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public final class Game {
-    private final static Logger logger = new Logger(Game.class);
+    private final static Logger logger = Logger.get(Game.class);
 
     private final World                            world;
     private final Movements                        movements;
