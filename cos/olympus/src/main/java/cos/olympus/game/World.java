@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static cos.olympus.game.Util.nextX;
-import static cos.olympus.game.Util.nextY;
+import static cos.olympus.game.MapUtil.nextX;
+import static cos.olympus.game.MapUtil.nextY;
 import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;

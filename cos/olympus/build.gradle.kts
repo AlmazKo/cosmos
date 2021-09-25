@@ -23,7 +23,8 @@ application {
     mainClass.set(mainClazz)
 
     applicationDefaultJvmArgs = listOf(
-        "-verbose:class",
+        "-DFxTraceLogs=true",
+//        "-verbose:class",
         "--enable-preview",
         "-Xmx100m"
         //        "-verbose:class"

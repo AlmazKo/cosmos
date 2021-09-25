@@ -1,13 +1,12 @@
 package cos.olympus.game;
 
 import cos.ops.Direction;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Orientable{
-    int x();
+public interface Orientable extends Placeable {
+    @Override int x();
 
-    int y();
+    @Override int y();
 
     int speed();
 

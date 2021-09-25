@@ -1,6 +1,6 @@
 package cos.olympus.game;
 
-public interface Avatar {
+public interface Avatar extends Placeable {
 
     int id();
 

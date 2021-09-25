@@ -1,6 +1,7 @@
 package cos.olympus.game;
 
 import cos.olympus.NoSpaceException;
+import cos.olympus.Util;
 import cos.olympus.util.OpConsumer;
 import cos.ops.out.Appear;
 

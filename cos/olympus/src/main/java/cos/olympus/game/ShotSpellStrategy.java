@@ -1,7 +1,7 @@
 package cos.olympus.game;
 
+import cos.olympus.Util;
 import cos.olympus.game.events.Damage;
-import cos.olympus.game.events.Fireball;
 import cos.olympus.game.events.Shot;
 import cos.olympus.game.events.Spell;
 
@@ -62,7 +62,7 @@ public class ShotSpellStrategy extends AbstractSpellStrategy {
     }
 
     @Override public boolean inZone(Creature cr) {
-        return Util.inZone(cr, x, y, 8);
+        return MapUtil.inZone(cr, x, y, 8);
     }
 
     @Override public Spell spell() {

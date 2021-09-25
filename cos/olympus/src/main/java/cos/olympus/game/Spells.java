@@ -68,10 +68,17 @@ public class Spells {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
         if (tick - cr.lastSpellTick < pause) {
+            //too fast
             return;
         }
 
 
+        var spell = new cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);
+        var str = new MeleeAttackStrategy(spell, world);
+        spells.add(str);
+    }
+
+    void onMeleeAttack(int tick, Creature cr) {
         var spell = new cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);
         var str = new MeleeAttackStrategy(spell, world);
         spells.add(str);

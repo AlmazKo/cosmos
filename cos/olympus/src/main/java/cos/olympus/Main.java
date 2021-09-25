@@ -54,7 +54,7 @@ public class Main {
             var out = new OpsConsumer();
             game.onTick(++id, in, out);
             s.write(out);
-            logger.info("" + (nanoTime() - start) / 1000 + "us, in/out: " + in.size() + "/" + out.size());
+//            logger.info("" + (nanoTime() - start) / 1000 + "us, in/out: " + in.size() + "/" + out.size());
             TimeUtil.sleepUntil(100);
         }
         appFinished = true;

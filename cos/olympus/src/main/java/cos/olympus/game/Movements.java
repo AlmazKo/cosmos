@@ -9,17 +9,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
+import static cos.olympus.game.MapUtil.nextX;
+import static cos.olympus.game.MapUtil.nextY;
 import static cos.olympus.util.TimeUtil.toTickSpeed;
-import static cos.olympus.game.Util.nextX;
-import static cos.olympus.game.Util.nextY;
 
 final class Movements implements TickAware {
 
-    public final static  int                  HALF   = 50;
-    public final static  int                  METER  = 100;
-    private final static Logger               logger = Logger.get(Movements.class);
-    private final        World                world;
-    private final        HashMap<Integer, Mv> mvs    = new HashMap<>();
+    public final static int HALF = 50;
+    public final static int METER = 100;
+    private final static Logger logger = Logger.get(Movements.class);
+    private final World world;
+    private final HashMap<Integer, Mv> mvs = new HashMap<>();
 
     Movements(World world) {
         this.world = world;
@@ -41,11 +41,21 @@ final class Movements implements TickAware {
 
     private final static class Mv {
         final Creature cr;
-        Move    next;
+        Move next;
         boolean stop = false;
 
         Mv(Creature cr) {
             this.cr = cr;
+        }
+    }
+
+    void changeSight(Creature cr, Direction sight) {
+        var mv = mvs.get(cr.id());
+        if (mv != null) {
+            //fixme this is simulation
+            mv.next = new Move((byte) -1, -1, -1, cr.x, cr.y, null, sight);
+        } else {
+            cr.setSight(sight);
         }
     }
 
@@ -110,7 +120,7 @@ final class Movements implements TickAware {
 
         if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
             cr.offset = 0;
-        //    logger.info("Reset " + cr);
+            //    logger.info("Reset " + cr);
 
             if (mv.stop) {
                 cr.stop();

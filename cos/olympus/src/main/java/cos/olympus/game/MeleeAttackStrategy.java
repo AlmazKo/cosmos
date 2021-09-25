@@ -6,9 +6,9 @@ import cos.olympus.game.events.Spell;
 
 import java.util.Collection;
 
-import static cos.olympus.game.Util.nextX;
-import static cos.olympus.game.Util.nextY;
-import static cos.olympus.game.Util.rand;
+import static cos.olympus.game.MapUtil.nextX;
+import static cos.olympus.game.MapUtil.nextY;
+import static cos.olympus.Util.rand;
 
 public class MeleeAttackStrategy extends AbstractSpellStrategy {
     public final  MeleeAttack spell;
@@ -42,7 +42,7 @@ public class MeleeAttackStrategy extends AbstractSpellStrategy {
     }
 
     @Override public boolean inZone(Creature cr) {
-        return Util.inZone(cr, targetX, targetY, 8);
+        return MapUtil.inZone(cr, targetX, targetY, 8);
     }
 
     @Override public Spell spell() {

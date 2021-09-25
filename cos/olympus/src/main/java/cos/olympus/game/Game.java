@@ -7,15 +7,9 @@ import cos.olympus.game.events.Death;
 import cos.olympus.util.OpConsumer;
 import cos.olympus.util.OpsConsumer;
 import cos.ops.AnyOp;
-import cos.ops.out.Disconnect;
-import cos.ops.in.ForcedExit;
-import cos.ops.in.FireballEmmit;
-import cos.ops.in.Login;
-import cos.ops.in.MeleeAttack;
-import cos.ops.in.Move;
 import cos.ops.Op;
-import cos.ops.in.ShotEmmit;
-import cos.ops.in.StopMove;
+import cos.ops.in.*;
+import cos.ops.out.Disconnect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +18,19 @@ import java.util.List;
 public final class Game {
     private final static Logger logger = Logger.get(Game.class);
 
-    private final World                            world;
-    private final Movements                        movements;
-    private final Spells                           spells;
-    private final Users                            users;
-    private final ArrayList<RespawnStrategy>       npcRespawns     = new ArrayList<>();
+    private final World world;
+    private final Movements movements;
+    private final Spells spells;
+    private final Users users;
+    private final ArrayList<RespawnStrategy> npcRespawns = new ArrayList<>();
     private final ArrayList<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
-    private final Zone                             zone;
+    private final Zone zone;
 
     int id = 0;
     private int tick = 0;
     private OpConsumer outOps = new OpsConsumer();
+
+    private Boolean settleMobs = true;
 
     public Game(World world) {
         this.world = world;
@@ -43,13 +39,13 @@ public final class Game {
         this.zone = new Zone(world);
         this.movements = new Movements(world);
 
-        settleMobs();
+        if (settleMobs) settleMobs();
     }
 
     private void settleMobs() {
         world.respawns.forEach(resp -> {
             for (int i = 0; i < resp.size(); i++) {
-                npcRespawns.add(new RespawnStrategy(world, movements, new Coord(resp.x(), resp.y())));
+                npcRespawns.add(new RespawnStrategy(world, spells, movements, new Coord(resp.x(), resp.y())));
             }
         });
     }

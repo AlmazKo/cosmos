@@ -8,10 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cos.olympus.game.Movements.METER;
-import static cos.ops.Direction.EAST;
-import static cos.ops.Direction.NORTH;
-import static cos.ops.Direction.SOUTH;
-import static cos.ops.Direction.WEST;
+import static cos.ops.Direction.*;
 
 public final class Creature implements Orientable {
     final Avatar avatar;
@@ -22,12 +19,12 @@ public final class Creature implements Orientable {
     int speed;
     @Nullable Direction mv = null;
 
-    Direction                   sight;
-    Metrics                     metrics;
-    Map<Integer, Obj>           zoneObjects   = new HashMap<>();
-    Map<Integer, Orientation>   zoneCreatures = new HashMap<>();
-    Map<Integer, Metrics>       zoneMetrics   = new HashMap<>();
-    Map<Integer, SpellStrategy> zoneSpells    = new HashMap<>();
+    Direction sight;
+    Metrics metrics;
+    Map<Integer, Obj> zoneObjects = new HashMap<>();
+    Map<Integer, Orientation> zoneCreatures = new HashMap<>();
+    Map<Integer, Metrics> zoneMetrics = new HashMap<>();
+    Map<Integer, SpellStrategy> zoneSpells = new HashMap<>();
 
     public Creature(Avatar avatar, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight, int life) {
         this.avatar = avatar;
@@ -47,21 +44,22 @@ public final class Creature implements Orientable {
     Orientation orientation() {
         return new Orientation(avatar.id(), x, y, speed, offset, sight, mv);
     }
+
     Metrics copyMetrics() {
         return metrics.copy();
     }
 
     @Override public String toString() {
         return "Creature{" +
-                "id=" + avatar.id() +
+               "id=" + avatar.id() +
 //                ", name='" + name + '\'' +
 //                ", x=" + x +
 //                ", y=" + y +
-                ", pos=[" + rx() + "; " + ry() + "]" +
-                ", speed=" + speed +
-                ", dir=" + mv +
-                ", sight=" + sight +
-                '}';
+               ", pos=[" + rx() + "; " + ry() + "]" +
+               ", speed=" + speed +
+               ", dir=" + mv +
+               ", sight=" + sight +
+               '}';
     }
 
     public float ry() {
