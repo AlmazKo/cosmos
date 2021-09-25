@@ -27,6 +27,10 @@ export const style = {
     style: "#00ff0b",
     width: 2
   } as Partial<StrokeStyle>,
+  expLine   : {
+    style: "rgba(0,196,255,0.56)",
+    width: 2
+  } as Partial<StrokeStyle>,
   warningLifeLine: {
     style: "#fff900",
     width: 2

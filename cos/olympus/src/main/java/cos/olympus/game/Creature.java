@@ -21,7 +21,6 @@ public final class Creature implements Orientable {
     int speed;
     @Nullable Direction mv = null;
 
-    int level = 1;
     Direction sight;
     Metrics metrics;
     Bag bag = new Bag();
@@ -56,7 +55,7 @@ public final class Creature implements Orientable {
     @Override public String toString() {
         return "Creature{" +
                "id=" + avatar.id() +
-               ", lvl=" + level +
+               ", lvl=" + metrics.lvl +
                ", life=" + metrics.life +
                ", type=" + type() +
 //                ", name='" + name + '\'' +
@@ -132,9 +131,17 @@ public final class Creature implements Orientable {
     }
 
     public void onKill(Death death) {
-        if (death.victim().level >= level) {
-            level++;
-            metrics.maxLife = metrics.maxLife + 10;
+
+        if (death.victim().metrics.lvl > metrics.lvl) {
+            metrics.exp += 3;
+        } else if (death.victim().metrics.lvl >= metrics.lvl - 1) {
+            metrics.exp += 1;
+        }
+
+        if (metrics.exp >= 10) {
+            metrics.lvl++;
+            metrics.exp = metrics.exp - 10;
+            metrics.maxLife = (int) (metrics.maxLife + 1.2);
             metrics.life = metrics.maxLife;
             System.out.println("" + this + " level up");
         }

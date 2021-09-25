@@ -1,16 +1,7 @@
 package cos.api
 
 import cos.ops.AnyOp
-import cos.ops.out.Appear
-import cos.ops.out.CreatureHid
-import cos.ops.out.CreatureMoved
-import cos.ops.out.Damage
-import cos.ops.out.Death
-import cos.ops.out.FireballMoved
-import cos.ops.out.MeleeAttacked
-import cos.ops.out.Metrics
-import cos.ops.out.ObjAppear
-import cos.ops.out.ShotMoved
+import cos.ops.out.*
 import io.vertx.core.json.JsonObject
 
 object JsonMapper {
@@ -60,6 +51,7 @@ object JsonMapper {
                 .put("creatureId", op.creatureId())
                 .put("life", op.life())
                 .put("lvl", op.lvl())
+                .put("exp", op.exp())
                 .put("maxLife", op.maxLife())
         )
 

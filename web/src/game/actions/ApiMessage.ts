@@ -14,7 +14,7 @@ export type MeleeAttacked = { spellId: uint, creatureId: uid }
 export type CreatureHid = { id: uint, creatureId: uid }
 export type Damage = { id: uint, creatureId: uid, victimId: uid, amount: uint, spellId: uint, crit: boolean }
 export type Death = { id: uint, creatureId: uid, victimId: uid }
-export type OpMetrics = { id: uint, creatureId: uid, lvl: uint, life: uint, maxLife: uint }
+export type OpMetrics = { id: uint, creatureId: uid, lvl: uint, life: uint, maxLife: uint, exp:uint }
 
 export interface ApiMessage {
     readonly id: uint

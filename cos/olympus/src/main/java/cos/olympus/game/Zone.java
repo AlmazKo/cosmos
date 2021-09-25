@@ -10,7 +10,7 @@ import cos.ops.out.ObjAppear;
 public class Zone {
 
     private final static Logger logger = Logger.get(Zone.class);
-    private final static int    radius = 8;
+    private final static int radius = 8;
 
     private final World world;
 
@@ -47,10 +47,10 @@ public class Zone {
                 }
 
                 var met = target.zoneMetrics.get(cr.id());
-                if (met == null || (met.life() != cr.life() || met.maxLife() != cr.metrics.maxLife())) {
+                if (met == null || (met.life() != cr.life() || met.maxLife() != cr.metrics.maxLife() || met.exp != cr.metrics.exp)) {
                     var n = cr.copyMetrics();
                     target.zoneMetrics.put(cr.id(), n);
-                    consumer.add(new Metrics(1, tick, target.id(), cr.id(), cr.level, n.life(), n.maxLife()));
+                    consumer.add(new Metrics(1, tick, target.id(), cr.id(), cr.metrics.lvl, cr.metrics.exp, n.life(), n.maxLife()));
                 }
             }
 

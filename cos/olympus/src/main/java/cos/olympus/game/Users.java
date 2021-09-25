@@ -22,7 +22,7 @@ public class Users {
         if (usr == null) {
             usr = new Player(op.userId(), "user:" + op.userId());
             var creature = world.createCreature(usr, 100, 4);
-            return new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.level, creature.metrics.life());
+            return new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.metrics.lvl, creature.metrics.life());
         } else {
             logger.warn("#" + tick + " " + "User already logged in " + usr);
             return null;

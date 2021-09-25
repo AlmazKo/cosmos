@@ -33,7 +33,7 @@ public class MeleeAttackStrategy extends AbstractSpellStrategy {
         if (victim != null && spell.source().id() != victim.id()) {
             boolean crit = rand(0, 10) == 1;
             int amount = crit ? rand(40, 60) : rand(10, 20);
-            var coef = -0.1 + Math.pow(1.5, spell.source().level);
+            var coef = -0.1 + Math.pow(1.5, spell.source().metrics.lvl);
             var d = new Damage(++DAMAGES_IDS, tick, victim, spell, (int) (coef * amount), crit);
             logger.info("Damaged : " + d);
             damages.add(d);

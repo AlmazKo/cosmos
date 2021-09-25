@@ -129,20 +129,28 @@ export class DrawableCreature implements TileDrawable {
 
   drawLifeLine(bp: CanvasContext, camera: Camera) {
 
-    const cr = this.creature;
-    const x = camera.toX2(cr.orientation);
-    const y = camera.toY2(cr.orientation);
-
-    if (cr.metrics.life < cr.metrics.maxLife) {
-      const s = cr.metrics.life / cr.metrics.maxLife;
-      const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
-      bp.fillRect(x + 4, y, CELL - 8, 3, '#00000066')
-      bp.fillRect(x + 4, y, (CELL - 8) * s, 3, st.style)
-    }
+      const cr = this.creature;
+      const x = camera.toX2(cr.orientation);
+      const y = camera.toY2(cr.orientation);
+      const m = cr.metrics;
 
 
-    bp.text("" + cr.metrics.lvl, x+1, y+1, style.creatureLvlBg)
-    bp.text("" + cr.metrics.lvl, x, y, style.creatureLvl)
+      if (m.life < m.maxLife) {
+          const s = m.life / m.maxLife;
+          const st = (s <= 0.3) ? style.dangerLifeLine : (s <= 0.75 ? style.warningLifeLine : style.goodLifeLine);
+          bp.fillRect(x + 4, y, CELL - 8, 3, '#00000066')
+          bp.fillRect(x + 4, y, (CELL - 8) * s, 3, st.style)
+      }
+
+      if (m.exp > 0) {
+          const s = m.exp / 10;
+          bp.fillRect(x + 4, y + CELL - 4, CELL - 8, 3, '#00000066')
+          bp.fillRect(x + 4, y + CELL - 4, (CELL - 8) * s, 3, style.expLine.style)
+      }
+
+
+    bp.text("" + m.lvl, x+1, y+1, style.creatureLvlBg)
+    bp.text("" + m.lvl, x, y, style.creatureLvl)
   }
 
 

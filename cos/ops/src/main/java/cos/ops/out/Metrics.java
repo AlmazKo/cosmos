@@ -12,16 +12,18 @@ public record Metrics(
         @Override int userId,
         int creatureId,
         int lvl,
+        int exp,
         int life,
         int maxLife
 ) implements OutOp {
 
-    public Metrics(int id, int tick, int userId, int creatureId, int lvl, int life, int maxLife) {
-        this(Op.METRICS, id, tick, userId, creatureId, lvl,life, maxLife);
+    public Metrics(int id, int tick, int userId, int creatureId, int lvl, int exp, int life, int maxLife) {
+        this(Op.METRICS, id, tick, userId, creatureId, lvl, exp, life, maxLife);
     }
 
     public static Metrics read(ByteBuffer b) {
         return new Metrics(
+                b.getInt(),
                 b.getInt(),
                 b.getInt(),
                 b.getInt(),
@@ -37,6 +39,7 @@ public record Metrics(
         buf.putInt(userId);
         buf.putInt(creatureId);
         buf.putInt(lvl);
+        buf.putInt(exp);
         buf.putInt(life);
         buf.putInt(maxLife);
     }
