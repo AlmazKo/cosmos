@@ -45,7 +45,7 @@ public final class Game {
     private void settleMobs() {
         world.respawns.forEach(resp -> {
             for (int i = 0; i < resp.size(); i++) {
-                npcRespawns.add(new RespawnStrategy(world, spells, movements, new Coord(resp.x(), resp.y())));
+                npcRespawns.add(new RespawnStrategy(world, spells, movements, new Coord(resp.x(), resp.y()), resp.type()));
             }
         });
     }

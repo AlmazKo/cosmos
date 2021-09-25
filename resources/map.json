@@ -1,11 +1,4 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "target":"."
-        }
-    },
  "height":100,
  "infinite":true,
  "layers":[
@@ -462,6 +455,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"wolf"
+                        }, 
+                        {
                          "name":"size",
                          "type":"int",
                          "value":5
@@ -478,6 +476,11 @@
                  "id":28,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"sheep"
+                        }, 
                         {
                          "name":"size",
                          "type":"int",
@@ -496,6 +499,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"wolf"
+                        }, 
+                        {
                          "name":"size",
                          "type":"int",
                          "value":8
@@ -512,6 +520,11 @@
                  "id":31,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"wolf"
+                        }, 
                         {
                          "name":"size",
                          "type":"int",
@@ -530,6 +543,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"wolf"
+                        }, 
+                        {
                          "name":"size",
                          "type":"int",
                          "value":5
@@ -547,6 +565,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"sheep"
+                        }, 
+                        {
                          "name":"size",
                          "type":"int",
                          "value":1
@@ -563,6 +586,11 @@
                  "id":34,
                  "name":"",
                  "properties":[
+                        {
+                         "name":"npc_type",
+                         "type":"string",
+                         "value":"wolf"
+                        }, 
                         {
                          "name":"size",
                          "type":"int",
@@ -585,7 +613,7 @@
  "nextobjectid":35,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.4.3",
+ "tiledversion":"1.7.2",
  "tileheight":32,
  "tilesets":[
         {
@@ -594,6 +622,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":1.4,
+ "version":"1.6",
  "width":100
 }

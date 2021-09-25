@@ -1,10 +1,12 @@
 package cos.olympus.game;
 
+import cos.map.NpcType;
+
 final class Player implements Avatar {
-    final int    id;
+    final int id;
     final String name;
-    final int    lastX;
-    final int    lastY;
+    final int lastX;
+    final int lastY;
 
     public Player(int id, String name) {
         this(id, name, 0, 0);
@@ -19,6 +21,10 @@ final class Player implements Avatar {
 
     @Override public int id() {
         return id;
+    }
+
+    @Override public NpcType type() {
+        return NpcType.PLAYER;
     }
 
     @Override public String name() {

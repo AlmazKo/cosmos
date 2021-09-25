@@ -2,10 +2,7 @@ package cos.map.parser;
 
 import almazko.microjson.JsArray;
 import almazko.microjson.JsObject;
-import cos.map.Lands;
-import cos.map.RespawnSpot;
-import cos.map.Tile;
-import cos.map.TileType;
+import cos.map.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -87,11 +84,31 @@ public class MapParser {
 
         for (Object o : objects) {
             var obj = (JsObject) o;
-            int size = obj.getArray("properties").getObject(0).getInt("value");
-            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size);
+            var props = obj.getArray("properties");
+            int size = findIntProp(props, "size");
+            String type = findStringProp(props, "npc_type");
+            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size, NpcType.valueOf(type.toUpperCase()));
             result.add(spot);
         }
         return result;
+    }
+
+    private static int findIntProp(JsArray props, String name) {
+        for (Object prop : props) {
+            if (name.equals(((JsObject) prop).getString("name"))) {
+                return ((JsObject) prop).getInt("value");
+            }
+        }
+        return 0;
+    }
+
+    private static String findStringProp(JsArray props, String name) {
+        for (Object prop : props) {
+            if (name.equals(((JsObject) prop).getString("name"))) {
+                return ((JsObject) prop).getString("value");
+            }
+        }
+        return null;
     }
 
     private static short[] readChunks(JsArray layers, Spec spec) {

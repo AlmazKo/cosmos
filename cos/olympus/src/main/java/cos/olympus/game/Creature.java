@@ -1,5 +1,6 @@
 package cos.olympus.game;
 
+import cos.map.NpcType;
 import cos.olympus.game.events.Damage;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
@@ -90,6 +91,10 @@ public final class Creature implements Orientable {
 
     public int id() {
         return avatar.id();
+    }
+
+    public NpcType type() {
+        return avatar.type();
     }
 
     @Override public int x() {

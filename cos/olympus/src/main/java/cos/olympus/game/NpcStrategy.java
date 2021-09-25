@@ -4,6 +4,7 @@ import cos.logging.Logger;
 import cos.olympus.Util;
 import cos.ops.Direction;
 import cos.ops.in.Move;
+import org.jetbrains.annotations.Nullable;
 
 public class NpcStrategy {
 
@@ -32,30 +33,40 @@ public class NpcStrategy {
     }
 
     private boolean tryToAttract(int tick) {
+        if (!npc.avatar.type().isAggressive()) return false;
+
         var nextX = MapUtil.nextX(npc);
         var nextY = MapUtil.nextY(npc);
         var near = world.getCreature(nextX, nextY);
-        if (near != null) {
+        if (near != null && near.type() != npc.type()) {
             logger.info("" + npc + " aggro-ed " + near);
             spells.onMeleeAttack(tick, npc);
             nextPlannedTick = tick + Util.rand(4, 8);
             return true;
         }
 
+        var dir = turnTo();
+        if (dir == null) return false;
+
+        logger.info("" + npc + " attracted " + dir);
+        movements.changeSight(npc, dir);
+        nextPlannedTick = tick + 1;
+        return true;
+    }
+
+    private @Nullable Direction turnTo() {
         var nears = world.getCreatures(npc.x, npc.y, 1);
-        if (!nears.isEmpty()) {
-            var dir = MapUtil.direction(npc, nears.get(0));
-            if (dir == null) {
-                return false;
+
+        for (Creature near : nears) {
+            if (near.type() != npc.type()) {
+                var dir = MapUtil.direction(npc, near);
+                if (dir != null) return dir;
             }
-            logger.info("" + npc + " attracted " + dir);
-            movements.changeSight(npc, dir);
-            nextPlannedTick = tick + 1;
-            return true;
         }
 
-        return false;
+        return null;
     }
+
 
     private void walkingAround() {
         var dir = Direction.values()[Util.rand(0, 4)];
