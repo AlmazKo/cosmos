@@ -32,6 +32,7 @@ object JsonMapper {
             "data", JsonObject()
                 .put("id", op.id())
                 .put("userId", op.userId())
+                .put("map", "map")
                 .put("x", op.x())
                 .put("y", op.y())
                 .put("mv", op.mv())

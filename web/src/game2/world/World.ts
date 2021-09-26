@@ -25,6 +25,7 @@ export class Piece {
 export class World {
 
   private pieces: Array<Array<Piece | Loading>> = [[]];
+  name: string = '';
 
 
   constructor(private readonly api: MapApi) {
@@ -32,6 +33,7 @@ export class World {
   }
 
   iterateLands(posX: pos, posY: pos, radius: uint, handler: (p: Piece | undefined) => void) {
+    if(this.name == '') return;
 
     const fromX = floor((posX - radius) / PIECE_SIZE);
     const fromY = floor((posY - radius) / PIECE_SIZE);
@@ -61,7 +63,7 @@ export class World {
     } else {
       if (p === undefined) {
         r[y] = Loading.REQUESTING;
-        this.loadPiece(x, y)
+        this.loadPiece(this.name, x, y)
           .then(i => r[y] = i)
           .catch(() => r[y] = Loading.FAIL)
       }
@@ -88,9 +90,9 @@ export class World {
     return p.data[offsetY * PIECE_SIZE + offsetX];
   }
 
-  loadPiece(x: piecePos, y: piecePos): Promise<Piece> {
+  loadPiece(mapName: string, x: piecePos, y: piecePos): Promise<Piece> {
 
-    return this.api.getMapPiece(x, y).map(p => {
+    return this.api.getMapPiece(mapName, x, y).map(p => {
       const lands = [];
       let pair: [uint, TileType];
 

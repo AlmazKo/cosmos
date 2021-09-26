@@ -10,7 +10,8 @@ public record Lands(
         short[] basis,
         short[] objects,
         Tile[] tiles,
-        ArrayList<RespawnSpot> respawns
+        ArrayList<RespawnSpot> respawns,
+        ArrayList<PortalSpot> portals
 ) {
 
 }

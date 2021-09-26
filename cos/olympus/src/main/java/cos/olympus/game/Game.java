@@ -2,6 +2,8 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.Coord;
+import cos.map.CreatureType;
+import cos.map.PortalSpot;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.olympus.util.OpConsumer;
@@ -82,6 +84,18 @@ public final class Game {
 
         npcRespawns.forEach(it -> it.onTick(tick));
         world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, out));
+        world.getAllCreatures().forEach(cr -> {
+            if(cr.type() == CreatureType.PLAYER) {
+                for (PortalSpot portal : world.portals) {
+                    if( portal.x() == cr.x && portal.y() == cr.y) {
+                        logger.warn("PORTAL!!!! " + portal);
+                    }
+                }
+            }
+        });
+
+
+
 
         world.getAllCreatures().forEach(cr -> {
             damages.forEach(d -> {

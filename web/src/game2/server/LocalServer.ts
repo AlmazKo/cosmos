@@ -73,7 +73,7 @@ export class LocalServer implements Api, MapApi {
 
   }
 
-  getMapPiece(x: int, y: int): Promise<MapPieceRaw> {
+  getMapPiece(world: string,x: int, y: int): Promise<MapPieceRaw> {
 
     // ajax('file:///Users/almaz/ballad/resources/map.json')
 

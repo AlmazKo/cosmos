@@ -41,7 +41,7 @@ public class Main {
         var s = new Sessions();
         Server.run(s);
 
-        var lands = Land.load(res.toAbsolutePath());
+        var lands = Land.load(res.toAbsolutePath(), "map");
         var world = new World(lands);
         var game = new Game(world);
 

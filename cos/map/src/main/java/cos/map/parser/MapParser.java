@@ -17,6 +17,7 @@ public class MapParser {
         short[] map = null;
         short[] objects = null;
         ArrayList<RespawnSpot> respawns = null;
+        ArrayList<PortalSpot> portals = null;
         for (Object l : layers) {
             if (l == null) continue;
 
@@ -25,11 +26,12 @@ public class MapParser {
                 case "basic" -> map = readChunks(layer.getArray("chunks"), spec);
                 case "objects" -> objects = readChunks(layer.getArray("chunks"), spec);
                 case "respawns" -> respawns = readRespawnSpots(layer.getArray("objects"));
+                case "portals" -> portals = readPortalSpots(layer.getArray("objects"));
             }
         }
         var tiles = readTiles(rawTiles);
 
-        return new Lands(spec.width, spec.height, spec.shiftX, spec.shiftY, map, objects, tiles, respawns);
+        return new Lands(spec.width, spec.height, spec.shiftX, spec.shiftY, map, objects, tiles, respawns, portals);
     }
 
 
@@ -84,10 +86,27 @@ public class MapParser {
 
         for (Object o : objects) {
             var obj = (JsObject) o;
+            if (!obj.getString("type").equals("RESPAWN_SPOT")) continue;
+
             var props = obj.getArray("properties");
             int size = findIntProp(props, "size");
             String type = findStringProp(props, "npc_type");
             var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size, CreatureType.valueOf(type.toUpperCase()));
+            result.add(spot);
+        }
+        return result;
+    }
+
+    private static ArrayList<PortalSpot> readPortalSpots(JsArray objects) {
+        var result = new ArrayList<PortalSpot>();
+
+        for (Object o : objects) {
+            var obj = (JsObject) o;
+            if (!obj.getString("type").equals("PORTAL")) continue;
+
+            var props = obj.getArray("properties");
+            String mapName = findStringProp(props, "name");
+            var spot = new PortalSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, mapName);
             result.add(spot);
         }
         return result;

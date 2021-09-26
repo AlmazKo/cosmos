@@ -15,7 +15,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.ext.web.handler.StaticHandler
 import java.nio.file.Paths
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class App(val vertx: Vertx) {
@@ -25,7 +24,8 @@ class App(val vertx: Vertx) {
 
     init {
         log.info("Vertx started!")
-        val lands = Land.load(Paths.get("", "../../resources").toAbsolutePath())
+        val lands = Land.load(Paths.get("", "../../resources").toAbsolutePath(), "map")
+        val lands2 = Land.load(Paths.get("", "../../resources").toAbsolutePath(), "map_mike")
 
         val opts = HttpServerOptions().apply {
             host = "0.0.0.0"
@@ -40,7 +40,7 @@ class App(val vertx: Vertx) {
         }
 
         val server = vertx.createHttpServer(opts)
-        initApi(vertx, lands, server)
+        initApi(vertx, mapOf("map" to lands, "map_mike" to lands2), server)
         server.listen {
             if (it.failed()) {
                 log.warn("Fail!", it.cause())
@@ -63,7 +63,7 @@ class App(val vertx: Vertx) {
     }
 
 
-    private fun initApi(vertx: Vertx, lands: Lands, server: HttpServer) {
+    private fun initApi(vertx: Vertx, lands: Map<String, Lands>, server: HttpServer) {
         val router = Router.router(vertx)
         //        router.route().handler(WebLogger())
         initCors(router)
@@ -76,6 +76,30 @@ class App(val vertx: Vertx) {
         //            }
         //            .toList()
 
+
+        lands.forEach { (n, l) -> initMapApi(router, l, n) }
+        router.route("/r/*").handler(StaticHandler.create("../../resources"))
+
+
+
+//        router.get("/objects").handler { req ->
+//            val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
+//// todo: tmp           val t = objects.getOrDefault(key, JsonArray())
+//            val t = JsonArray()
+//            req.response().putHeader("content-type", "application/json; charset=utf-8")
+//            req.response()
+//                .end(t.toString())
+//        }
+
+        router.route("/ws").handler { ctx ->
+            val ws = ctx.request().upgrade()
+            PlayerSession(vertx, ws, playerInc.incrementAndGet())
+        }
+        server.requestHandler(router::accept)
+    }
+
+
+    private fun initMapApi(router: Router, lands: Lands, name: String) {
         val cc = Splitter.split16(lands)
         val basis = cc.mapValues { (k, v) ->
             JsonArray(v.map { t ->
@@ -99,31 +123,16 @@ class App(val vertx: Vertx) {
             })
         }
 
-        router.route("/r/*").handler(StaticHandler.create("../../resources"))
 
-        router.get("/map").handler { req ->
+
+        router.get("/map/$name").handler { req ->
             val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
             val t = basis[key]!!
             req.response().putHeader("content-type", "application/json; charset=utf-8")
             req.response()
                 .end(t.toString())
         }
-
-        router.get("/objects").handler { req ->
-            val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
-            val t = objects.getOrDefault(key, JsonArray())
-            req.response().putHeader("content-type", "application/json; charset=utf-8")
-            req.response()
-                .end(t.toString())
-        }
-
-        router.route("/ws").handler { ctx ->
-            val ws = ctx.request().upgrade()
-            PlayerSession(vertx, ws, playerInc.incrementAndGet())
-        }
-        server.requestHandler(router::accept)
     }
-
 
     private fun initCors(router: Router) {
         val cors = CorsHandler.create("*")

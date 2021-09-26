@@ -2,11 +2,7 @@ package cos.olympus.game;
 
 
 import cos.logging.Logger;
-import cos.map.Coord;
-import cos.map.Lands;
-import cos.map.RespawnSpot;
-import cos.map.Tile;
-import cos.map.TileType;
+import cos.map.*;
 import cos.olympus.NoSpaceException;
 import cos.olympus.util.IntIntConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +34,7 @@ public final class World {
     private final int offsetX;
     private final int                    offsetY;
     final ArrayList<RespawnSpot> respawns;
+    final ArrayList<PortalSpot> portals;
 
     public World(Lands lands) {
         this.offsetX = lands.offsetX();
@@ -49,6 +46,7 @@ public final class World {
         this.creatures = new int[basis.length];
         this.tiles = lands.tiles();
         this.respawns = lands.respawns();
+        this.portals = lands.portals();
 //        debug();
     }
 
