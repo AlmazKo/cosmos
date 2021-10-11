@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":ops"))
     implementation(project(":map"))
     implementation(project(":logging"))
+    implementation(project(":nio"))
     implementation("io.vertx:vertx-core:3.9.4")
     implementation("io.vertx:vertx-web:3.9.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")

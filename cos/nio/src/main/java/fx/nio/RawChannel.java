@@ -1,19 +1,22 @@
 package fx.nio;
 
+import cos.logging.Logger;
+import fx.nio.codecs.BufferReadable;
+
+import java.io.Closeable;
 import java.io.IOException;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.WritableByteChannel;
 
-import cos.logging.Logger;
-import fx.nio.codecs.Codec;
 import static fx.nio.Session.INC;
 
 public class RawChannel implements ReadChannel, WritableByteChannel {
-    private final Logger logger = Logger.get(RawChannel.class).atErrors();
+    private final Logger logger = Logger.get(RawChannel.class);
     private final SocketChannel ch;
     private final Session session;
-    private volatile Codec codec;
+    private volatile BufferReadable codec;
 
     public RawChannel(SocketChannel ch) {
         this.ch = ch;
@@ -27,7 +30,7 @@ public class RawChannel implements ReadChannel, WritableByteChannel {
         logger.info("new", session);
     }
 
-    public void register(Codec codec) {
+    public void register(BufferReadable codec) {
         this.codec = codec;
     }
 
@@ -72,7 +75,13 @@ public class RawChannel implements ReadChannel, WritableByteChannel {
     }
 
     public void close() {
-        this.codec.close();
+        if (codec instanceof Closeable) {
+            try {
+                ((Closeable) codec).close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if (ch.isOpen()) {
             try {
                 ch.close();
@@ -107,7 +116,17 @@ public class RawChannel implements ReadChannel, WritableByteChannel {
                 logger.warn("Full size wasn't written");
             }
             out.clear();
-//                logger.info("Written: $written")
+            //fixme: to do something with over
+            //logger.info("Written: " + written);
+        }
+    }
+
+    public SocketAddress getRemoteAddress() {
+        try {
+            return ch.getRemoteAddress();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

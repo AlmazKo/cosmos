@@ -3,7 +3,7 @@ package fx.nio.codecs;
 import java.nio.ByteBuffer;
 import org.jetbrains.annotations.NotNull;
 
-public interface Codec<I, O> extends CodecOutput<O>, AutoCloseable {
+public interface Codec<I, O> extends CodecOutput<O>, AutoCloseable, BufferReadable {
 
     void read(ByteBuffer buf);
 

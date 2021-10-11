@@ -77,7 +77,7 @@ final class Util {
 
         for (int i = 1; i < st.length; i++) {
             ste = st[i];
-            if (!ste.getClassName().startsWith("fx.logging")) {
+            if (!ste.getClassName().startsWith("cos.logging")) {
                 line = ste.getLineNumber();
                 file = ste.getFileName();
                 break;

@@ -7,9 +7,10 @@ plugins {
 java.modularity.inferModulePath.set(true)
 
 dependencies {
-    implementation("org.jetbrains:annotations:20.1.0")
+    implementation(files("../mods/annotations-20.1.0.jar"))
     implementation(project(":ops"))
     implementation(project(":map"))
+    implementation(project(":nio"))
     implementation(project(":logging"))
     implementation(files("../mods/microjson-0.6.3.jar"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")

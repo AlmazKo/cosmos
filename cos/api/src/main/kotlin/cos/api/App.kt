@@ -4,6 +4,8 @@ package cos.api
 import cos.logging.Logger
 import cos.map.Land
 import cos.map.Lands
+import cos.ops.parser.OpType
+import fx.nio.Client
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpMethod
@@ -18,7 +20,8 @@ import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 
 class App(val vertx: Vertx) {
-    var cid = AtomicInteger(0)
+    private val sessions = HashMap<Int, PlayerSession>()
+    private lateinit var olympus: ApiClientChannel
     private val log = Logger.get(javaClass)
     private val playerInc = AtomicInteger(0)
 
@@ -51,6 +54,18 @@ class App(val vertx: Vertx) {
         }
     }
 
+    private fun connectToOlympus() {
+        Client.run("127.0.0.1", 6666) { ch ->
+            this.olympus = ApiClientChannel(ch)
+            log.info("Connected to Olympus")
+            olympus.start { pkg ->
+                sessions.values.removeIf { it.isClosed }
+                sessions[pkg.userId()]?.onOp(pkg)
+            }
+
+            this.olympus
+        }
+    }
 
     private fun op(code: Byte, id: Int, userId: Int, vararg bytes: Byte): Buffer {
         val bf = Buffer.buffer(bytes.size + 2 + 4)
@@ -64,40 +79,21 @@ class App(val vertx: Vertx) {
 
 
     private fun initApi(vertx: Vertx, lands: Map<String, Lands>, server: HttpServer) {
+        connectToOlympus()
         val router = Router.router(vertx)
-        //        router.route().handler(WebLogger())
         initCors(router)
-
-        //
-        //        val t = lands.basis.asSequence()
-        //            .map { tileId ->
-        //                val typeId = lands.tiles[tileId.toInt()]?.type?.id ?: TileType.NOTHING.id
-        //                JsonArray(listOf(tileId, typeId))
-        //            }
-        //            .toList()
-
-
         lands.forEach { (n, l) -> initMapApi(router, l, n) }
         router.route("/r/*").handler(StaticHandler.create("../../resources"))
-
-
-
-//        router.get("/objects").handler { req ->
-//            val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()
-//// todo: tmp           val t = objects.getOrDefault(key, JsonArray())
-//            val t = JsonArray()
-//            req.response().putHeader("content-type", "application/json; charset=utf-8")
-//            req.response()
-//                .end(t.toString())
-//        }
-
         router.route("/ws").handler { ctx ->
             val ws = ctx.request().upgrade()
-            PlayerSession(vertx, ws, playerInc.incrementAndGet())
+            val userId = playerInc.incrementAndGet()
+            sessions[userId] = PlayerSession(ws, userId) {
+                olympus.write(it as Record, OpType.REQUEST)
+            }
+
         }
         server.requestHandler(router::accept)
     }
-
 
     private fun initMapApi(router: Router, lands: Lands, name: String) {
         val cc = Splitter.split16(lands)
@@ -111,19 +107,6 @@ class App(val vertx: Vertx) {
                 }
             })
         }
-        val cco = Splitter.splitObjects16(lands)
-        val objects = cco.mapValues { (k, v) ->
-            JsonArray(v.map { t ->
-                if (t == null) {
-                    emptyList()
-                    //println("Wrong $k - $k")
-                } else {
-                    listOf(t.id(), t.type().id)
-                }
-            })
-        }
-
-
 
         router.get("/map/$name").handler { req ->
             val key = req.queryParam("x")[0].toInt() to req.queryParam("y")[0].toInt()

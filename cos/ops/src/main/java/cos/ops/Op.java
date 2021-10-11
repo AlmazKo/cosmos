@@ -5,7 +5,6 @@ public interface Op {
     byte APPEAR         = 101;
     byte MOVE           = 102;
     byte STOP_MOVE      = 103;
-    byte LOGOUT         = 104;
     byte MOVE_STOP      = 105;
     byte APPEAR_OBJ     = 106;
     byte CREATURE_MOVED = 107;
@@ -23,5 +22,6 @@ public interface Op {
     //infrastructure op-codes
     byte NOPE       = 0;
     byte DISCONNECT = 1;
-    byte EXIT       = 2;
+    byte LOGOUT       = 2;
+    byte FORCED_EXIT       = 3;
 }

@@ -5,19 +5,18 @@ import cos.ops.Op;
 
 import java.nio.ByteBuffer;
 
-public record ForcedExit(
+public record Logout(
         @Override byte code,
         @Override int id,
-        @Override int userId,
-        @Override int tick
+        @Override int userId
 ) implements InOp {
 
-    public ForcedExit(int id, int userId) {
-        this(Op.EXIT, id, userId, 0);
+    public Logout(int id, int userId) {
+        this(Op.LOGOUT, id, userId);
     }
 
-    public static ForcedExit read(ByteBuffer b) {
-        return new ForcedExit(b.getInt(), b.getInt());
+    public static Logout read(ByteBuffer b) {
+        return new Logout(b.getInt(), b.getInt());
     }
 
     public void write(ByteBuffer buf) {

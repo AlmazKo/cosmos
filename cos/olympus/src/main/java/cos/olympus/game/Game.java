@@ -85,16 +85,14 @@ public final class Game {
         npcRespawns.forEach(it -> it.onTick(tick));
         world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, out));
         world.getAllCreatures().forEach(cr -> {
-            if(cr.type() == CreatureType.PLAYER) {
+            if (cr.type() == CreatureType.PLAYER) {
                 for (PortalSpot portal : world.portals) {
-                    if( portal.x() == cr.x && portal.y() == cr.y) {
+                    if (portal.x() == cr.x && portal.y() == cr.y) {
                         logger.warn("PORTAL!!!! " + portal);
                     }
                 }
             }
         });
-
-
 
 
         world.getAllCreatures().forEach(cr -> {
@@ -120,9 +118,9 @@ public final class Game {
         try {
             switch (op.code()) {
                 case Op.LOGIN -> onLogin((Login) op);
+                case Op.LOGOUT -> onLogout((Logout) op);
                 case Op.MOVE -> onMove((Move) op);
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
-                case Op.EXIT -> onExit((ForcedExit) op);
                 case Op.EMMIT_FIREBALL -> onSpell((FireballEmmit) op);
                 case Op.EMMIT_SHOT -> onShot((ShotEmmit) op);
                 case Op.MELEE_ATTACK -> onMeleeAttack((MeleeAttack) op);
@@ -158,7 +156,7 @@ public final class Game {
         this.movements.onStopMove(op);
     }
 
-    private void onExit(ForcedExit op) {
+    private void onLogout(Logout op) {
         var cr = world.getCreature(op.userId());
         if (cr == null) return;
 
