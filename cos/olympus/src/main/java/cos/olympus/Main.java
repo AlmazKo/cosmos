@@ -4,16 +4,25 @@ import cos.logging.Logger;
 import cos.map.Land;
 import cos.map.Lands;
 import cos.olympus.game.Game;
+import cos.olympus.game.Router;
 import cos.olympus.game.World;
 import cos.olympus.game.api.Connection;
 import cos.olympus.game.api.Connections;
 import cos.olympus.util.OpsConsumer;
 import cos.olympus.util.TimeUtil;
+import cos.ops.AnyOp;
+import cos.ops.InOp;
+import cos.ops.Op;
+import cos.ops.in.Login;
+import cos.ops.in.Logout;
 import fx.nio.ServerLauncher;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.System.getenv;
 import static java.lang.Thread.sleep;
@@ -39,38 +48,60 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         logger.info("Starting...");
-        Game game = prepareGame(args);
+        var game = prepareGame(args);
         var api = setupApi();
         startGame(game, api);
         appFinished = true;
         logger.info("Stopped");
     }
 
-    @NotNull private static Game prepareGame(String[] args) throws IOException {
-        var lands = parseResources(args);
-        var world = new World(lands);
-        return new Game(world);
+    @NotNull private static List<Game> prepareGame(String[] args) throws IOException {
+        var lands = parseResources(args, "map");
+        var lands2 = parseResources(args, "map_mike");
+        return List.of(new Game(new World(lands)), new Game(new World(lands2)));
     }
 
-    private static void startGame(Game game, Connections pool) throws InterruptedException {
+    private static void startGame(List<Game> games, Connections pool) throws InterruptedException {
         TimeUtil.sleepUntil(100); //align
         logger.info("Ready!");
-        var id = 0;
+        var id = new AtomicInteger(0);
+        var router = new Router();
 //        long start;
         while (running) {
-//            start = nanoTime();
-            var in = pool.collect();
+            id.incrementAndGet();
             var out = new OpsConsumer();
-            game.onTick(++id, in, out);
-            pool.write(id, out);
+
+//            start = nanoTime();
+
+            var mapOps = new ArrayList<InOp>();
+            var mikeOps = new ArrayList<InOp>();
+
+            for (AnyOp op : pool.collect()) {
+                if (op.code() == Op.LOGIN) {
+                    router.onLogin(id.get(), (Login) op);
+                } else if (op.code() == Op.LOGOUT) {
+                    router.onLogout(id.get(), (Logout) op);
+                }
+
+                var userWorld = router.getWorld(op.userId());
+                if (userWorld.equals("map")) {
+                    mapOps.add((InOp) op);
+                } else if (userWorld.equals("mike")) {
+                    mikeOps.add((InOp) op);
+                }
+            }
+
+            games.get(0).onTick(id.get(), mapOps, out);
+            games.get(1).onTick(id.get(), mikeOps, out);
+            pool.write(id.get(), out);
 //            logger.info("" + (nanoTime() - start) / 1000 + "us, in/out: " + in.size() + "/" + out.size());
             TimeUtil.sleepUntil(100);
         }
     }
 
-    @NotNull private static Lands parseResources(String[] args) throws IOException {
+    @NotNull private static Lands parseResources(String[] args, String name) throws IOException {
         var res = (args.length > 0) ? Paths.get("", args[0]) : Paths.get("", "../../resources");
-        return Land.load(res.toAbsolutePath(), "map");
+        return Land.load(res.toAbsolutePath(), name);
     }
 
     public static Connections setupApi() {

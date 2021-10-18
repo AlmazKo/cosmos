@@ -18,6 +18,8 @@ public interface Op {
     byte METRICS        = 115;
     byte EMMIT_SHOT     = 116;
     byte SHOT_MOVED     = 117;
+    byte PROTO_APPEAR   = 118;
+    byte WORLD_LOGIN   = 119;
 
     //infrastructure op-codes
     byte NOPE       = 0;

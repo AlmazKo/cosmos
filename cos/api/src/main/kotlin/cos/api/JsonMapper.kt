@@ -11,6 +11,7 @@ object JsonMapper {
 
         return when (op) {
             is Appear -> toJ(op)
+            is ProtoAppear -> toJ(op)
             is ObjAppear -> toJ(op)
             is Metrics -> toJ(op)
             is CreatureMoved -> toJ(op)
@@ -32,13 +33,27 @@ object JsonMapper {
             "data", JsonObject()
                 .put("id", op.id())
                 .put("userId", op.userId())
-                .put("map", "map")
+//                .put("map", "map")
                 .put("x", op.x())
                 .put("y", op.y())
                 .put("mv", op.mv())
                 .put("sight", op.sight())
                 .put("lvl", op.lvl())
                 .put("life", op.life())
+        )
+
+    private fun toJ(op: ProtoAppear) = JsonObject()
+        .put("id", op.id())
+        .put("action", "proto_appear")
+        .put("type", "")
+        .put(
+            "data", JsonObject()
+                .put("id", op.id())
+                .put("userId", op.userId())
+                .put("map", op.world())
+                .put("x", op.x())
+                .put("y", op.y())
+                .put("sight", op.sight())
         )
 
     private fun toJ(op: Metrics) = JsonObject()

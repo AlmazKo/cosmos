@@ -9,6 +9,7 @@ import cos.olympus.game.events.Death;
 import cos.olympus.util.OpConsumer;
 import cos.olympus.util.OpsConsumer;
 import cos.ops.AnyOp;
+import cos.ops.InOp;
 import cos.ops.Op;
 import cos.ops.in.*;
 import cos.ops.out.Disconnect;
@@ -23,7 +24,7 @@ public final class Game {
     private final World world;
     private final Movements movements;
     private final Spells spells;
-    private final Users users;
+    private final WorldUsers users;
     private final ArrayList<RespawnStrategy> npcRespawns = new ArrayList<>();
     private final ArrayList<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
     private final Zone zone;
@@ -37,7 +38,7 @@ public final class Game {
     public Game(World world) {
         this.world = world;
         this.spells = new Spells(world);
-        this.users = new Users(world);
+        this.users = new WorldUsers(world);
         this.zone = new Zone(world);
         this.movements = new Movements(world);
 
@@ -54,7 +55,7 @@ public final class Game {
         });
     }
 
-    public void onTick(int tickId, List<AnyOp> in, OpConsumer out) {
+    public void onTick(int tickId, List<InOp> in, OpConsumer out) {
         tick = tickId;
         outOps = out;
 
@@ -89,6 +90,8 @@ public final class Game {
                 for (PortalSpot portal : world.portals) {
                     if (portal.x() == cr.x && portal.y() == cr.y) {
                         logger.warn("PORTAL!!!! " + portal);
+
+                     //   ProtoAppear(1, tick, cr.id(), "mike_map",0,0)
                     }
                 }
             }
@@ -119,6 +122,7 @@ public final class Game {
             switch (op.code()) {
                 case Op.LOGIN -> onLogin((Login) op);
                 case Op.LOGOUT -> onLogout((Logout) op);
+
                 case Op.MOVE -> onMove((Move) op);
                 case Op.STOP_MOVE -> onStopMove((StopMove) op);
                 case Op.EMMIT_FIREBALL -> onSpell((FireballEmmit) op);

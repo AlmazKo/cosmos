@@ -2,27 +2,27 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.ops.in.Login;
-import cos.ops.out.Appear;
+import cos.ops.out.ProtoAppear;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
-public class Users {
-    private final static Logger logger = Logger.get(Users.class);
+public class WorldUsers {
+    private final static Logger logger = Logger.get(WorldUsers.class);
 
     private final HashMap<Integer, Player> users = new HashMap<>();
     private final World world;
 
-    public Users(World world) {
+    public WorldUsers(World world) {
         this.world = world;
     }
 
-    @Nullable Appear onLogin(int tick, Login op) {
+    @Nullable ProtoAppear onLogin(int tick, Login op) {
         var usr = users.get(op.userId());
         if (usr == null) {
             usr = new Player(op.userId(), "user:" + op.userId());
             var creature = world.createCreature(usr, 100, 4);
-            return new Appear(op.id(), tick, usr.id, creature.x, creature.y, creature.mv, creature.sight, creature.metrics.lvl, creature.metrics.life());
+            return new ProtoAppear(op.id(), tick, usr.id, "map", creature.x, creature.y, creature.sight);
         } else {
             logger.warn("#" + tick + " " + "User already logged in " + usr);
             return null;
