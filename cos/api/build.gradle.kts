@@ -3,21 +3,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     java
     application
-    kotlin("jvm") version "1.4.20"
-    kotlin("plugin.serialization") version "1.4.10"
+    kotlin("jvm") version "1.5.31"
+    kotlin("plugin.serialization") version "1.5.31"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.apply {
-        jvmTarget = "15"
-        noReflect = true
-        noStdlib = true
-        noJdk = false
-        noReflect = true
-        includeRuntime = false
-        languageVersion = "1.4"
-        apiVersion = "1.4"
+        jvmTarget = "16"
         suppressWarnings = true
     }
 }
