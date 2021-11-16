@@ -15,8 +15,10 @@
             <option value="$PROJECT_DIR$/cos/api" />
             <option value="$PROJECT_DIR$/cos/logging" />
             <option value="$PROJECT_DIR$/cos/map" />
+            <option value="$PROJECT_DIR$/cos/nio" />
             <option value="$PROJECT_DIR$/cos/olympus" />
             <option value="$PROJECT_DIR$/cos/ops" />
+            <option value="$PROJECT_DIR$/cos/records" />
           </set>
         </option>
       </GradleProjectSettings>

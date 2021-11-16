@@ -60,6 +60,7 @@ public class Connection implements BufferReadable {
     }
 
     public void write(Record op) {
+        logger.info(">> " + op.toString());
         writer.write(op, seq.incrementAndGet(), OpType.EVENT);
     }
 }

@@ -23,6 +23,7 @@ public interface Registry {
 
             .register(Op.LOGIN, Login.class)
             .register(Op.APPEAR, Appear.class)
+            .register(Op.PROTO_APPEAR, ProtoAppear.class)
             .register(Op.MOVE, Move.class)
             .register(Op.STOP_MOVE, StopMove.class)
 //            .register(Op.LOGOUT, .class)

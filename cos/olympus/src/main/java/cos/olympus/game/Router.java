@@ -9,7 +9,6 @@ import java.util.Map;
 public class Router {
     private final Map<Integer, Usr> users = new HashMap<>();
 
-
     public void onLogin(int tick, Login op) {
         var usr = users.get(op.userId());
         if (usr == null) {
@@ -29,6 +28,7 @@ public class Router {
 
     public String getWorld(int userId) {
         //fixme NPE
-        return users.get(userId).worldName;
+        var usr = users.get(userId);
+        return usr.worldName;
     }
 }

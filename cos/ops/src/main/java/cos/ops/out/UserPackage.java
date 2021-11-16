@@ -1,6 +1,7 @@
 package cos.ops.out;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import static cos.ops.Registry.PARSER;
 
@@ -33,5 +34,13 @@ public record UserPackage(
         }
 
         return new UserPackage(tick, userId, ops);
+    }
+
+    @Override public String toString() {
+        return "UserPackage{" +
+               "tick=" + tick +
+               ", userId=" + userId +
+               ", ops=" + Arrays.deepToString(ops) +
+               '}';
     }
 }

@@ -27,10 +27,10 @@ public record ProtoAppear(
         buf.putInt(id);
         buf.putInt(tick);
         buf.putInt(userId);
+        put(buf, world);
         buf.putInt(x);
         buf.putInt(y);
         put(buf, sight);
-        put(buf, world);
     }
 
     public static ProtoAppear read(ByteBuffer buf) {
