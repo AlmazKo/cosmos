@@ -4,7 +4,6 @@ allprojects {
     repositories {
         mavenCentral()
         maven(url = "https://kotlin.bintray.com/kotlinx")
-        jcenter()
     }
 }
 
@@ -14,7 +13,7 @@ subprojects {
 
     configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of("16"))
+            languageVersion.set(JavaLanguageVersion.of("17"))
         }
 
         modularity.inferModulePath.set(true)

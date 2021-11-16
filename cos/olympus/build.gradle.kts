@@ -1,5 +1,3 @@
-import java.lang.String.join
-
 plugins {
     application
 }
@@ -14,8 +12,8 @@ application {
         "-DFxTraceLogs=true",
 //        "-verbose:class",
         "--enable-preview",
-        "-Xmx100m"
-        //        "-verbose:class"
+        "-XX:+UseZGC",
+        "-Xmx64m"
         //        "-XX:+UnlockExperimentalVMOptions",
 //                "-XX:+UseEpsilonGC"
     )
@@ -23,11 +21,11 @@ application {
 
 dependencies {
     implementation(files("../mods/annotations-20.1.0.jar"))
+    implementation(files("../mods/microjson-0.6.3.jar"))
     implementation(project(":ops"))
     implementation(project(":map"))
     implementation(project(":nio"))
     implementation(project(":logging"))
-    implementation(files("../mods/microjson-0.6.3.jar"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
 }
@@ -45,15 +43,15 @@ tasks {
     register("patchImage") {
         dependsOn("jlink")
         val opts = listOf(
-//            "-verbose:class",
-            "--enable-preview",
             "-Duser.timezone=UTC",
             "-Xmx64m",
             "-XX:+CrashOnOutOfMemoryError",
             "-XX:+HeapDumpOnOutOfMemoryError",
-            "-XX:HeapDumpPath=/tmp"
-            // "-Xlog:gc",
-//            "-XX:+UseZGC"
+            "-XX:HeapDumpPath=/dumps",
+            //"-verbose:class",
+            //"-Xlog:gc",
+            "-XX:+UseZGC",
+            "\$JAVA_EXTRA_OPTIONS"
         ).joinToString(" ")
 
         doLast {
@@ -66,7 +64,6 @@ tasks {
             launcher.writeText(lines.joinToString("\n"))
         }
     }
-
 
     register<Exec>("jlink") {
         group = "Build"

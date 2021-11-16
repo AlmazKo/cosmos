@@ -31,7 +31,8 @@ application {
     mainClass.set("cos.api.Main")
     applicationDefaultJvmArgs = listOf(
         "--enable-preview",
-        "-Xmx200m"
+        "-XX:+UseZGC",
+        "-Xmx128m"
 //        "-verbose:class"
     )
 }
@@ -52,6 +53,6 @@ tasks {
         dependsOn("shadowJar")
         group = "Application"
         description = "Run image"
-        main = "-jar /Users/aleksandrsuslov/projects/cosmos/cos/api/build/libs/api.jar";
+        main = "-jar /Users/aleksandrsuslov/projects/cosmos/cos/api/build/libs/api.jar";//fixme
     }
 }
