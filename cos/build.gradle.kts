@@ -17,18 +17,10 @@ subprojects {
             languageVersion.set(JavaLanguageVersion.of("16"))
         }
 
-    }
-
-    repositories {
-        maven(url = "https://dl.bintray.com/almazko/micro")
+        modularity.inferModulePath.set(true)
     }
 
     tasks.withType<Test> {
         useJUnitPlatform()
-        jvmArgs = listOf("--enable-preview")
-    }
-
-    tasks.withType<JavaCompile> {
-        options.compilerArgs = listOf("--enable-preview")
     }
 }

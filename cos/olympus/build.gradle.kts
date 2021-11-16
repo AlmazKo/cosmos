@@ -4,19 +4,6 @@ plugins {
     application
 }
 
-java.modularity.inferModulePath.set(true)
-
-dependencies {
-    implementation(files("../mods/annotations-20.1.0.jar"))
-    implementation(project(":ops"))
-    implementation(project(":map"))
-    implementation(project(":nio"))
-    implementation(project(":logging"))
-    implementation(files("../mods/microjson-0.6.3.jar"))
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
-}
-
 val mainClazz = "cos.olympus.Main"
 val mainModule = "cos.olympus"
 
@@ -34,13 +21,25 @@ application {
     )
 }
 
+dependencies {
+    implementation(files("../mods/annotations-20.1.0.jar"))
+    implementation(project(":ops"))
+    implementation(project(":map"))
+    implementation(project(":nio"))
+    implementation(project(":logging"))
+    implementation(files("../mods/microjson-0.6.3.jar"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+}
+
+
 
 
 tasks {
     val imageDir = "image"
     register<Copy>("moveLibs") {
-        into("build/libs/")
         from(configurations.compileClasspath)
+        into("build/libs/")
     }
 
     register("patchImage") {
@@ -53,7 +52,7 @@ tasks {
             "-XX:+CrashOnOutOfMemoryError",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-XX:HeapDumpPath=/tmp"
-           // "-Xlog:gc",
+            // "-Xlog:gc",
 //            "-XX:+UseZGC"
         ).joinToString(" ")
 
@@ -72,25 +71,13 @@ tasks {
     register<Exec>("jlink") {
         group = "Build"
         description = "Generate runtime image"
-        dependsOn("assemble", "moveLibs")
+        dependsOn("assemble", "processResources", "moveLibs")
         delete(imageDir)
 
         val javaHome = System.getProperty("java.home")
-        val buildDir = "build/classes/java/main/"
         commandLine(
             "$javaHome/bin/jlink",
-            "--module-path", join(
-                ":",
-                "../mods", // contains java9 modules
-                "build/libs/",
-                "../ops/$buildDir",
-                "../logging/$buildDir",
-                "../map/$buildDir",
-                "../json/$buildDir",
-                "$javaHome/jmods"
-            ),
-            "--strip-debug",
-            "--no-header-files",
+            "--module-path", "build/libs/:../mods/",
             "--no-man-pages",
             "--vm", "server",
             "--add-modules", mainModule,
