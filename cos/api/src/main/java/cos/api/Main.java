@@ -9,6 +9,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Starting... " + Instant.now());
         System.setProperty("user.timezone", "UTC");
-        new App(Vertx.vertx());
+        new Api(Vertx.vertx());
     }
 }

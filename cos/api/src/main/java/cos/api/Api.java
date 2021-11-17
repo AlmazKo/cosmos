@@ -28,16 +28,20 @@ import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 
-class App {
+class Api {
     private Map<Integer, PlayerSession> sessions  = new HashMap<>();
     private ApiClientChannel            olympus;
     private Logger                      log       = Logger.get(getClass());
     private AtomicInteger               playerInc = new AtomicInteger(0);
 
-    App(Vertx vertx) throws IOException {
+    Api(Vertx vertx) throws IOException {
         log.info("Vertx started!");
-        var lands = Land.load(Paths.get("", "../../resources").toAbsolutePath(), "map");
-        var lands2 = Land.load(Paths.get("", "../../resources").toAbsolutePath(), "map_mike");
+
+        var dir = System.getProperty("CosResourcesDir");
+        var res = (dir == null || dir.isBlank()) ? Paths.get("", "../../resources") : Paths.get("", dir);
+
+        var lands = Land.load(res.toAbsolutePath(), "map");
+        var lands2 = Land.load(res.toAbsolutePath(), "map_mike");
 
         var opts = new HttpServerOptions();
 
@@ -46,10 +50,12 @@ class App {
         opts.setSsl(true);
         opts.setPort(443);
 
+
+//        Api.class.getResource("localhost+2-key.pem");
         //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
         var pkco = new PemKeyCertOptions();
-        pkco.setKeyPath("localhost+2-key.pem");
-        pkco.setCertPath("localhost+2.pem");
+        pkco.setKeyPath(Api.class.getResource("localhost+2-key.pem").toString());
+        pkco.setCertPath(Api.class.getResource("localhost+2-key.pem").toString());
         opts.setPemKeyCertOptions(pkco);
 
 
@@ -97,14 +103,13 @@ class App {
         router.route().handler(new WebLogger());
         lands.forEach((n, l) -> initMapApi(router, l, n));
         router.route("/r/*").handler(StaticHandler.create("../../resources"));
-        router.route("/ws").handler(ctx -> {
-
-            var ws = ctx.request().upgrade();
-            var userId = playerInc.incrementAndGet();
-            sessions.put(userId, new PlayerSession(ws, userId, it -> olympus.write((Record) it, OpType.REQUEST)));
-
-        });
-        server.requestHandler(router::accept);
+        router.route("/ws").handler(ctx ->
+                ctx.request().toWebSocket(wsAr -> {
+                    var ws = wsAr.result();//fixme handle error
+                    var userId = playerInc.incrementAndGet();
+                    sessions.put(userId, new PlayerSession(ws, userId, it -> olympus.write((Record) it, OpType.REQUEST)));
+                }));
+        server.requestHandler(router);
     }
 
     private void initMapApi(Router router, Lands lands, String name) {
@@ -124,7 +129,11 @@ class App {
             var y = parseInt(req.queryParam("y").get(0));
             var t = basis.get(new Splitter.Coord<>(x, y));
             req.response().putHeader("content-type", "application/json; charset=utf-8");
-            req.response().end(t.toString());
+            if (t == null) {
+                req.fail(400);
+            } else {
+                req.response().end(t.toString());
+            }
         });
     }
 
