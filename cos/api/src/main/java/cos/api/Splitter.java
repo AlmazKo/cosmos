@@ -2,7 +2,6 @@ package cos.api;
 
 import cos.map.Lands;
 import cos.map.Tile;
-import kotlin.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +11,14 @@ import static java.lang.Math.floorMod;
 
 public class Splitter {
 
-    public static Map<Pair<Integer, Integer>, Tile[]> split16(Lands lands) {
-        var result = new HashMap<Pair<Integer, Integer>, Tile[]>();
+    public record Coord<A, B>(A x, B y) {
+        @Override public String toString() {
+            return "Coord(" + x + "; " + y + ')';
+        }
+    }
+
+    public static Map<Coord<Integer, Integer>, Tile[]> split16(Lands lands) {
+        var result = new HashMap<Coord<Integer, Integer>, Tile[]>();
 
         Tile t;
         int width = lands.width();
@@ -35,7 +40,7 @@ public class Splitter {
             var xx = floorDiv(x, 16);
             var yy = floorDiv(y, 16);
 //            idx = toIndex(xx, yy);
-            var chunk = result.computeIfAbsent(new Pair<>(xx, yy), p -> new Tile[16 * 16]);
+            var chunk = result.computeIfAbsent(new Coord<>(xx, yy), p -> new Tile[16 * 16]);
 
             var xi = floorMod(x, 16);
             var yi = floorMod(y, 16);
@@ -44,8 +49,9 @@ public class Splitter {
 
         return result;
     }
-    public static Map<Pair<Integer, Integer>, Tile[]> splitObjects16(Lands lands) {
-        var result = new HashMap<Pair<Integer, Integer>, Tile[]>();
+
+    public static Map<Coord<Integer, Integer>, Tile[]> splitObjects16(Lands lands) {
+        var result = new HashMap<Coord<Integer, Integer>, Tile[]>();
 
         Tile t;
         int width = lands.width();
@@ -67,7 +73,7 @@ public class Splitter {
             var xx = floorDiv(x, 16);
             var yy = floorDiv(y, 16);
 //            idx = toIndex(xx, yy);
-            var chunk = result.computeIfAbsent(new Pair<>(xx, yy), p -> new Tile[16 * 16]);
+            var chunk = result.computeIfAbsent(new Coord<>(xx, yy), p -> new Tile[16 * 16]);
 
             var xi = floorMod(x, 16);
             var yi = floorMod(y, 16);

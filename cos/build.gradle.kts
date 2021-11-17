@@ -3,7 +3,6 @@ allprojects {
     version = "1.0-SNAPSHOT"
     repositories {
         mavenCentral()
-        maven(url = "https://kotlin.bintray.com/kotlinx")
     }
 }
 
@@ -17,6 +16,10 @@ subprojects {
         }
 
         modularity.inferModulePath.set(true)
+    }
+
+    tasks.withType<JavaCompile> {
+        options.compilerArgs = listOf("--enable-preview")
     }
 
     tasks.withType<Test> {

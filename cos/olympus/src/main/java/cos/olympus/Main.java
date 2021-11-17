@@ -22,8 +22,8 @@ import static java.lang.System.getenv;
 import static java.lang.Thread.sleep;
 
 public class Main {
-    private final static Logger logger = Logger.get(Main.class);
-    private volatile static boolean running = true;
+    private final static    Logger  logger      = Logger.get(Main.class);
+    private volatile static boolean running     = true;
     private volatile static boolean appFinished = false;
 
     static {
@@ -41,7 +41,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        logger.info("Starting...");
+        logger.info("Starting... " + System.getProperty("CosResourcesDir"));
         var games = prepareGame(args);
         var api = setupApi();
 
@@ -52,8 +52,8 @@ public class Main {
     }
 
     @NotNull private static Map<String, Game> prepareGame(String[] args) throws IOException {
-        var lands = parseResources(args, "map");
-        var lands2 = parseResources(args, "map_mike");
+        var lands = parseResources("map");
+        var lands2 = parseResources("map_mike");
         return Map.of(
                 "map", new Game(new World(lands), new Teleports(null)),
                 "map_mike", new Game(new World(lands2), new Teleports(null))
@@ -76,8 +76,9 @@ public class Main {
 
 //            logger.info("" + (nanoTime() - start) / 1000 + "us, in/out: " + in.size() + "/" + out.size());
 
-    @NotNull private static Lands parseResources(String[] args, String name) throws IOException {
-        var res = (args.length > 0) ? Paths.get("", args[0]) : Paths.get("", "../../resources");
+    @NotNull private static Lands parseResources(String name) throws IOException {
+        var dir = System.getProperty("CosResourcesDir");
+        var res = (dir == null || dir.isBlank()) ? Paths.get("", "../resources") : Paths.get("", dir);
         return Land.load(res.toAbsolutePath(), name);
     }
 

@@ -10,6 +10,7 @@ application {
 
     applicationDefaultJvmArgs = listOf(
         "-DFxTraceLogs=true",
+        "-DCosResourcesDir=../resources",
 //        "-verbose:class",
         "--enable-preview",
         "-XX:+UseZGC",
@@ -44,6 +45,7 @@ tasks {
         dependsOn("jlink")
         val opts = listOf(
             "-Duser.timezone=UTC",
+            "-DCosResourcesDir=/resources",
             "-Xmx64m",
             "-XX:+CrashOnOutOfMemoryError",
             "-XX:+HeapDumpOnOutOfMemoryError",

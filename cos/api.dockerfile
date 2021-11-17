@@ -1,9 +1,11 @@
-FROM openjdk:15-oracle as builder
+FROM openjdk:17-oracle as builder
 COPY . /src/
 WORKDIR /src
 RUN ls -l && ./gradlew api:shadowJar -i
 
-FROM openjdk:15-alpine
+FROM openjdk:17-alpine
 EXPOSE 80
 COPY --from=builder /src/api/build/libs/api.jar /server/
-CMD ["java", "-Xmx200m", "--enable-preview", "/server/api.jar"]
+CMD ["ls -l", "/server"]
+#ENTRYPOINT java /server/api.jar
+#STOPSIGNAL SIGINT
