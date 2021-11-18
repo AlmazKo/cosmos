@@ -1,4 +1,4 @@
-import { int, px } from '../../chart/types';
+// import { int, px } from '../../chart/types';
 
 type handler<K extends keyof HTMLElementEventMap> = (
   this: HTMLElement,

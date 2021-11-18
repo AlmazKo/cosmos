@@ -3,6 +3,7 @@ package cos.api;
 import io.vertx.core.Vertx;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.Instant;
 
 public class Main {

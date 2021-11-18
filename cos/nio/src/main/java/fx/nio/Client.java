@@ -51,7 +51,7 @@ public class Client {
 
     void start(SocketAddress address) throws IOException {
         var selector = setupClientSocket(address);
-        logger.info("Client connected to " + address);
+        logger.info("Client connecting to " + address);
 
 
         while (selector.isOpen() && running) {

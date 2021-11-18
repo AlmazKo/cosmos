@@ -11,22 +11,24 @@ import {Player} from '../engine/Player';
 import {Camera} from './Camera';
 import {CELL, HCELL} from './constants';
 
-
-const map: px[] = [];
+// @ts-ignore
+const map:  { [key in  Dir]: px } = [];
 
 map[Dir.NORTH] = 0;
 map[Dir.SOUTH] = 128;
 map[Dir.EAST] = 196;
 map[Dir.WEST] = 64;
 
-const mapSmall: px[] = [];
+// @ts-ignore
+const mapSmall:  { [key in  Dir]: px } = [];
 
 mapSmall[Dir.NORTH] = 64;
 mapSmall[Dir.SOUTH] = 0;
 mapSmall[Dir.EAST] = 32;
 mapSmall[Dir.WEST] = 96;
 
-const mapNpc: px[] = [];
+// @ts-ignore
+const mapNpc:  { [key in  Dir]: px } = [];
 
 mapNpc[Dir.NORTH] = 64;
 mapNpc[Dir.SOUTH] = 0;

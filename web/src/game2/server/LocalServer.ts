@@ -7,10 +7,16 @@ import { Tiles } from '../../game/api/Tiles';
 import { Api } from './Api';
 import { MOCK_TILES } from './map';
 import { MapApi } from './MapApi';
+import {ConnStatus} from "./WsServer";
 
 
 export class LocalServer implements Api, MapApi {
   private handler: ((msg: Package) => void) | undefined;
+  status: ConnStatus = 'connected';
+
+  getObjectsPiece(x: int, y: int): Promise<MapPieceRaw> {
+    return Promise.resolve(undefined as any);
+  }
 
 
   constructor() {

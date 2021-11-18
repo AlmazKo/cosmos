@@ -1,0 +1,17 @@
+version: '3'
+services:
+  olympus:
+    build:
+      context: .
+      dockerfile: olympus.dockerfile
+    ports:
+      - "6666:6666"
+  api:
+    depends_on: [ olympus ]
+    build:
+      context: .
+      dockerfile: api.dockerfile
+    ports:
+      - "443:443"
+    environment:
+      CosOlympusHost: "olympus"

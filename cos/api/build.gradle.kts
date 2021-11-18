@@ -23,6 +23,7 @@ application {
     mainClass.set("cos.api.Main")
     applicationDefaultJvmArgs = listOf(
         "-DFxTraceLogs=true",
+        "-DCosOlympusHost=localhost",
         "--enable-preview",
         "-XX:+UseZGC",
         "-Xmx128m"

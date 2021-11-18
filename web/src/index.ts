@@ -40,12 +40,12 @@ window.onload = () => {
     console.log('Gamepad disconnected');
     gc.render.panels.onHotKeysUpdate(keyboardSchema);
   });
-
-  const myWorker = new Worker('worker.ts');
-
-  myWorker.onmessage = function (e) {
-    console.log('Message received from worker', e);
-  }
+  //
+  // const myWorker = new Worker('worker.ts');
+  //
+  // myWorker.onmessage = function (e) {
+  //   console.log('Message received from worker', e);
+  // }
 };
 
 

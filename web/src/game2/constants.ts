@@ -93,6 +93,7 @@ export function debugTile(t: TileType): string {
       return '=';
     case TileType.GATE:
       return 'П';
-
+    default:
+      return  '?';
   }
 }

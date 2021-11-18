@@ -29,20 +29,19 @@ import java.util.stream.Collectors;
 import static java.lang.Integer.parseInt;
 
 class Api {
-    private Map<Integer, PlayerSession> sessions  = new HashMap<>();
-    private ApiClientChannel            olympus;
-    private Logger                      log       = Logger.get(getClass());
-    private AtomicInteger               playerInc = new AtomicInteger(0);
+    private Map<Integer, PlayerSession> sessions = new HashMap<>();
+    private ApiClientChannel olympus;
+    private Logger log = Logger.get(getClass());
+    private AtomicInteger playerInc = new AtomicInteger(0);
+
 
     Api(Vertx vertx) throws IOException {
         log.info("Vertx started!");
 
         var dir = System.getProperty("CosResourcesDir");
         var res = (dir == null || dir.isBlank()) ? Paths.get("", "../../resources") : Paths.get("", dir);
-
         var lands = Land.load(res.toAbsolutePath(), "map");
         var lands2 = Land.load(res.toAbsolutePath(), "map_mike");
-
         var opts = new HttpServerOptions();
 
         opts.setHost("0.0.0.0");
@@ -50,14 +49,11 @@ class Api {
         opts.setSsl(true);
         opts.setPort(443);
 
-
-//        Api.class.getResource("localhost+2-key.pem");
         //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
-        var pkco = new PemKeyCertOptions();
-        pkco.setKeyPath(Api.class.getResource("localhost+2-key.pem").toString());
-        pkco.setCertPath(Api.class.getResource("localhost+2-key.pem").toString());
-        opts.setPemKeyCertOptions(pkco);
-
+        var sertOpts = new PemKeyCertOptions();
+        sertOpts.setKeyValue(resToBuffer("/localhost+2-key.pem"));
+        sertOpts.setCertValue(resToBuffer("/localhost+2.pem"));
+        opts.setPemKeyCertOptions(sertOpts);
 
         var server = vertx.createHttpServer(opts);
         initApi(vertx, Map.of("map", lands, "map_mike", lands2), server);
@@ -72,9 +68,10 @@ class Api {
     }
 
     private void connectToOlympus() {
-        Client.run("127.0.0.1", 6666, ch -> {
+        var host = prop("CosOlympusHost");
+        Client.run(host, 6666, ch -> {
             this.olympus = new ApiClientChannel(ch);
-            log.info("Connected to Olympus");
+            log.info("Connected to Olympus " + host);
             olympus.start(pkg -> {
                 sessions.values().removeIf(PlayerSession::isClosed);
                 var sess = sessions.get(pkg.userId());
@@ -83,6 +80,10 @@ class Api {
 
             return this.olympus;
         });
+    }
+
+    private String prop(String name) {
+        return System.getProperty(name, System.getenv(name));
     }
 
     private Buffer op(Byte code, int id, int userId, byte[] bytes) {
@@ -105,6 +106,10 @@ class Api {
         router.route("/r/*").handler(StaticHandler.create("../../resources"));
         router.route("/ws").handler(ctx ->
                 ctx.request().toWebSocket(wsAr -> {
+                    if (wsAr.failed()) {
+                        ctx.fail(500);
+                        return;
+                    }
                     var ws = wsAr.result();//fixme handle error
                     var userId = playerInc.incrementAndGet();
                     sessions.put(userId, new PlayerSession(ws, userId, it -> olympus.write((Record) it, OpType.REQUEST)));
@@ -148,5 +153,10 @@ class Api {
         cors.maxAgeSeconds(600);
         cors.allowedHeaders(headers);
         router.route().handler(cors);
+    }
+
+    private static Buffer resToBuffer(String file) throws IOException {
+        byte[] data = Api.class.getResourceAsStream(file).readAllBytes();
+        return Buffer.buffer(data);
     }
 }

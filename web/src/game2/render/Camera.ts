@@ -9,7 +9,7 @@ export class Camera {
   target: Orientation;
 
   constructor(public offset: floatShare = 0.0) {
-    this.target = new Orientation(NO, NO, 0, offset, 0, 0)
+    this.target = new Orientation(NO as any, NO as any, 0, offset, 0, 0)
   }
 
   setTarget(orientation: Orientation) {

@@ -20,9 +20,10 @@ export class Effects implements TileDrawable {
 
   draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
 
-    this.effects.forEach(it => {
-      it.draw2(time, bp, camera)
-    });
+    //todo
+    // this.effects.forEach((it: Effect) => {
+    //   it.draw(time, bp, camera)
+    // });
 
     //fixme optimize?
     this.effects = this.effects.filter(b => !b.isFinished)
