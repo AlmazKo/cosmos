@@ -17,6 +17,30 @@ public final class ByteBufferUtil {
         buf.put((byte) value.ordinal());
     }
 
+    public static void put(ByteBuffer buf, int[] value) {
+        if (value == null) {
+            buf.putInt(-1);
+            return;
+        }
+        buf.putInt(value.length);
+
+        for (int i : value) {
+            buf.putInt(i);
+        }
+    }
+
+    public static int[] getIntArray(ByteBuffer buf) {
+        int size = buf.getInt();
+        if (size < 0) return null;
+
+        int[] result = new int[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = buf.getInt();
+        }
+        return result;
+    }
+
+
     public static void put(ByteBuffer buf, boolean value) {
         buf.put((byte) (value ? 1 : 0));
     }
@@ -53,23 +77,6 @@ public final class ByteBufferUtil {
             return value;
         }
 
-    }
-
-    static byte[] debug(ByteBuffer buf) {
-        var dump = new byte[buf.limit() - buf.position()];
-        int i = 0;
-        for (int b = buf.position(); b < buf.limit(); b++) {
-            dump[i++] = buf.get(b);
-        }
-        return dump;
-    }
-
-    static byte[] debugFull(ByteBuffer buf) {
-        var dump = new byte[buf.limit()];
-        for (int i = 0; i < buf.limit(); i++) {
-            dump[i] = buf.get(i);
-        }
-        return dump;
     }
 }
 

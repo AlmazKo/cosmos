@@ -2,7 +2,12 @@ package cos.olympus.game;
 
 
 import cos.logging.Logger;
-import cos.map.*;
+import cos.map.Coord;
+import cos.map.Lands;
+import cos.map.PortalSpot;
+import cos.map.RespawnSpot;
+import cos.map.Tile;
+import cos.map.TileType;
 import cos.olympus.NoSpaceException;
 import cos.olympus.util.IntIntConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -21,18 +26,18 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public final class World {
-    private final static Logger  logger = Logger.get(World.class);
-    private final        int     width;
-    private final        int     height;
-    private final        short[] basis;
-    private final        short[] objects;
-    private final        Tile[]  tiles;
-    private final        int[]   creatures;
+    private final static Logger logger = Logger.get(World.class);
+    final int width;
+    final int height;
+    private final short[] basis;
+    private final short[] objects;
+    private final Tile[] tiles;
+    private final int[] creatures;
 
     private final HashMap<Integer, Creature> creatureObjects = new HashMap<>();
 
-    private final int offsetX;
-    private final int                    offsetY;
+    final int offsetX;
+    final int offsetY;
     final ArrayList<RespawnSpot> respawns;
     final ArrayList<PortalSpot> portals;
 

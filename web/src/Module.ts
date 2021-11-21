@@ -12,8 +12,12 @@ import { ImageAssets } from './game2/server/ImageAssets';
 import { ResourcesServer } from './game2/server/ResourcesServer';
 import { WsServer } from './game2/server/WsServer';
 import { World } from './game2/world/World';
-import { HOST, WS_HOST } from './index';
+import {AdminCanvas} from "./admin/AdminCanvas";
 
+
+export const HOST = "https://localhost";
+export const WS_HOST = "wss://localhost/ws";
+export const WS_HOST_ADMIN = "wss://localhost/ws/admin";
 
 interface Constructor<T = any> {
   new(..._: any[]): T;
@@ -48,7 +52,8 @@ export function get<T>(c: Constructor<T> | string): T {
 }
 
 setCached('api', () => new WsServer(WS_HOST));
-setCached('map', () => new ResourcesServer());
+setCached('admin-api', () => new WsServer(WS_HOST_ADMIN));
+setCached('map', () => new ResourcesServer(HOST));
 setCached('images', () => new ImageAssets(HOST));
 // setCached(LocalServer, () => new LocalServer());
 setCached(Moving, () => new Moving());
@@ -63,4 +68,5 @@ setCached(Game, () => new Game(get('api'), get(World), get(Moving), get(Spells),
 setCached(LandsLayer, () => new LandsLayer(get(World), get('images')));
 setCached(Render, () => new Render(get(Game), get(LandsLayer), get(Spells), get('images')));
 setCached(GameCanvas, () => new GameCanvas(get(Render)));
+setCached(AdminCanvas, () => new AdminCanvas(get('admin-api')));
 

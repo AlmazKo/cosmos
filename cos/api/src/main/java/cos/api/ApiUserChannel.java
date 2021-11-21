@@ -14,22 +14,21 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-class ApiClientChannel implements ReadChannel, AutoCloseable {
-    private final SocketChannel         ch;
-    private       Logger                logger = Logger.get(getClass());
-    private       AtomicInteger         SEQ    = new AtomicInteger(0);
-    private       Consumer<UserPackage> consumer;
-    private       ByteBuffer            input  = ByteBuffer.allocate(16 * 1024);
-    private       ByteBuffer            output = ByteBuffer.allocate(16 * 1024);
-    private       ByteWriter            writer = new ByteWriter(Registry.PARSER, output);
-    private       ByteReader            reader = new ByteReader(Registry.PARSER, this::onData);
+class ApiUserChannel implements ReadChannel, AutoCloseable {
+    private final SocketChannel ch;
+    private Logger logger = Logger.get(getClass());
+    private AtomicInteger SEQ = new AtomicInteger(0);
+    private Consumer<Record> consumer;
+    private ByteBuffer input = ByteBuffer.allocate(16 * 1024);
+    private ByteBuffer output = ByteBuffer.allocate(16 * 1024);
+    private ByteWriter writer = new ByteWriter(Registry.PARSER, output);
+    private ByteReader reader = new ByteReader(Registry.PARSER, this::onData);
 
-
-    ApiClientChannel(SocketChannel ch) {
+    ApiUserChannel(SocketChannel ch) {
         this.ch = ch;
     }
 
-    void start(Consumer<UserPackage> consumer) {
+    void start(Consumer<Record> consumer) {
         this.consumer = consumer;
     }
 
@@ -41,7 +40,8 @@ class ApiClientChannel implements ReadChannel, AutoCloseable {
 //                logger.info("<< #$seqId $t UserPackage[tick=${op.tick()},user=${op.userId()}, ops=${op.ops().size}]")
             consumer.accept((UserPackage) op);
         } else {
-            logger.info("<< #$seqId $t $op");
+//            logger.info("<< #$seqId $t $op");
+            consumer.accept((Record) op);
         }
     }
 

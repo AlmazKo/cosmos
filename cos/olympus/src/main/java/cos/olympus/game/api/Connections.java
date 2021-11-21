@@ -1,7 +1,8 @@
 package cos.olympus.game.api;
 
 import cos.olympus.util.OpsConsumer;
-import cos.ops.AnyOp;
+import cos.ops.SomeOp;
+import cos.ops.UserOp;
 import cos.ops.out.UserPackage;
 
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ public final class Connections {
     private final ArrayList<Connection> connections = new ArrayList<>();
 
     //call from Game
-    public List<AnyOp> collect() {
-        var result = new ArrayList<AnyOp>();
+    public List<UserOp> collect() {
+        var result = new ArrayList<UserOp>();
         connections.forEach(s -> s.collect(result));
         return result;
     }
@@ -22,8 +23,14 @@ public final class Connections {
         connections.forEach(conn -> {
             try {
                 oc.data.forEach((userId, ops) -> {
-                    var up = new UserPackage(tick, userId, ops.toArray(new Record[0]));
-                    conn.write(up);
+                    if (userId == 0) {
+                        for (SomeOp o : ops) {
+                            conn.write((Record) o);
+                        }
+                    } else {
+                        var op = new UserPackage(tick, userId, ops.toArray(new Record[0]));
+                        conn.write(op);
+                    }
                 });
 
             } catch (Exception e) {

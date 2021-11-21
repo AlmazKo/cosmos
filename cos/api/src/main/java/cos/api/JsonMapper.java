@@ -1,6 +1,6 @@
 package cos.api;
 
-import cos.ops.AnyOp;
+import cos.ops.SomeOp;
 import cos.ops.out.Appear;
 import cos.ops.out.CreatureHid;
 import cos.ops.out.CreatureMoved;
@@ -16,7 +16,7 @@ import io.vertx.core.json.JsonObject;
 
 public class JsonMapper {
 
-    public static JsonObject toJson(AnyOp op) {
+    public static JsonObject toJson(SomeOp op) {
         return switch (op) {
             case Appear o -> toJ(o);
             case ProtoAppear o -> toJ(o);

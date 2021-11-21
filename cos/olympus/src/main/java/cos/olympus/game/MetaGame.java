@@ -2,9 +2,10 @@ package cos.olympus.game;
 
 import cos.olympus.Strategy;
 import cos.olympus.util.OpsConsumer;
-import cos.ops.AnyOp;
 import cos.ops.Op;
+import cos.ops.UserOp;
 import cos.ops.in.Login;
+import cos.ops.out.AllCreatures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,6 @@ import java.util.Map;
 
 public class MetaGame {
     private final Map<Integer, Usr> users = new HashMap<>();
-
     private final Map<String, Game> games;
     private final List<Strategy> strategies = new ArrayList<>();
 
@@ -21,7 +21,7 @@ public class MetaGame {
         this.games = games;
     }
 
-    public void onTick(int tick, List<AnyOp> in, OpsConsumer out) {
+    public void onTick(int tick, List<UserOp> in, OpsConsumer out) {
         in.forEach(op -> {
             if (op.code() == Op.LOGIN) {
                 strategies.add(new LoginStrategy(games, op.userId()));
@@ -30,15 +30,32 @@ public class MetaGame {
             }
         });
 
+//        var metrics =
 
         games.values().forEach(game -> {
             game.onTick(tick, out);
+            collectMetrics(out, game);
         });
 
 
         strategies.removeIf(strategy -> strategy.onTick(tick, out));
     }
 
+    private void collectMetrics(OpsConsumer out, Game game) {
+        var crs = game.getWorld().getAllCreatures();
+        if (crs.isEmpty()) return;
+
+        int i = 0;
+        var data = new int[crs.size() * 3];
+        for (Creature cr : crs) {
+            data[i++] = cr.x;
+            data[i++] = cr.y;
+            data[i++] = cr.type().ordinal();
+        }
+        var w = game.getWorld();
+        var op = new AllCreatures(w.width,w.height, w.offsetX, w.offsetY,data);
+        out.add(op);
+    }
 
     public void onLogin(int tick, Login op) {
         var usr = users.get(op.userId());

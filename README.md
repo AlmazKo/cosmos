@@ -1,0 +1,3 @@
+- **cos/olympus** – game engine (server)
+- **cos/api** – game api (server)
+- **web** – web client

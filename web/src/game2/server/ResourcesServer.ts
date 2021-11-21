@@ -1,8 +1,10 @@
 import { MapPieceRaw } from '../../game/api/MapPieceRaw';
-import { HOST } from '../../index';
 import { MapApi } from './MapApi';
 
 export class ResourcesServer implements MapApi {
+
+  constructor(readonly host: string) {
+  }
 
   getMapPiece(world: string, x: int, y: int): Promise<MapPieceRaw> {
     return this.ajax(`/map/${world}?x=${x}&y=${y}`) as Promise<MapPieceRaw>;
@@ -14,7 +16,7 @@ export class ResourcesServer implements MapApi {
   private ajax(url: string): Promise<object> {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open("GET", HOST + url);
+      xhr.open("GET", this.host + url);
       xhr.onerror = () => {
         reject(url + ': request failed')
       };

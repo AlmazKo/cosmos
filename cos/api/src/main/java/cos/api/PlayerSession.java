@@ -1,7 +1,7 @@
 package cos.api;
 
 import cos.logging.Logger;
-import cos.ops.AnyOp;
+import cos.ops.UserOp;
 import cos.ops.Direction;
 import cos.ops.OutOp;
 import cos.ops.in.FireballEmmit;
@@ -23,7 +23,7 @@ import java.util.function.Function;
 class PlayerSession {
     private final    AtomicInteger            cid      = new AtomicInteger(0);
     private final    Logger                   log      = Logger.get(getClass());
-    private final    Function<AnyOp, Integer> olympus;
+    private final    Function<UserOp, Integer> olympus;
     private final    ServerWebSocket          ws;
     private final    int                      userId;
     private volatile boolean                  isClosed = false;
@@ -35,7 +35,7 @@ class PlayerSession {
 
     PlayerSession(ServerWebSocket ws,
                   int userId,
-                  Function<AnyOp, Integer> olympus) {
+                  Function<UserOp, Integer> olympus) {
 
         this.ws = ws;
         this.userId = userId;
@@ -52,7 +52,7 @@ class PlayerSession {
         ws.textMessageHandler(this::onRequest);
     }
 
-    private void send(AnyOp op) {
+    private void send(UserOp op) {
         olympus.apply(op);
     }
 
@@ -64,7 +64,7 @@ class PlayerSession {
         send(op);
     }
 
-    private @Nullable AnyOp parseRequest(JsonObject js) {
+    private @Nullable UserOp parseRequest(JsonObject js) {
         return switch (js.getString("op")) {
             case "move" -> {
                 @Nullable String dirId = js.getString("dir");

@@ -9,8 +9,7 @@ import { TileInfoCanvas } from './game2/render/layers/TileInfoCanvas';
 import { Render } from './game2/render/Render';
 import { get } from './Module';
 
-export const HOST = "https://localhost";
-export const WS_HOST = "wss://localhost/ws";
+
 
 window.onload = () => {
   let div = document.getElementById("game")!!;

@@ -8,7 +8,7 @@ import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.olympus.util.OpConsumer;
 import cos.olympus.util.OpsConsumer;
-import cos.ops.AnyOp;
+import cos.ops.UserOp;
 import cos.ops.Op;
 import cos.ops.in.FireballEmmit;
 import cos.ops.in.MeleeAttack;
@@ -117,7 +117,7 @@ public final class Game {
         world.removeCreatureIf(Creature::isDead);
     }
 
-    public void handleIncomeOp(AnyOp op) {
+    public void handleIncomeOp(UserOp op) {
         //logger.info(">> #" + tickId + " " + op.toString());
         try {
             switch (op.code()) {

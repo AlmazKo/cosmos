@@ -1,7 +1,7 @@
 package cos.olympus.game.api;
 
 import cos.logging.Logger;
-import cos.ops.AnyOp;
+import cos.ops.UserOp;
 import cos.ops.parser.ByteReader;
 import cos.ops.parser.ByteWriter;
 import cos.ops.parser.OpType;
@@ -24,18 +24,18 @@ public class Connection implements BufferReadable {
     private final RawChannel ch;
     private final ByteReader reader;
     private final ByteWriter writer;
-    private ArrayList<AnyOp> ins = new ArrayList<>();
+    private ArrayList<UserOp> ins = new ArrayList<>();
 
     public Connection(RawChannel ch) {
         this.ch = ch;
         this.writer = new ByteWriter(PARSER, ch.out());
         this.reader = new ByteReader(PARSER, (Object op, int seqId, OpType type) -> {
             logger.info("New op " + op);
-            ins.add((AnyOp) op);
+            ins.add((UserOp) op);
         });
     }
 
-    public final void collect(Collection<AnyOp> collector) {
+    public final void collect(Collection<UserOp> collector) {
         if (!ins.isEmpty()) {
             collector.addAll(ins);
             ins = new ArrayList<>(ins.size());
@@ -60,7 +60,7 @@ public class Connection implements BufferReadable {
     }
 
     public void write(Record op) {
-        logger.info(">> " + op.toString());
+//        logger.info(">> " + op.toString());
         writer.write(op, seq.incrementAndGet(), OpType.EVENT);
     }
 }

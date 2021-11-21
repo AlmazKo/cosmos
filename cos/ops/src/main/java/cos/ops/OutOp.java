@@ -1,5 +1,5 @@
 package cos.ops;
 
-public interface OutOp extends AnyOp {
+public interface OutOp extends UserOp {
     int tick();
 }

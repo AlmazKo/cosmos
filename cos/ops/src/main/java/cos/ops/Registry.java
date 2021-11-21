@@ -41,6 +41,7 @@ public interface Registry {
             .register(Op.EMMIT_SHOT, ShotEmmit.class)
             .register(Op.SHOT_MOVED, ShotMoved.class)
             .register(99, UserPackage.class)
+            .register(110, AllCreatures.class)
 
             .build();
 }

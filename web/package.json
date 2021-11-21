@@ -17,8 +17,7 @@
     "url": "https://github.com/AlmazKo/cosmos"
   },
   "scripts": {
-    "watch": "./node_modules/parcel/lib/bin.js index.html",
-    "build": "./node_modules/parcel/lib/bin.js build index.html",
+    "start": "./node_modules/parcel/lib/bin.js serve src/admin.html src/index.html",
     "test": "jest"
   },
   "dependencies": {

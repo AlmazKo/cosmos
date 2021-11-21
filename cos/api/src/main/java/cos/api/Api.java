@@ -4,6 +4,7 @@ package cos.api;
 import cos.logging.Logger;
 import cos.map.Land;
 import cos.map.Lands;
+import cos.ops.out.UserPackage;
 import cos.ops.parser.OpType;
 import fx.nio.Client;
 import io.vertx.core.Vertx;
@@ -30,9 +31,11 @@ import static java.lang.Integer.parseInt;
 
 class Api {
     private Map<Integer, PlayerSession> sessions = new HashMap<>();
-    private ApiClientChannel olympus;
+    private Map<Integer, AdminSession> adminSessions = new HashMap<>();
+    private ApiUserChannel olympus;
     private Logger log = Logger.get(getClass());
     private AtomicInteger playerInc = new AtomicInteger(0);
+    private AtomicInteger adminInc = new AtomicInteger(0);
 
 
     Api(Vertx vertx) throws IOException {
@@ -70,12 +73,18 @@ class Api {
     private void connectToOlympus() {
         var host = prop("CosOlympusHost");
         Client.run(host, 6666, ch -> {
-            this.olympus = new ApiClientChannel(ch);
+            this.olympus = new ApiUserChannel(ch);
             log.info("Connected to Olympus " + host);
-            olympus.start(pkg -> {
+            olympus.start(op -> {
                 sessions.values().removeIf(PlayerSession::isClosed);
-                var sess = sessions.get(pkg.userId());
-                if (sess != null) sess.onOp(pkg);
+                if (op instanceof UserPackage pkg) {
+                    var sess = sessions.get(pkg.userId());
+                    if (sess != null) sess.onOp(pkg);
+                } else {
+                    adminSessions.values().forEach(sess -> {
+                        sess.onOp(op);
+                    });
+                }
             });
 
             return this.olympus;
@@ -110,9 +119,20 @@ class Api {
                         ctx.fail(500);
                         return;
                     }
-                    var ws = wsAr.result();//fixme handle error
+                    var ws = wsAr.result();
                     var userId = playerInc.incrementAndGet();
                     sessions.put(userId, new PlayerSession(ws, userId, it -> olympus.write((Record) it, OpType.REQUEST)));
+                }));
+
+
+        router.route("/ws/admin").handler(ctx ->
+                ctx.request().toWebSocket(wsAr -> {
+                    if (wsAr.failed()) {
+                        ctx.fail(500);
+                        return;
+                    }
+                    var ws = wsAr.result();
+                    adminSessions.put(adminInc.decrementAndGet(), new AdminSession(ws));
                 }));
         server.requestHandler(router);
     }
