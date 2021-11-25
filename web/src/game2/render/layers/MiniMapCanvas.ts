@@ -6,6 +6,26 @@ import { Land } from '../../world/Land';
 import { floor } from '../../world/World';
 import { Render } from '../Render';
 
+export const getColor = (type: TileType) => {
+  switch (type) {
+    case TileType.GRASS:
+      return '#8bd742'
+    case TileType.SHALLOW:
+      return '#63e8ff'
+    case TileType.DEEP_WATER:
+      return '#0099f9'
+    case TileType.GATE:
+      return '#ffcf73'
+    case TileType.TIMBER:
+      return '#cb972a'
+    case TileType.SAND:
+      return '#ffea66'
+    case TileType.WALL:
+      return '#4d5d46'
+  }
+  return '#999';
+};
+
 export class MiniMapCanvas implements CanvasComposer {
   // @ts-ignore
   height: px;
@@ -14,25 +34,7 @@ export class MiniMapCanvas implements CanvasComposer {
   // @ts-ignore
   private p: BasePainter;
 
-  private readonly getColor = (land: Land) => {
-    switch (land.type) {
-      case TileType.GRASS:
-        return '#8bd742'
-      case TileType.SHALLOW:
-        return '#63e8ff'
-      case TileType.DEEP_WATER:
-        return '#0099f9'
-      case TileType.GATE:
-        return '#ffcf73'
-      case TileType.TIMBER:
-        return '#cb972a'
-      case TileType.SAND:
-        return '#ffea66'
-      case TileType.WALL:
-        return '#4d5d46'
-    }
-    return '#999';
-  };
+
 
   constructor(private readonly render: Render) {
   }
@@ -72,7 +74,7 @@ export class MiniMapCanvas implements CanvasComposer {
         const land = piece.data[i];
         const x: pos = piece.x + (i % 16);
         const y: pos = piece.y + floor(i / 16);
-        let color = this.getColor(land);
+        let color = getColor(land.type);
         p.fillRect((x - lx) * pixel, (y - ty) * pixel, pixel, pixel, color)
       }
 

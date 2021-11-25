@@ -81,6 +81,7 @@ class Api {
                     var sess = sessions.get(pkg.userId());
                     if (sess != null) sess.onOp(pkg);
                 } else {
+                    //fixme:  forEach  CME
                     adminSessions.values().forEach(sess -> {
                         sess.onOp(op);
                     });
@@ -132,7 +133,7 @@ class Api {
                         return;
                     }
                     var ws = wsAr.result();
-                    adminSessions.put(adminInc.decrementAndGet(), new AdminSession(ws));
+                    adminSessions.put(adminInc.decrementAndGet(), new AdminSession(lands, ws));
                 }));
         server.requestHandler(router);
     }
