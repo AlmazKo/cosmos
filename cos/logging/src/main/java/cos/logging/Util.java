@@ -83,7 +83,7 @@ final class Util {
                 break;
             }
         }
-        int i = appendString(file== null? "unknown" : file, buf, idx);
+        int i = appendString(file == null ? "unknown" : file, buf, idx);
 
         if (line != -1) {
             buf[i++] = ':';
@@ -118,5 +118,14 @@ final class Util {
         var sw = new StringWriter();
         t.printStackTrace(new PrintWriter(sw));
         return sw.toString();
+    }
+
+    static @Nullable String readResource(String file) {
+        try {
+            var raw = Util.class.getResourceAsStream(file).readAllBytes();
+            return new String(raw);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

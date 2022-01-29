@@ -5,9 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface Logger {
-    enum Level {
-        DEBUG, INFO, WARN, ERROR
-    }
+    String SUB_TYPE = "subType";
 
     static Logger get(Class<?> name) {
         return new SharedLogger(name);
@@ -30,9 +28,9 @@ public interface Logger {
     }
 
     default void info(String subType, Object msg) {
-        ThreadContext.set("subType", subType);
+        ThreadContext.set(SUB_TYPE, subType);
         info(msg.toString());
-        ThreadContext.clear("subType");
+        ThreadContext.clear(SUB_TYPE);
     }
 
     void info(Consumer<Dic> msg);
@@ -51,11 +49,13 @@ public interface Logger {
 
     void debug(String s);
 
-
     void setTag(String tag);
 
     void removeTag();
 
-
     void publish(Level lvl, String msg, @Nullable Throwable throwable);
+
+    enum Level {
+        DEBUG, INFO, WARN, ERROR
+    }
 }

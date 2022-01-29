@@ -6,10 +6,13 @@ import java.util.function.Consumer;
 
 import static cos.logging.Logger.Level.INFO;
 import static cos.logging.Logger.Level.WARN;
-import static cos.logging.Util.*;
+import static cos.logging.Util.appendFileLink;
+import static cos.logging.Util.appendString;
+import static cos.logging.Util.appendThread;
+import static cos.logging.Util.appendTime;
 import static java.lang.System.currentTimeMillis;
 
-public final class SharedLogger implements cos.logging.Logger {
+public final class SharedLogger implements Logger {
     private final boolean debug = false;
     private final String name;
     private boolean errorsOnly = false;
@@ -78,7 +81,7 @@ public final class SharedLogger implements cos.logging.Logger {
     @Override
     public void publish(Level lvl, String msg, @Nullable Throwable throwable) {
         //100 is hardcoded, can be calculated in advance
-        final String subType = ThreadContext.get("subType");
+        final String subType = ThreadContext.get(SUB_TYPE);
         //TODO optimize it
         if (subType != null && !subType.isEmpty()) {
             msg = subType + " - " + msg;

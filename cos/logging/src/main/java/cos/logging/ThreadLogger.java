@@ -6,7 +6,10 @@ import java.util.function.Consumer;
 
 import static cos.logging.Logger.Level.INFO;
 import static cos.logging.Logger.Level.WARN;
-import static cos.logging.Util.*;
+import static cos.logging.Util.appendString;
+import static cos.logging.Util.appendThread;
+import static cos.logging.Util.appendTime;
+import static cos.logging.Util.truncate;
 import static java.lang.System.currentTimeMillis;
 
 /*
