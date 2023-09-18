@@ -9,42 +9,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Connections {
-    private final ArrayList<Connection> connections = new ArrayList<>();
+    private final ArrayList<UserOp> ins = new ArrayList<>();
+    public final ArrayList<UserPackage> out = new ArrayList<>();
+
+
+
+    public void in(UserOp record) {
+        ins.add(record);
+    }
 
     //call from Game
     public List<UserOp> collect() {
-        var result = new ArrayList<UserOp>();
-        connections.forEach(s -> s.collect(result));
+        List<UserOp> result;
+        synchronized (ins) {
+            if (ins.isEmpty()) return List.of();
+            result = List.copyOf(ins);
+            ins.clear();
+        }
         return result;
     }
 
     //call from Game
     public void write(int tick, OpsConsumer oc) {
-        connections.forEach(conn -> {
-            try {
-                oc.data.forEach((userId, ops) -> {
-                    if (userId == 0) {
-                        for (SomeOp o : ops) {
-                            conn.write((Record) o);
-                        }
-                    } else {
-                        var op = new UserPackage(tick, userId, ops.toArray(new Record[0]));
-                        conn.write(op);
+        try {
+            oc.data.forEach((userId, ops) -> {
+                if (userId == 0) {
+                    for (SomeOp o : ops) {
+                      //TODO  System.out.println(">> " + o);
+
+
+//                            conn.write((Record) o);
                     }
-                });
+                } else {
+                    var op = new UserPackage(tick, userId, ops.toArray(new Record[0]));
+                    out.add(op);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                //fixme : todo something with full buffers
-            }
-        });
+//                        conn.write(op);
+                }
+            });
 
-        connections.forEach(Connection::flush);
-        connections.removeIf(Connection::isFinished);
-    }
+        } catch (Exception e) {
+            e.printStackTrace();
+            //fixme : todo something with full buffers
+        }
 
-    //call from Server
-    public void register(Connection gc) {
-        connections.add(gc);
+//        connections.forEach(Connection::flush);
+//        connections.removeIf(Connection::isFinished);
     }
 }

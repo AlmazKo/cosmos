@@ -31,6 +31,7 @@ public final class World {
     final int height;
     private final short[] basis;
     private final short[] objects;
+    private final String name;
     private final Tile[] tiles;
     private final int[] creatures;
 
@@ -41,18 +42,23 @@ public final class World {
     final ArrayList<RespawnSpot> respawns;
     final ArrayList<PortalSpot> portals;
 
-    public World(Lands lands) {
+    public World(Lands lands, String name) {
         this.offsetX = lands.offsetX();
         this.offsetY = lands.offsetY();
         this.width = lands.width();
         this.height = lands.height();
         this.basis = lands.basis();
         this.objects = lands.objects();
+        this.name = name;
         this.creatures = new int[basis.length];
         this.tiles = lands.tiles();
         this.respawns = lands.respawns();
         this.portals = lands.portals();
 //        debug();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void debug() {
@@ -132,7 +138,7 @@ public final class World {
         return creatureObjects.get(crId);
     }
 
-    List<@NotNull Creature> getCreatures(int centerX, int centerY, int radius) {
+    public List<@NotNull Creature> getCreatures(int centerX, int centerY, int radius) {
 
         ArrayList<@NotNull Creature> result = new ArrayList<>();
 
@@ -167,7 +173,7 @@ public final class World {
     void removeCreature(int id) {
         var cr = creatureObjects.remove(id);
         if (cr == null) {
-            logger.warn("Not found creature" + id + " for removing");
+            logger.warn(name + ": Not found creature" + id + " for removing");
             return;
         }
 
@@ -193,21 +199,21 @@ public final class World {
         });
     }
 
-    public Creature createCreature(Avatar usr, int life, int maxDev) {
+    public Creature place(Avatar usr, int x, int y, int life, int maxDev) {
 
-        int idx = toIndex(usr.x(), usr.y());
+        int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) {
             throw new NoSpaceException("Fail finding free place");
         }
 
-        idx = findFreeIndex(usr.x(), usr.y(), maxDev);
+        idx = findFreeIndex(x, y, maxDev);
 
         if (idx >= 0) {
             var coord = toCoord(idx);
             var cr = new Creature(usr, coord.x(), coord.y(), (byte) 0, (byte) 0, null, SOUTH, life);
             creatures[idx] = cr.id();
             creatureObjects.put(cr.id(), cr);
-//            logger.info("Creature #" + cr.id() + " set x=" + cr.x + ", y=" + cr.y);
+            logger.info(name + ": Creature #" + cr.id() + " placed x=" + cr.x + ", y=" + cr.y);
             return cr;
         } else {
             throw new NoSpaceException("Fail finding free place");
@@ -256,10 +262,10 @@ public final class World {
         int creatureId = creatures[from];
 
         if (creatureId == 0) {
-            logger.warn("Try moving from free place " + toX + ", " + toY);
+            logger.warn(name + ": Try moving from free place " + toX + ", " + toY);
         }
         if (creatures[to] != 0) {
-            logger.warn("Try moving into occupied place " + toX + ", " + toY);
+            logger.warn(name + ": Try moving into occupied place " + toX + ", " + toY);
         }
 
         creatures[from] = 0;
@@ -267,7 +273,7 @@ public final class World {
         cr.x = toX;
         cr.y = toY;
 
-        //  logger.info("Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
+////        logger.info(name + ": Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
     }
 
     public @Nullable Coord findFreePlace(int x, int y, int maxDev) {

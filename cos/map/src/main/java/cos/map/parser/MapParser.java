@@ -2,7 +2,12 @@ package cos.map.parser;
 
 import almazko.microjson.JsArray;
 import almazko.microjson.JsObject;
-import cos.map.*;
+import cos.map.CreatureType;
+import cos.map.Lands;
+import cos.map.PortalSpot;
+import cos.map.RespawnSpot;
+import cos.map.Tile;
+import cos.map.TileType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -105,8 +110,10 @@ public class MapParser {
             if (!obj.getString("type").equals("PORTAL")) continue;
 
             var props = obj.getArray("properties");
-            String mapName = findStringProp(props, "name");
-            var spot = new PortalSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, mapName);
+            String mapName = findStringProp(props, "dst_map");
+            int dstX = findIntProp(props, "dst_x");
+            int dstY = findIntProp(props, "dst_y");
+            var spot = new PortalSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, mapName, dstX, dstY);
             result.add(spot);
         }
         return result;
@@ -114,11 +121,11 @@ public class MapParser {
 
     private static int findIntProp(JsArray props, String name) {
         for (Object prop : props) {
-            if (name.equals(((JsObject) prop).getString("name"))) {
+            if ("int".equals(((JsObject) prop).getString("type")) && name.equals(((JsObject) prop).getString("name"))) {
                 return ((JsObject) prop).getInt("value");
             }
         }
-        return 0;
+        throw new RuntimeException("Not found int prop '" + name + "' in " + props);
     }
 
     private static String findStringProp(JsArray props, String name) {
@@ -127,7 +134,7 @@ public class MapParser {
                 return ((JsObject) prop).getString("value");
             }
         }
-        return null;
+        throw new RuntimeException("Not found string prop '" + name + "' in " + props);
     }
 
     private static short[] readChunks(JsArray layers, Spec spec) {

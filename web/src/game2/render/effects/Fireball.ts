@@ -25,6 +25,7 @@ export class Fireball implements Effect {
   id: uint;
 
   constructor(private readonly images: Images, spec: FireballSpell, world: World) {
+    console.log("Start Fireball effect")
     this.id = spec.id;
     this.direction = spec.direction;
     this.posX = spec.initX;
@@ -74,11 +75,7 @@ export class Fireball implements Effect {
     }
   }
 
-  draw(time: DOMHighResTimeStamp, bp: TilePainter) {
-  }
-
-  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
-
+  draw(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
     this.anim.run(time);
     let shiftX: px = 0, shiftY: px = 0;
     let sy: px;

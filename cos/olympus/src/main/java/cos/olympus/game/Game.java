@@ -2,15 +2,18 @@ package cos.olympus.game;
 
 import cos.logging.Logger;
 import cos.map.Coord;
-import cos.map.CreatureType;
 import cos.map.PortalSpot;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
+import cos.olympus.game.strategy.RespawnPlayerStrategy;
+import cos.olympus.game.strategy.RespawnStrategy;
+import cos.olympus.game.strategy.Strategy;
+import cos.olympus.game.strategy.TeleportOutStrategy;
 import cos.olympus.util.OpConsumer;
 import cos.olympus.util.OpsConsumer;
 import cos.ops.UserOp;
-import cos.ops.Op;
 import cos.ops.in.FireballEmmit;
+import cos.ops.in.Logout;
 import cos.ops.in.MeleeAttack;
 import cos.ops.in.Move;
 import cos.ops.in.ShotEmmit;
@@ -20,31 +23,37 @@ import cos.ops.out.Disconnect;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cos.map.CreatureType.PLAYER;
+
 
 public final class Game {
+    record Config(
+            Boolean settleMobs
+    ) {
+
+    }
+
     private final static Logger logger = Logger.get(Game.class);
 
     private final World world;
+    private final Config cfg = new Config(false);
 
     private final Movements movements;
-    private final Teleports teleports;
     private final Spells spells;
     private final List<RespawnStrategy> npcRespawns = new ArrayList<>();
     private final List<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
+    private final List<Strategy> strategies = new ArrayList<>();
     private final Zone zone;
     private OpConsumer tickOuts = new OpsConsumer();
 
     private int tickId = 0;
-    private Boolean settleMobs = true;
 
-    public Game(World world, Teleports teleports) {
+    public Game(World world) {
         this.world = world;
         this.spells = new Spells(world);
         this.zone = new Zone(world);
         this.movements = new Movements(world);
-        this.teleports = teleports;
-//        npcRespawns.add(new RespawnStrategy(world, spells, movements, new Coord(5, 5), NpcType.WOLF));
-        if (settleMobs) settleMobs();
+        if (cfg.settleMobs()) settleMobs();
     }
 
     public World getWorld() {
@@ -59,14 +68,38 @@ public final class Game {
         });
     }
 
+    public void handleIncomeOp(UserOp op) {
+        //logger.info(">> #" + tick + " " + op.toString());
+
+        try {
+            if (op instanceof Logout o) {
+                removeAvatar(o.userId());
+            } else if (op instanceof Move o) {
+                movements.onMove(o);
+            } else if (op instanceof StopMove o) {
+                movements.onStopMove(o);
+            } else if (op instanceof FireballEmmit o) {
+                spells.onSpell(tickId, o);
+            } else if (op instanceof ShotEmmit o) {
+                spells.onShot(tickId, o);
+            } else if (op instanceof MeleeAttack o) {
+                spells.onMeleeAttack(tickId, o);
+            }
+        } catch (Exception ex) {
+            logger.warn("Error during processing " + op, ex);
+            tickOuts.add(new Disconnect(op.id(), tickId, op.userId()));
+        }
+    }
+
     public void onTick(int tick, OpConsumer out) {
         tickId = tick;
         tickOuts = out;
 
+        strategies.removeIf(it -> it.onTick(tick, out));
         playersRespawns.removeIf(it -> it.onTick(tick, out));
         movements.onTick(tick);
-        var damages = new ArrayList<Damage>();
-        var deaths = new ArrayList<Death>();
+        var damages = new ArrayList<Damage>();//todo: channel
+        var deaths = new ArrayList<Death>();//todo: channel
         spells.onTick(tick, damages, out);
 
         damages.forEach(d -> {
@@ -77,7 +110,7 @@ public final class Game {
                 deaths.add(death);
                 movements.interrupt(d.victim());
 
-                if (d.victim().avatar instanceof Player) {
+                if (d.victim().is(PLAYER)) {
                     playersRespawns.add(new RespawnPlayerStrategy(tick, world, (Player) d.victim().avatar));
                 }
 
@@ -86,13 +119,13 @@ public final class Game {
         });
 
 
-        npcRespawns.forEach(it -> it.onTick(tick));
+        npcRespawns.forEach(it -> it.onTick(tick, out));
         world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, out));
         world.getAllCreatures().forEach(cr -> {
-            if (cr.type() == CreatureType.PLAYER) {
+            if (cr.is(PLAYER)) {
                 for (PortalSpot portal : world.portals) {
                     if (portal.x() == cr.x && portal.y() == cr.y) {
-                        teleports.activate(tickId, (Player) cr.avatar, portal);
+                        strategies.add(new TeleportOutStrategy(tick, this, cr, portal));
                     }
                 }
             }
@@ -117,26 +150,11 @@ public final class Game {
         world.removeCreatureIf(Creature::isDead);
     }
 
-    public void handleIncomeOp(UserOp op) {
-        //logger.info(">> #" + tickId + " " + op.toString());
-        try {
-            switch (op.code()) {
-                case Op.LOGOUT -> removeAvatar(op.userId());
+    public void placeAvatar(int userId) {
 
-                case Op.MOVE -> movements.onMove((Move) op);
-                case Op.STOP_MOVE -> movements.onStopMove((StopMove) op);
-
-                case Op.EMMIT_FIREBALL -> spells.onSpell(tickId, (FireballEmmit) op);
-                case Op.EMMIT_SHOT -> spells.onShot(tickId, (ShotEmmit) op);
-                case Op.MELEE_ATTACK -> spells.onMeleeAttack(tickId, (MeleeAttack) op);
-            }
-        } catch (Exception ex) {
-            logger.warn("Error during processing " + op, ex);
-            tickOuts.add(new Disconnect(op.id(), tickId, op.userId()));
-        }
     }
 
-    private void removeAvatar(int userId) {
+    public void removeAvatar(int userId) {
         var cr = world.getCreature(userId);
         if (cr == null) return;
 

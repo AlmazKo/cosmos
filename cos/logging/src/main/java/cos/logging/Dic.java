@@ -1,49 +1,63 @@
 package cos.logging;
 
-public final class Dic {
+import org.jetbrains.annotations.Nullable;
 
-    //todo: remove alloc
-    private final Object[] data = new Object[16];
+import static cos.logging.Util.appendString;
+
+
+public final class Dic {
+    private final String[] data;
     private int size = 0;
 
-    public Dic add(String key, long value) {
-        data[size] = key;
-        data[size + 1] = value;
-        size += 2;
-        return this;
+    public Dic() {
+        data = new String[32];
     }
 
-    public Dic add(String key, int value) {
-        data[size] = key;
-        data[size + 1] = value;
-        size += 2;
-        return this;
+    public Dic(int size) {
+        data = new String[size * 2];
     }
 
-    public Dic add(String key, Object value) {
+    public void set(String key, String value) {
+        if (key == null) return;
 
-        data[size] = key;
-        data[size + 1] = value.toString();
-        size += 2;
-
-        //todo: add dynamic alloc
-        return this;
-    }
-
-
-    Object get(String key) {
-        for (int i = 0; i < data.length; i += 2) {
-            Object k = data[i];
-            if (k.equals(key)) {
-                return data[i + 1];
+        for (int i = 0; i < size; i += 2) {
+            if (data[i].equals(key)) {
+                data[i + 1] = value;
+                return;
             }
         }
 
+        if (size >= data.length) {
+            return;
+        }
+
+        data[size] = key;
+        data[size + 1] = value;
+        size += 2;
+    }
+
+    public @Nullable String get(String key) {
+        for (int i = 0; i < size; i += 2) {
+            if (data[i].equals(key)) {
+                return data[i + 1];
+            }
+        }
         return null;
     }
 
+    public void remove(String key) {
+        for (int i = 0; i < size; i += 2) {
+            if (data[i].equals(key)) {
+                data[i + 1] = null;
+                return;
+            }
+        }
+    }
+
     public void clear() {
-        size = 0;
+        for (int i = 0; i < size; i += 2) {
+            data[i + 1] = null;
+        }
     }
 
     public CharSequence toCharSequence() {
@@ -51,9 +65,8 @@ public final class Dic {
 
         var sb = new StringBuilder();
         sb.append('{');
-
         for (int i = 0; i < size; i += 2) {
-            sb.append((String) data[i]);
+            sb.append(data[i]);
             sb.append('=');
             sb.append(data[i + 1]);
 
@@ -65,8 +78,28 @@ public final class Dic {
         return sb;
     }
 
+    int append(byte[] buf, int index) {
+        buf[index++] = '{';
+
+        for (int i = 0; i < size; i += 2) {
+            index = appendString(data[i], buf, index);
+            buf[index++] = '=';
+            index = appendString(data[i + 1], buf, index);
+            buf[index++] = ',';
+            buf[index++] = ' ';
+        }
+
+        buf[index - 2] = '}';
+        buf[index - 1] = 0;
+        return index - 1;
+    }
+
     @Override
     public String toString() {
         return toCharSequence().toString();
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
     }
 }

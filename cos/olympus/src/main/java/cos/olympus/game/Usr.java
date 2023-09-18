@@ -2,11 +2,13 @@ package cos.olympus.game;
 
 public class Usr {
 
-    final int id;
-    String worldName;
+    public final int id;
+    public final String name;
+    public String worldName;
 
     public Usr(int id, String worldName) {
         this.id = id;
+        this.name = "user:" + id;
         this.worldName = worldName;
     }
 

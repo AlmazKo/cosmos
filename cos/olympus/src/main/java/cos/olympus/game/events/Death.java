@@ -7,7 +7,7 @@ public record Death(
         int tick,
         Spell spell,
         Creature victim
-) {
+) implements Event {
 
     public cos.ops.out.Death toUserOp(int userId) {
         return new cos.ops.out.Death(id, tick, userId, spell.source().id(), victim.id());

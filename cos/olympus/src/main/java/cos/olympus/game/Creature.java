@@ -3,6 +3,7 @@ package cos.olympus.game;
 import cos.map.CreatureType;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
+import cos.olympus.game.strategy.SpellStrategy;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,24 +11,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cos.olympus.game.Movements.METER;
-import static cos.ops.Direction.*;
+import static cos.ops.Direction.EAST;
+import static cos.ops.Direction.NORTH;
+import static cos.ops.Direction.SOUTH;
+import static cos.ops.Direction.WEST;
 
-public final class Creature implements Orientable {
-    final Avatar avatar;
+public final class Creature implements Agent {
+    public Avatar avatar;
     int lastSpellTick;
+
     int x;
     int y;
     int offset;
     int speed;
     @Nullable Direction mv = null;
-
     Direction sight;
+
+
     Metrics metrics;
     Bag bag = new Bag();
+
     Map<Integer, Obj> zoneObjects = new HashMap<>();
     Map<Integer, Orientation> zoneCreatures = new HashMap<>();
     Map<Integer, Metrics> zoneMetrics = new HashMap<>();
     Map<Integer, SpellStrategy> zoneSpells = new HashMap<>();
+    
+    public Metrics metrics() {
+        return metrics;
+    }
 
     public Creature(Avatar avatar, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight, int life) {
         this.avatar = avatar;
@@ -52,15 +63,13 @@ public final class Creature implements Orientable {
         return metrics.copy();
     }
 
+
     @Override public String toString() {
         return "Creature{" +
                "id=" + avatar.id() +
                ", lvl=" + metrics.lvl +
                ", life=" + metrics.life +
                ", type=" + type() +
-//                ", name='" + name + '\'' +
-//                ", x=" + x +
-//                ", y=" + y +
                ", pos=[" + rx() + "; " + ry() + "]" +
                ", speed=" + speed +
                ", dir=" + mv +
@@ -94,11 +103,11 @@ public final class Creature implements Orientable {
         return metrics.isDead();
     }
 
-    public int id() {
+    @Override public int id() {
         return avatar.id();
     }
 
-    public CreatureType type() {
+    @Override public CreatureType type() {
         return avatar.type();
     }
 

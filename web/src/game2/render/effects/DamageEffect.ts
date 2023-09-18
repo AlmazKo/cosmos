@@ -25,11 +25,7 @@ export class DamageEffect implements Effect {
     });
   }
 
-  draw(time: DOMHighResTimeStamp, p: TilePainter) {
-
-  }
-
-  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
+  draw(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
     const x = camera.toX(this.posX) + HCELL;
     const y = camera.toY(this.posY);
     const amount = this.event.amount;

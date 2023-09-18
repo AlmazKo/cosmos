@@ -1,22 +1,28 @@
 package cos.olympus.game;
 
-import cos.map.Land;
-import cos.olympus.util.OpsConsumer;
-import cos.ops.out.CreatureHid;
-import cos.ops.out.CreatureMoved;
-import cos.ops.OutOp;
+import cos.ops.in.Login;
+import cos.ops.in.Move;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static cos.ops.Direction.NORTH;
 
 class ZoneTest {
-//
-//
+    static final int userId = 777;
+
+    @Test
+    @DisplayName("Teleport")
+    void teleport() {
+        var game = new TestGame();
+        game.tick(new Login(1, userId));
+        var a = game.appear(userId);
+        game.tick(new Move(2, 777, a.x(), a.y(), NORTH, NORTH));
+        game.many(18);//14
+
+    }
+
     @Test
     @DisplayName("Update zone")
     void infinityMoving() throws IOException {

@@ -1,8 +1,8 @@
-import { Dir, TileType } from '../constants';
-import { Creature } from '../engine/Creature';
-import { MapApi } from '../server/MapApi';
-import { Loading } from '../server/util';
-import { Land } from './Land';
+import {Dir, TileType} from '../constants';
+import {Creature} from '../engine/Creature';
+import {MapApi} from '../server/MapApi';
+import {Loading} from '../server/util';
+import {Land} from './Land';
 
 
 /**
@@ -30,6 +30,12 @@ export class World {
 
   constructor(private readonly api: MapApi) {
 
+  }
+
+  set(worldName: string) {
+    console.log(`Set world: '${worldName}'`)
+    this.name = worldName;
+    this.pieces = [[]]; //todo store old pieces
   }
 
   iterateLands(posX: pos, posY: pos, radius: uint, handler: (p: Piece | undefined) => void) {

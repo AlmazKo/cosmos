@@ -83,7 +83,7 @@ export class Player {
       if (!this.started) {
         this.started = true;
         composer.init(this.canvas.ctx, this.canvas.width, this.canvas.height);
-        console.info('Started');
+        console.debug('Init canvas');
       }
 
       prev = now;

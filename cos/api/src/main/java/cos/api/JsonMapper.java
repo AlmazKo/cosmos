@@ -29,7 +29,7 @@ public class JsonMapper {
             case Damage o -> toJ(o);
             case Death o -> toJ(o);
             case MeleeAttacked o -> toJ(o);
-            default -> throw new RuntimeException("No json serializator for $op");
+            default -> throw new RuntimeException("No json serializator for " + op);
         };
     }
 
@@ -38,17 +38,16 @@ public class JsonMapper {
         return new JsonObject().put("id", op.id())
                 .put("action", "appear")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
+                .put("data", new JsonObject()
                                 .put("id", op.id())
                                 .put("userId", op.userId())
-//                .put("map", "map")
                                 .put("x", op.x())
                                 .put("y", op.y())
                                 .put("mv", op.mv())
                                 .put("sight", op.sight())
                                 .put("lvl", op.lvl())
                                 .put("life", op.life())
+                        //                .put("map", "map")
                 );
     }
 
@@ -56,14 +55,13 @@ public class JsonMapper {
         return new JsonObject().put("id", op.id())
                 .put("action", "proto_appear")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("userId", op.userId())
-                                .put("map", op.world())
-                                .put("x", op.x())
-                                .put("y", op.y())
-                                .put("sight", op.sight())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("userId", op.userId())
+                        .put("map", op.world())
+                        .put("x", op.x())
+                        .put("y", op.y())
+                        .put("sight", op.sight())
                 );
     }
 
@@ -71,15 +69,14 @@ public class JsonMapper {
         return new JsonObject().put("id", op.id())
                 .put("action", "metrics")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("userId", op.userId())
-                                .put("creatureId", op.creatureId())
-                                .put("life", op.life())
-                                .put("lvl", op.lvl())
-                                .put("exp", op.exp())
-                                .put("maxLife", op.maxLife())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("userId", op.userId())
+                        .put("creatureId", op.creatureId())
+                        .put("life", op.life())
+                        .put("lvl", op.lvl())
+                        .put("exp", op.exp())
+                        .put("maxLife", op.maxLife())
                 );
     }
 
@@ -87,13 +84,11 @@ public class JsonMapper {
         return new JsonObject().put("id", op.id())
                 .put("action", "appear_obj")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-
-                                .put("x", op.x())
-                                .put("y", op.y())
-                                .put("tileId", op.tileId())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("x", op.x())
+                        .put("y", op.y())
+                        .put("tileId", op.tileId())
                 );
     }
 
@@ -102,16 +97,15 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "creature_moved")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("creatureId", op.creatureId())
-                                .put("x", op.x())
-                                .put("y", op.y())
-                                .put("offset", op.offset())
-                                .put("speed", op.speed())
-                                .put("mv", op.mv())
-                                .put("sight", op.sight())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("creatureId", op.creatureId())
+                        .put("x", op.x())
+                        .put("y", op.y())
+                        .put("offset", op.offset())
+                        .put("speed", op.speed())
+                        .put("mv", op.mv())
+                        .put("sight", op.sight())
                 );
     }
 
@@ -120,16 +114,15 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "fireball_moved")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("spellId", op.spellId())
-                                .put("sourceId", op.userId())
-                                .put("x", op.x())
-                                .put("y", op.y())
-                                .put("speed", op.speed())
-                                .put("dir", op.dir())
-                                .put("finished", op.finished())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("spellId", op.spellId())
+                        .put("sourceId", op.userId())
+                        .put("x", op.x())
+                        .put("y", op.y())
+                        .put("speed", op.speed())
+                        .put("dir", op.dir())
+                        .put("finished", op.finished())
                 );
     }
 
@@ -138,16 +131,15 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "shot_moved")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("spellId", op.spellId())
-                                .put("sourceId", op.userId())
-                                .put("x", op.x())
-                                .put("y", op.y())
-                                .put("speed", op.speed())
-                                .put("dir", op.dir())
-                                .put("finished", op.finished())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("spellId", op.spellId())
+                        .put("sourceId", op.userId())
+                        .put("x", op.x())
+                        .put("y", op.y())
+                        .put("speed", op.speed())
+                        .put("dir", op.dir())
+                        .put("finished", op.finished())
                 );
     }
 
@@ -156,10 +148,9 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "creature_hid")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("creatureId", op.creatureId())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("creatureId", op.creatureId())
                 );
     }
 
@@ -168,14 +159,13 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "damage")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("creatureId", op.creatureId())
-                                .put("victimId", op.victimId())
-                                .put("amount", op.amount())
-                                .put("crit", op.crit())
-                                .put("spellId", op.spellId())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("creatureId", op.creatureId())
+                        .put("victimId", op.victimId())
+                        .put("amount", op.amount())
+                        .put("crit", op.crit())
+                        .put("spellId", op.spellId())
                 );
     }
 
@@ -184,11 +174,10 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "melee_attacked")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("creatureId", op.sourceId())
-                                .put("spellId", op.spellId())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("creatureId", op.sourceId())
+                        .put("spellId", op.spellId())
                 );
     }
 
@@ -197,11 +186,10 @@ public class JsonMapper {
                 .put("id", op.id())
                 .put("action", "death")
                 .put("type", "")
-                .put(
-                        "data", new JsonObject()
-                                .put("id", op.id())
-                                .put("creatureId", op.creatureId())
-                                .put("victimId", op.victimId())
+                .put("data", new JsonObject()
+                        .put("id", op.id())
+                        .put("creatureId", op.creatureId())
+                        .put("victimId", op.victimId())
                 );
     }
 }

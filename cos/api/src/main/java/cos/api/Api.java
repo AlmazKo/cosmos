@@ -5,8 +5,6 @@ import cos.logging.Logger;
 import cos.map.Land;
 import cos.map.Lands;
 import cos.ops.out.UserPackage;
-import cos.ops.parser.OpType;
-import fx.nio.Client;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
@@ -30,16 +28,17 @@ import java.util.stream.Collectors;
 import static java.lang.Integer.parseInt;
 
 class Api {
-    private Map<Integer, PlayerSession> sessions = new HashMap<>();
-    private Map<Integer, AdminSession> adminSessions = new HashMap<>();
-    private ApiUserChannel olympus;
-    private Logger log = Logger.get(getClass());
-    private AtomicInteger playerInc = new AtomicInteger(0);
-    private AtomicInteger adminInc = new AtomicInteger(0);
+    private final Map<Integer, PlayerSession> sessions = new HashMap<>();
+    private final Map<Integer, AdminSession> adminSessions = new HashMap<>();
+    private final Logger log = Logger.get(getClass());
+    private final AtomicInteger playerInc = new AtomicInteger(0);
+    private final AtomicInteger adminInc = new AtomicInteger(0);
+    private final Bus bus;
 
 
     Api(Vertx vertx) throws IOException {
         log.info("Vertx started!");
+        this.bus = new Bus(vertx.eventBus());
 
         var dir = System.getProperty("CosResourcesDir");
         var res = (dir == null || dir.isBlank()) ? Paths.get("", "../../resources") : Paths.get("", dir);
@@ -54,8 +53,8 @@ class Api {
 
         //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
         var sertOpts = new PemKeyCertOptions();
-        sertOpts.setKeyValue(resToBuffer("/localhost+2-key.pem"));
-        sertOpts.setCertValue(resToBuffer("/localhost+2.pem"));
+        sertOpts.setKeyValue(readRescourceToBuffer("/localhost+2-key.pem"));
+        sertOpts.setCertValue(readRescourceToBuffer("/localhost+2.pem"));
         opts.setPemKeyCertOptions(sertOpts);
 
         var server = vertx.createHttpServer(opts);
@@ -68,47 +67,27 @@ class Api {
                 log.info("Started!");
             }
         });
+
+
+        bus.consume("game_out", this::onMessage);
     }
 
-    private void connectToOlympus() {
-        var host = prop("CosOlympusHost");
-        Client.run(host, 6666, ch -> {
-            this.olympus = new ApiUserChannel(ch);
-            log.info("Connected to Olympus " + host);
-            olympus.start(op -> {
-                sessions.values().removeIf(PlayerSession::isClosed);
-                if (op instanceof UserPackage pkg) {
-                    var sess = sessions.get(pkg.userId());
-                    if (sess != null) sess.onOp(pkg);
-                } else {
-                    //fixme:  forEach  CME
-                    adminSessions.values().forEach(sess -> {
-                        sess.onOp(op);
-                    });
-                }
-            });
+    private void onMessage(Record record) {
+        if (record instanceof UserPackage pkg) {
+            var sess = sessions.get(pkg.userId());
+            sess.onOp(pkg);
+        } else {
+//            log.warn("Unknown op: " + record);
+        }
 
-            return this.olympus;
-        });
     }
 
     private String prop(String name) {
         return System.getProperty(name, System.getenv(name));
     }
 
-    private Buffer op(Byte code, int id, int userId, byte[] bytes) {
-        var bf = Buffer.buffer(bytes.length + 2 + 4);
-        bf.appendByte(code);
-        bf.appendInt(id);
-        bf.appendInt(userId);
-        bf.appendBytes(bytes);
-        bf.appendByte(Byte.MAX_VALUE);
-        return bf;
-    }
-
 
     private void initApi(Vertx vertx, Map<String, Lands> lands, HttpServer server) {
-        connectToOlympus();
         var router = Router.router(vertx);
         initCors(router);
         router.route().handler(new WebLogger());
@@ -122,7 +101,7 @@ class Api {
                     }
                     var ws = wsAr.result();
                     var userId = playerInc.incrementAndGet();
-                    sessions.put(userId, new PlayerSession(ws, userId, it -> olympus.write((Record) it, OpType.REQUEST)));
+                    sessions.put(userId, new PlayerSession(ws, userId, it -> bus.publish("game_in", it)));
                 }));
 
 
@@ -143,12 +122,13 @@ class Api {
         var basis = cc.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> Arrays.stream(e.getValue()).map(t -> {
                     if (t == null) {
-                        log.warn("Wrong " + e.getKey());
+                        //  log.warn("Wrong " + e.getKey());
                         return List.of();
                     } else {
                         return List.of(t.id(), t.type().getId());
                     }
                 }).toList()));
+
 
         router.get("/map/" + name).handler(req -> {
             var x = parseInt(req.queryParam("x").get(0));
@@ -156,14 +136,16 @@ class Api {
             var t = basis.get(new Splitter.Coord<>(x, y));
             req.response().putHeader("content-type", "application/json; charset=utf-8");
             if (t == null) {
-                req.fail(400);
+                req.fail(404);
             } else {
                 req.response().end(t.toString());
             }
         });
+
+        router.route().failureHandler(ctx -> ctx.response().setStatusCode(ctx.statusCode()).end());
     }
 
-    private void initCors(Router router) {
+    private static void initCors(Router router) {
         var cors = CorsHandler.create("*");
         cors.allowedMethod(HttpMethod.GET);
         var headers = new HashSet<String>();
@@ -176,7 +158,7 @@ class Api {
         router.route().handler(cors);
     }
 
-    private static Buffer resToBuffer(String file) throws IOException {
+    private static Buffer readRescourceToBuffer(String file) throws IOException {
         byte[] data = Api.class.getResourceAsStream(file).readAllBytes();
         return Buffer.buffer(data);
     }

@@ -114,17 +114,17 @@ export class Render {
 
     crp.zoneCreatures.forEach((cr) => {
       const dc = this.getDrawable(cr);
-      dc.draw2(time, this.p!!, this.tp, camera);
+      dc.draw(time, this.p!!, this.tp, camera);
     });
 
-    p.draw2(time, this.p!!, this.tp, camera);
+    p.draw(time, this.p!!, this.tp, camera);
     if (p.creature.isDead()) {
       this.drawDeath(this.tp, camera);
     } else {
       this.drawFog(this.tp, camera);
     }
 
-    this.effects.draw2(time, this.tp, camera);
+    this.effects.draw(time, this.tp, camera);
     this.drawCursorPosition();
     this.drawConnectionStatus();
     this.panels.draw(time, this.tp.p)

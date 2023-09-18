@@ -74,10 +74,7 @@ export class Shot implements Effect {
     }
   }
 
-  draw(time: DOMHighResTimeStamp, bp: TilePainter) {
-  }
-
-  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
+  draw(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
 
     this.anim.run(time);
     let shiftX: px = 0, shiftY: px = 0;

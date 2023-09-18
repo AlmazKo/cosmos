@@ -1,6 +1,7 @@
 package cos.ops;
 
 public interface Op {
+    byte ENTER          = 99;
     byte LOGIN          = 100;
     byte APPEAR         = 101;
     byte MOVE           = 102;
@@ -20,6 +21,7 @@ public interface Op {
     byte SHOT_MOVED     = 117;
     byte PROTO_APPEAR   = 118;
     byte WORLD_LOGIN   = 119;
+    byte TELEPORT_IN   = 120;
 
     //infrastructure op-codes
     byte NOPE       = 0;

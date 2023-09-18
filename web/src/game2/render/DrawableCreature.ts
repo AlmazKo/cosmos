@@ -60,12 +60,7 @@ export class DrawableCreature implements TileDrawable {
     this.orientation = c.orientation;
   }
 
-  draw(time: DOMHighResTimeStamp, bp: TilePainter) {
-
-  }
-
-  draw2(time: DOMHighResTimeStamp, p: CanvasContext, bp: TilePainter, camera: Camera) {
-
+  draw(time: DOMHighResTimeStamp, p: CanvasContext, bp: TilePainter, camera: Camera) {
     let shift = (time % 400) / 400;
     this.drawLifeLine(p, camera);
     const o = this.orientation;
@@ -91,6 +86,7 @@ export class DrawableCreature implements TileDrawable {
       let sw = 32, sh = 32;
       bp.drawTo("character", sx, sy, sw, sh, x, y, CELL, CELL);
     } else if (this.creature.id < 10000) {
+      //another player
       x = camera.toX2(this.creature.orientation);
       y = camera.toY2(this.creature.orientation);
 

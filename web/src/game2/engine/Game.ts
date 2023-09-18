@@ -7,7 +7,8 @@ import {
     FireballMoved,
     MeleeAttacked,
     ObjAppear,
-    OpMetrics, ProtoAppear,
+    OpMetrics,
+    ProtoAppear,
     ShotMoved
 } from '../../game/actions/ApiMessage';
 import {FireballSpell} from '../../game/actions/FireballSpell';
@@ -97,7 +98,7 @@ export class Game implements MovingListener {
     private onData(pkg: Package) {
         pkg.messages.forEach(msg => {
             let e = {...msg.data, tickId: pkg.tick};
-            console.log(msg.action, e);
+            console.log("%c◁ "+msg.action, 'color:red', JSON.stringify(e));
             switch (msg.action) {
                 case 'proto_appear':
                     this.onProtoAppear(e)
@@ -290,15 +291,14 @@ export class Game implements MovingListener {
                 y: e.y,
                 sight: e.sight,
                 direction: null,
-                metrics: new Metrics(1, -1,100, 100, "Player#" + e.userId),
+                metrics: new Metrics(1, -1, 100, 100, "Player#" + e.userId),
                 viewDistance: 10
             };
-            console.log("World", e.map)
-            this.world.name = e.map;
+            this.world.set(e.map);
             this.proto = this.addPlayer(arrival) as Player;
             this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
         } else {
-
+            this.world.set(e.map);
             this.proto.metrics.life = this.proto.metrics.maxLife;
             this.proto.orientation.x = e.x;
             this.proto.orientation.y = e.y;
@@ -372,11 +372,11 @@ export class Game implements MovingListener {
             cr = this.proto;
             this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset / 100, e.x, e.y);//shift hardcoded
 
-
-            const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
-            if (stop) {
-                this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
-            }
+            // fixme: now we ignore the server orientation
+            // const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
+            // if (stop) {
+            //     this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
+            // }
         } else {
             cr = proto.zoneCreatures.get(e.creatureId);
             if (!cr) {

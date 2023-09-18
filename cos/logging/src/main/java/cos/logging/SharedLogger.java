@@ -1,22 +1,24 @@
 package cos.logging;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.util.Objects;
 
 import static cos.logging.Logger.Level.INFO;
-import static cos.logging.Logger.Level.WARN;
+import static cos.logging.ThreadContext.TAG;
 import static cos.logging.Util.appendFileLink;
+import static cos.logging.Util.appendInt;
 import static cos.logging.Util.appendString;
 import static cos.logging.Util.appendThread;
 import static cos.logging.Util.appendTime;
 import static java.lang.System.currentTimeMillis;
 
 public final class SharedLogger implements Logger {
-    private final boolean debug = false;
     private final String name;
-    private boolean errorsOnly = false;
-    private String tag = "";
+    private Level level = LogConfig.DEFAULT_LEVEL;
+    private @NotNull String tag = "";
+    private final LogHandler[] handlers = LogConfig.HANDLERS;
 
     public SharedLogger(Class<?> klass) {
         name = klass.getSimpleName();
@@ -26,92 +28,112 @@ public final class SharedLogger implements Logger {
         this.name = name;
     }
 
+
     @Override
-    public void warn(String msg) {
-        publish(WARN, msg, null);
+    public Level level() {
+        return level;
     }
 
     @Override
-    public void warn(String msg, Throwable t) {
-        publish(WARN, msg, t);
-    }
-
-    @Override
-    public void error(String msg, Throwable t) {
-        warn(msg, t);
-    }
-
-    @Override
-    public void info(Consumer<Dic> msg) {
-        var dic = new Dic();
-        msg.accept(dic);
-        info(dic);
-        dic.clear();
-    }
-
-    public void warn(Consumer<Dic> msg, Throwable e) {
-        var dic = new Dic();
-        msg.accept(dic);
-        warn(dic.toString(), e);
-        dic.clear();
-    }
-
-    @Override
-    public void info(Dic msg) {
-        info(msg.toString());
-    }
-
-    @Override
-    public void info(String msg) {
-        if (!errorsOnly) publish(INFO, msg, null);
-    }
-
-    @Override
-    public SharedLogger atErrors() {
-        errorsOnly = true;
+    public Logger setLevel(Level level) {
+        this.level = level;
         return this;
     }
 
     @Override
-    public void debug(String s) {
-        //todo nothing
+    public void publish(Level lvl, Object msg, @Nullable Throwable throwable) {
+        if (lvl.compareTo(level) < 0) return;
+
+        try {
+            for (LogHandler h : handlers) {
+                h.beforePublish(lvl, msg, throwable);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        write(lvl, throwable, msg.toString());
+
+        try {
+            for (LogHandler h : handlers) {
+                h.afterPublish(lvl, msg, throwable);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
+    private void write(Level lvl, @Nullable Throwable throwable, String message) {
+        //extra spaced is hardcoded, can be calculated in advance
+        var buf = new byte[message.length() + 300];//todo ; now it supports only latin
+        int i = append(message, buf);
 
-    @Override
-    public void publish(Level lvl, String msg, @Nullable Throwable throwable) {
-        //100 is hardcoded, can be calculated in advance
-        final String subType = ThreadContext.get(SUB_TYPE);
-        //TODO optimize it
-        if (subType != null && !subType.isEmpty()) {
-            msg = subType + " - " + msg;
-        }
-
-        var buf = new byte[msg.length() + 100];//todo ; now it supports only latin
-        int i = appendTime(buf, currentTimeMillis());
-        i = appendThread(buf, i);
-        if (!tag.isEmpty()) {
-            i = appendString(tag, buf, i);
-        }
-        if (LogConfig.APPEND_FILE) i = appendFileLink(name, buf, i);
-        buf[i++] = ' ';
-        msg.getBytes(0, msg.length(), buf, i);
-        i += msg.length();
-        buf[i] = '\n';
-
-        (lvl == INFO ? System.out : System.err).write(buf, 0, i + 1);
+        (lvl.ordinal() <= INFO.ordinal() ? System.out : System.err).write(buf, 0, i + 1);
         if (throwable != null) {
             throwable.printStackTrace(System.err);
         }
     }
 
+    private int append(String message, byte[] buf) {
+        int i = appendTime(buf, 0, currentTimeMillis());
+        if (LogConfig.APPEND_FILE) i = appendFileLink(name, buf, i);
+        i = appendBuild(buf, i);
+        i = appendThread(buf, i);
+        i = appendTag(buf, i);
+        i = appendSubType(buf, i);
+        buf[i++] = ' ';
+        i = appendString(message, buf, i);
+        if (LogConfig.APPEND_CONTEXT) i = appendContext(buf, i);
+        buf[i] = '\n';
+        return i;
+    }
+
+    private int appendContext(byte[] buf, int i) {
+        var dic = ThreadContext.getAll();
+        if (dic == null || dic.isEmpty()) {
+            return i;
+        }
+
+        buf[i++] = ' ';
+        return dic.append(buf, i);
+    }
+
+    private int appendTag(byte[] buf, int i) {
+        final String value = (tag.isEmpty()) ? ThreadContext.get(TAG) : tag;
+        if (value != null && !value.isEmpty()) {
+            buf[i++] = ' ';
+            i = appendString(value, buf, i);
+        }
+        return i;
+    }
+
+    private int appendBuild(byte[] buf, int i) {
+        if (LogConfig.BUILD_ID < 0) return i;
+
+        buf[i++] = ' ';
+        buf[i++] = '(';
+        i = appendInt(LogConfig.BUILD_ID, buf, i);
+        buf[i++] = ')';
+        return i;
+    }
+
+    private int appendSubType(byte[] buf, int i) {
+        final String value = ThreadContext.get(ThreadContext.SUB_TYPE);
+        if (value != null && !value.isEmpty()) {
+            buf[i++] = ' ';
+            i = appendString(value, buf, i);
+            buf[i++] = ' ';
+            buf[i++] = '-';
+        }
+        return i;
+    }
+
     @Override
     public void setTag(String tag) {
-        this.tag = " " + tag;
+        this.tag = Objects.requireNonNullElse(tag, "");
     }
 
     @Override
     public void removeTag() {
-        this.tag = "";
     }
 }

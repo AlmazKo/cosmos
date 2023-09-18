@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 import static cos.logging.Logger.Level.INFO;
-import static cos.logging.Logger.Level.WARN;
 import static cos.logging.Util.appendString;
 import static cos.logging.Util.appendThread;
 import static cos.logging.Util.appendTime;
@@ -17,11 +16,10 @@ GC free logger, but not thread safe
  */
 public final class ThreadLogger implements Logger {
     public static final int MAX_LEN = 800;
-    private final boolean debug = false;
     private final String name;
     private final byte[] buf = new byte[MAX_LEN + 100];
     private final Dic dic = new Dic();
-    private boolean errorsOnly = false;
+    private Level level = LogConfig.DEFAULT_LEVEL;
     private String tag = "";
 
     public ThreadLogger(Class<?> klass) {
@@ -29,18 +27,14 @@ public final class ThreadLogger implements Logger {
     }
 
     @Override
-    public void warn(String msg) {
-        publish(WARN, msg, null);
+    public Level level() {
+        return level;
     }
 
     @Override
-    public void warn(String msg, Throwable t) {
-        publish(WARN, msg, t);
-    }
-
-    @Override
-    public void error(String msg, Throwable t) {
-        warn(msg, t);
+    public Logger setLevel(Level level) {
+        this.level = level;
+        return this;
     }
 
     @Override
@@ -50,27 +44,14 @@ public final class ThreadLogger implements Logger {
         dic.clear();
     }
 
-    @Override
-    public void warn(Consumer<Dic> msg, Throwable e) {
-        msg.accept(dic);
-        warn(dic.toString(), e);
-        dic.clear();
-    }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void info(Dic msg) {
-        info(msg.toString());
-    }
+    public void publish(Level lvl, Object msg, @Nullable Throwable throwable) {
+        if (lvl.compareTo(level) < 0) return;
 
-    @Override
-    public void info(String msg) {
-        if (!errorsOnly) publish(INFO, msg, null);
-    }
-
-    @Override
-    public void publish(Level lvl, String msg, @Nullable Throwable throwable) {
-        msg = truncate(msg, MAX_LEN);
-        int i = appendTime(buf, currentTimeMillis());
+        final String message = truncate(msg.toString(), MAX_LEN);
+        int i = appendTime(buf, 0, currentTimeMillis());
         i = appendThread(buf, i);
         if (!tag.isEmpty()) {
             buf[i++] = ' ';
@@ -78,26 +59,14 @@ public final class ThreadLogger implements Logger {
         }
         if (LogConfig.APPEND_FILE) i = Util.appendFileLink(name, buf, i);
         buf[i++] = ' ';
-        msg.getBytes(0, msg.length(), buf, i);
-        i += msg.length();
+        message.getBytes(0, message.length(), buf, i);
+        i += message.length();
         buf[i] = '\n';
 
         (lvl == INFO ? System.out : System.err).write(buf, 0, i + 1);
         if (throwable != null) {
             throwable.printStackTrace(System.err);
         }
-    }
-
-    @Override
-    public ThreadLogger atErrors() {
-        errorsOnly = true;
-        return this;
-    }
-
-
-    @Override
-    public void debug(String s) {
-        //todo nothing
     }
 
     @Override

@@ -4,7 +4,6 @@ import { Trait, Traits } from '../Trait';
 import { HotKey, Key } from './controls';
 import { MovingAggregator } from './MovingAggregator';
 
-console.log("Keyboard", Key)
 const movingButtons: { [index: number]: Dir } = {
   37: Dir.WEST,
   38: Dir.NORTH,

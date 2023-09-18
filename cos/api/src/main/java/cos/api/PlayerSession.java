@@ -1,9 +1,9 @@
 package cos.api;
 
 import cos.logging.Logger;
-import cos.ops.UserOp;
 import cos.ops.Direction;
 import cos.ops.OutOp;
+import cos.ops.UserOp;
 import cos.ops.in.FireballEmmit;
 import cos.ops.in.Login;
 import cos.ops.in.Logout;
@@ -18,15 +18,15 @@ import io.vertx.core.json.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 class PlayerSession {
-    private final    AtomicInteger            cid      = new AtomicInteger(0);
-    private final    Logger                   log      = Logger.get(getClass());
-    private final    Function<UserOp, Integer> olympus;
-    private final    ServerWebSocket          ws;
-    private final    int                      userId;
-    private volatile boolean                  isClosed = false;
+    private final AtomicInteger cid = new AtomicInteger(0);
+    private final Logger log = Logger.get(getClass());
+    private final Consumer<UserOp> olympus;
+    private final ServerWebSocket ws;
+    private final int userId;
+    private volatile boolean isClosed = false;
 
 
     boolean isClosed() {
@@ -35,17 +35,17 @@ class PlayerSession {
 
     PlayerSession(ServerWebSocket ws,
                   int userId,
-                  Function<UserOp, Integer> olympus) {
+                  Consumer<UserOp> olympus) {
 
         this.ws = ws;
         this.userId = userId;
         this.olympus = olympus;
-        log.info("Connected player: #" +userId);
+        log.info("Connected player: #" + userId);
         setupClient();
 
         ws.closeHandler(it -> {
             isClosed = true;
-            send(new Logout(cid.incrementAndGet(), userId));
+            send(new Logout(cid(), userId));
             log.info("Client socket is closing ... ");
         });
 
@@ -53,56 +53,42 @@ class PlayerSession {
     }
 
     private void send(UserOp op) {
-        olympus.apply(op);
+        olympus.accept(op);
     }
 
     private void onRequest(String msg) {
         var js = new JsonObject(msg);
-        var op = parseRequest(js);
-        if (op == null) return;
-
-        send(op);
+        var request = parseRequest(js);
+        if (request != null) send(request);
     }
 
     private @Nullable UserOp parseRequest(JsonObject js) {
         return switch (js.getString("op")) {
             case "move" -> {
-                @Nullable String dirId = js.getString("dir");
-                var sightId = js.getString("sight");
-                if (sightId == null) sightId = dirId;
-                if (dirId == null && sightId == null) throw new IllegalArgumentException("Wrong move request");
-
-                yield new Move(
-                        cid.incrementAndGet(),
-                        userId,
-                        js.getInteger("x"),
-                        js.getInteger("y"),
-                        (dirId == null) ? null : Direction.valueOf(dirId),
-                        Direction.valueOf(sightId)
-                );
+                var dir = asDir(js.getString("dir"));
+                var sight = asDir(js.getString("sight"));
+                if (sight == null) sight = dir;
+                if (dir == null) throw new IllegalArgumentException("Wrong move request");
+                yield new Move(cid(), userId, js.getInteger("x"), js.getInteger("y"), dir, sight);
             }
-            case "emmit_fireball" -> new FireballEmmit(
-                    cid.incrementAndGet(),
-                    userId
-            );
-            case "emmit_shot" -> new ShotEmmit(
-                    cid.incrementAndGet(),
-                    userId
-            );
-
-            case "melee_attack" -> new MeleeAttack(cid.incrementAndGet(), userId);
-            case "stop_move" -> new StopMove(
-                    cid.incrementAndGet(),
-                    userId,
-                    js.getInteger("x"),
-                    js.getInteger("y"),
-                    Direction.valueOf(js.getString("sight"))
-            );
+            case "emmit_fireball" -> new FireballEmmit(cid(), userId);
+            case "emmit_shot" -> new ShotEmmit(cid(), userId);
+            case "melee_attack" -> new MeleeAttack(cid(), userId);
+            case "stop_move" ->
+                    new StopMove(cid(), userId, js.getInteger("x"), js.getInteger("y"), asDir(js.getString("sight")));
             default -> null;
         };
 
     }
 
+    private int cid() {
+        return cid.incrementAndGet();
+    }
+
+    @Nullable Direction asDir(@Nullable String raw) {
+        if (raw == null) return null;
+        return Direction.valueOf(raw);
+    }
 
     void onOp(UserPackage pkg) {
         var messages = new JsonArray();
@@ -119,6 +105,6 @@ class PlayerSession {
     }
 
     private void setupClient() {
-        send(new Login(cid.incrementAndGet(), userId));
+        send(new Login(cid(), userId));
     }
 }

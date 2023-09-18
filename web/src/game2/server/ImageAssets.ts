@@ -25,6 +25,7 @@ export class ImageAssets implements Images {
     } else {
       if (data === undefined) {
         this.data[name] = Loading.REQUESTING;
+        console.log("Requesting image... ", name)
         this.load(name)
           .then(i => this.data[name] = i)
           .catch(() => this.data[name] = Loading.FAIL)

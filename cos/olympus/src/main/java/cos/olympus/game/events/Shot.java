@@ -10,10 +10,10 @@ public record Shot(
         int speed,
         Direction dir,
         int distance,
-        int tickId,
+        int tick,
         @Override Creature source
 
-) implements Spell {
+) implements Spell, Event {
 //
 //    public static final boolean finished = ;
 

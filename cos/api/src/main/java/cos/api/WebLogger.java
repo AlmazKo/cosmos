@@ -12,8 +12,7 @@ import io.vertx.ext.web.RoutingContext;
 
 
 public class WebLogger implements Handler<RoutingContext> {
-
-    private Logger logger = Logger.get(WebLogger.class);
+    private final Logger logger = Logger.get(WebLogger.class);
 
     private void log(RoutingContext ctx, long startLts, HttpMethod method, String uri) {
         var request = ctx.request();
@@ -28,17 +27,16 @@ public class WebLogger implements Handler<RoutingContext> {
         if (status >= 400) {
             logger.warn(message);
         } else {
-            logger.info(message);
+            logger.debug(message);
         }
     }
 
-    @Override public void handle(RoutingContext ctx) {
+    @Override
+    public void handle(RoutingContext ctx) {
         var timestamp = System.currentTimeMillis();
         var method = ctx.request().method();
         var uri = ctx.request().uri();
-
         ctx.addBodyEndHandler(v -> log(ctx, timestamp, method, uri));
-
         ctx.next();
     }
 

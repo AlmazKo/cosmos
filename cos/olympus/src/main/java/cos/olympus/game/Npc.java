@@ -5,8 +5,6 @@ import cos.map.CreatureType;
 public record Npc(
         @Override int id,
         @Override CreatureType type,
-        @Override String name,
-        @Override int x,
-        @Override int y
+        @Override String name
 ) implements Avatar {
 }

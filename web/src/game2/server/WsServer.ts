@@ -40,8 +40,7 @@ export class WsServer implements Api {
   }
 
   sendAction(name: string, action: Action) {
-
-    console.log('sendAction', name, action);
+    console.log("%c▷ "+name, 'color:green', JSON.stringify(action));
     this.ws.send(JSON.stringify({op: name, ...action}))
 
     // if (action instanceof Step) {

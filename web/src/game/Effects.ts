@@ -14,16 +14,13 @@ export class Effects implements TileDrawable {
     return this.effects.find(e => e.id == spellId);
   }
 
-  draw(time: DOMHighResTimeStamp, p: TilePainter) {
 
-  }
-
-  draw2(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
+  draw(time: DOMHighResTimeStamp, bp: TilePainter, camera: Camera) {
 
     //todo
-    // this.effects.forEach((it: Effect) => {
-    //   it.draw(time, bp, camera)
-    // });
+    this.effects.forEach((it: Effect) => {
+      it.draw(time, bp, camera)
+    });
 
     //fixme optimize?
     this.effects = this.effects.filter(b => !b.isFinished)

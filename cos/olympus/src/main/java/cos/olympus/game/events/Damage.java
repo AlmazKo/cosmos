@@ -9,7 +9,7 @@ public record Damage(
         Spell spell,
         int amount,
         boolean crit
-) {
+) implements Event {
 
     public cos.ops.out.Damage toUserOp(int userId) {
         return new cos.ops.out.Damage(id, tick, userId, spell.source().id(), victim.id(), amount, spell.id(), crit);

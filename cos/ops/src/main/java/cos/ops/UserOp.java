@@ -5,5 +5,5 @@ public interface UserOp extends SomeOp {
 
     int userId();
 
-    byte code();
+//    byte code();
 }

@@ -75,9 +75,9 @@ export class CanvasHolder {
     this.ctx.scale(this.ratio, this.ratio);
 
     if (this.ratio === 1) {
-      console.log(`Canvas size is set: ${this.canvas.width}x${this.canvas.height}px, ratio: 1:1`);
+      console.debug(`Canvas size is set: ${this.canvas.width}x${this.canvas.height}px, ratio: 1:1`);
     } else {
-      console.log(
+      console.debug(
         `Canvas size is set: ${this.canvas.width}x${this.canvas.height},`,
         `real size: ${this.width}x${this.height}px`,
         `ratio: 1:${this.ratio}`,

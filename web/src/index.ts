@@ -15,7 +15,6 @@ window.onload = () => {
   let div = document.getElementById("game")!!;
   let div2 = document.getElementById("minimap")!!;
   let div3 = document.getElementById("tileinfo")!!;
-  console.info(div);
   let p = new Player(div);
   const gc = get(GameCanvas);
   get(Keyboard);

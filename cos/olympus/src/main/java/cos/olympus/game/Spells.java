@@ -4,6 +4,10 @@ import cos.logging.Logger;
 import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Fireball;
 import cos.olympus.game.events.Shot;
+import cos.olympus.game.strategy.FireballSpellStrategy;
+import cos.olympus.game.strategy.MeleeAttackStrategy;
+import cos.olympus.game.strategy.ShotSpellStrategy;
+import cos.olympus.game.strategy.SpellStrategy;
 import cos.olympus.util.OpConsumer;
 import cos.ops.in.FireballEmmit;
 import cos.ops.out.FireballMoved;
@@ -78,7 +82,7 @@ public class Spells {
         spells.add(str);
     }
 
-    void onMeleeAttack(int tick, Creature cr) {
+    public void onMeleeAttack(int tick, Creature cr) {
         var spell = new cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);
         var str = new MeleeAttackStrategy(spell, world);
         spells.add(str);
@@ -87,6 +91,7 @@ public class Spells {
     public void onTick(int tick, ArrayList<Damage> damages, OpConsumer outOps) {
         spells.forEach(s -> s.onTick(tick, damages));
 
+        //notify
         spells.forEach((SpellStrategy strategy) -> {
             var spell = strategy.spell();
             world.getAllCreatures().forEach(cr -> {

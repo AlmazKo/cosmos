@@ -1,21 +1,24 @@
 package cos.logging;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDate;
 
 final class Util {
 
-    static int appendTime(byte[] buf, long ts) {
+    static int appendTime(byte[] buf, int i, long ts) {
+        i = appendDate(buf, i, ts);
+        buf[i++] = ' ';
         int msDay = (int) (ts % 86400000);
         int h = msDay / 3_600_000;
         int mi = (msDay - h * 3_600_000) / 60_000;
         int sec = (msDay - h * 3_600_000 - mi * 60_000) / 1_000;
         int ms = (msDay - h * 3_600_000 - mi * 60_000 - sec * 1000);
 
-        int i = 0;
         buf[i++] = (byte) (h / 10 + '0');
         buf[i++] = (byte) (h % 10 + '0');
         buf[i++] = ':';
@@ -31,7 +34,55 @@ final class Util {
         return i;
     }
 
+    private static int appendDate(byte[] buf, int i, long ts) {
+        final LocalDate dt = getDate(ts);
+        final int y = dt.getYear();
+        final int m = dt.getMonthValue();
+        final int d = dt.getDayOfMonth();
 
+        buf[i++] = (byte) (y / 1000 + '0');
+        buf[i++] = (byte) (y % 1000 / 100 + '0');
+        buf[i++] = (byte) (y % 100 / 10 + '0');
+        buf[i++] = (byte) (y % 10 + '0');
+        buf[i++] = '-';
+        buf[i++] = (byte) (m / 10 + '0');
+        buf[i++] = (byte) (m % 10 + '0');
+        buf[i++] = '-';
+        buf[i++] = (byte) (d / 10 + '0');
+        buf[i++] = (byte) (d % 10 + '0');
+        return i;
+    }
+
+    static void appendDate(StringBuilder buf, LocalDate dt) {
+        final int y = dt.getYear();
+        final int m = dt.getMonthValue();
+        final int d = dt.getDayOfMonth();
+
+        buf.append((char) (y / 1000 + '0'));
+        buf.append((char) (y % 1000 / 100 + '0'));
+        buf.append((char) (y % 100 / 10 + '0'));
+        buf.append((char) (y % 10 + '0'));
+        buf.append('-');
+        buf.append((char) (m / 10 + '0'));
+        buf.append((char) (m % 10 + '0'));
+        buf.append('-');
+        buf.append((char) (d / 10 + '0'));
+        buf.append((char) (d % 10 + '0'));
+    }
+
+    @NotNull
+    static LocalDate getCurrentDate() {
+        return getDate(System.currentTimeMillis());
+    }
+
+    @NotNull
+    static LocalDate getDate(long ts) {
+        //todo may be cache the date for gc free
+        long localEpochDay = Math.floorDiv(ts / 1000, 86_400);
+        return LocalDate.ofEpochDay(localEpochDay);
+    }
+
+    @SuppressWarnings("deprecation")
     static int appendThread(byte[] buf, int i) {
         buf[i++] = ' ';
         String name = Thread.currentThread().getName();
@@ -55,7 +106,11 @@ final class Util {
     }
 
 
-    static int appendString(@NotNull String value, byte[] buf, int idx) {
+    @SuppressWarnings("deprecation")
+    static int appendString(@Nullable String value, byte[] buf, int idx) {
+        if (value == null) {
+            value = "null";
+        }
         value.getBytes(0, value.length(), buf, idx);
         return idx + value.length();
     }
@@ -77,7 +132,7 @@ final class Util {
 
         for (int i = 1; i < st.length; i++) {
             ste = st[i];
-            if (!ste.getClassName().startsWith("cos.logging")) {
+            if (!ste.getClassName().startsWith("cos.logging") && !ste.getClassName().endsWith("Logger")) {
                 line = ste.getLineNumber();
                 file = ste.getFileName();
                 break;
@@ -112,11 +167,14 @@ final class Util {
         return value.substring(0, max);
     }
 
-    static String getStackTrace(@Nullable Throwable t) {
+    //copy from org.apache.commons ExceptionUtils#getStackTrace
+    @Contract("null -> null")
+    public static @Nullable String getStackTrace(@Nullable final Throwable t) {
         if (t == null) return null;
 
-        var sw = new StringWriter();
-        t.printStackTrace(new PrintWriter(sw));
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw, true);
+        t.printStackTrace(pw);
         return sw.toString();
     }
 

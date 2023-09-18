@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DoubleBuffer<T> {
 
-    private final Logger       logger   = Logger.get(DoubleBuffer.class).atErrors();
+    private final Logger       logger   = Logger.get(DoubleBuffer.class);
     private final ArrayList<T> first    = new ArrayList<>();
     private final ArrayList<T> second   = new ArrayList<>();
     private       ArrayList<T> consumer = first;

@@ -13,7 +13,7 @@ import static cos.olympus.game.MapUtil.nextX;
 import static cos.olympus.game.MapUtil.nextY;
 import static cos.olympus.util.TimeUtil.toTickSpeed;
 
-final class Movements implements TickAware {
+public final class Movements implements TickAware {
 
     public final static int HALF = 50;
     public final static int METER = 100;
@@ -49,17 +49,17 @@ final class Movements implements TickAware {
         }
     }
 
-    void changeSight(Creature cr, Direction sight) {
+    public void changeSight(Creature cr, Direction sight) {
         var mv = mvs.get(cr.id());
         if (mv != null) {
             //fixme this is simulation
-            mv.next = new Move((byte) -1, -1, -1, cr.x, cr.y, null, sight);
+            mv.next = new Move(-1, -1, cr.x, cr.y, null, sight);
         } else {
             cr.setSight(sight);
         }
     }
 
-    void change(Creature cr, Move op) {
+    public void change(Creature cr, Move op) {
         var mv = mvs.get(cr.id());
         if (mv != null) {
             mv.next = op;
@@ -93,7 +93,7 @@ final class Movements implements TickAware {
         mvs.remove(cr.id());
     }
 
-    void stop(Creature cr, Direction sight) {
+    public void stop(Creature cr, Direction sight) {
         var mv = mvs.get(cr.id());
         if (mv != null) {
             mv.stop = true;
@@ -120,11 +120,11 @@ final class Movements implements TickAware {
 
         if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
             cr.offset = 0;
-            //    logger.info("Reset " + cr);
+            logger.info("Reset " + cr);
 
             if (mv.stop) {
                 cr.stop();
-//                logger.info("MV finished " + cr);
+                logger.info("MV finished " + cr);
                 return true;
             }
             return false;
@@ -134,7 +134,7 @@ final class Movements implements TickAware {
 
         if (mv.stop) {
             cr.stop();
-//            logger.info("MV finished " + cr);
+            logger.info("MV finished " + cr);
             return true;
         } else {
 
