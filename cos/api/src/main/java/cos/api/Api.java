@@ -75,6 +75,10 @@ class Api {
     private void onMessage(Record record) {
         if (record instanceof UserPackage pkg) {
             var sess = sessions.get(pkg.userId());
+            if (sess == null) {
+                log.warn("Empty session for user " + pkg.userId());
+                return;
+            }
             sess.onOp(pkg);
         } else {
 //            log.warn("Unknown op: " + record);

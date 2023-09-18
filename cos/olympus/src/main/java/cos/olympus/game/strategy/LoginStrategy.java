@@ -1,6 +1,5 @@
 package cos.olympus.game.strategy;
 
-import cos.logging.Logger;
 import cos.olympus.game.Game;
 import cos.olympus.game.Player;
 import cos.olympus.game.Usr;
@@ -10,7 +9,6 @@ import cos.ops.out.ProtoAppear;
 import java.util.Map;
 
 public class LoginStrategy implements Strategy {
-    private final static Logger logger = Logger.get(LoginStrategy.class);
     private final Map<String, Game> games;
     private final Usr usr;
 

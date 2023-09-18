@@ -2,22 +2,20 @@ package cos.olympus.game.strategy;
 
 import cos.olympus.Util;
 import cos.olympus.game.Creature;
+import cos.olympus.game.Damages;
 import cos.olympus.game.MapUtil;
 import cos.olympus.game.World;
-import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Shot;
 import cos.olympus.game.events.Spell;
 
-import java.util.Collection;
-
 public class ShotSpellStrategy extends AbstractSpellStrategy {
 
-    public final  Shot  spell;
+    public final Shot spell;
     private final World world;
 
     private int passed;
-    public  int x;
-    public  int y;
+    public int x;
+    public int y;
 
     public ShotSpellStrategy(Shot spell, World world) {
         this.world = world;
@@ -26,11 +24,12 @@ public class ShotSpellStrategy extends AbstractSpellStrategy {
         this.y = spell.y();
     }
 
-    @Override public int id() {
+    @Override
+    public int id() {
         return spell.id();
     }
 
-    public boolean onTick(int tick, Collection<Damage> damages) {
+    public boolean onTick(int tick, Damages damages) {
 
         int distance = (tick - spell.tick()) * spell.speed() / 100;
 
@@ -47,9 +46,7 @@ public class ShotSpellStrategy extends AbstractSpellStrategy {
         var victim = world.getCreature(x, y);
         if (victim != null && spell.source().id() != victim.id()) {
             boolean crit = Util.rand(0, 5) == 1;
-            var d = new Damage(++DAMAGES_IDS, tick, victim, spell, crit ? 200 : 100, crit);
-            logger.info("Damaged : " + d);
-            damages.add(d);
+            damages.on(victim, spell, crit ? 200 : 100, crit);
             finished = true;
         }
         if (distance >= spell.distance()) {
@@ -64,15 +61,18 @@ public class ShotSpellStrategy extends AbstractSpellStrategy {
         return finished;
     }
 
-    @Override public boolean inZone(Creature cr) {
+    @Override
+    public boolean inZone(Creature cr) {
         return MapUtil.inZone(cr, x, y, 8);
     }
 
-    @Override public Spell spell() {
+    @Override
+    public Spell spell() {
         return spell;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "ShotSpellStrategy{" +
                 "passed=" + passed +
                 ", x=" + x +

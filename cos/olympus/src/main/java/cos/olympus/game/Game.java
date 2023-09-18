@@ -3,7 +3,6 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.map.Coord;
 import cos.map.PortalSpot;
-import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.olympus.game.strategy.RespawnPlayerStrategy;
 import cos.olympus.game.strategy.RespawnStrategy;
@@ -36,13 +35,14 @@ public final class Game {
     private final static Logger logger = Logger.get(Game.class);
 
     private final World world;
-    private final Config cfg = new Config(false);
+    private final Config cfg = new Config(true);
 
     private final Movements movements;
     private final Spells spells;
     private final List<RespawnStrategy> npcRespawns = new ArrayList<>();
     private final List<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
     private final List<Strategy> strategies = new ArrayList<>();
+    private final Damages damages = new Damages();
     private final Zone zone;
     private OpConsumer tickOuts = new OpsConsumer();
 
@@ -98,7 +98,7 @@ public final class Game {
         strategies.removeIf(it -> it.onTick(tick, out));
         playersRespawns.removeIf(it -> it.onTick(tick, out));
         movements.onTick(tick);
-        var damages = new ArrayList<Damage>();//todo: channel
+        damages.onTick(tick);
         var deaths = new ArrayList<Death>();//todo: channel
         spells.onTick(tick, damages, out);
 
@@ -148,6 +148,7 @@ public final class Game {
 
         spells.onAfterTick();
         world.removeCreatureIf(Creature::isDead);
+        damages.clear();
     }
 
     public void placeAvatar(int userId) {

@@ -17,7 +17,7 @@ import static cos.ops.Direction.SOUTH;
 import static cos.ops.Direction.WEST;
 
 public final class Creature implements Agent {
-    public Avatar avatar;
+    public final Avatar avatar;
     int lastSpellTick;
 
     int x;
@@ -28,14 +28,14 @@ public final class Creature implements Agent {
     Direction sight;
 
 
-    Metrics metrics;
-    Bag bag = new Bag();
+    final Metrics metrics;
+    final Bag bag = new Bag();
 
-    Map<Integer, Obj> zoneObjects = new HashMap<>();
-    Map<Integer, Orientation> zoneCreatures = new HashMap<>();
-    Map<Integer, Metrics> zoneMetrics = new HashMap<>();
-    Map<Integer, SpellStrategy> zoneSpells = new HashMap<>();
-    
+    final Map<Integer, Obj> zoneObjects = new HashMap<>();
+    final Map<Integer, Orientation> zoneCreatures = new HashMap<>();
+    final Map<Integer, Metrics> zoneMetrics = new HashMap<>();
+    final Map<Integer, SpellStrategy> zoneSpells = new HashMap<>();
+
     public Metrics metrics() {
         return metrics;
     }
