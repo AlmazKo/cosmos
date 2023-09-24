@@ -4,9 +4,11 @@ import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
 public interface Orientable extends Placeable {
-    @Override int x();
+    @Override
+    int x();
 
-    @Override int y();
+    @Override
+    int y();
 
     int speed();
 

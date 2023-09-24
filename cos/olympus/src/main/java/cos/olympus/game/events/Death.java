@@ -13,7 +13,8 @@ public record Death(
         return new cos.ops.out.Death(id, tick, userId, spell.source().id(), victim.id());
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Death{" +
                 "id=" + id +
                 ", tick=" + tick +

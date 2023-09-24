@@ -15,7 +15,8 @@ public record Damage(
         return new cos.ops.out.Damage(id, tick, userId, spell.source().id(), victim.id(), amount, spell.id(), crit);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Damage{" +
                 "id=" + id +
                 ", tick=" + tick +

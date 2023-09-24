@@ -72,18 +72,14 @@ public final class Game {
         //logger.info(">> #" + tick + " " + op.toString());
 
         try {
-            if (op instanceof Logout o) {
-                removeAvatar(o.userId());
-            } else if (op instanceof Move o) {
-                movements.onMove(o);
-            } else if (op instanceof StopMove o) {
-                movements.onStopMove(o);
-            } else if (op instanceof FireballEmmit o) {
-                spells.onSpell(tickId, o);
-            } else if (op instanceof ShotEmmit o) {
-                spells.onShot(tickId, o);
-            } else if (op instanceof MeleeAttack o) {
-                spells.onMeleeAttack(tickId, o);
+            switch (op) {
+                case Logout o -> removeAvatar(o.userId());
+                case Move o -> movements.onMove(o);
+                case StopMove o -> movements.onStopMove(o);
+                case FireballEmmit o -> spells.onSpell(tickId, o);
+                case ShotEmmit o -> spells.onShot(tickId, o);
+                case MeleeAttack o -> spells.onMeleeAttack(tickId, o);
+                default -> throw new IllegalStateException("Unexpected user op: " + op);
             }
         } catch (Exception ex) {
             logger.warn("Error during processing " + op, ex);

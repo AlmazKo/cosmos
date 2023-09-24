@@ -13,7 +13,7 @@ import cos.ops.out.Appear;
 public class RespawnPlayerStrategy implements Strategy {
     private final World world;
     private final Player player;
-    private final int    respawnTime;
+    private final int respawnTime;
 
     public RespawnPlayerStrategy(int tick, World world, Player player) {
         this.world = world;

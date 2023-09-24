@@ -100,7 +100,8 @@ public final class World {
         System.out.println(sb.toString());
     }
 
-    @Nullable public TileType get(int x, int y) {
+    @Nullable
+    public TileType get(int x, int y) {
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) return null;
         var b = basis[idx];
@@ -133,7 +134,8 @@ public final class World {
         return _getCreature(x, y);
     }
 
-    @Nullable private Creature _getCreature(int x, int y) {
+    @Nullable
+    private Creature _getCreature(int x, int y) {
         int crId = creatures[toIndex(x, y)];
         return creatureObjects.get(crId);
     }
@@ -363,7 +365,8 @@ public final class World {
         return new Coord(idx % width + offsetX, idx / width + offsetY);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return debugCreatures();
     }
 

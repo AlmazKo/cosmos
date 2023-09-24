@@ -18,7 +18,7 @@ public class OpsConsumer implements OpConsumer {
     @Override
     public void add(SomeOp op) {
         if (op instanceof UserOp uop) {
-          ////  LOG.info("New user op: " + op);
+            ////  LOG.info("New user op: " + op);
             data.computeIfAbsent(uop.userId(), u -> new ArrayList<>()).add(uop);
         } else if (op instanceof AllCreatures) {
             data.computeIfAbsent(0, u -> new ArrayList<>()).add(op);

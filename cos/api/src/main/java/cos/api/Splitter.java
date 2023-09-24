@@ -12,7 +12,8 @@ import static java.lang.Math.floorMod;
 public class Splitter {
 
     public record Coord<A, B>(A x, B y) {
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return "Coord(" + x + "; " + y + ')';
         }
     }

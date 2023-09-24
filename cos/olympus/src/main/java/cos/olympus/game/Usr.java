@@ -12,10 +12,11 @@ public class Usr {
         this.worldName = worldName;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Usr{" +
-               "id=" + id +
-               ", worldName='" + worldName + '\'' +
-               '}';
+                "id=" + id +
+                ", worldName='" + worldName + '\'' +
+                '}';
     }
 }

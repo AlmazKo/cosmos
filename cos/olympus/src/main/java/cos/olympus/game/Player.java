@@ -7,7 +7,8 @@ public record Player(
         @Override String name
 ) implements Avatar {
 
-    @Override public CreatureType type() {
+    @Override
+    public CreatureType type() {
         return CreatureType.PLAYER;
     }
 }

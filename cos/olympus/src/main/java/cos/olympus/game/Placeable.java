@@ -7,11 +7,13 @@ public interface Placeable {
 
     static Placeable sample(int x, int y) {
         return new Placeable() {
-            @Override public int x() {
+            @Override
+            public int x() {
                 return x;
             }
 
-            @Override public int y() {
+            @Override
+            public int y() {
                 return y;
             }
         };

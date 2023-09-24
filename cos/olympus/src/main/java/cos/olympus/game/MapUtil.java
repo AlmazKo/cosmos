@@ -3,7 +3,10 @@ package cos.olympus.game;
 import cos.ops.Direction;
 import org.jetbrains.annotations.Nullable;
 
-import static cos.ops.Direction.*;
+import static cos.ops.Direction.EAST;
+import static cos.ops.Direction.NORTH;
+import static cos.ops.Direction.SOUTH;
+import static cos.ops.Direction.WEST;
 
 public final class MapUtil {
 

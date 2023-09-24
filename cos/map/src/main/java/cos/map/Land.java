@@ -12,7 +12,7 @@ public class Land {
 
     public static Lands load(Path dir, String mapName) throws IOException {
         var baseFile = dir.resolve("base1.json");
-        var mapFile =  dir.resolve(mapName +".json");
+        var mapFile = dir.resolve(mapName + ".json");
         var base = (JsObject) Json.parseObject(Files.readString(baseFile));
         var map = Json.parseObject(Files.readString(mapFile));
         return MapParser.parse(map, base);

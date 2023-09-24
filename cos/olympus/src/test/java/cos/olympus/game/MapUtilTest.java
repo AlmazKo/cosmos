@@ -4,7 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static cos.olympus.game.MapUtil.direction;
 import static cos.olympus.game.Placeable.sample;
-import static cos.ops.Direction.*;
+import static cos.ops.Direction.EAST;
+import static cos.ops.Direction.NORTH;
+import static cos.ops.Direction.SOUTH;
+import static cos.ops.Direction.WEST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

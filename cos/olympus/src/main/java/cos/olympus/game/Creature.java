@@ -64,17 +64,18 @@ public final class Creature implements Agent {
     }
 
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Creature{" +
-               "id=" + avatar.id() +
-               ", lvl=" + metrics.lvl +
-               ", life=" + metrics.life +
-               ", type=" + type() +
-               ", pos=[" + rx() + "; " + ry() + "]" +
-               ", speed=" + speed +
-               ", dir=" + mv +
-               ", sight=" + sight +
-               '}';
+                "id=" + avatar.id() +
+                ", lvl=" + metrics.lvl +
+                ", life=" + metrics.life +
+                ", type=" + type() +
+                ", pos=[" + rx() + "; " + ry() + "]" +
+                ", speed=" + speed +
+                ", dir=" + mv +
+                ", sight=" + sight +
+                '}';
     }
 
     public float ry() {
@@ -103,35 +104,43 @@ public final class Creature implements Agent {
         return metrics.isDead();
     }
 
-    @Override public int id() {
+    @Override
+    public int id() {
         return avatar.id();
     }
 
-    @Override public CreatureType type() {
+    @Override
+    public CreatureType type() {
         return avatar.type();
     }
 
-    @Override public int x() {
+    @Override
+    public int x() {
         return x;
     }
 
-    @Override public int y() {
+    @Override
+    public int y() {
         return y;
     }
 
-    @Override public int speed() {
+    @Override
+    public int speed() {
         return speed;
     }
 
-    @Override public int offset() {
+    @Override
+    public int offset() {
         return offset;
     }
 
-    @Override public @Nullable Direction mv() {
+    @Override
+    public @Nullable Direction mv() {
         return mv;
     }
 
-    @Override public Direction sight() {
+    @Override
+    public Direction sight() {
         return sight;
     }
 
