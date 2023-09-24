@@ -1,6 +1,6 @@
 package cos.olympus.game;
 
-import cos.olympus.util.OpsConsumer;
+import cos.olympus.util.OpsAggregator;
 import cos.ops.SomeOp;
 import cos.ops.UserOp;
 import cos.ops.out.ProtoAppear;
@@ -15,7 +15,7 @@ import static cos.olympus.GameUtil.prepareGame;
 class TestGame {
     private int tick = 0;
     private MetaGame game;
-    private OpsConsumer out = new OpsConsumer();
+    private OpsAggregator out = new OpsAggregator();
     private List<SomeOp> serviceOps = List.of();
 
     TestGame() {

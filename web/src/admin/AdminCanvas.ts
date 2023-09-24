@@ -90,7 +90,7 @@ export class AdminCanvas implements CanvasComposer {
         for (let i = 0; i < m.data.length; i++) {
             const land = m.data[i];
             const x: pos = (i % m.width);
-            const y: pos = floor(i / height);
+            const y: pos = floor(i / m.width);
             let color = getColor(land);
             p.fillRect(PAD + x * CELL, PAD + y * CELL, CELL + 1, CELL + 1, color)
         }

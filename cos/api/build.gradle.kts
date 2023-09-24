@@ -12,8 +12,8 @@ dependencies {
     implementation(project(":logging"))
     implementation(project(":nio"))
     implementation(project(":olympus"))
-    implementation("io.vertx:vertx-core:4.2.1")
-    implementation("io.vertx:vertx-web:4.2.1")
+    implementation("io.vertx:vertx-core:4.4.5")
+    implementation("io.vertx:vertx-web:4.4.5")
     implementation(files("../mods/annotations-20.1.0.jar"))
 }
 

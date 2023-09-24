@@ -20,7 +20,7 @@ public class Damages implements TickAware {
 
     public void on(Creature victim, Spell spell, int amount, boolean crit) {
         var dmg = new Damage(++DAMAGES_IDS, tick, victim, spell, amount, crit);
-        logger.info(dmg, "on");
+        logger.info(dmg);
         data.add(dmg);
     }
 

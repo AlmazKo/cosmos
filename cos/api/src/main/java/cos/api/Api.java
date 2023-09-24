@@ -68,11 +68,15 @@ class Api {
             }
         });
 
-
-        bus.consume("game_out", this::onMessage);
+        bus.consume("game_out", this::onGameOut);
+        bus.consume("game_admin_out", this::onGameAdminOut);
     }
 
-    private void onMessage(Record record) {
+    private void onGameAdminOut(Record record) {
+        adminSessions.values().forEach(it -> it.onOp(record));
+    }
+
+    private void onGameOut(Record record) {
         if (record instanceof UserPackage pkg) {
             var sess = sessions.get(pkg.userId());
             if (sess == null) {
@@ -81,7 +85,7 @@ class Api {
             }
             sess.onOp(pkg);
         } else {
-//            log.warn("Unknown op: " + record);
+            log.warn("Unknown op: " + record);
         }
 
     }

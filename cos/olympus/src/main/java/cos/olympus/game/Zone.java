@@ -10,7 +10,7 @@ import cos.ops.out.ObjAppear;
 public class Zone {
 
     private final static Logger logger = Logger.get(Zone.class);
-    private final static int radius = 8;
+    private final static int VIEW_RADIUS = 8;
 
     private final World world;
 
@@ -20,7 +20,7 @@ public class Zone {
 
     void onTick(Creature target, int tick, OpConsumer consumer) {
         //todo hardcode radius
-        world.iterate(target.x, target.y, radius, (x, y) -> {
+        world.iterate(target.x, target.y, VIEW_RADIUS, (x, y) -> {
             var o = world.getObject(x, y);
             if (o != null && !target.zoneObjects.containsKey(o.id())) {
                 target.zoneObjects.put(o.id(), o);
@@ -71,6 +71,6 @@ public class Zone {
     }
 
     static boolean inNotFov(Creature target, Creature o) {
-        return Math.abs(target.x - o.x) > radius || Math.abs(target.y - o.y) > radius;
+        return Math.abs(target.x - o.x) > VIEW_RADIUS || Math.abs(target.y - o.y) > VIEW_RADIUS;
     }
 }

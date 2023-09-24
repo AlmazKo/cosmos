@@ -9,7 +9,7 @@ import cos.map.RespawnSpot;
 import cos.map.Tile;
 import cos.map.TileType;
 import cos.olympus.NoSpaceException;
-import cos.olympus.util.IntIntConsumer;
+import cos.olympus.util.XYConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,7 +158,7 @@ public final class World {
         return result;
     }
 
-    public void iterate(int centerX, int centerY, int radius, IntIntConsumer consumer) {
+    public void iterate(int centerX, int centerY, int radius, XYConsumer consumer) {
         for (int x = max(offsetX, centerX - radius); x <= min(centerX + radius, width + offsetX); x++) {
             for (int y = max(offsetY, centerY - radius); y <= min(centerY + radius, height + offsetY); y++) {
 //                if (x == centerX && y == centerY) continue;
@@ -371,6 +371,9 @@ public final class World {
     }
 
     public Collection<Creature> getAllCreatures() {
+        return creatureObjects.values();
+    }
+    public Collection<Creature> getAllPlayers() {
         return creatureObjects.values();
     }
 }

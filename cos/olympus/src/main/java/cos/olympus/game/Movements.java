@@ -134,7 +134,7 @@ public final class Movements implements TickAware {
 
         if (mv.stop) {
             cr.stop();
-            logger.info("MV finished " + cr);
+///            logger.info("MV finished " + cr);
             return true;
         } else {
 

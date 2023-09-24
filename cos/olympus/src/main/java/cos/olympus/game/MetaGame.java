@@ -6,6 +6,7 @@ import cos.olympus.game.strategy.LoginStrategy;
 import cos.olympus.game.strategy.Strategy;
 import cos.olympus.game.strategy.TeleportInStrategy;
 import cos.olympus.util.OpConsumer;
+import cos.ops.ServiceOp;
 import cos.ops.SomeOp;
 import cos.ops.UserOp;
 import cos.ops.in.Login;
@@ -27,23 +28,17 @@ public class MetaGame {
         this.games = games;
     }
 
-    public void onTick(int tick, UserOp... in) {
-        onTick(tick, List.of(in), List.of(), op -> {
-            LOG.info("OUT: " + op);
-        });
-    }
-
-    public void onTick(int tick, List<UserOp> in, List<SomeOp> serviceIn, OpConsumer out) {
+    public void onTick(int tick, List<UserOp> userOps, List<ServiceOp> serviceOps, OpConsumer out) {
         ThreadContext.set("SUB_TYPE", "#" + tick);
 
-        serviceIn.forEach(op -> {
+        serviceOps.forEach(op -> {
             if (op instanceof TeleportIn t) {
                 var target = games.get(t.world());
                 strategies.add(new TeleportInStrategy(tick, t, target));
             }
         });
 
-        in.forEach(op -> {
+        userOps.forEach(op -> {
             if (op instanceof Login) {
 //                strategies.add(new LoginStrategy(games, op.userId()));
 

@@ -3,13 +3,14 @@ package cos.olympus.game;
 import cos.logging.Logger;
 import cos.map.Coord;
 import cos.map.PortalSpot;
+import cos.olympus.game.events.Damage;
 import cos.olympus.game.events.Death;
 import cos.olympus.game.strategy.RespawnPlayerStrategy;
 import cos.olympus.game.strategy.RespawnStrategy;
 import cos.olympus.game.strategy.Strategy;
 import cos.olympus.game.strategy.TeleportOutStrategy;
 import cos.olympus.util.OpConsumer;
-import cos.olympus.util.OpsConsumer;
+import cos.olympus.util.OpsAggregator;
 import cos.ops.UserOp;
 import cos.ops.in.FireballEmmit;
 import cos.ops.in.Logout;
@@ -43,8 +44,9 @@ public final class Game {
     private final List<RespawnPlayerStrategy> playersRespawns = new ArrayList<>();
     private final List<Strategy> strategies = new ArrayList<>();
     private final Damages damages = new Damages();
+    private final ArrayList<Death> deaths = new ArrayList<>();//todo: channel
     private final Zone zone;
-    private OpConsumer tickOuts = new OpsConsumer();
+    private OpConsumer tickOuts = new OpsAggregator();
 
     private int tickId = 0;
 
@@ -69,7 +71,7 @@ public final class Game {
     }
 
     public void handleIncomeOp(UserOp op) {
-        //logger.info(">> #" + tick + " " + op.toString());
+        logger.info(op, "game_in");
 
         try {
             switch (op) {
@@ -95,56 +97,60 @@ public final class Game {
         playersRespawns.removeIf(it -> it.onTick(tick, out));
         movements.onTick(tick);
         damages.onTick(tick);
-        var deaths = new ArrayList<Death>();//todo: channel
+
         spells.onTick(tick, damages, out);
-
-        damages.forEach(d -> {
-            d.victim().damage(d);
-            if (d.victim().isDead()) {
-                var death = new Death(0, tick, d.spell(), d.victim());
-                logger.info(death.toString());
-                deaths.add(death);
-                movements.interrupt(d.victim());
-
-                if (d.victim().is(PLAYER)) {
-                    playersRespawns.add(new RespawnPlayerStrategy(tick, world, (Player) d.victim().avatar));
-                }
-
-                d.spell().source().onKill(death);
-            }
-        });
-
-
+        damages.forEach(this::onDamage);
         npcRespawns.forEach(it -> it.onTick(tick, out));
         world.getAllCreatures().forEach(cr -> zone.onTick(cr, tick, out));
-        world.getAllCreatures().forEach(cr -> {
-            if (cr.is(PLAYER)) {
-                for (PortalSpot portal : world.portals) {
-                    if (portal.x() == cr.x && portal.y() == cr.y) {
-                        strategies.add(new TeleportOutStrategy(tick, this, cr, portal));
-                    }
-                }
-            }
-        });
+        world.getAllCreatures().forEach(this::checkPortals);
+        notifyAboutEvents();
 
+        spells.onAfterTick();
+        world.removeCreatureIf(Creature::isDead);
+        damages.clear();
+        deaths.clear();//todo: optimize
+    }
 
+    private void notifyAboutEvents() {
         world.getAllCreatures().forEach(cr -> {
             damages.forEach(d -> {
                 if (cr.zoneCreatures.containsKey(d.victim().id())) {
-                    out.add(d.toUserOp(cr.id()));
+                    tickOuts.add(d.toUserOp(cr.id()));
                 }
             });
 
             deaths.forEach(death -> {
                 if (cr.zoneCreatures.containsKey(death.victim().id())) {
-                    out.add(death.toUserOp(cr.id()));
+                    tickOuts.add(death.toUserOp(cr.id()));
                 }
             });
         });
+    }
 
-        spells.onAfterTick();
-        world.removeCreatureIf(Creature::isDead);
-        damages.clear();
+    private void checkPortals(Creature cr) {
+        if (cr.is(PLAYER)) {
+            for (PortalSpot portal : world.portals) {
+                if (portal.x() == cr.x && portal.y() == cr.y) {
+                    strategies.add(new TeleportOutStrategy(tickId, this, cr, portal));
+                }
+            }
+        }
+    }
+
+    void onDamage(Damage dmg) {
+        dmg.victim().damage(dmg);
+        if (dmg.victim().isDead()) {
+            var death = new Death(0, tickId, dmg.spell(), dmg.victim());
+            logger.info(death.toString());
+            deaths.add(death);
+            movements.interrupt(dmg.victim());
+
+            if (dmg.victim().is(PLAYER)) {
+                playersRespawns.add(new RespawnPlayerStrategy(tickId, world, (Player) dmg.victim().avatar));
+            }
+
+            dmg.spell().source().onKill(death);
+        }
     }
 
     public void placeAvatar(int userId) {

@@ -1,6 +1,7 @@
 package cos.ops.out;
 
 import cos.ops.Direction;
+import cos.ops.ServiceOp;
 import cos.ops.SomeOp;
 
 public record TeleportIn(
@@ -11,6 +12,6 @@ public record TeleportIn(
         int x,
         int y,
         Direction sight
-) implements SomeOp {
+) implements SomeOp, ServiceOp {
 
 }

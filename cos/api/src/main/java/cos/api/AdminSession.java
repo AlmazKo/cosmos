@@ -17,12 +17,7 @@ class AdminSession {
     private final Logger log = Logger.get(getClass());
     private final Map<String, Lands> lands;
     private final ServerWebSocket ws;
-    private volatile boolean isClosed = false;
 
-
-    boolean isClosed() {
-        return isClosed;
-    }
 
     AdminSession(Map<String, Lands> lands, ServerWebSocket ws) {
         this.lands = lands;
@@ -31,8 +26,7 @@ class AdminSession {
         log.info("Connected admin");
 
         ws.closeHandler(it -> {
-            isClosed = true;
-            log.info("Admin socket is closing ... ");
+            log.info("Admin socket is closed");
         });
 
         ws.textMessageHandler(this::onRequest);
