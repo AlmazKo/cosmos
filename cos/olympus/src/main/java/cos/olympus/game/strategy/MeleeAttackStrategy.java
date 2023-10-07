@@ -17,6 +17,7 @@ public class MeleeAttackStrategy extends AbstractSpellStrategy {
     public final int targetX;
     public final int targetY;
 
+
     public MeleeAttackStrategy(MeleeAttack spell, World world) {
         this.world = world;
         this.spell = spell;

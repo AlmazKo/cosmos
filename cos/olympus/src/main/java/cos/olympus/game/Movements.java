@@ -120,11 +120,11 @@ public final class Movements implements TickAware {
 
         if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
             cr.offset = 0;
-            logger.info("Reset " + cr);
+            logger.info(cr, "reset");
 
             if (mv.stop) {
                 cr.stop();
-                logger.info("MV finished " + cr);
+                logger.info(cr, "finish");
                 return true;
             }
             return false;

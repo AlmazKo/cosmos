@@ -2,7 +2,7 @@ package cos.olympus.game;
 
 public class Metrics {
     public final int creatureId;
-    public int lvl = 1;
+    public int lvl;
     public int life;
     public int maxLife;
     public int exp;

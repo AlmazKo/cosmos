@@ -7,7 +7,6 @@ import cos.olympus.game.strategy.Strategy;
 import cos.olympus.game.strategy.TeleportInStrategy;
 import cos.olympus.util.OpConsumer;
 import cos.ops.ServiceOp;
-import cos.ops.SomeOp;
 import cos.ops.UserOp;
 import cos.ops.in.Login;
 import cos.ops.out.AllCreatures;

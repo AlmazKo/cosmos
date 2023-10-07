@@ -24,9 +24,8 @@ public final class Creature implements Agent {
     int y;
     int offset;
     int speed;
-    @Nullable Direction mv = null;
+    @Nullable Direction mv;
     Direction sight;
-
 
     final Metrics metrics;
     final Bag bag = new Bag();

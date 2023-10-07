@@ -20,11 +20,11 @@ public class Zone {
 
     void onTick(Creature target, int tick, OpConsumer consumer) {
         //todo hardcode radius
-        world.iterate(target.x, target.y, VIEW_RADIUS, (x, y) -> {
-            var o = world.getObject(x, y);
-            if (o != null && !target.zoneObjects.containsKey(o.id())) {
-                target.zoneObjects.put(o.id(), o);
-                consumer.add(new ObjAppear(o.id(), tick, target.id(), x, y, o.tile().id()));
+        world.iterateAround(target.x, target.y, VIEW_RADIUS, (x, y) -> {
+            var obj = world.getObject(x, y);
+            if (obj != null && !target.zoneObjects.containsKey(obj.id())) {
+                target.zoneObjects.put(obj.id(), obj);
+                consumer.add(new ObjAppear(obj.id(), tick, target.id(), x, y, obj.tile().id()));
             }
 
 //            if (target.x == x && target.y == y) return; // avoid self-detection

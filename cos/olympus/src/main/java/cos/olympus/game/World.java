@@ -158,7 +158,7 @@ public final class World {
         return result;
     }
 
-    public void iterate(int centerX, int centerY, int radius, XYConsumer consumer) {
+    public void iterateAround(int centerX, int centerY, int radius, XYConsumer consumer) {
         for (int x = max(offsetX, centerX - radius); x <= min(centerX + radius, width + offsetX); x++) {
             for (int y = max(offsetY, centerY - radius); y <= min(centerY + radius, height + offsetY); y++) {
 //                if (x == centerX && y == centerY) continue;
@@ -215,7 +215,7 @@ public final class World {
             var cr = new Creature(usr, coord.x(), coord.y(), (byte) 0, (byte) 0, null, SOUTH, life);
             creatures[idx] = cr.id();
             creatureObjects.put(cr.id(), cr);
-            logger.info(name + ": Creature #" + cr.id() + " placed x=" + cr.x + ", y=" + cr.y);
+            logger.info(cr, "placed");
             return cr;
         } else {
             throw new NoSpaceException("Fail finding free place");
@@ -373,6 +373,7 @@ public final class World {
     public Collection<Creature> getAllCreatures() {
         return creatureObjects.values();
     }
+
     public Collection<Creature> getAllPlayers() {
         return creatureObjects.values();
     }
