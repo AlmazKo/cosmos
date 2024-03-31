@@ -36,6 +36,7 @@ import {MovingListener} from './MovingListener';
 import {Orientation} from './Orientation';
 import {Player} from './Player';
 import {Spells} from './Spells';
+import {Chat} from './Chat';
 
 const NO_ACTIONS: Act[] = [];
 let ID = 1;
@@ -46,8 +47,7 @@ export class Game implements MovingListener {
     public protoReal?: Orientation;
     private actions: Act[] = NO_ACTIONS;
     private movements: Movements;
-    private chat: HTMLElement;
-    private chat_in: HTMLInputElement;
+    private chat: Chat;
     private serverTime: tsm = 0;
     private serverLatency: tsm = 0;
 
@@ -61,25 +61,7 @@ export class Game implements MovingListener {
         this.movements = new Movements(world, this)
         api.listen(p => this.onData(p))
         mvg.listen(this)
-
-        this.chat = document.getElementById("chat_history")!!;
-        this.chat_in = document.getElementById("chat_input") as any;
-
-        document.addEventListener("keyup", event => {
-            if (event.code === "Tab") {
-                event.stopPropagation();
-                return false;
-            }
-        });
-        this.chat_in.addEventListener("keyup", event => {
-            console.warn(event)
-            if (event.keyCode === 13) {
-                this.onChatMessage(`You says ${this.chat_in.value}`);
-                this.chat_in.value = '';
-                event.preventDefault();
-                this.chat_in.blur();
-            }
-        });
+        this.chat = new Chat();
     }
 
     getConnectionStatus(): ConnStatus {
@@ -139,7 +121,7 @@ export class Game implements MovingListener {
 
         const msgSubject = e.creatureId == proto.id ? 'You' : `<a>#${e.creatureId}</a>`;//todo fix
         const msgVictim = e.victimId == proto.id ? 'You' : `<a>#${e.victimId}</a>`;
-        this.onChatMessage(`${msgSubject} kills ${msgVictim} ☠️`);
+        this.chat.post(`${msgSubject} kills ${msgVictim} ☠️`);
 
 
         proto.zoneCreatures.delete(e.victimId);
@@ -190,7 +172,7 @@ export class Game implements MovingListener {
 
         const msgSubject = e.creatureId == proto.id ? 'You' : `<a>#${e.creatureId}</a>`;//todo fix
         const msgVictim = e.victimId == proto.id ? 'You' : `<a>#${e.victimId}</a>`;
-        this.onChatMessage(`${msgSubject} hits ${msgVictim} for ${e.crit ? '💥' : ''}${e.amount}`);
+        this.chat.post(`${msgSubject} hits ${msgVictim} for <span class="${e.crit ? 'damage' : 'damage'}">${e.amount}</span>`);
 
         // ???
         const spell = this.proto.zoneSpells.get(e.spellId);
@@ -199,15 +181,6 @@ export class Game implements MovingListener {
             this.proto.zoneSpells.delete(e.spellId);
             this.audio.play('damage_fireball.ogg')
         }
-    }
-
-    private onChatMessage(msg: string) {
-        let p: HTMLParagraphElement = document.createElement("p");
-        const time = new Date();
-        // p.innerHTML = `${dt.format(time)} <a>#${e.id}</a> hits <a>#${e.victimId}</a> for ${e.amount}`
-        p.innerHTML = msg
-        this.chat.append(p);
-        this.chat.scrollTo(0, this.chat.scrollHeight);
     }
 
     onAction(trait: Trait) {
