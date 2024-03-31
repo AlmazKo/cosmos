@@ -104,7 +104,11 @@ public final class Movements implements TickAware {
 
 
     public void onTick(int tickId) {
-        mvs.values().removeIf(this::onTick);
+        mvs.values().removeIf(mv -> {
+            var del = onTick(mv);
+            logger.info(mv.cr, "onTick");
+            return del;
+        });
     }
 
     private boolean onTick(Mv mv) {
@@ -115,6 +119,7 @@ public final class Movements implements TickAware {
             return false;
         }
 
+        //next cell
         int x = nextX(cr);
         int y = nextY(cr);
 
@@ -134,7 +139,7 @@ public final class Movements implements TickAware {
 
         if (mv.stop) {
             cr.stop();
-///            logger.info("MV finished " + cr);
+            logger.info(cr, "finish");
             return true;
         } else {
 
@@ -147,7 +152,7 @@ public final class Movements implements TickAware {
             cr.offset = newOffset - METER;
             var tile = world.get(x, y);
             cr.speed = toTickSpeed(getSpeed(tile));
-            logger.info("MV " + cr);
+            logger.info(cr, "");
             return false;
         }
     }

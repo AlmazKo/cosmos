@@ -4,7 +4,9 @@ import cos.logging.Logger;
 import cos.olympus.game.MetaGame;
 import cos.olympus.util.OpsAggregator;
 import cos.ops.ServiceOp;
+import cos.ops.SomeOp;
 import cos.ops.UserOp;
+import cos.ops.out.UserPackage;
 import io.vertx.core.AbstractVerticle;
 
 import java.util.ArrayList;
@@ -27,32 +29,45 @@ public class GameVerticle extends AbstractVerticle {
         log.info("Resources: " + System.getProperty("CosResourcesDir"));
         bus = new Bus(vertx.eventBus());
         game = prepareGame();
-        vertx.setPeriodic(100, this::onTick);
+
+        var time = System.currentTimeMillis();
+        var tick = time % 100;
+        if (tick > 3) {
+            Thread.sleep(100 - tick - 3);
+        }
+        var gt = new GameThread(game, this);
+        var t = new Thread(gt);
+        t.start();
+
+
+//        vertx.setPeriodic(100, this::onTick);
         bus.consume("game_in", this::onMessage);
     }
 
-    private void onTick(Long l) {
-        ++tick;
-        game.onTick(tick, userOps, serviceOps, out);
-        var events = out.groupByUser(tick);
+
+    synchronized List<UserOp> extract() {
+        if (userOps.isEmpty()) return List.of();
+
+        var tmp = userOps;
+        userOps = new ArrayList<>();
+        return tmp;
+    }
+
+
+    void onReady(ArrayList<UserPackage> events, List<SomeOp> adminEvents) {
+        /// todo check threads
         for (var e : events) {
-//            log.info(e, "out");
             bus.publish("game_out", e);
         }
 
-        var adminEvents = out.adminOps();
         for (var e : adminEvents) {
-//            log.info(e, "out_admin");
             bus.publish("game_admin_out", e);
         }
-        serviceOps = this.out.serviceOps();
-        userOps = new ArrayList<>();
-        this.out = new OpsAggregator();
     }
 
     private void onMessage(Record record) {
         if (record instanceof UserOp u) {
-            log.info("<< " + record);
+///            log.info("<< " + record);
             userOps.add(u);
         } else {
             log.warn("Unknown op: " + record);

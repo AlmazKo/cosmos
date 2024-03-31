@@ -9,6 +9,7 @@ import { Util } from './Util';
 
 const GRASS_SPEED: speed = 40;
 const WATER_SPEED: speed = 10;
+const TICK: ms = 100;
 
 interface Move {
   mv: Dir,
@@ -29,54 +30,60 @@ export class Movements {
   constructor(readonly world: World, private readonly game: Game) {
   }
 
-  onFrame(time: DOMHighResTimeStamp) {
-    this.data.forEach((m) => {
-      if (!m.start) m.start = time;
+  onFrame(time: DOMHighResTimeStamp, serverLatency: ms) {
+    this.data.forEach((mv) => {
+      if (!mv.start) {
+        mv.start = time;
+        console.info('Started', time)
+      } else {
+        console.info('Updated', time)
+      }
 
-      const o = m.cr.orientation;
-      const newTicks = (time - m.start) / 100;
-      const newOffset = Math.round(o.offset + newTicks * o.speed);
 
-      m.start = time;
+      const o = mv.cr.orientation;
+      const ticksPass = (time - mv.start) / TICK;
+      const newOffset = Math.round(o.offset + ticksPass * o.speed);
 
-      if (newOffset < 100) {
+      mv.start = time;
+
+      console.debug('newOffset', newOffset, 'New ticks',ticksPass)
+      if (newOffset < TICK) {
         o.offset = newOffset;
-        o.shift = newOffset / 100;
-        console.debug('C', o.offset)
+        o.shift = newOffset / TICK;
         return;
       }
 
       const newX = this.nextX(o);
       const newY = this.nextY(o);
       const newTile = this.world.tileType(newX, newY);
-      this.world.moveCreature(m.cr, newX, newY)
+      this.world.moveCreature(mv.cr, newX, newY)
 
-      if (m.next !== undefined && m.next.mv === null) {
+      if (mv.next !== undefined && mv.next.mv === null) {
         o.stop();
-        this.data.delete(m.cr.id);
+        this.data.delete(mv.cr.id);
         return;
       }
 
-      const nextDir = m.next ? m.next.mv : o.move;
+      const nextDir = mv.next ? mv.next.mv : o.move;
 
       if (this.isBlocked(o, nextDir)) {
-        console.warn(`#${m.cr.id} Step is blocked: ${o}`, o.move);
+        console.warn(`#${mv.cr.id} Step is blocked: ${o}`, o.move);
         o.stop();
-        this.data.delete(m.cr.id);
+        this.data.delete(mv.cr.id);
         // console.log("MOVING STOP")
         return;
       }
 
 
-      if (m.next !== undefined) {
-        o.sight = m.next.sight;
-        o.move = m.next.mv;
+      if (mv.next !== undefined) {
+        o.sight = mv.next.sight;
+        o.move = mv.next.mv;
         o.speed = Movements.getSpeed(newTile, o.move, o.sight);
-        m.next = undefined;
+        mv.next = undefined;
       }
 
 
-      // m.start = time; //todo check overlaps
+      // m.start = time; ///todo check overlaps
       o.offset -= 100;
       console.debug('C', o.offset)
       o.shift -= 1;
@@ -178,7 +185,7 @@ export class Movements {
       if (status !== StatusMoving.STOP) {
         o.move = dir;
         o.speed = 40;
-        // console.log("MOVING START", {status, dir, sight})
+        console.log("MOVING START", {status, dir, sight})
         this.data.set(cr.id, {cr, start: 0})
       }
     }

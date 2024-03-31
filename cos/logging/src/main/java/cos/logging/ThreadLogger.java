@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import static cos.logging.Logger.Level.INFO;
 import static cos.logging.Util.appendString;
 import static cos.logging.Util.appendThread;
-import static cos.logging.Util.appendTime;
+import static cos.logging.Util.appendDateTime;
 import static cos.logging.Util.truncate;
 import static java.lang.System.currentTimeMillis;
 
@@ -51,7 +51,7 @@ public final class ThreadLogger implements Logger {
         if (lvl.compareTo(level) < 0) return;
 
         final String message = truncate(msg.toString(), MAX_LEN);
-        int i = appendTime(buf, 0, currentTimeMillis());
+        int i = appendDateTime(buf, 0, currentTimeMillis());
         i = appendThread(buf, i);
         if (!tag.isEmpty()) {
             buf[i++] = ' ';

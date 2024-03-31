@@ -36,7 +36,7 @@ public final class Game {
     private final static Logger logger = Logger.get(Game.class);
 
     private final World world;
-    private final Config cfg = new Config(true);
+    private final Config cfg = new Config(false);
 
     private final Movements movements;
     private final Spells spells;
@@ -71,7 +71,7 @@ public final class Game {
     }
 
     public void handleIncomeOp(UserOp op) {
-        logger.info(op, "game_in");
+       logger.info(op, "game_in");
 
         try {
             switch (op) {

@@ -54,6 +54,8 @@ export class Game implements MovingListener {
     private movements: Movements;
     private chat: HTMLElement;
     private chat_in: HTMLInputElement;
+    private serverTime: tsm = 0;
+    private serverLatency: tsm = 0;
 
     constructor(
         private readonly api: Api,
@@ -96,9 +98,12 @@ export class Game implements MovingListener {
     }
 
     private onData(pkg: Package) {
+        this.serverTime = pkg.time;
+        this.serverLatency = Date.now() - pkg.time;
+        console.log("Server latency", this.serverLatency, 'Server time', (this.serverTime % 1000) + 'ms')
         pkg.messages.forEach(msg => {
             let e = {...msg.data, tickId: pkg.tick};
-            console.log("%c◁ "+msg.action, 'color:red', JSON.stringify(e));
+            console.log("%c◁ " + msg.action, 'color:red', JSON.stringify(e));
             switch (msg.action) {
                 case 'proto_appear':
                     this.onProtoAppear(e)

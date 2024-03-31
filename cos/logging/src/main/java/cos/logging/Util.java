@@ -11,8 +11,6 @@ import java.time.LocalDate;
 final class Util {
 
     static int appendTime(byte[] buf, int i, long ts) {
-        i = appendDate(buf, i, ts);
-        buf[i++] = ' ';
         int msDay = (int) (ts % 86400000);
         int h = msDay / 3_600_000;
         int mi = (msDay - h * 3_600_000) / 60_000;
@@ -31,6 +29,13 @@ final class Util {
         buf[i++] = (byte) (ms / 100 + '0');
         buf[i++] = (byte) (ms % 100 / 10 + '0');
         buf[i++] = (byte) (ms % 10 + '0');
+        return i;
+    }
+
+    static int appendDateTime(byte[] buf, int i, long ts) {
+        i = appendDate(buf, i, ts);
+        buf[i++] = ' ';
+        i = appendTime(buf, i, ts);
         return i;
     }
 

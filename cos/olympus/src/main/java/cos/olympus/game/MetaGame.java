@@ -28,8 +28,6 @@ public class MetaGame {
     }
 
     public void onTick(int tick, List<UserOp> userOps, List<ServiceOp> serviceOps, OpConsumer out) {
-        ThreadContext.set("SUB_TYPE", "#" + tick);
-
         serviceOps.forEach(op -> {
             if (op instanceof TeleportIn t) {
                 var target = games.get(t.world());
@@ -77,7 +75,7 @@ public class MetaGame {
         if (usr == null) {
             usr = new Usr(op.userId(), "map");
             users.put(op.userId(), usr);
-            LOG.info("#" + tick, "New User " + usr);
+            LOG.info( "New User " + usr);
             strategies.add(new LoginStrategy(games, usr));
         }
     }

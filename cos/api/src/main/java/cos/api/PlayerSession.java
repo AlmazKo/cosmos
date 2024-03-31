@@ -99,7 +99,7 @@ class PlayerSession {
 
         var clientRes = new JsonObject()
                 .put("tick", pkg.tick()) //todo hardcode
-                .put("time", System.currentTimeMillis() / 1000)
+                .put("time", pkg.tickTimeMs())
                 .put("messages", messages);
         ws.writeTextMessage(clientRes.toString());
     }

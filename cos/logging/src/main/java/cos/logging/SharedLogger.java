@@ -7,11 +7,11 @@ import java.util.Objects;
 
 import static cos.logging.Logger.Level.INFO;
 import static cos.logging.ThreadContext.TAG;
+import static cos.logging.Util.*;
 import static cos.logging.Util.appendFileLink;
 import static cos.logging.Util.appendInt;
 import static cos.logging.Util.appendString;
-import static cos.logging.Util.appendThread;
-import static cos.logging.Util.appendTime;
+import static cos.logging.Util.appendDateTime;
 import static java.lang.System.currentTimeMillis;
 
 public final class SharedLogger implements Logger {
@@ -75,10 +75,11 @@ public final class SharedLogger implements Logger {
     }
 
     private int append(String message, byte[] buf) {
+///        int i = appendDateTime(buf, 0, currentTimeMillis());
         int i = appendTime(buf, 0, currentTimeMillis());
         if (LogConfig.APPEND_FILE) i = appendFileLink(name, buf, i);
         i = appendBuild(buf, i);
-////        i = appendThread(buf, i);
+        i = appendThread(buf, i);
         i = appendTag(buf, i);
         i = appendSubType(buf, i);
         buf[i++] = ' ';

@@ -75,11 +75,11 @@ public class OpsAggregator implements OpConsumer {
     }
 
 
-    public ArrayList<UserPackage> groupByUser(int tick) {
+    public ArrayList<UserPackage> groupByUser(int tick, long tickTime) {
         var out = new ArrayList<UserPackage>();
         data.forEach((userId, ops) -> {
             if (userId > 0 && userId < 10000) {
-                var op = new UserPackage(tick, userId, ops.toArray(new Record[0]));
+                var op = new UserPackage(tick, tickTime, userId, ops.toArray(new Record[0]));
                 out.add(op);
             }
         });
