@@ -73,7 +73,7 @@ public class MetaGame {
     public void onLogin(int tick, Login op) {
         var usr = users.get(op.userId());
         if (usr == null) {
-            usr = new Usr(op.userId(), "map");
+            usr = new Usr(op.userId(), "castle-island");
             users.put(op.userId(), usr);
             LOG.info( "New User " + usr);
             strategies.add(new LoginStrategy(games, usr));

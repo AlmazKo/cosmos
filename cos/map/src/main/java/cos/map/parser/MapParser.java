@@ -27,11 +27,19 @@ public class MapParser {
             if (l == null) continue;
 
             var layer = (JsObject) l;
-            switch (layer.getString("name")) {
-                case "basic" -> map = readChunks(layer.getArray("chunks"), spec);
-                case "objects" -> objects = readChunks(layer.getArray("chunks"), spec);
-                case "respawns" -> respawns = readRespawnSpots(layer.getArray("objects"));
-                case "portals" -> portals = readPortalSpots(layer.getArray("objects"));
+
+            if (spec.chunks) {
+                switch (layer.getString("name")) {
+                    case "basic" -> map = readChunks(layer.getArray("chunks"), spec);
+                    case "objects" -> objects = readChunks(layer.getArray("chunks"), spec);
+                    case "respawns" -> respawns = readRespawnSpots(layer.getArray("objects"));
+                    case "portals" -> portals = readPortalSpots(layer.getArray("objects"));
+                }
+            } else {
+                switch (layer.getString("name")) {
+                    case "basic" -> map = readData(layer, spec);
+                    case "objects" -> objects = readData(layer, spec);
+                }
             }
         }
         var tiles = readTiles(rawTiles);
@@ -57,33 +65,36 @@ public class MapParser {
     }
 
     private static Spec calcSpec(JsArray rawLayers) {
-
         var isFirst = true;
         int maxShiftX = 0;
         int maxShiftY = 0;
         int minShiftX = 0;
         int minShiftY = 0;
+        var raw = rawLayers.getObject(0);
+        var chunks = raw.getArray("chunks");
 
-        var basis = rawLayers.getObject(0).getArray("chunks");
+        if (chunks != null) {
+            for (Object it : chunks) {
+                var chunk = (JsObject) it;
+                var shiftX = chunk.getInt("x");
+                var shiftY = chunk.getInt("y");
+                if (isFirst) {
 
-        for (Object it : basis) {
-            var chunk = (JsObject) it;
-            var shiftX = chunk.getInt("x");
-            var shiftY = chunk.getInt("y");
-            if (isFirst) {
+                    isFirst = false;
+                    minShiftX = shiftX;
+                    minShiftY = shiftY;
+                }
 
-                isFirst = false;
-                minShiftX = shiftX;
-                minShiftY = shiftY;
+                if (shiftX > maxShiftX) maxShiftX = shiftX;
+                if (shiftY > maxShiftY) maxShiftY = shiftY;
             }
+            var width = maxShiftX - minShiftX + chunkSize;
+            var height = maxShiftY - minShiftY + chunkSize;
 
-            if (shiftX > maxShiftX) maxShiftX = shiftX;
-            if (shiftY > maxShiftY) maxShiftY = shiftY;
+            return new Spec(width, height, minShiftX, minShiftY, true);
+        } else {
+            return new Spec(raw.getInt("width"), raw.getInt("height"), 0, 0, false);
         }
-        var width = maxShiftX - minShiftX + chunkSize;
-        var height = maxShiftY - minShiftY + chunkSize;
-
-        return new Spec(width, height, minShiftX, minShiftY);
     }
 
     private static ArrayList<RespawnSpot> readRespawnSpots(JsArray objects) {
@@ -161,6 +172,23 @@ public class MapParser {
         return map;
     }
 
+    private static short[] readData(JsObject layer, Spec spec) {
+        var map = new short[spec.width * spec.height];
+        var posX = 0;
+        var posY = 0;
+        var data = layer.getArray("data");
+        for (int i = data.size() - 1; i >= 0; i--) {
+            var v = data.getInt(i);
+            if (v == 0) continue;
+            var chnukX = i % spec.width;
+            var chnukY = i / spec.height;
+            var coord = posX + chnukX + (posY + chnukY) * spec.width;
+            map[coord] = (short) (v - 1); //tile manager increments every tile id (I don't know why);
+        }
+
+        return map;
+    }
+
     private static TileType parseTileType(@Nullable String raw) {
 
         if (raw == null) return TileType.NOTHING;
@@ -178,12 +206,14 @@ public class MapParser {
         int height;
         int shiftX;
         int shiftY;
+        boolean chunks;
 
-        public Spec(int width, int height, int shiftX, int shiftY) {
+        public Spec(int width, int height, int shiftX, int shiftY, boolean chunks) {
             this.width = width;
             this.height = height;
             this.shiftX = shiftX;
             this.shiftY = shiftY;
+            this.chunks = chunks;
         }
     }
 }

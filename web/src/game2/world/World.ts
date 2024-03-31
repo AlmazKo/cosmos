@@ -33,7 +33,7 @@ export class World {
   }
 
   set(worldName: string) {
-    console.log(`Set world: '${worldName}'`)
+    console.log('Set world', worldName);
     this.name = worldName;
     this.pieces = [[]]; //todo store old pieces
   }

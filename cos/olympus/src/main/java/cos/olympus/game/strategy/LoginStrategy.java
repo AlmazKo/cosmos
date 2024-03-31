@@ -22,7 +22,7 @@ public class LoginStrategy implements Strategy {
         var world = games.get(usr.worldName).getWorld();
         var player = new Player(usr.id, usr.name);
         var creature = world.place(player, 0, 0, 100, 4);
-        var op = new ProtoAppear(1, tick, usr.id, "map", creature.x(), creature.y(), creature.sight());
+        var op = new ProtoAppear(1, tick, usr.id, "castle-island", creature.x(), creature.y(), creature.sight());
         outOps.add(op);
         return true;
     }

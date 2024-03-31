@@ -42,7 +42,7 @@ class Api {
 
         var dir = System.getProperty("CosResourcesDir");
         var res = (dir == null || dir.isBlank()) ? Paths.get("", "../../resources") : Paths.get("", dir);
-        var lands = Land.load(res.toAbsolutePath(), "map");
+        var lands = Land.load(res.toAbsolutePath(), "castle-island");
         var lands2 = Land.load(res.toAbsolutePath(), "map_mike");
         var opts = new HttpServerOptions();
 
@@ -58,7 +58,7 @@ class Api {
         opts.setPemKeyCertOptions(sertOpts);
 
         var server = vertx.createHttpServer(opts);
-        initApi(vertx, Map.of("map", lands, "map_mike", lands2), server);
+        initApi(vertx, Map.of("castle-island", lands, "map_mike", lands2), server);
         server.listen(handler -> {
             if (handler.failed()) {
                 log.warn("Fail!", handler.cause());

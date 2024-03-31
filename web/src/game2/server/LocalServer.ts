@@ -28,7 +28,7 @@ export class LocalServer implements Api, MapApi {
 
     const pkg = {
       tick    : 0,
-      time    : 0,
+      tickTimeMs    : 0,
       ops: [
         {
           id    : 1,

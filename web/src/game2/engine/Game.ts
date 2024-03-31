@@ -91,11 +91,11 @@ export class Game implements MovingListener {
     }
 
     private onData(pkg: Package) {
-        this.serverTime = pkg.time;
-        this.serverLatency = Date.now() - pkg.time;
-        console.log("Server latency", this.serverLatency, 'Server time', (this.serverTime % 1000) + 'ms')
+        this.serverTime = pkg.tickTimeMs;
+        this.serverLatency = Date.now() - pkg.tickTimeMs;
+        console.debug("Server latency:", this.serverLatency, 'Server time(ms):', (this.serverTime % 1000))
         pkg.ops.forEach(msg => {
-            console.log("%c◁ " + msg.action, 'color:red', JSON.stringify(msg));
+            console.log("%c⬇︎" + msg.action, 'color:red', JSON.stringify(msg));
             switch (msg.action) {
                 case 'proto_appear':
                     this.onProtoAppear(msg)

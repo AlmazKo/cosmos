@@ -146,6 +146,23 @@ public final class Game {
             movements.interrupt(dmg.victim());
 
             if (dmg.victim().is(PLAYER)) {
+                /* TODO
+                17:43:06.900 #22203 (Damages.java:23) Damage{id=403, tick=22203, victim=10157, spell=9433, amount=27} {tag=#22203, subType=null}
+                17:43:06.900 #22203 (Game.java:144) Death{id=0, tick=22203, victim=10157, spell=9433} {tag=#22203, subType=null}
+                17:43:06.900 #22203 (NpcStrategy.java:50) Creature{id=10033, lvl=1, life=80, type=WOLF, pos=[35.0; -24.0], speed=0, dir=null, sight=WEST} aggro-ed Creature{id=15, lvl=1, life=63, type=PLAYER, pos=[34.0; -24.0], speed=0, dir=null, sight=SOUTH} {tag=#22203, subType=null}
+                17:43:07.000 #22204 (Damages.java:23) Damage{id=404, tick=22204, victim=15, spell=9448, amount=71} {tag=#22204, subType=null}
+                17:43:07.000 #22204 (Game.java:144) Death{id=0, tick=22204, victim=15, spell=9448} {tag=#22204, subType=null}
+                java.lang.ClassCastException: class cos.olympus.game.Npc cannot be cast to class cos.olympus.game.Player (cos.olympus.game.Npc and cos.olympus.game.Player are in unnamed module of loader 'app')
+                    at cos.olympus.game.Game.onDamage(Game.java:149)
+                    at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+                    at cos.olympus.game.Damages.forEach(Damages.java:30)
+                    at cos.olympus.game.Game.onTick(Game.java:102)
+                    at cos.olympus.game.MetaGame.lambda$onTick$3(MetaGame.java:50)
+                    at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+                    at cos.olympus.game.MetaGame.onTick(MetaGame.java:49)
+                    at cos.api.GameThread.run(GameThread.java:42)
+                    at java.base/java.lang.Thread.run(Thread.java:1583)
+                 */
                 playersRespawns.add(new RespawnPlayerStrategy(tickId, world, (Player) dmg.victim().avatar));
             }
 

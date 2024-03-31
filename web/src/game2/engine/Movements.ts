@@ -34,9 +34,9 @@ export class Movements {
     this.data.forEach((mv) => {
       if (!mv.start) {
         mv.start = time;
-        console.info('Started', time)
+        /// console.info('Started', time)
       } else {
-        console.info('Updated', time)
+        /// console.info('Updated', time)
       }
 
 
@@ -46,7 +46,7 @@ export class Movements {
 
       mv.start = time;
 
-      console.debug('newOffset', newOffset, 'New ticks',ticksPass)
+      /// console.debug('newOffset', newOffset, 'New ticks',ticksPass)
       if (newOffset < TICK) {
         o.offset = newOffset;
         o.shift = newOffset / TICK;

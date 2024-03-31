@@ -20,10 +20,10 @@ public class GameUtil {
     }
 
     public static @NotNull MetaGame prepareGame() throws IOException {
-        var lands = parseResources("map");
+        var lands = parseResources("castle-island");
         var lands2 = parseResources("map_mike");
         var games = Map.of(
-                "map", new Game(new World(lands, "map")),
+                "castle-island", new Game(new World(lands, "castle-island")),
                 "map_mike", new Game(new World(lands2, "map_mike"))
         );
 

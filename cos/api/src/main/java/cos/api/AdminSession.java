@@ -30,7 +30,7 @@ class AdminSession {
         });
 
         ws.textMessageHandler(this::onRequest);
-        ws.writeTextMessage(toJson(lands.get("map")).toString());
+        ws.writeTextMessage(toJson(lands.get("castle-island")).toString());
     }
 
     private void onRequest(String msg) {
