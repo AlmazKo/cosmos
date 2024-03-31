@@ -1,7 +1,11 @@
 package cos.api.records;
 
+import cos.ops.SomeOp;
+
 import java.util.Collection;
 import java.util.Map;
+
+import static cos.api.Util.toUnderscore;
 
 public interface JSON {
 
@@ -15,6 +19,12 @@ public interface JSON {
         sb.append('{');
         var mapper = RecordMapper.get(obj.getClass());
         try {
+
+            if (obj instanceof SomeOp) {
+                sb.append("\"action\":\"");
+                sb.append(toUnderscore(obj.getClass().getSimpleName()));
+                if (!mapper.getters.isEmpty()) sb.append("\",");
+            }
             for (var entry : mapper.getters) {
                 sb.append('\"');
                 sb.append(entry.getKey());

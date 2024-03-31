@@ -29,7 +29,7 @@ export class LocalServer implements Api, MapApi {
     const pkg = {
       tick    : 0,
       time    : 0,
-      messages: [
+      ops: [
         {
           id    : 1,
           action: "PROTAGONIST_ARRIVAL",

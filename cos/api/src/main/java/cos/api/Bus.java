@@ -14,6 +14,7 @@ public class Bus {
         this.bus = bus;
     }
 
+    @SuppressWarnings("unchecked")
     <T extends Record> void consume(String name, Consumer<T> handler) {
         bus.localConsumer(name).handler(m -> handler.accept((T) m.body()));
     }

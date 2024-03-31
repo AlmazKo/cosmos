@@ -10,6 +10,8 @@ import cos.ops.UserOp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cos.logging.ThreadContext.TAG;
+
 public class GameThread implements Runnable {
 
     private final Logger log = Logger.get(getClass());
@@ -35,7 +37,7 @@ public class GameThread implements Runnable {
             while (true) {
                 ++tick;
                 var tickTime = nextMs;
-                ThreadContext.set("TICK", "#" + tick);
+                ThreadContext.set(TAG, "#" + tick);
                 List<UserOp> userOps = gameVerticle.extract();
                 game.onTick(tick, userOps, serviceOps, out);
 

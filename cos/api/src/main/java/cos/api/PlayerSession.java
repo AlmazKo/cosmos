@@ -1,8 +1,8 @@
 package cos.api;
 
+import cos.api.records.JSON;
 import cos.logging.Logger;
 import cos.ops.Direction;
-import cos.ops.OutOp;
 import cos.ops.UserOp;
 import cos.ops.in.FireballEmmit;
 import cos.ops.in.Login;
@@ -13,7 +13,6 @@ import cos.ops.in.ShotEmmit;
 import cos.ops.in.StopMove;
 import cos.ops.out.UserPackage;
 import io.vertx.core.http.ServerWebSocket;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,9 +32,7 @@ class PlayerSession {
         return isClosed;
     }
 
-    PlayerSession(ServerWebSocket ws,
-                  int userId,
-                  Consumer<UserOp> olympus) {
+    PlayerSession(ServerWebSocket ws, int userId, Consumer<UserOp> olympus) {
 
         this.ws = ws;
         this.userId = userId;
@@ -69,16 +66,21 @@ class PlayerSession {
                 var sight = asDir(js.getString("sight"));
                 if (sight == null) sight = dir;
                 if (dir == null) throw new IllegalArgumentException("Wrong move request");
-                yield new Move(cid(), userId, js.getInteger("x"), js.getInteger("y"), dir, sight);
+                int x = js.getInteger("x");
+                int y = js.getInteger("y");
+                yield new Move(cid(), userId, x, y, dir, sight);
+            }
+            case "stop_move" -> {
+                int x = js.getInteger("x");
+                int y = js.getInteger("y");
+                var sight = asDir(js.getString("sight"));
+                yield new StopMove(cid(), userId, x, y, sight);
             }
             case "emmit_fireball" -> new FireballEmmit(cid(), userId);
             case "emmit_shot" -> new ShotEmmit(cid(), userId);
             case "melee_attack" -> new MeleeAttack(cid(), userId);
-            case "stop_move" ->
-                    new StopMove(cid(), userId, js.getInteger("x"), js.getInteger("y"), asDir(js.getString("sight")));
             default -> null;
         };
-
     }
 
     private int cid() {
@@ -91,17 +93,8 @@ class PlayerSession {
     }
 
     void onOp(UserPackage pkg) {
-        var messages = new JsonArray();
-
-        for (Record op : pkg.ops()) {
-            messages.add(JsonMapper.toJson((OutOp) op));
-        }
-
-        var clientRes = new JsonObject()
-                .put("tick", pkg.tick()) //todo hardcode
-                .put("time", pkg.tickTimeMs())
-                .put("messages", messages);
-        ws.writeTextMessage(clientRes.toString());
+        var data = JSON.stringify(pkg);
+        ws.writeTextMessage(data);
     }
 
     private void setupClient() {

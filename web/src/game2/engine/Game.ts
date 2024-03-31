@@ -39,12 +39,6 @@ import {Spells} from './Spells';
 
 const NO_ACTIONS: Act[] = [];
 let ID = 1;
-const dt = Intl.DateTimeFormat('en', {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false
-});
-
 
 export class Game implements MovingListener {
     // @ts-ignore
@@ -67,7 +61,6 @@ export class Game implements MovingListener {
         this.movements = new Movements(world, this)
         api.listen(p => this.onData(p))
         mvg.listen(this)
-
 
         this.chat = document.getElementById("chat_history")!!;
         this.chat_in = document.getElementById("chat_input") as any;
@@ -101,42 +94,41 @@ export class Game implements MovingListener {
         this.serverTime = pkg.time;
         this.serverLatency = Date.now() - pkg.time;
         console.log("Server latency", this.serverLatency, 'Server time', (this.serverTime % 1000) + 'ms')
-        pkg.messages.forEach(msg => {
-            let e = {...msg.data, tickId: pkg.tick};
-            console.log("%c◁ " + msg.action, 'color:red', JSON.stringify(e));
+        pkg.ops.forEach(msg => {
+            console.log("%c◁ " + msg.action, 'color:red', JSON.stringify(msg));
             switch (msg.action) {
                 case 'proto_appear':
-                    this.onProtoAppear(e)
+                    this.onProtoAppear(msg)
                     break;
                 case 'appear':
-                    this.onAppear(e)
+                    this.onAppear(msg)
                     break;
-                case 'appear_obj':
-                    this.onObjectAppear(e);
+                case 'obj_appear':
+                    this.onObjectAppear(msg);
                     break;
                 case 'metrics':
-                    this.onMetrics(e);
+                    this.onMetrics(msg);
                     break;
                 case 'creature_hid':
-                    this.onCreatureHid(e);
+                    this.onCreatureHid(msg);
                     break
                 case 'damage':
-                    this.onDamage(e);
+                    this.onDamage(msg);
                     break;
                 case 'death':
-                    this.onDeath(e);
+                    this.onDeath(msg);
                     break;
                 case 'fireball_moved':
-                    this.onFireballMoved(e)
+                    this.onFireballMoved(msg)
                     break;
                 case 'shot_moved':
-                    this.onShotMoved(e)
+                    this.onShotMoved(msg)
                     break;
                 case 'melee_attacked':
-                    this.onMeleeAttacked(e)
+                    this.onMeleeAttacked(msg)
                     break;
                 case 'creature_moved':
-                    this.onCreatureMove(e)
+                    this.onCreatureMove(msg)
                     break;
             }
         })
@@ -299,11 +291,11 @@ export class Game implements MovingListener {
                 metrics: new Metrics(1, -1, 100, 100, "Player#" + e.userId),
                 viewDistance: 10
             };
-            this.world.set(e.map);
+            this.world.set(e.world);
             this.proto = this.addPlayer(arrival) as Player;
             this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
         } else {
-            this.world.set(e.map);
+            this.world.set(e.world);
             this.proto.metrics.life = this.proto.metrics.maxLife;
             this.proto.orientation.x = e.x;
             this.proto.orientation.y = e.y;
@@ -362,9 +354,9 @@ export class Game implements MovingListener {
 
     private onMeleeAttacked(e: MeleeAttacked) {
         const proto = this.proto!!;
-        if (e.creatureId === proto.id) return;
+        if (e.sourceId === proto.id) return;
 
-        const source = proto.zoneCreatures.get(e.creatureId);
+        const source = proto.zoneCreatures.get(e.sourceId);
         if (!source) return;
 
         this.actions.push(new OnMeleeAttack(ID++, source, Date.now()))

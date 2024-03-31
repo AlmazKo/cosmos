@@ -106,7 +106,7 @@ public final class Movements implements TickAware {
     public void onTick(int tickId) {
         mvs.values().removeIf(mv -> {
             var del = onTick(mv);
-            logger.info(mv.cr, "onTick");
+           /// lo0gger.info(mv.cr, "onTick");
             return del;
         });
     }

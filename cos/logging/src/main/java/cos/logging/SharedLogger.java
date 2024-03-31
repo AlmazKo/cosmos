@@ -77,10 +77,11 @@ public final class SharedLogger implements Logger {
     private int append(String message, byte[] buf) {
 ///        int i = appendDateTime(buf, 0, currentTimeMillis());
         int i = appendTime(buf, 0, currentTimeMillis());
+        i = appendTag(buf, i);
         if (LogConfig.APPEND_FILE) i = appendFileLink(name, buf, i);
         i = appendBuild(buf, i);
-        i = appendThread(buf, i);
-        i = appendTag(buf, i);
+/// i = appendThread(buf, i);
+///        i = appendTag(buf, i);
         i = appendSubType(buf, i);
         buf[i++] = ' ';
         i = appendString(message, buf, i);
