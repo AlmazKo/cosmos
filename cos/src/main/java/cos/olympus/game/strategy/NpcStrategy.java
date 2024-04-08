@@ -47,7 +47,7 @@ public class NpcStrategy implements Strategy {
         var nextY = MapUtil.nextY(npc);
         var near = world.getCreature(nextX, nextY);
         if (near != null && near.type() != npc.type()) {
-            logger.info("" + npc + " aggro-ed " + near);
+///            logger.info("" + npc + " aggro-ed " + near);
             spells.onMeleeAttack(tick, npc);
             nextPlannedTick = tick + Util.rand(4, 8);
             return true;

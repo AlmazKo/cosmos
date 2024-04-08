@@ -1,10 +1,8 @@
 rootProject.name = "cos"
 
-include("logging")
-include("map")
-include("logging")
-include("olympus")
-include("ops")
-include("api")
-include("records")
-include("nio")
+//include("logging")
+//include("map")
+//include("logging")
+//include("olympus")
+//include("ops")
+//include("api")

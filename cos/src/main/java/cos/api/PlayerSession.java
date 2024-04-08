@@ -94,6 +94,7 @@ class PlayerSession {
 
     void onOp(UserPackage pkg) {
         var data = JSON.stringify(pkg);
+        System.out.println(data);
         ws.writeTextMessage(data);
     }
 

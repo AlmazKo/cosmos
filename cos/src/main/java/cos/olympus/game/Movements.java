@@ -125,11 +125,11 @@ public final class Movements implements TickAware {
 
         if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
             cr.offset = 0;
-            logger.info(cr, "reset");
+///            logger.info(cr, "reset");
 
             if (mv.stop) {
                 cr.stop();
-                logger.info(cr, "finish");
+///                logger.info(cr, "finish");
                 return true;
             }
             return false;
@@ -139,7 +139,7 @@ public final class Movements implements TickAware {
 
         if (mv.stop) {
             cr.stop();
-            logger.info(cr, "finish");
+///            logger.info(cr, "finish");
             return true;
         } else {
 

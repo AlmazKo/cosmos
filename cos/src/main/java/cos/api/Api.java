@@ -100,7 +100,9 @@ class Api {
         initCors(router);
         router.route().handler(new WebLogger());
         lands.forEach((n, l) -> initMapApi(router, l, n));
-        router.route("/r/*").handler(StaticHandler.create("../../resources"));
+
+        var dir = System.getProperty("CosResourcesDir");
+        router.route("/r/*").handler(StaticHandler.create(dir));
         router.route("/ws").handler(ctx ->
                 ctx.request().toWebSocket(wsAr -> {
                     if (wsAr.failed()) {
