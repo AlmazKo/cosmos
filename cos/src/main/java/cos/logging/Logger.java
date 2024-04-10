@@ -2,6 +2,7 @@ package cos.logging;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.event.EventConstants;
 
 import java.util.function.Consumer;
 
@@ -102,10 +103,16 @@ public interface Logger {
 
 
     enum Level {
-        TRACE,
-        DEBUG,
-        INFO,
-        WARN,
-        ERROR
+        TRACE(EventConstants.TRACE_INT),
+        DEBUG(EventConstants.DEBUG_INT),
+        INFO(EventConstants.DEBUG_INT),
+        WARN(EventConstants.DEBUG_INT),
+        ERROR(EventConstants.DEBUG_INT);
+
+        public final int intLevel;
+
+        Level(int lvl) {
+            intLevel = lvl;
+        }
     }
 }

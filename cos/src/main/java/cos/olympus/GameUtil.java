@@ -1,5 +1,6 @@
 package cos.olympus;
 
+import cos.Properties;
 import cos.map.Land;
 import cos.map.Lands;
 import cos.olympus.game.Game;
@@ -14,9 +15,7 @@ import java.util.Map;
 public class GameUtil {
 
     public static @NotNull Lands parseResources(String name) throws IOException {
-        var dir = System.getProperty("CosResourcesDir");
-        var res = (dir == null || dir.isBlank()) ? Paths.get("", "../../resources") : Paths.get("", dir);
-        return Land.load(res.toAbsolutePath(), name);
+        return Land.load(Properties.resourcesDir, name);
     }
 
     public static @NotNull MetaGame prepareGame() throws IOException {

@@ -1,6 +1,7 @@
 package cos.api;
 
 
+import cos.Properties;
 import cos.logging.Logger;
 import cos.map.Land;
 import cos.map.Lands;
@@ -40,10 +41,8 @@ class Api {
         log.info("Vertx started!");
         this.bus = new Bus(vertx.eventBus());
 
-        var dir = System.getProperty("CosResourcesDir");
-        var res = (dir == null || dir.isBlank()) ? Paths.get("", "../../resources") : Paths.get("", dir);
-        var lands = Land.load(res.toAbsolutePath(), "castle-island");
-        var lands2 = Land.load(res.toAbsolutePath(), "map_mike");
+        var lands = Land.load(Properties.resourcesDir, "castle-island");
+        var lands2 = Land.load(Properties.resourcesDir, "map_mike");
         var opts = new HttpServerOptions();
 
         opts.setHost("0.0.0.0");
@@ -89,11 +88,6 @@ class Api {
         }
 
     }
-
-    private String prop(String name) {
-        return System.getProperty(name, System.getenv(name));
-    }
-
 
     private void initApi(Vertx vertx, Map<String, Lands> lands, HttpServer server) {
         var router = Router.router(vertx);

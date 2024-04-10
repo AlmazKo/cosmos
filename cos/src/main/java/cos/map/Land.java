@@ -3,6 +3,8 @@ package cos.map;
 import almazko.microjson.JsObject;
 import almazko.microjson.Json;
 import cos.map.parser.MapParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,11 +12,14 @@ import java.nio.file.Path;
 
 public class Land {
 
+    private static Logger logger = LoggerFactory.getLogger(Land.class);
+
     public static Lands load(Path dir, String mapName) throws IOException {
         var baseFile = dir.resolve("base1.json");
         var mapFile = dir.resolve(mapName + ".json");
         var base = (JsObject) Json.parseObject(Files.readString(baseFile));
         var map = Json.parseObject(Files.readString(mapFile));
+        logger.info("Loading map: " + mapName);
         return MapParser.parse(map, base);
     }
 }

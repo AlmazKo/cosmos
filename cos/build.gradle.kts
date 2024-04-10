@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation(files("mods/annotations-20.1.0.jar"))
     implementation(files("mods/microjson-0.6.3.jar"))
+    implementation(files("mods/slf4j-api-2.0.12.jar"))
     implementation("io.vertx:vertx-core:4.5.7")
     implementation("io.vertx:vertx-web:4.5.7")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
@@ -21,6 +22,7 @@ dependencies {
 }
 
 application {
+    mainModule = "cos"
 //    mainClassName = "cos.api.Main" // need for ShadowJar
     mainClass.set("cos.api.Main")
     applicationDefaultJvmArgs = listOf(
@@ -29,11 +31,10 @@ application {
         "-DCosResourcesDir=../resources",
         "--enable-preview",
         "-XX:+UseZGC",
-        "-Xmx256m"
+        "-Xmx256m",
 //        "-verbose:class"
     )
 }
-
 
 configure<JavaPluginExtension> {
     toolchain {

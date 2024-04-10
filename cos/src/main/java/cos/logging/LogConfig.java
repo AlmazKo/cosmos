@@ -1,13 +1,15 @@
 package cos.logging;
 
 
+import cos.Env;
+
 import static cos.logging.Logger.Level.INFO;
 
 public final class LogConfig {
     public static int BUILD_ID = -1;
     public static final String ENV = System.getProperty("FxEnvName", "LOCAL");
     public static final long LAUNCH_TS = System.currentTimeMillis() / 1000;
-    static final boolean APPEND_FILE = "true".equalsIgnoreCase(System.getProperty("FxTraceLogs"));
+    static final boolean APPEND_FILE = "true".equalsIgnoreCase(Env.get("FxTraceLogs"));
     static final boolean APPEND_CONTEXT = true;
     static final String ES_HOST = System.getProperty("FxEsHost", "");
     static final String ES_INDEX = System.getProperty("FxEsIndexPrefix", "fx2");

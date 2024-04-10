@@ -1,0 +1,17 @@
+import cos.logging.slf4j.SlfServiceProvider;
+
+module cos {
+    requires java.net.http;
+    requires java.logging;
+    requires org.jetbrains.annotations;
+    requires microjson;
+    requires org.slf4j;
+    requires io.netty.buffer;
+    requires io.vertx.core;
+    requires io.vertx.web;
+    uses org.slf4j.spi.SLF4JServiceProvider;
+
+    exports cos.logging;
+    exports cos.logging.slf4j;
+    provides org.slf4j.spi.SLF4JServiceProvider with SlfServiceProvider;
+}
