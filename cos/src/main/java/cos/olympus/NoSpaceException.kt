@@ -1,8 +1,3 @@
-package cos.olympus;
+package cos.olympus
 
-public class NoSpaceException extends RuntimeException {
-
-    public NoSpaceException(String message) {
-        super(message);
-    }
-}
+class NoSpaceException(message: String) : RuntimeException(message)

@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static cos.olympus.game.MapUtil.nextX;
-import static cos.olympus.game.MapUtil.nextY;
 import static cos.ops.Direction.SOUTH;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -97,7 +95,7 @@ public final class World {
 
         }
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
     @Nullable
@@ -119,7 +117,6 @@ public final class World {
 
         var t = tiles[objTileId];
         if (t == null) return new Obj(idx, new Tile(objTileId, TileType.ITEM), x, y);
-        ;
 
         return new Obj(idx, t, x, y);//todo id is hardcoded
     }
@@ -179,7 +176,7 @@ public final class World {
             return;
         }
 
-        int idx = toIndex(cr.x, cr.y);
+        int idx = toIndex(cr.getX(), cr.getY());
 
         //todo debug
         if (creatures[idx] != id) {
@@ -192,7 +189,7 @@ public final class World {
     public void removeCreatureIf(Predicate<? super Creature> filter) {
         creatureObjects.values().removeIf(cr -> {
             if (filter.test(cr)) {
-                int idx = toIndex(cr.x, cr.y);
+                int idx = toIndex(cr.getX(), cr.getY());
                 creatures[idx] = 0;
                 return true;
             } else {
@@ -213,8 +210,8 @@ public final class World {
         if (idx >= 0) {
             var coord = toCoord(idx);
             var cr = new Creature(usr, coord.x(), coord.y(), (byte) 0, (byte) 0, null, SOUTH, life);
-            creatures[idx] = cr.id();
-            creatureObjects.put(cr.id(), cr);
+            creatures[idx] = cr.getId();
+            creatureObjects.put(cr.getId(), cr);
             logger.info(cr, "placed");
             return cr;
         } else {
@@ -235,7 +232,7 @@ public final class World {
     public boolean isNoMovingCreaturesIn(int x, int y) {
         var crs = getCreatures(x, y, 1);
         for (Orientable o : crs) {
-            if (o.speed() > 0 && (nextX(o) == x && nextY(o) == y)) {
+            if (o.getSpeed() > 0 && (MapUtil.INSTANCE.nextX(o) == x && MapUtil.INSTANCE.nextY(o) == y)) {
                 return false;
             }
         }
@@ -251,7 +248,7 @@ public final class World {
         if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
         var o = getObject(x, y);
         if (o != null) {
-            b = o.tile().type();
+            b = o.getTile().type();
             if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
         }
 
@@ -259,7 +256,7 @@ public final class World {
     }
 
     public void moveCreature(Creature cr, int toX, int toY) {
-        int from = toIndex(cr.x, cr.y);
+        int from = toIndex(cr.getX(), cr.getY());
         int to = toIndex(toX, toY);
         int creatureId = creatures[from];
 
@@ -272,8 +269,8 @@ public final class World {
 
         creatures[from] = 0;
         creatures[to] = creatureId;
-        cr.x = toX;
-        cr.y = toY;
+        cr.setX(toX);
+        cr.setY(toY);
 
 ////        logger.info(name + ": Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
     }

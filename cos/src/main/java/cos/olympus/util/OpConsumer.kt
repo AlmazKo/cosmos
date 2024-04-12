@@ -1,8 +1,7 @@
-package cos.olympus.util;
+package cos.olympus.util
 
-import cos.ops.SomeOp;
+import cos.ops.SomeOp
 
-@FunctionalInterface
-public interface OpConsumer {
-    void add(SomeOp op);
+fun interface OpConsumer {
+    fun add(op: SomeOp)
 }

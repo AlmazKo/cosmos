@@ -1,29 +1,28 @@
-package cos.olympus.game.events;
+package cos.olympus.game.events
 
-import cos.olympus.game.Creature;
+import cos.olympus.game.Creature
+import cos.ops.out.Damage
 
-public record Damage(
-        int id,
-        int tick,
-        Creature victim,
-        Spell spell,
-        int amount,
-        boolean crit
-) implements Event {
-
-    public cos.ops.out.Damage toUserOp(int userId) {
-        return new cos.ops.out.Damage(id, tick, userId, spell.source().id(), victim.id(), amount, spell.id(), crit);
+data class Damage(
+    override val id: Int,
+    override val tick: Int,
+    val victim: Creature,
+    val spell: Spell,
+    val amount: Int,
+    val crit: Boolean
+) : Event {
+    fun toUserOp(userId: Int): Damage {
+        return Damage(id, tick, userId, spell.source.id, victim.id, amount, spell.id, crit)
     }
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "Damage{" +
-                "id=" + id +
-                ", tick=" + tick +
-                ", victim=" + victim.id() +
-                ", spell=" + spell.id() +
-                ", amount=" + amount +
-                '}';
+            "id=" + id +
+            ", tick=" + tick +
+            ", victim=" + victim.id +
+            ", spell=" + spell.id +
+            ", amount=" + amount +
+            '}'
     }
 }
 

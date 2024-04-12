@@ -1,21 +1,21 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.olympus.game.Creature;
-import cos.olympus.game.Damages;
-import cos.olympus.game.events.Spell;
+import cos.olympus.game.Creature
+import cos.olympus.game.Damages
+import cos.olympus.game.events.Spell
 
-public interface SpellStrategy {
+interface SpellStrategy {
     //        val action: SpellAction
-    int id();
-//        fun inZone(creature: Creature): Boolean
-//        fun handle(time: Tsm, actions: ActionConsumer, map: GameMap): Boolean
+    val id: Int
 
 
-    boolean onTick(int tick, Damages damages);
+    //        fun inZone(creature: Creature): Boolean
+    //        fun handle(time: Tsm, actions: ActionConsumer, map: GameMap): Boolean
+    fun onTick(tick: Int, damages: Damages): Boolean
 
-    boolean inZone(Creature cr);
+    fun inZone(cr: Creature): Boolean
 
-    boolean isFinished();
+    val finished: Boolean
 
-    Spell spell();
+    val spell: Spell
 }

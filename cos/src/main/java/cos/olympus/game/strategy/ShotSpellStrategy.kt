@@ -1,83 +1,72 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.olympus.Util;
-import cos.olympus.game.Creature;
-import cos.olympus.game.Damages;
-import cos.olympus.game.MapUtil;
-import cos.olympus.game.World;
-import cos.olympus.game.events.Shot;
-import cos.olympus.game.events.Spell;
+import cos.logging.Logger
+import cos.olympus.Util
+import cos.olympus.game.Creature
+import cos.olympus.game.Damages
+import cos.olympus.game.MapUtil.inZone
+import cos.olympus.game.World
+import cos.olympus.game.events.Shot
+import cos.ops.Direction
 
-public class ShotSpellStrategy extends AbstractSpellStrategy {
+class ShotSpellStrategy(
+    override val spell: Shot,
+    private val world: World
+) : SpellStrategy {
 
-    public final Shot spell;
-    private final World world;
 
-    private int passed;
-    public int x;
-    public int y;
+    private var passed = 0
+    var x: Int = spell.x
+    var y: Int = spell.y
 
-    public ShotSpellStrategy(Shot spell, World world) {
-        this.world = world;
-        this.spell = spell;
-        this.x = spell.x();
-        this.y = spell.y();
-    }
+    override val id = spell.id
+    override var finished = false
 
-    @Override
-    public int id() {
-        return spell.id();
-    }
+    override fun onTick(tick: Int, damages: Damages): Boolean {
+        val distance = (tick - spell.tick) * spell.speed / 100
 
-    public boolean onTick(int tick, Damages damages) {
+        x = spell.x
+        y = spell.y
 
-        int distance = (tick - spell.tick()) * spell.speed() / 100;
-
-        x = spell.x();
-        y = spell.y();
-
-        switch (spell.dir()) {
-            case NORTH -> y -= distance;
-            case EAST -> x += distance;
-            case SOUTH -> y += distance;
-            case WEST -> x -= distance;
+        when (spell.dir) {
+            Direction.NORTH -> y -= distance
+            Direction.EAST -> x += distance
+            Direction.SOUTH -> y += distance
+            Direction.WEST -> x -= distance
         }
-
-        var victim = world.getCreature(x, y);
-        if (victim != null && spell.source().id() != victim.id()) {
-            boolean crit = Util.rand(0, 5) == 1;
-            damages.on(victim, spell, crit ? 200 : 100, crit);
-            finished = true;
+        val victim = world.getCreature(x, y)
+        if (victim != null && spell.source.id != victim.id) {
+            val crit = Util.rand(0, 5) == 1
+            damages.on(victim, spell, if (crit) 200 else 100, crit)
+            finished = true
         }
-        if (distance >= spell.distance()) {
-            finished = true;
+        if (distance >= spell.distance) {
+            finished = true
         }
 
         if (distance > passed) {
-            passed = distance;
+            passed = distance
         }
 
-        logger.info("Spell distance: " + this);
-        return finished;
+        LOG.info("Spell distance: $this")
+        return finished
     }
 
-    @Override
-    public boolean inZone(Creature cr) {
-        return MapUtil.inZone(cr, x, y, 8);
+    override fun inZone(cr: Creature): Boolean {
+        return inZone(cr, x, y, 8)
     }
 
-    @Override
-    public Spell spell() {
-        return spell;
-    }
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "ShotSpellStrategy{" +
-                "passed=" + passed +
-                ", x=" + x +
-                ", y=" + y +
-                '}';
+            "passed=" + passed +
+            ", x=" + x +
+            ", y=" + y +
+            '}'
+    }
+
+    companion object {
+        val LOG = Logger.get(ShotSpellStrategy::class.java)
     }
 }
 

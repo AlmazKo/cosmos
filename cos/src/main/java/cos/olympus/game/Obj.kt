@@ -1,11 +1,10 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.map.Tile;
+import cos.map.Tile
 
-public record Obj(
-        int id,
-        Tile tile,
-        int x,
-        int y
-) implements Placeable {
-}
+class Obj(
+    val id: Int,
+    val tile: Tile,
+    override val x: Int,
+    override val y: Int
+) : Placeable

@@ -1,10 +1,8 @@
-package cos.olympus.game.events;
+package cos.olympus.game.events
 
-import cos.olympus.game.Creature;
+import cos.olympus.game.Creature
 
-public interface Spell {
-
-    int id();
-
-    Creature source();
+interface Spell {
+    val id: Int
+    val source: Creature
 }

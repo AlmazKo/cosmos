@@ -1,7 +1,6 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-public class Bag {
-    public void add(Item item) {
-
+class Bag {
+    fun add(item: Item) {
     }
 }

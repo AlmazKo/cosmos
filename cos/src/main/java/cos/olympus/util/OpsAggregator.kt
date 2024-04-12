@@ -1,88 +1,77 @@
-package cos.olympus.util;
+package cos.olympus.util
 
-import cos.logging.Logger;
-import cos.ops.ServiceOp;
-import cos.ops.SomeOp;
-import cos.ops.UserOp;
-import cos.ops.out.UserPackage;
+import cos.logging.Logger
+import cos.ops.ServiceOp
+import cos.ops.SomeOp
+import cos.ops.UserOp
+import cos.ops.out.UserPackage
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+class OpsAggregator : OpConsumer {
+    private val data = HashMap<Int, ArrayList<SomeOp>>()
+    private var serviceOps = ArrayList<ServiceOp>()
 
-public class OpsAggregator implements OpConsumer {
+    override fun add(op: SomeOp) {
+        LOG.info(op, "new_op")
 
-    private final static Logger LOG = Logger.get(OpsAggregator.class);
-
-    private final HashMap<Integer, List<SomeOp>> data = new HashMap<>();
-    private List<ServiceOp> serviceOps = new ArrayList<>();
-
-    @Override
-    public void add(SomeOp op) {
-//        LOG.info(op, "new_op");
-
-        if (op instanceof ServiceOp o) {
-            serviceOps.add(o);
-            return;
+        if (op is ServiceOp) {
+            serviceOps.add(op)
+            return
         }
 
-        int usrId = switch (op) {
-            case UserOp uop -> uop.userId();
-            default -> 0;
-        };
+        val usrId = if (op is UserOp) op.userId() else 0
 
-        data.computeIfAbsent(usrId, it -> new ArrayList<>())
-                .add(op);
+        data.computeIfAbsent(usrId) { ArrayList() }
+            .add(op)
     }
 
-    public int size() {
-        return data.size();
+    fun size(): Int {
+        return data.size
     }
 
-    public void clear() {
-        data.clear();
+    fun clear() {
+        data.clear()
     }
 
-    public List<SomeOp> getServiceData() {
-        return data.getOrDefault(0, List.of());
+    val serviceData: List<SomeOp>
+        get() = data.getOrDefault(0, listOf())
+
+    fun userOps(): Map<Int, List<SomeOp>> {
+        return data
     }
 
-    public Map<Integer, List<SomeOp>> userOps() {
-        return data;
+    fun serviceOps(): List<ServiceOp> {
+        if (serviceOps.isEmpty()) return listOf()
+
+        val tmp = serviceOps
+        serviceOps = ArrayList()
+        return tmp
     }
 
-    public List<ServiceOp> serviceOps() {
-        if (serviceOps.isEmpty()) return List.of();
-
-        var tmp = serviceOps;
-        serviceOps = new ArrayList<>();
-        return tmp;
+    fun adminOps(): List<SomeOp> {
+        val tmp = data[0]
+        return if ((tmp == null)) listOf() else tmp
     }
 
-    public List<SomeOp> adminOps() {
-        List<SomeOp> tmp = data.get(0);
-        return (tmp == null) ? List.of() : tmp;
+    fun getUserData(userId: Int): List<SomeOp> {
+        require(userId != 0) { "UserId must be greater than 0" }
+
+        val result = data[userId] ?: return listOf()
+
+        return result
     }
 
-    public List<SomeOp> getUserData(int userId) {
-        if (userId == 0) throw new IllegalArgumentException("UserId must be greater than 0");
-
-        var result = data.get(userId);
-        if (result == null) return List.of();
-
-        return result;
-    }
-
-
-    public ArrayList<UserPackage> groupByUser(int tick, long tickTime) {
-        var out = new ArrayList<UserPackage>();
-        data.forEach((userId, ops) -> {
+    fun groupByUser(tick: Int, tickTime: Long): java.util.ArrayList<UserPackage> {
+        val out = java.util.ArrayList<UserPackage>()
+        data.forEach { userId, ops ->
             if (userId > 0 && userId < 10000) {
-                var op = new UserPackage(tick, tickTime, userId, ops.toArray(new Record[0]));
-                out.add(op);
+                val op = UserPackage(tick, tickTime, userId, ops.map { it as Record }.toTypedArray())
+                out.add(op)
             }
-        });
-        return out;
+        }
+        return out
+    }
+
+    companion object {
+        private val LOG: Logger = Logger.get(OpsAggregator::class.java)
     }
 }

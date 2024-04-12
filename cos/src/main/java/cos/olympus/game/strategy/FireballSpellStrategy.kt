@@ -1,83 +1,59 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.olympus.Util;
-import cos.olympus.game.Creature;
-import cos.olympus.game.Damages;
-import cos.olympus.game.MapUtil;
-import cos.olympus.game.World;
-import cos.olympus.game.events.Fireball;
-import cos.olympus.game.events.Spell;
+import cos.olympus.Util
+import cos.olympus.game.Creature
+import cos.olympus.game.Damages
+import cos.olympus.game.MapUtil.inZone
+import cos.olympus.game.World
+import cos.olympus.game.events.Fireball
+import cos.ops.Direction
 
-public class FireballSpellStrategy extends AbstractSpellStrategy {
+class FireballSpellStrategy(
+    override val spell: Fireball,
+    private val world: World
+) : SpellStrategy {
 
-    public final Fireball spell;
-    private final World world;
+    override var finished = false
+    private var passed = 0
+    var x = spell.x
+    var y = spell.y
 
-    private int passed;
-    public int x;
-    public int y;
+    override val id = spell.id
 
-    public FireballSpellStrategy(Fireball spell, World world) {
-        this.world = world;
-        this.spell = spell;
-        this.x = spell.x();
-        this.y = spell.y();
-    }
+    override fun onTick(tick: Int, damages: Damages): Boolean {
+        val distance = (tick - spell.tick) * spell.speed / 100
 
-    @Override
-    public int id() {
-        return spell.id();
-    }
+        x = spell.x
+        y = spell.y
 
-    public boolean onTick(int tick, Damages damages) {
-
-        int distance = (tick - spell.tick()) * spell.speed() / 100;
-
-        x = spell.x();
-        y = spell.y();
-
-        switch (spell.dir()) {
-            case NORTH -> y -= distance;
-            case EAST -> x += distance;
-            case SOUTH -> y += distance;
-            case WEST -> x -= distance;
+        when (spell.dir) {
+            Direction.NORTH -> y -= distance
+            Direction.EAST -> x += distance
+            Direction.SOUTH -> y += distance
+            Direction.WEST -> x -= distance
         }
-
-        var victim = world.getCreature(x, y);
-        if (victim != null && spell.source().id() != victim.id()) {
-            boolean crit = Util.rand(0, 10) == 1;
-            damages.on(victim, spell, crit ? 100 : 50, crit);
-            finished = true;
+        val victim = world.getCreature(x, y)
+        if (victim != null && spell.source.id != victim.id) {
+            val crit = Util.rand(0, 10) == 1
+            damages.on(victim, spell, if (crit) 100 else 50, crit)
+            finished = true
         }
-        if (distance >= spell.distance()) {
-            finished = true;
+        if (distance >= spell.distance) {
+            finished = true
         }
 
         if (distance > passed) {
-            passed = distance;
+            passed = distance
         }
 
         //logger.info("Spell distance: " + this);
-        return finished;
+        return finished
     }
 
-    @Override
-    public boolean inZone(Creature cr) {
-        return MapUtil.inZone(cr, x, y, 8);
+    override fun inZone(cr: Creature): Boolean {
+        return inZone(cr, x, y, 8)
     }
 
-    @Override
-    public Spell spell() {
-        return spell;
-    }
-
-    @Override
-    public String toString() {
-        return "FireballSpellStrategy{" +
-                "passed=" + passed +
-                ", x=" + x +
-                ", y=" + y +
-                '}';
-    }
+    override fun toString() = "FireballSpellStrategy{passed=$passed, x=$x, y=$y}"
 }
 

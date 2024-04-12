@@ -1,7 +1,6 @@
-package cos.olympus.game.events;
+package cos.olympus.game.events
 
-public interface Event {
-    int id();
-
-    int tick();
+interface Event {
+    val id: Int
+    val tick: Int
 }

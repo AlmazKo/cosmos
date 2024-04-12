@@ -43,20 +43,8 @@ class Api {
 
         var lands = Land.load(Properties.resourcesDir, "castle-island");
         var lands2 = Land.load(Properties.resourcesDir, "map_mike");
-        var opts = new HttpServerOptions();
+        var server = createServer(vertx);
 
-        opts.setHost("0.0.0.0");
-        opts.setUseAlpn(true);
-        opts.setSsl(true);
-        opts.setPort(443);
-
-        //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
-        var sertOpts = new PemKeyCertOptions();
-        sertOpts.setKeyValue(readRescourceToBuffer("/localhost+2-key.pem"));
-        sertOpts.setCertValue(readRescourceToBuffer("/localhost+2.pem"));
-        opts.setPemKeyCertOptions(sertOpts);
-
-        var server = vertx.createHttpServer(opts);
         initApi(vertx, Map.of("castle-island", lands, "map_mike", lands2), server);
         server.listen(handler -> {
             if (handler.failed()) {
@@ -69,6 +57,22 @@ class Api {
 
         bus.consume("game_out", this::onGameOut);
         bus.consume("game_admin_out", this::onGameAdminOut);
+    }
+
+    private static HttpServer createServer(Vertx vertx) throws IOException {
+        var opts = new HttpServerOptions();
+        opts.setHost("0.0.0.0");
+        opts.setUseAlpn(true);
+        opts.setSsl(true);
+        opts.setPort(443);
+
+        //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
+        var sertOpts = new PemKeyCertOptions();
+        sertOpts.setKeyValue(readRescourceToBuffer("/localhost+2-key.pem"));
+        sertOpts.setCertValue(readRescourceToBuffer("/localhost+2.pem"));
+        opts.setKeyCertOptions(sertOpts);
+
+        return vertx.createHttpServer(opts);
     }
 
     private void onGameAdminOut(Record record) {
@@ -135,8 +139,8 @@ class Api {
 
 
         router.get("/map/" + name).handler(req -> {
-            var x = parseInt(req.queryParam("x").get(0));
-            var y = parseInt(req.queryParam("y").get(0));
+            var x = parseInt(req.queryParam("x").getFirst());
+            var y = parseInt(req.queryParam("y").getFirst());
             var t = basis.get(new Splitter.Coord<>(x, y));
             req.response().putHeader("content-type", "application/json; charset=utf-8");
             if (t == null) {
@@ -150,7 +154,7 @@ class Api {
     }
 
     private static void initCors(Router router) {
-        var cors = CorsHandler.create("*");
+        var cors = CorsHandler.create().addRelativeOrigin(".*");
         cors.allowedMethod(HttpMethod.GET);
         var headers = new HashSet<String>();
         headers.add("content-type");

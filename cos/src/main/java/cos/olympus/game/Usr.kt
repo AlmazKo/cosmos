@@ -1,22 +1,15 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-public class Usr {
+class Usr(
+    val id: Int,
+    var worldName: String
+) {
+    val name: String = "user:$id"
 
-    public final int id;
-    public final String name;
-    public String worldName;
-
-    public Usr(int id, String worldName) {
-        this.id = id;
-        this.name = "user:" + id;
-        this.worldName = worldName;
-    }
-
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "Usr{" +
-                "id=" + id +
-                ", worldName='" + worldName + '\'' +
-                '}';
+            "id=" + id +
+            ", worldName='" + worldName + '\'' +
+            '}'
     }
 }

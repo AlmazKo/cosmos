@@ -1,6 +1,4 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-public record Item(
-        int id
-) {
-}
+
+data class Item(val id: Int)

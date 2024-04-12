@@ -1,76 +1,66 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.logging.Logger;
-import cos.olympus.util.OpConsumer;
-import cos.ops.out.CreatureHid;
-import cos.ops.out.CreatureMoved;
-import cos.ops.out.Metrics;
-import cos.ops.out.ObjAppear;
+import cos.logging.Logger
+import cos.olympus.util.OpConsumer
+import cos.ops.out.CreatureHid
+import cos.ops.out.CreatureMoved
+import cos.ops.out.Metrics
+import cos.ops.out.ObjAppear
+import kotlin.math.abs
 
-public class Zone {
-
-    private final static Logger logger = Logger.get(Zone.class);
-    private final static int VIEW_RADIUS = 8;
-
-    private final World world;
-
-    public Zone(World world) {
-        this.world = world;
-    }
-
-    void onTick(Creature target, int tick, OpConsumer consumer) {
+class Zone(private val world: World) {
+    fun onTick(target: Creature, tick: Int, consumer: OpConsumer) {
         //todo hardcode radius
-        world.iterateAround(target.x, target.y, VIEW_RADIUS, (x, y) -> {
-            var obj = world.getObject(x, y);
-            if (obj != null && !target.zoneObjects.containsKey(obj.id())) {
-                target.zoneObjects.put(obj.id(), obj);
-                consumer.add(new ObjAppear(obj.id(), tick, target.id(), x, y, obj.tile().id()));
+        world.iterateAround(target.x, target.y, VIEW_RADIUS) { x, y ->
+            val obj = world.getObject(x, y)
+            if (obj != null && !target.zoneObjects.containsKey(obj.id)) {
+                target.zoneObjects[obj.id] = obj
+                consumer.add(ObjAppear(obj.id, tick, target.id, x, y, obj.tile.id))
             }
 
-//            if (target.x == x && target.y == y) return; // avoid self-detection
-
-            Creature cr;
-            if (target.x == x && target.y == y) {
-                cr = target;
+            //            if (target.getX() == x && target.getY() == y) return; // avoid self-detection
+            val cr = if (target.x == x && target.y == y) {
+                target
             } else {
-                cr = world.getCreature(x, y);
+                world.getCreature(x, y)
             }
-
-
             if (cr == null) {
                 //disappear or /nothing
             } else {
-                var ort = target.zoneCreatures.get(cr.id());
-                if (ort == null || (ort.x() != cr.x || ort.y() != cr.y) || ort.speed() != cr.speed || ort.sight() != cr.sight) {
-                    target.zoneCreatures.put(cr.id(), cr.orientation());
-                    consumer.add(new CreatureMoved(1, tick, target.id(), cr.id(), x, y, cr.offset, cr.speed, cr.mv, cr.sight));
+                val ort = target.zoneCreatures[cr.id]
+                if (ort == null || (ort.x != cr.x || ort.y != cr.y) || ort.speed != cr.speed || ort.sight != cr.sight) {
+                    target.zoneCreatures[cr.id] = cr.orientation()
+                    consumer.add(CreatureMoved(1, tick, target.id, cr.id, x, y, cr.offset, cr.speed, cr.mv, cr.sight))
                 }
 
-                var met = target.zoneMetrics.get(cr.id());
-                if (met == null || (met.life() != cr.life() || met.maxLife() != cr.metrics.maxLife() || met.exp != cr.metrics.exp)) {
-                    var n = cr.copyMetrics();
-                    target.zoneMetrics.put(cr.id(), n);
-                    consumer.add(new Metrics(1, tick, target.id(), cr.id(), cr.metrics.lvl, cr.metrics.exp, n.life(), n.maxLife()));
+                val met = target.zoneMetrics[cr.id]
+                if (met == null || (met.life() != cr.life || met.maxLife() != cr.metrics.maxLife() || met.exp != cr.metrics.exp)) {
+                    val n = cr.copyMetrics()
+                    target.zoneMetrics[cr.id] = n
+                    consumer.add(Metrics(1, tick, target.id, cr.id, cr.metrics.lvl, cr.metrics.exp, n.life(), n.maxLife()))
                 }
             }
+        }
 
-        });
-
-        target.zoneCreatures.values().removeIf(ort -> {
-            if (ort.creatureId() == target.id()) return false;
-
-            var cr = world.getCreature(ort.creatureId());
+        target.zoneCreatures.values.removeIf { ort: Orientation ->
+            if (ort.creatureId == target.id) return@removeIf false
+            val cr = world.getCreature(ort.creatureId)
             if (cr == null || inNotFov(target, cr)) {
-                consumer.add(new CreatureHid(1, tick, target.id(), ort.creatureId()));
-                target.zoneMetrics.remove(ort.creatureId());
-                return true;
+                consumer.add(CreatureHid(1, tick, target.id, ort.creatureId))
+                target.zoneMetrics.remove(ort.creatureId)
+                return@removeIf true
             } else {
-                return false;
+                return@removeIf false
             }
-        });
+        }
     }
 
-    static boolean inNotFov(Creature target, Creature o) {
-        return Math.abs(target.x - o.x) > VIEW_RADIUS || Math.abs(target.y - o.y) > VIEW_RADIUS;
+    companion object {
+        private val logger: Logger = Logger.get(Zone::class.java)
+        private const val VIEW_RADIUS = 8
+
+        fun inNotFov(target: Creature, o: Creature): Boolean {
+            return abs((target.x - o.x).toDouble()) > VIEW_RADIUS || abs((target.y - o.y).toDouble()) > VIEW_RADIUS
+        }
     }
 }

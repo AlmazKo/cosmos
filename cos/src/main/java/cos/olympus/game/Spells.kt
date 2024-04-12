@@ -1,115 +1,113 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.logging.Logger;
-import cos.olympus.game.events.Fireball;
-import cos.olympus.game.events.Shot;
-import cos.olympus.game.strategy.FireballSpellStrategy;
-import cos.olympus.game.strategy.MeleeAttackStrategy;
-import cos.olympus.game.strategy.ShotSpellStrategy;
-import cos.olympus.game.strategy.SpellStrategy;
-import cos.olympus.util.OpConsumer;
-import cos.ops.in.FireballEmmit;
-import cos.ops.in.MeleeAttack;
-import cos.ops.in.ShotEmmit;
-import cos.ops.out.FireballMoved;
-import cos.ops.out.MeleeAttacked;
-import cos.ops.out.ShotMoved;
+import cos.logging.Logger
+import cos.olympus.game.events.Fireball
+import cos.olympus.game.events.Shot
+import cos.olympus.game.events.Spell
+import cos.olympus.game.strategy.FireballSpellStrategy
+import cos.olympus.game.strategy.MeleeAttackStrategy
+import cos.olympus.game.strategy.ShotSpellStrategy
+import cos.olympus.game.strategy.SpellStrategy
+import cos.olympus.util.OpConsumer
+import cos.olympus.util.TimeUtil
+import cos.ops.`in`.FireballEmmit
+import cos.ops.`in`.MeleeAttack
+import cos.ops.`in`.ShotEmmit
+import cos.ops.out.FireballMoved
+import cos.ops.out.MeleeAttacked
+import cos.ops.out.ShotMoved
 
-import java.util.ArrayList;
+class Spells(private val world: World) {
+    private val pause = TimeUtil.toTicks(1)
 
-import static cos.olympus.util.TimeUtil.toTickSpeed;
-import static cos.olympus.util.TimeUtil.toTicks;
+    private val spells = ArrayList<SpellStrategy>()
 
-public class Spells {
-    private final static Logger logger = Logger.get(Spells.class);
+    fun onShot(tick: Int, op: ShotEmmit) {
+        val cr = world.getCreature(op.userId) ?: return
 
-    protected static int SPELL_IDS = 0;
-    private final int pause = toTicks(1);
-
-    private final ArrayList<SpellStrategy> spells = new ArrayList<>();
-    private final World world;
-
-    public Spells(World world) {
-        this.world = world;
-    }
-
-    void onShot(int tick, ShotEmmit op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
         //todo validate cooldown
-
         if (tick - cr.lastSpellTick < pause) {
-            logger.info("Ignore spell " + op);
-            return;
+            logger.info("Ignore spell $op")
+            return
         }
 
-        cr.lastSpellTick = tick;
+        cr.lastSpellTick = tick
 
-        var spell = new Shot(++SPELL_IDS, cr.x(), cr.y(), toTickSpeed(1000), cr.sight(), 10, tick, cr);
-        var str = new ShotSpellStrategy(spell, world);
-        spells.add(str);
+        val spell = Shot(++SPELL_IDS, cr.x, cr.y, TimeUtil.toTickSpeed(1000), cr.sight, 10, tick, cr)
+        val str = ShotSpellStrategy(spell, world)
+        spells.add(str)
     }
 
-    void onSpell(int tick, FireballEmmit op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
-        //todo validate cooldown
+    fun onSpell(tick: Int, op: FireballEmmit) {
+        val cr = world.getCreature(op.userId) ?: return
 
+        //todo validate cooldown
         if (tick - cr.lastSpellTick < pause) {
-            logger.info("Ignore spell " + op);
-            return;
+            logger.info("Ignore spell $op")
+            return
         }
 
-        cr.lastSpellTick = tick;
+        cr.lastSpellTick = tick
 
-        var spell = new Fireball(++SPELL_IDS, cr.x(), cr.y(), toTickSpeed(400), cr.sight(), 8, tick, cr);
-        var str = new FireballSpellStrategy(spell, world);
-        spells.add(str);
+        val spell = Fireball(++SPELL_IDS, cr.x, cr.y, TimeUtil.toTickSpeed(400), cr.sight, 8, tick, cr)
+        val str = FireballSpellStrategy(spell, world)
+        spells.add(str)
     }
 
-    void onMeleeAttack(int tick, MeleeAttack op) {
-        var cr = world.getCreature(op.userId());
-        if (cr == null) return;
+    fun onMeleeAttack(tick: Int, op: MeleeAttack) {
+        val cr = world.getCreature(op.userId) ?: return
         if (tick - cr.lastSpellTick < pause) {
             //too fast
-            return;
+            return
         }
 
 
-        var spell = new cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);
-        var str = new MeleeAttackStrategy(spell, world);
-        spells.add(str);
+        val spell = cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x, cr.y, cr.sight, cr)
+        val str = MeleeAttackStrategy(spell, world)
+        spells.add(str)
     }
 
-    public void onMeleeAttack(int tick, Creature cr) {
-        var spell = new cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x(), cr.y(), cr.sight(), cr);
-        var str = new MeleeAttackStrategy(spell, world);
-        spells.add(str);
+    fun onMeleeAttack(tick: Int, cr: Creature) {
+        val spell = cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, cr.x, cr.y, cr.sight, cr)
+        val str = MeleeAttackStrategy(spell, world)
+        spells.add(str)
     }
 
-    public void onTick(int tick, Damages damages, OpConsumer outOps) {
-        spells.forEach(s -> s.onTick(tick, damages));
+    fun onTick(tick: Int, damages: Damages, outOps: OpConsumer) {
+        spells.forEach { it.onTick(tick, damages) }
 
         //notify
-        spells.forEach((SpellStrategy strategy) -> {
-            var spell = strategy.spell();
-            world.getAllCreatures().forEach(cr -> {
+        spells.forEach { strategy ->
+            val spell: Spell = strategy.spell
+            world.allCreatures.forEach { cr ->
                 if (strategy.inZone(cr)) {
-                    if (cr.zoneSpells.put(strategy.id(), strategy) == null) {
-                        if (spell instanceof Fireball s) {
-                            outOps.add(new FireballMoved(SPELL_IDS++, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinished()));
-                        } else if (spell instanceof cos.olympus.game.events.MeleeAttack s) {
-                            outOps.add(new MeleeAttacked(SPELL_IDS++, tick, cr.id(), s.id(), s.source().id()));
-                        } else if (spell instanceof Shot s) {
-                            outOps.add(new ShotMoved(SPELL_IDS++, tick, cr.id(), s.id(), s.x(), s.y(), s.speed(), s.dir(), strategy.isFinished()));
+                    if (cr.zoneSpells.put(strategy.id, strategy) == null) {
+                        when (spell) {
+                            is Fireball -> {
+                                outOps.add(FireballMoved(SPELL_IDS++, tick, cr.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
+                            }
+
+                            is cos.olympus.game.events.MeleeAttack -> {
+                                outOps.add(MeleeAttacked(SPELL_IDS++, tick, cr.id, spell.id, spell.source.id))
+                            }
+
+                            is Shot -> {
+                                outOps.add(ShotMoved(SPELL_IDS++, tick, cr.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
+                            }
                         }
                     }
                 }
-            });
-        });
+            }
+        }
     }
 
-    public void onAfterTick() {
-        spells.removeIf(SpellStrategy::isFinished);
+    fun onAfterTick() {
+        spells.removeIf { obj: SpellStrategy -> obj.finished }
+    }
+
+    companion object {
+        private val logger: Logger = Logger.get(Spells::class.java)
+
+        protected var SPELL_IDS: Int = 0
     }
 }

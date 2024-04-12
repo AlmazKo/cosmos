@@ -1,166 +1,94 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.map.CreatureType;
-import cos.olympus.game.events.Damage;
-import cos.olympus.game.events.Death;
-import cos.olympus.game.strategy.SpellStrategy;
-import cos.ops.Direction;
-import org.jetbrains.annotations.Nullable;
+import cos.olympus.game.events.Damage
+import cos.olympus.game.events.Death
+import cos.olympus.game.strategy.SpellStrategy
+import cos.ops.Direction
 
-import java.util.HashMap;
-import java.util.Map;
+class Creature(
+    val avatar: Avatar,
+    override var x: Int,
+    override var y: Int,
+    override var offset: Int,
+    override var speed: Int,
+    override var mv: Direction?,
+    override var sight: Direction,
+    life: Int
+) : Agent {
 
-import static cos.olympus.game.Movements.METER;
-import static cos.ops.Direction.EAST;
-import static cos.ops.Direction.NORTH;
-import static cos.ops.Direction.SOUTH;
-import static cos.ops.Direction.WEST;
+    override val id get() = avatar.id
+    override val type get() = avatar.type
 
-public final class Creature implements Agent {
-    public final Avatar avatar;
-    int lastSpellTick;
+    var lastSpellTick: Int = 0
+    val metrics = Metrics(avatar.id, life)
+    val bag = Bag()
+    val zoneObjects = HashMap<Int, Obj>()
+    val zoneCreatures = HashMap<Int, Orientation>()
+    val zoneMetrics = HashMap<Int, Metrics>()
+    val zoneSpells = HashMap<Int, SpellStrategy>()
 
-    int x;
-    int y;
-    int offset;
-    int speed;
-    @Nullable Direction mv;
-    Direction sight;
-
-    final Metrics metrics;
-    final Bag bag = new Bag();
-
-    final Map<Integer, Obj> zoneObjects = new HashMap<>();
-    final Map<Integer, Orientation> zoneCreatures = new HashMap<>();
-    final Map<Integer, Metrics> zoneMetrics = new HashMap<>();
-    final Map<Integer, SpellStrategy> zoneSpells = new HashMap<>();
-
-    public Metrics metrics() {
-        return metrics;
+    fun orientation(): Orientation {
+        return Orientation(avatar.id, x, y, speed, offset, sight, mv)
     }
 
-    public Creature(Avatar avatar, int x, int y, int offset, int speed, @Nullable Direction dir, Direction sight, int life) {
-        this.avatar = avatar;
-        this.x = x;
-        this.y = y;
-        this.offset = offset;
-        this.speed = speed;
-        this.mv = dir;
-        this.sight = sight;
-        this.metrics = new Metrics(avatar.id(), life);
-    }
-
-    public void setSight(Direction sight) {
-        this.sight = sight;
-    }
-
-    Orientation orientation() {
-        return new Orientation(avatar.id(), x, y, speed, offset, sight, mv);
-    }
-
-    Metrics copyMetrics() {
-        return metrics.copy();
+    fun copyMetrics(): Metrics {
+        return metrics.copy()
     }
 
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "Creature{" +
-                "id=" + avatar.id() +
-                ", lvl=" + metrics.lvl +
-                ", life=" + metrics.life +
-                ", type=" + type() +
-                ", pos=[" + rx() + "; " + ry() + "]" +
-                ", speed=" + speed +
-                ", dir=" + mv +
-                ", sight=" + sight +
-                '}';
+            "id=" + avatar.id +
+            ", lvl=" + metrics.lvl +
+            ", life=" + metrics.life +
+            ", type=" + type +
+            ", pos=[" + rx() + "; " + ry() + "]" +
+            ", speed=" + speed +
+            ", dir=" + mv +
+            ", sight=" + sight +
+            '}'
     }
 
-    public float ry() {
-        if (mv == NORTH) return y - ((float) offset / METER);
-        if (mv == SOUTH) return y + ((float) offset / METER);
-        return y;
+    fun ry(): Float {
+        if (mv == Direction.NORTH) return y - (offset.toFloat() / Movements.METER)
+        if (mv == Direction.SOUTH) return y + (offset.toFloat() / Movements.METER)
+        return y.toFloat()
     }
 
-    public float rx() {
-        if (mv == WEST) return x - ((float) offset / METER);
-        if (mv == EAST) return x + ((float) offset / METER);
-        return x;
+    fun rx(): Float {
+        if (mv == Direction.WEST) return x - (offset.toFloat() / Movements.METER)
+        if (mv == Direction.EAST) return x + (offset.toFloat() / Movements.METER)
+        return x.toFloat()
     }
 
-    public void stop() {
-        offset = 0;
-        speed = 0;
-        mv = null;
+    fun stop() {
+        offset = 0
+        speed = 0
+        mv = null
     }
 
-    public void damage(Damage d) {
-        this.metrics.minus(d.amount());
+    fun damage(d: Damage) {
+        metrics.minus(d.amount)
     }
 
-    public boolean isDead() {
-        return metrics.isDead();
-    }
+    val isDead: Boolean
+        get() = metrics.isDead
 
-    @Override
-    public int id() {
-        return avatar.id();
-    }
+    val life: Int = metrics.life()
 
-    @Override
-    public CreatureType type() {
-        return avatar.type();
-    }
-
-    @Override
-    public int x() {
-        return x;
-    }
-
-    @Override
-    public int y() {
-        return y;
-    }
-
-    @Override
-    public int speed() {
-        return speed;
-    }
-
-    @Override
-    public int offset() {
-        return offset;
-    }
-
-    @Override
-    public @Nullable Direction mv() {
-        return mv;
-    }
-
-    @Override
-    public Direction sight() {
-        return sight;
-    }
-
-    public int life() {
-        return metrics.life();
-    }
-
-    public void onKill(Death death) {
-
-        if (death.victim().metrics.lvl > metrics.lvl) {
-            metrics.exp += 3;
-        } else if (death.victim().metrics.lvl >= metrics.lvl - 1) {
-            metrics.exp += 1;
+    fun onKill(death: Death) {
+        if (death.victim.metrics.lvl > metrics.lvl) {
+            metrics.exp += 3
+        } else if (death.victim.metrics.lvl >= metrics.lvl - 1) {
+            metrics.exp += 1
         }
 
         if (metrics.exp >= 10) {
-            metrics.lvl++;
-            metrics.exp = metrics.exp - 10;
-            metrics.maxLife = (int) (metrics.maxLife + 1.2);
-            metrics.life = metrics.maxLife;
-            System.out.println("" + this + " level up");
+            metrics.lvl++
+            metrics.exp = metrics.exp - 10
+            metrics.maxLife = (metrics.maxLife + 1.2).toInt()
+            metrics.life = metrics.maxLife
+            println("$this level up")
         }
     }
 }

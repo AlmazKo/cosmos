@@ -1,14 +1,11 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.map.CreatureType;
+import cos.map.CreatureType
 
-public record Player(
-        @Override int id,
-        @Override String name
-) implements Avatar {
 
-    @Override
-    public CreatureType type() {
-        return CreatureType.PLAYER;
-    }
+class Player(
+    override val id: Int,
+    override val name: String
+) : Avatar {
+    override val type = CreatureType.PLAYER
 }

@@ -1,20 +1,10 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.ops.Direction;
-import org.jetbrains.annotations.Nullable;
+import cos.ops.Direction
 
-public interface Orientable extends Placeable {
-    @Override
-    int x();
-
-    @Override
-    int y();
-
-    int speed();
-
-    int offset();
-
-    @Nullable Direction mv();
-
-    Direction sight();
+interface Orientable : Placeable {
+    val speed: Int
+    val offset: Int
+    val mv: Direction?
+    val sight: Direction
 }

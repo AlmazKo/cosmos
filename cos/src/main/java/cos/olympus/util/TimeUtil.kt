@@ -1,39 +1,37 @@
-package cos.olympus.util;
+package cos.olympus.util
 
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.nanoTime;
+object TimeUtil {
+    private const val TICKS_PER_SECOND = 10
 
-public class TimeUtil {
-    private final static int TICKS_PER_SECOND = 10;
-
-    public static int toTickSpeed(int v) {
-        return v / TICKS_PER_SECOND;
+    fun toTickSpeed(v: Int): Int {
+        return v / TICKS_PER_SECOND
     }
 
-    public static int toTicks(int sec) {
-        return sec * TICKS_PER_SECOND;
+    fun toTicks(sec: Int): Int {
+        return sec * TICKS_PER_SECOND
     }
 
-    public static void sleepUntil() {
-        long nowMs = currentTimeMillis();
-        long waitUntil = nanoTime() + (100 - nowMs % 100) * 1_000_000 - 10_000;
-        while (waitUntil > nanoTime()) {
-            Thread.onSpinWait();
+    fun sleepUntil() {
+        val nowMs = System.currentTimeMillis()
+        val waitUntil = System.nanoTime() + (100 - nowMs % 100) * 1000000 - 10000
+        while (waitUntil > System.nanoTime()) {
+            Thread.onSpinWait()
         }
     }
 
-    public static void sleep(long nanos) {
-        long waitUntil = nanoTime() + nanos - 50_000;
-        while (waitUntil > nanoTime()) {
-            Thread.onSpinWait();
+    fun sleep(nanos: Long) {
+        val waitUntil = System.nanoTime() + nanos - 50000
+        while (waitUntil > System.nanoTime()) {
+            Thread.onSpinWait()
         }
     }
 
-    public static void sleepUntil(final long tickMs) throws InterruptedException {
-        long nowMs = currentTimeMillis();
-        long waitUntil = nanoTime() + (tickMs - nowMs % tickMs) * 1_000_000 - 50_000;
-        while (waitUntil > nanoTime()) {
-            Thread.sleep(1);
+    @Throws(InterruptedException::class)
+    fun sleepUntil(tickMs: Long) {
+        val nowMs = System.currentTimeMillis()
+        val waitUntil = System.nanoTime() + (tickMs - nowMs % tickMs) * 1000000 - 50000
+        while (waitUntil > System.nanoTime()) {
+            Thread.sleep(1)
         }
     }
 }

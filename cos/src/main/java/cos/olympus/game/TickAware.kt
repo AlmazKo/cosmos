@@ -1,6 +1,5 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-public interface TickAware {
-
-    void onTick(int tickId);
+interface TickAware {
+    fun onTick(tickId: Int)
 }

@@ -1,15 +1,14 @@
-package cos.olympus.game.events;
+package cos.olympus.game.events
 
-import cos.olympus.game.Creature;
-import cos.ops.Direction;
+import cos.olympus.game.Creature
+import cos.ops.Direction
 
-public record MeleeAttack(
-        @Override int id,
-        int tick,
-        int x,
-        int y,
-        Direction dir,
-        @Override Creature source
-) implements Spell, Event {
-
-}
+@JvmRecord
+data class MeleeAttack(
+    override val id: Int,
+    override val tick: Int,
+    val x: Int,
+    val y: Int,
+    val dir: Direction,
+    override val source: Creature
+) : Spell, Event

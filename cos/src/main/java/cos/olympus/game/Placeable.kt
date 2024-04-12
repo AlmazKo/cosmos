@@ -1,21 +1,16 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-public interface Placeable {
-    int x();
+interface Placeable {
+    val x: Int
+    val y: Int
 
-    int y();
-
-    static Placeable sample(int x, int y) {
-        return new Placeable() {
-            @Override
-            public int x() {
-                return x;
+    companion object {
+        @JvmStatic
+        fun sample(x: Int, y: Int): Placeable {
+            return object : Placeable {
+                override val x = x
+                override val y = y
             }
-
-            @Override
-            public int y() {
-                return y;
-            }
-        };
+        }
     }
 }

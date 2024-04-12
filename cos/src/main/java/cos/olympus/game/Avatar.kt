@@ -1,12 +1,9 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.map.CreatureType;
+import cos.map.CreatureType
 
-public interface Avatar/* extends Placeable*/ {
-
-    int id();
-
-    CreatureType type();
-
-    String name();
+interface Avatar /* extends Placeable*/ {
+    val id: Int
+    val type: CreatureType
+    val name: String
 }

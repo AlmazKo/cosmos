@@ -1,42 +1,35 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.map.PortalSpot;
-import cos.olympus.game.Agent;
-import cos.olympus.game.Game;
-import cos.olympus.util.OpConsumer;
-import cos.ops.out.TeleportIn;
+import cos.map.PortalSpot
+import cos.olympus.game.Agent
+import cos.olympus.game.Game
+import cos.olympus.util.OpConsumer
+import cos.ops.out.TeleportIn
 
-public class TeleportOutStrategy implements Strategy {
-    private final Game game;
-    private final Agent avatar;
-    private final int respawnTime;
-    private final String to;
-    private final int toX;
-    private final int toY;
-    private int state = 0;
+class TeleportOutStrategy(
+    tick: Int,
+    private val game: Game,
+    private val avatar: Agent,
+    spot: PortalSpot
+) : Strategy {
+    private val respawnTime = tick + 1
+    private val to: String = spot.map
+    private val toX = spot.dstX
+    private val toY = spot.dstY
+    private var state = 0
 
-    public TeleportOutStrategy(int tick, Game from, Agent avatar, PortalSpot spot) {
-        this.game = from;
-        this.avatar = avatar;
-        this.respawnTime = tick + 1;
-        this.to = spot.map();
-        this.toX = spot.dstX();
-        this.toY = spot.dstY();
-    }
-
-    @Override
-    public boolean onTick(int tick, OpConsumer out) {
+    override fun onTick(tick: Int, out: OpConsumer): Boolean {
         if (state == 0) {
-            game.removeAvatar(avatar.id());
+            game.removeAvatar(avatar.id)
             //todo: add event
-            state = 1;
-            return false;
+            state = 1
+            return false
         } else if (state == 1 && tick >= respawnTime) {
-            var a = avatar;
-            out.add(new TeleportIn(100500, tick, a.id(), to, toX, toY, a.sight()));
-            state = 2;
-            return true;
+            val a = avatar
+            out.add(TeleportIn(100500, tick, a.id, to, toX, toY, a.sight))
+            state = 2
+            return true
         }
-        return false;
+        return false
     }
 }

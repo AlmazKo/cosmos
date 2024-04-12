@@ -2,6 +2,7 @@ plugins {
     java
     application
     `java-library`
+    kotlin("jvm") version "2.0.0-RC1"
 }
 
 group = "cos"
@@ -22,7 +23,7 @@ dependencies {
 }
 
 application {
-    mainModule = "cos"
+  //  mainModule = "cos"
 //    mainClassName = "cos.api.Main" // need for ShadowJar
     mainClass.set("cos.api.Main")
     applicationDefaultJvmArgs = listOf(

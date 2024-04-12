@@ -1,48 +1,37 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-public class Metrics {
-    public final int creatureId;
-    public int lvl;
-    public int life;
-    public int maxLife;
-    public int exp;
+class Metrics(
+    val creatureId: Int,
+    var lvl: Int,
+    var life: Int,
+    var maxLife: Int,
+    var exp: Int
+) {
+    constructor(creatureId: Int, life: Int) : this(creatureId, 1, life, life, 0)
 
-    public Metrics(int creatureId, int life) {
-        this(creatureId, 1, life, life, 0);
+    fun maxLife(): Int {
+        return maxLife
     }
 
-    public Metrics(int creatureId, int lvl, int life, int maxLife, int exp) {
-        this.creatureId = creatureId;
-        this.lvl = lvl;
-        this.life = life;
-        this.maxLife = maxLife;
-        this.exp = exp;
+    fun life(): Int {
+        return life
     }
 
-    public int maxLife() {
-        return maxLife;
+    fun plus(amount: Int) {
+        this.life += amount
+        if (life > maxLife) life = maxLife
     }
 
-    public int life() {
-        return life;
+    fun minus(amount: Int) {
+        this.life -= amount
+        if (life < 0) life = 0
     }
 
-    void plus(int amount) {
-        this.life += amount;
-        if (life > maxLife) life = maxLife;
-    }
-
-    void minus(int amount) {
-        this.life -= amount;
-        if (life < 0) life = 0;
-    }
-
-    public boolean isDead() {
-        return life <= 0;
-    }
+    val isDead: Boolean
+        get() = life <= 0
 
 
-    public Metrics copy() {
-        return new Metrics(creatureId, lvl, life, maxLife, exp);
+    fun copy(): Metrics {
+        return Metrics(creatureId, lvl, life, maxLife, exp)
     }
 }

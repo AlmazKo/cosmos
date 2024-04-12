@@ -12,7 +12,7 @@ import io.vertx.core.AbstractVerticle;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cos.olympus.GameUtil.prepareGame;
+import static cos.olympus.game.GameUtil.prepareGame;
 
 public class GameVerticle extends AbstractVerticle {
     private final Logger log = Logger.get(getClass());

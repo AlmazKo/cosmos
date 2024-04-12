@@ -1,21 +1,16 @@
-package cos.olympus.game.events;
+package cos.olympus.game.events
 
-import cos.olympus.game.Creature;
-import cos.ops.Direction;
+import cos.olympus.game.Creature
+import cos.ops.Direction
 
-public record Fireball(
-        @Override int id,
-        int x,
-        int y,
-        int speed,
-        Direction dir,
-        int distance,
-        int tick,
-        @Override Creature source
+data class Fireball(
+    override val id: Int,
+    val x: Int,
+    val y: Int,
+    val speed: Int,
+    val dir: Direction,
+    val distance: Int,
+    override val tick: Int,
+    override val source: Creature
 
-) implements Spell, Event {
-//
-//    public static final boolean finished = ;
-
-
-}
+) : Spell, Event

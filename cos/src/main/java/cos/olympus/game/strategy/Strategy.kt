@@ -1,7 +1,7 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.olympus.util.OpConsumer;
+import cos.olympus.util.OpConsumer
 
-public interface Strategy {
-    boolean onTick(int tick, OpConsumer out);
+interface Strategy {
+    fun onTick(tick: Int, out: OpConsumer): Boolean
 }

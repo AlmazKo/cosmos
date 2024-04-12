@@ -1,7 +1,5 @@
-package cos.olympus.util;
+package cos.olympus.util
 
-@FunctionalInterface
-public interface XYConsumer {
-
-    void accept(int x, int y);
+fun interface XYConsumer {
+    fun accept(x: Int, y: Int)
 }

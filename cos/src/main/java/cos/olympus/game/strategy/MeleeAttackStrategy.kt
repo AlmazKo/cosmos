@@ -1,56 +1,46 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.olympus.game.Creature;
-import cos.olympus.game.Damages;
-import cos.olympus.game.MapUtil;
-import cos.olympus.game.World;
-import cos.olympus.game.events.MeleeAttack;
-import cos.olympus.game.events.Spell;
+import cos.olympus.Util
+import cos.olympus.game.Creature
+import cos.olympus.game.Damages
+import cos.olympus.game.MapUtil.inZone
+import cos.olympus.game.MapUtil.nextX
+import cos.olympus.game.MapUtil.nextY
+import cos.olympus.game.World
+import cos.olympus.game.events.MeleeAttack
+import kotlin.math.pow
 
-import static cos.olympus.Util.rand;
-import static cos.olympus.game.MapUtil.nextX;
-import static cos.olympus.game.MapUtil.nextY;
+class MeleeAttackStrategy(
+    override val spell: MeleeAttack,
+    private val world: World
+) : SpellStrategy {
+    private val targetX: Int
+    private val targetY: Int
+    override var finished = false
 
-public class MeleeAttackStrategy extends AbstractSpellStrategy {
-    public final MeleeAttack spell;
-    private final World world;
-    public final int targetX;
-    public final int targetY;
-
-
-    public MeleeAttackStrategy(MeleeAttack spell, World world) {
-        this.world = world;
-        this.spell = spell;
-        var cr = spell.source();
-        this.targetX = nextX(cr, cr.sight());
-        this.targetY = nextY(cr, cr.sight());
+    init {
+        val cr = spell.source
+        this.targetX = nextX(cr, cr.sight)
+        this.targetY = nextY(cr, cr.sight)
     }
 
-    @Override
-    public int id() {
-        return spell.id();
-    }
+    override val id = spell.id
 
-    public boolean onTick(int tick, Damages damages) {
-        var victim = world.getCreature(targetX, targetY);
-        if (victim != null && spell.source().id() != victim.id()) {
-            boolean crit = rand(0, 10) == 1;
-            int amount = crit ? rand(40, 60) : rand(10, 20);
-            var coef = -0.1 + Math.pow(1.5, spell.source().metrics().lvl);
-            damages.on(victim, spell, (int) (coef * amount), crit);
+
+    override fun onTick(tick: Int, damages: Damages): Boolean {
+        val victim = world.getCreature(targetX, targetY)
+        if (victim != null && spell.source.id != victim.id) {
+            val crit = Util.rand(0, 10) == 1
+            val amount = if (crit) Util.rand(40, 60) else Util.rand(10, 20)
+            val coef: Double = -0.1 + 1.5.pow(spell.source.metrics.lvl.toDouble())
+            damages.on(victim, spell, (coef * amount).toInt(), crit)
         }
-        finished = true;
-        return true;
+        finished = true
+        return true
     }
 
-    @Override
-    public boolean inZone(Creature cr) {
-        return MapUtil.inZone(cr, targetX, targetY, 8);
-    }
-
-    @Override
-    public Spell spell() {
-        return spell;
+    override fun inZone(cr: Creature): Boolean {
+        return inZone(cr, targetX, targetY, 8)
     }
 
 }

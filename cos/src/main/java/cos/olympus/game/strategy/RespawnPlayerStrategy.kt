@@ -1,35 +1,31 @@
-package cos.olympus.game.strategy;
+package cos.olympus.game.strategy
 
-import cos.map.CreatureType;
-import cos.olympus.NoSpaceException;
-import cos.olympus.Util;
-import cos.olympus.game.Npc;
-import cos.olympus.game.Player;
-import cos.olympus.game.World;
-import cos.olympus.util.OpConsumer;
-import cos.ops.out.Appear;
+import cos.map.CreatureType.PLAYER
+import cos.olympus.NoSpaceException
+import cos.olympus.Util
+import cos.olympus.game.Npc
+import cos.olympus.game.Player
+import cos.olympus.game.World
+import cos.olympus.util.OpConsumer
+import cos.ops.out.Appear
 
+class RespawnPlayerStrategy(
+    tick: Int,
+    private val world: World,
+    private val player: Player
+) : Strategy {
 
-public class RespawnPlayerStrategy implements Strategy {
-    private final World world;
-    private final Player player;
-    private final int respawnTime;
+    private val respawnTime = tick + Util.rand(20, 40)
 
-    public RespawnPlayerStrategy(int tick, World world, Player player) {
-        this.world = world;
-        this.player = player;
-        this.respawnTime = tick + Util.rand(20, 40);
-    }
+    override fun onTick(tick: Int, outOps: OpConsumer): Boolean {
+        if (tick < respawnTime) return false
 
-    @Override
-    public boolean onTick(int tick, OpConsumer outOps) {
-        if (tick < respawnTime) return false;
         try {
-            var cr = world.place(new Npc(player.id(), CreatureType.PLAYER, player.name()), 34, -24, 100, 1);
-            outOps.add(new Appear(0, tick, cr.id(), cr.x(), cr.y(), cr.mv(), cr.sight(), cr.metrics().lvl, cr.life()));
-        } catch (NoSpaceException e) {
-            return false;
+            val cr = world.place(Npc(player.id, PLAYER, player.name), 34, -24, 100, 1)
+            outOps.add(Appear(0, tick, cr.id, cr.x, cr.y, cr.mv, cr.sight, cr.metrics.lvl, cr.life))
+        } catch (e: NoSpaceException) {
+            return false
         }
-        return true;
+        return true
     }
 }

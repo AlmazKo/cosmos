@@ -1,15 +1,13 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.ops.Direction;
+import cos.ops.Direction
 
-public record Orientation(
-        int creatureId,
-        int x,
-        int y,
-        int speed,
-        int offset,
-        Direction sight,
-        Direction mv
-) implements Orientable {
-
-}
+class Orientation(
+    val creatureId: Int,
+    override val x: Int,
+    override val y: Int,
+    override val speed: Int,
+    override val offset: Int,
+    override val sight: Direction,
+    override val mv: Direction?
+) : Orientable

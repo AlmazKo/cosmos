@@ -1,38 +1,37 @@
-package cos.olympus.game;
+package cos.olympus.game
 
-import cos.logging.Logger;
-import cos.olympus.game.events.Damage;
-import cos.olympus.game.events.Spell;
+import cos.logging.Logger
+import cos.olympus.game.events.Damage
+import cos.olympus.game.events.Spell
+import java.util.function.Consumer
 
-import java.util.ArrayList;
-import java.util.function.Consumer;
+class Damages : TickAware {
+    private var data = ArrayList<Damage>()
+    private var tick = 0
 
-public class Damages implements TickAware {
-    private static int DAMAGES_IDS = 0;
-    private final static Logger logger = Logger.get(Damages.class);
-    private ArrayList<Damage> data = new ArrayList<>();
-    private int tick;
-
-    @Override
-    public void onTick(int tick) {
-        this.tick = tick;
+    override fun onTick(tick: Int) {
+        this.tick = tick
     }
 
-    public void on(Creature victim, Spell spell, int amount, boolean crit) {
-        var dmg = new Damage(++DAMAGES_IDS, tick, victim, spell, amount, crit);
-///        logger.info(dmg);
-        data.add(dmg);
+    fun on(victim: Creature, spell: Spell, amount: Int, crit: Boolean) {
+        val dmg = Damage(++DAMAGES_IDS, tick, victim, spell, amount, crit)
+        ///        logger.info(dmg);
+        data.add(dmg)
     }
 
-    public void forEach(Consumer<Damage> consumer) {
-        if (data.isEmpty()) return;
+    fun forEach(consumer: Consumer<Damage>?) {
+        if (data.isEmpty()) return
 
-        data.forEach(consumer);
+        data.forEach(consumer)
     }
 
-    public void clear() {
-        if (data.isEmpty()) return;
+    fun clear() {
+        if (data.isEmpty()) return
 
-        data = new ArrayList<>();
+        data = ArrayList()
+    }
+
+    companion object {
+        private var DAMAGES_IDS = 0
     }
 }
