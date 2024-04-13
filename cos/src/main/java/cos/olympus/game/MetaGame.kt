@@ -1,6 +1,7 @@
 package cos.olympus.game
 
 import cos.logging.Logger
+import cos.olympus.game.Game.Companion
 import cos.olympus.game.strategy.LoginStrategy
 import cos.olympus.game.strategy.Strategy
 import cos.olympus.game.strategy.TeleportInStrategy
@@ -25,6 +26,7 @@ class MetaGame(private val games: Map<String, Game>) {
         }
 
         userOps.forEach { op ->
+            LOG.info(op, "user_in")
             if (op is Login) {
                 onLogin(tick, op)
             } else {

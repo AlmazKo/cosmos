@@ -7,7 +7,7 @@ public record ActorMoved(
         @Override int id,
         @Override int tick,
         @Override int userId,
-        int creatureId,
+        int actorId,
         int x,
         int y,
         int offset,

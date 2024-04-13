@@ -33,6 +33,24 @@ class Actor(
     val zoneMetrics = HashMap<Int, Metrics>()
     val zoneSpells = HashMap<Int, SpellStrategy>()
 
+
+    fun inZone(obj: Obj): Boolean = zoneObjects.contains(obj.id)
+
+    fun addInZone(obj: Obj) {
+        zoneObjects[obj.id] = obj
+    }
+
+    fun addInZone(actor: Actor) {
+        zoneActors[actor.id] = actor.orientation()
+    }
+
+    fun addMetricsInZone(actor: Actor) {
+        zoneMetrics[actor.id] = actor.copyMetrics()
+    }
+
+    val isDead: Boolean get() = metrics.isDead
+    val life: Int = metrics.life
+
     fun orientation(): Orientation {
         return Orientation(identity.id, x, y, speed, offset, sight, mv)
     }
@@ -75,11 +93,6 @@ class Actor(
     fun damage(d: Damage) {
         metrics.minus(d.amount)
     }
-
-    val isDead: Boolean
-        get() = metrics.isDead
-
-    val life: Int = metrics.life()
 
     fun onKill(death: Death) {
         if (death.victim.metrics.lvl > metrics.lvl) {

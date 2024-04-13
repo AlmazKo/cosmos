@@ -9,44 +9,41 @@ import cos.ops.out.ObjAppear
 import kotlin.math.abs
 
 class Zone(private val world: World) {
-    fun onTick(target: Actor, tick: Int, consumer: OpConsumer) {
+    fun onTick(target: Actor, tick: Int, out: OpConsumer) {
         //todo hardcode radius
         world.iterateAround(target.x, target.y, VIEW_RADIUS) { x, y ->
             val obj = world.getObject(x, y)
-            if (obj != null && !target.zoneObjects.contains(obj.id)) {
-                target.zoneObjects[obj.id] = obj
-                consumer.add(ObjAppear(obj.id, tick, target.id, x, y, obj.tile.id))
+            if (obj != null && !target.inZone(obj)) {
+                target.addInZone(obj)
+                out(ObjAppear(obj.id, tick, target.id, x, y, obj.tile.id))
             }
 
-            //            if (target.getX() == x && target.getY() == y) return; // avoid self-detection
-            val a = if (target.x == x && target.y == y) {
-                target
-            } else {
-                world.getActor(x, y)
-            }
+            val a = if (target.x == x && target.y == y) target else world.getActor(x, y)
+
             if (a == null) {
                 //disappear or /nothing
             } else {
                 val ort = target.zoneActors[a.id]
                 if (ort == null || (ort.x != a.x || ort.y != a.y) || ort.speed != a.speed || ort.sight != a.sight) {
-                    target.zoneActors[a.id] = a.orientation()
-                    consumer.add(ActorMoved(1, tick, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
+                    target.addInZone(a)
+                    out(ActorMoved(1, tick, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
                 }
 
                 val met = target.zoneMetrics[a.id]
-                if (met == null || (met.life() != a.life || met.maxLife() != a.metrics.maxLife() || met.exp != a.metrics.exp)) {
+                if (met == null || (met.life != a.life || met.maxLife != a.metrics.maxLife || met.exp != a.metrics.exp)) {
                     val n = a.copyMetrics()
                     target.zoneMetrics[a.id] = n
-                    consumer.add(Metrics(1, tick, target.id, a.id, a.metrics.lvl, a.metrics.exp, n.life(), n.maxLife()))
+                    out(Metrics(1, tick, target.id, a.id, a.metrics.lvl, a.metrics.exp, n.life, n.maxLife))
                 }
             }
         }
 
-        target.zoneActors.values.removeIf { ort: Orientation ->
+        target.zoneActors.values.removeIf { ort ->
             if (ort.actorId == target.id) return@removeIf false
+
             val a = world.getActor(ort.actorId)
             if (a == null || inNotFov(target, a)) {
-                consumer.add(ActorHid(1, tick, target.id, ort.actorId))
+                out(ActorHid(1, tick, target.id, ort.actorId))
                 target.zoneMetrics.remove(ort.actorId)
                 return@removeIf true
             } else {

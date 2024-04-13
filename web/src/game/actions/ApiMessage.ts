@@ -8,7 +8,7 @@ export type uid = uint;
 export type Appear = { userId: uid, x: pos, y: pos, mv: Dir | null, sight: Dir, lvl: uint, life: uint, map: string }
 export type ProtoAppear = { userId: uid, x: pos, y: pos, sight: Dir, world: string }
 export type ObjAppear = { id: uint, x: pos, y: pos, tileId: index }
-export type ActorMoved = { mv: Dir | null, sight: Dir, x: pos, y: pos, speed: speed, offset: uint, creatureId: uid }
+export type ActorMoved = { mv: Dir | null, sight: Dir, x: pos, y: pos, speed: speed, offset: uint, actorId: uid }
 export type FireballMoved = { spellId: uint, dir: Dir, x: pos, y: pos, speed: speed, finished: boolean }
 export type ShotMoved = { spellId: uint, dir: Dir, x: pos, y: pos, speed: speed, /*userId: uid,*/ finished: boolean }
 export type MeleeAttacked = { spellId: uint, sourceId: uid }
@@ -64,6 +64,6 @@ export const API_MAPPER: ApiMapper = {
         {spellId: m.spellId, sourceId: m.sourceId}
     ),
     'actor_moved': (m: any): ActorMoved => (
-        {creatureId: m.creatureId, x: m.x, y: m.y, offset: m.offset, speed: m.speed, mv: m.mv, sight: m.sight}
+        {actorId: m.actorId, x: m.x, y: m.y, offset: m.offset, speed: m.speed, mv: m.mv, sight: m.sight}
     ),
 }

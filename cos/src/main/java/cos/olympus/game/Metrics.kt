@@ -9,13 +9,8 @@ class Metrics(
 ) {
     constructor(actorId: Int, life: Int) : this(actorId, 1, life, life, 0)
 
-    fun maxLife(): Int {
-        return maxLife
-    }
 
-    fun life(): Int {
-        return life
-    }
+
 
     fun plus(amount: Int) {
         this.life += amount

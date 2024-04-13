@@ -99,7 +99,7 @@ export class Game implements MovingListener {
                 case 'melee_attacked':
                     return this.onMeleeAttacked(action)
                 case 'actor_moved':
-                    return this.onCreatureMove(action)
+                    return this.onActorMoved(action)
             }
         })
     }
@@ -323,10 +323,10 @@ export class Game implements MovingListener {
         this.actions.push(new OnMeleeAttack(ID++, source, Date.now()))
     }
 
-    private onCreatureMove(e: ActorMoved) {
+    private onActorMoved(e: ActorMoved) {
         const proto = this.proto!!;
         let cr: Creature | undefined;
-        if (e.creatureId == proto.id) {
+        if (e.actorId == proto.id) {
             cr = this.proto;
             this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset / 100, e.x, e.y);//shift hardcoded
 
@@ -336,20 +336,20 @@ export class Game implements MovingListener {
             //     this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
             // }
         } else {
-            cr = proto.zoneCreatures.get(e.creatureId);
+            cr = proto.zoneCreatures.get(e.actorId);
             if (!cr) {
                 const crr: ApiCreature = {
-                    id: e.creatureId,
+                    id: e.actorId,
                     isPlayer: true,
                     x: e.x,
                     y: e.y,
                     sight: e.sight,
                     direction: e.mv,
-                    metrics: new Metrics(-1, -1, 100, 100, "#" + e.creatureId),
+                    metrics: new Metrics(-1, -1, 100, 100, "#" + e.actorId),
                     viewDistance: 10
                 };
                 cr = this.addCreature(crr);
-                proto.zoneCreatures.set(e.creatureId, cr);
+                proto.zoneCreatures.set(e.actorId, cr);
             }
             const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
         }

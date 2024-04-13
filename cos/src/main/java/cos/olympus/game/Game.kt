@@ -49,8 +49,6 @@ class Game(@JvmField val world: World) {
     }
 
     fun onOp(op: UserOp) {
-        LOG.info(op, "game_in")
-
         try {
             when (op) {
                 is Logout -> removeIdentity(op.userId())

@@ -36,24 +36,24 @@
 ////        zone.onTick(player, 1, ops);
 ////        assertEquals(2, player.zoneCreatures.size());
 ////        assertEquals(4, ops.size());
-////        assertEquals(ops.getUserData(200), ((CreatureMoved) ops.data.get(0)).creatureId());
+////        assertEquals(ops.getUserData(200), ((CreatureMoved) ops.data.get(0)).actorId());
 ////        assertEquals(0, ((CreatureMoved) ops.data.get(0)).speed());
 ////        assertEquals(0, ((CreatureMoved) ops.data.get(2)).speed());
-////        assertEquals(log.id(), ((CreatureMoved) ops.data.get(2)).creatureId());
+////        assertEquals(log.id(), ((CreatureMoved) ops.data.get(2)).actorId());
 ////
 ////        ops.clear();
 ////        world.moveCreature(log, 7, 4);
 ////        zone.onTick(player, 1, ops);
 ////        assertEquals(1, player.zoneCreatures.size());
-////        assertEquals(log.id(), ((CreatureHid) ops.data.get(0)).creatureId());
+////        assertEquals(log.id(), ((CreatureHid) ops.data.get(0)).actorId());
 //
 ////        ops.clear();
 ////        world.moveCreature(player, -1, 0);
 ////        zone.onTick(player, 1, ops);
 ////        assertEquals(2, player.zoneCreatures.size());
 ////        assertEquals(2, ops.size());
-////        assertEquals(player.id(), ((CreatureMoved) ops.data.get(0)).creatureId());
-////        assertEquals(log.id(), ((CreatureMoved) ops.data.get(1)).creatureId());
+////        assertEquals(player.id(), ((CreatureMoved) ops.data.get(0)).actorId());
+////        assertEquals(log.id(), ((CreatureMoved) ops.data.get(1)).actorId());
 //    }
 //
 ////
