@@ -51,7 +51,7 @@ public class GameThread implements Runnable {
                 waitUntil(nextMs);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Game thread failed", e);
         }
     }
 

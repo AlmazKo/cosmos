@@ -1,14 +1,12 @@
 import {
+    ActorMoved,
+    API_MAPPER,
     Appear,
-    CreatureHid,
-    CreatureMoved,
+    CreatureHid2,
+    CreatureMoved2,
     Damage,
     Death,
-    FireballMoved,
-    MeleeAttacked,
-    ObjAppear,
-    OpMetrics,
-    ProtoAppear,
+    FireballMoved, MeleeAttacked, ObjAppear, OpMetrics, ProtoAppear,
     ShotMoved
 } from '../../game/actions/ApiMessage';
 import {FireballSpell} from '../../game/actions/FireballSpell';
@@ -77,41 +75,31 @@ export class Game implements MovingListener {
         this.serverLatency = Date.now() - pkg.tickTimeMs;
         console.debug("Server latency:", this.serverLatency, 'Server time(ms):', (this.serverTime % 1000))
         pkg.ops.forEach(msg => {
-            console.log("%c⬇︎" + msg.action, 'color:red', JSON.stringify(msg));
+            const action = API_MAPPER[msg.action](msg);
+            console.log("%c⬇︎" + msg.action, 'color:red', action);
             switch (msg.action) {
                 case 'proto_appear':
-                    this.onProtoAppear(msg)
-                    break;
+                    return this.onProtoAppear(action)
                 case 'appear':
-                    this.onAppear(msg)
-                    break;
+                    return this.onAppear(action)
                 case 'obj_appear':
-                    this.onObjectAppear(msg);
-                    break;
+                    return this.onObjectAppear(action);
                 case 'metrics':
-                    this.onMetrics(msg);
-                    break;
+                    return this.onMetrics(action);
                 case 'actor_hid':
-                    this.onCreatureHid(msg);
-                    break
+                    return this.onCreatureHid(action);
                 case 'damage':
-                    this.onDamage(msg);
-                    break;
+                    return this.onDamage(action);
                 case 'death':
-                    this.onDeath(msg);
-                    break;
+                    return this.onDeath(action)
                 case 'fireball_moved':
-                    this.onFireballMoved(msg)
-                    break;
+                    return this.onFireballMoved(action)
                 case 'shot_moved':
-                    this.onShotMoved(msg)
-                    break;
+                    return this.onShotMoved(action)
                 case 'melee_attacked':
-                    this.onMeleeAttacked(msg)
-                    break;
+                    return this.onMeleeAttacked(action)
                 case 'actor_moved':
-                    this.onCreatureMove(msg)
-                    break;
+                    return this.onCreatureMove(action)
             }
         })
     }
@@ -133,7 +121,7 @@ export class Game implements MovingListener {
         // this.actions.push(new OnDamage(ID++, proto, Date.now(), e))
     }
 
-    private onCreatureHid(e: CreatureHid) {
+    private onCreatureHid(e: CreatureHid2) {
         const proto = this.proto!!;
         this.movements.interrupt(e.creatureId)
         proto.zoneCreatures.delete(e.creatureId);
@@ -335,7 +323,7 @@ export class Game implements MovingListener {
         this.actions.push(new OnMeleeAttack(ID++, source, Date.now()))
     }
 
-    private onCreatureMove(e: CreatureMoved) {
+    private onCreatureMove(e: ActorMoved) {
         const proto = this.proto!!;
         let cr: Creature | undefined;
         if (e.creatureId == proto.id) {

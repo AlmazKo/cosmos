@@ -27,7 +27,7 @@ export class AudioAssets {
   }
 
   load(name: string): Promise<AudioBuffer> {
-    return this.ajax(`/r/${name}`)
+    return this.ajax(`/res/${name}`)
       .then((raw) => new Promise((resolve, reject) =>
         this.ctx.decodeAudioData(
           raw,

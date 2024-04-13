@@ -11,7 +11,7 @@ class OpsAggregator : OpConsumer {
     private var serviceOps = ArrayList<ServiceOp>()
 
     override fun add(op: SomeOp) {
-        LOG.info(op, "new_op")
+//        LOG.info(op, "new_op")
 
         if (op is ServiceOp) {
             serviceOps.add(op)

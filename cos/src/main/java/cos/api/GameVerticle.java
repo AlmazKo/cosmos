@@ -38,9 +38,6 @@ public class GameVerticle extends AbstractVerticle {
         var gt = new GameThread(game, this);
         var t = new Thread(gt);
         t.start();
-
-
-//        vertx.setPeriodic(100, this::onTick);
         bus.consume("game_in", this::onMessage);
     }
 

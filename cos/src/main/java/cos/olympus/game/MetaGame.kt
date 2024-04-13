@@ -10,11 +10,11 @@ import cos.ops.UserOp
 import cos.ops.`in`.Login
 import cos.ops.out.AllActors
 import cos.ops.out.TeleportIn
-import java.util.function.Consumer
 
 class MetaGame(private val games: Map<String, Game>) {
-    private val users: MutableMap<Int, Usr> = HashMap()
-    private val strategies: MutableList<Strategy> = ArrayList()
+    private val users = HashMap<Int, Usr>()
+    private val strategies = ArrayList<Strategy>()
+    private val defaultWorld = "castle-island"
 
     fun onTick(tick: Int, userOps: List<UserOp>, serviceOps: List<ServiceOp>, out: OpConsumer) {
         serviceOps.forEach { op ->
@@ -26,19 +26,18 @@ class MetaGame(private val games: Map<String, Game>) {
 
         userOps.forEach { op ->
             if (op is Login) {
-//                strategies.add(new LoginStrategy(games, op.userId()));
-                onLogin(tick, (op as Login?)!!)
+                onLogin(tick, op)
             } else {
                 games.values.forEach { it.onOp(op) }
             }
         }
 
-        games.values.forEach(Consumer { game: Game ->
+        games.values.forEach { game ->
             game.onTick(tick, out)
             collectMetrics(out, game)
-        })
+        }
 
-        strategies.removeIf { strategy: Strategy -> strategy.onTick(tick, out) }
+        strategies.removeIf { it.onTick(tick, out) }
     }
 
     private fun collectMetrics(out: OpConsumer, game: Game) {
@@ -48,7 +47,7 @@ class MetaGame(private val games: Map<String, Game>) {
         var i = 0
         val data = IntArray(actors.size * 3)
         for (a in actors) {
-            data[i++] = a.y
+            data[i++] = a.x
             data[i++] = a.y
             data[i++] = a.type.ordinal
         }
@@ -60,7 +59,7 @@ class MetaGame(private val games: Map<String, Game>) {
     private fun onLogin(tick: Int, op: Login) {
         var usr = users[op.userId]
         if (usr == null) {
-            usr = Usr(op.userId, "castle-island")
+            usr = Usr(op.userId, defaultWorld)
             users[op.userId] = usr
             LOG.info("New User $usr")
             strategies.add(LoginStrategy(games, usr))
