@@ -16,8 +16,8 @@ class Actor(
     life: Int
 ) : Agent {
 
-    override var x: Int = o.x
-    override var y: Int = o.y
+    override var x: Pos = o.x
+    override var y: Pos = o.y
     override var offset: Int = o.offset
     override var speed: Int = o.speed
     override var mv: Direction? = o.mv
@@ -29,7 +29,7 @@ class Actor(
     val metrics = Metrics(identity.id, life)
     val bag = Bag()
     val zoneObjects = HashMap<Int, Obj>()
-    val zoneActors = HashMap<Int, Orientation>()
+    val zoneActors = HashMap<Aid, Orientation>()
     val zoneMetrics = HashMap<Int, Metrics>()
     val zoneSpells = HashMap<Int, SpellStrategy>()
 

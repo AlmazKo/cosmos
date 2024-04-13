@@ -6,6 +6,7 @@ import cos.olympus.game.Damages
 import cos.olympus.game.MapUtil.inZone
 import cos.olympus.game.MapUtil.nextX
 import cos.olympus.game.MapUtil.nextY
+import cos.olympus.game.Pos
 import cos.olympus.game.World
 import cos.olympus.game.events.MeleeAttack
 import kotlin.math.pow
@@ -14,8 +15,8 @@ class MeleeAttackStrategy(
     override val spell: MeleeAttack,
     private val world: World
 ) : SpellStrategy {
-    private val targetX: Int
-    private val targetY: Int
+    private val targetX: Pos
+    private val targetY: Pos
     override var finished = false
 
     init {

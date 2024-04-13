@@ -30,7 +30,7 @@ object MapUtil {
         }
     }
 
-    fun inZone(ort: Placeable, x: Int, y: Int, radius: Int): Boolean {
+    fun inZone(ort: Placeable, x: Pos, y: Pos, radius: Int): Boolean {
         val oX = ort.x
         val oY = ort.y
         return oX <= x + radius && x >= oX - radius && oY <= y + radius && oY >= y - radius

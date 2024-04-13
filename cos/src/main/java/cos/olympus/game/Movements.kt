@@ -123,7 +123,7 @@ class Movements internal constructor(private val world: World) : TickAware {
         }
     }
 
-    private fun cannotStep(actor: Actor, x: Int, y: Int): Boolean {
+    private fun cannotStep(actor: Actor, x: Pos, y: Pos): Boolean {
         val obj = world.getObject(x, y)
         if (obj != null && obj.tile.type == TileType.WALL) {
             return true

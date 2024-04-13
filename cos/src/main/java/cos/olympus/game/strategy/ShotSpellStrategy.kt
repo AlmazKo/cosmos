@@ -16,8 +16,8 @@ class ShotSpellStrategy(
 
 
     private var passed = 0
-    var x: Int = spell.x
-    var y: Int = spell.y
+    var x = spell.x
+    var y = spell.y
 
     override val id = spell.id
     override var finished = false

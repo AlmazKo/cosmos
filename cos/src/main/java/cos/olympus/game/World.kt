@@ -1,286 +1,260 @@
-package cos.olympus.game;
+package cos.olympus.game
+
+import cos.logging.Logger
+import cos.map.Coord
+import cos.map.Lands
+import cos.map.PortalSpot
+import cos.map.RespawnSpot
+import cos.map.Tile
+import cos.map.TileType
+import cos.olympus.NoSpaceException
+import cos.olympus.game.MapUtil.nextX
+import cos.olympus.game.MapUtil.nextY
+import cos.olympus.util.XYConsumer
+import cos.ops.Direction
+import java.util.function.Predicate
+import kotlin.math.max
+import kotlin.math.min
 
 
-import cos.logging.Logger;
-import cos.map.Coord;
-import cos.map.Lands;
-import cos.map.PortalSpot;
-import cos.map.RespawnSpot;
-import cos.map.Tile;
-import cos.map.TileType;
-import cos.olympus.NoSpaceException;
-import cos.olympus.util.XYConsumer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+class World(lands: Lands, val name: String) {
+    val width = lands.width
+    val height = lands.height
+    private val basis: ShortArray = lands.basis
+    private val objects: ShortArray = lands.objects
+    private val tiles: Array<Tile?> = lands.tiles
+    private val actorsXY = IntArray(basis.size)
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Predicate;
+    private val actors = HashMap<Aid, Actor>()
 
-import static cos.ops.Direction.SOUTH;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+    val offsetX = lands.offsetX
+    val offsetY = lands.offsetY
+    val respawns: ArrayList<RespawnSpot> = lands.respawns
+    val portals: ArrayList<PortalSpot> = lands.portals
 
-public final class World {
-    private final static Logger logger = Logger.get(World.class);
-    final int width;
-    final int height;
-    private final short[] basis;
-    private final short[] objects;
-    private final String name;
-    private final Tile[] tiles;
-    private final int[] actorsXY;
-
-    private final HashMap<Integer, Actor> actors = new HashMap<>();
-
-    final int offsetX;
-    final int offsetY;
-    final ArrayList<RespawnSpot> respawns;
-    final ArrayList<PortalSpot> portals;
-
-    public World(Lands lands, String name) {
-        this.offsetX = lands.offsetX();
-        this.offsetY = lands.offsetY();
-        this.width = lands.width();
-        this.height = lands.height();
-        this.basis = lands.basis();
-        this.objects = lands.objects();
-        this.name = name;
-        this.actorsXY = new int[basis.length];
-        this.tiles = lands.tiles();
-        this.respawns = lands.respawns();
-        this.portals = lands.portals();
-//        debug();
+    init {
+        //        debug();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void debug() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < basis.length; i++) {
-
-            short it = basis[i];
+    fun debug() {
+        val sb = StringBuilder()
+        for (i in basis.indices) {
+            val it = basis[i].toInt()
             if (i % width == 0) {
-                sb.append('\n');
-                sb.append(String.format("%1$-4s", i / width + offsetY));
+                sb.append('\n')
+                sb.append(String.format("%1$-4s", i / width + offsetY))
             }
 
             if (it == 0) {
-                sb.append('.');
+                sb.append('.')
             } else {
-                Tile tile = tiles[it];
+                val tile = tiles[it]
                 if (tile == null) {
-                    sb.append('?');
-                    continue;
+                    sb.append('?')
+                    continue
                 }
 
-                char b = switch (tile.type()) {
-                    case WALL -> '#';
-                    case TIMBER -> 'T';
-                    case SHALLOW -> '~';
-                    case DEEP_WATER -> '≈';
-                    case GRASS -> 'v';
-                    case SAND -> '.';
-                    case GATE -> 'П';
-                    case NOTHING -> 'x';
-                    default -> 'N';
-                };
+                val b = when (tile.type) {
+                    TileType.WALL -> '#'
+                    TileType.TIMBER -> 'T'
+                    TileType.SHALLOW -> '~'
+                    TileType.DEEP_WATER -> '≈'
+                    TileType.GRASS -> 'v'
+                    TileType.SAND -> '.'
+                    TileType.GATE -> 'П'
+                    TileType.NOTHING -> 'x'
+                    else -> 'N'
+                }
 
-                sb.append(b);
+                sb.append(b)
             }
-
         }
 
-        System.out.println(sb);
+        println(sb)
     }
 
-    @Nullable
-    public TileType get(int x, int y) {
-        int idx = toIndex(x, y);
-        if (idx < 0 || idx >= basis.length) return null;
-        var b = basis[idx];
-        var t = tiles[b];
-        return (t == null) ? null : t.type();
+    operator fun get(x: Pos, y: Pos): TileType? {
+        val idx = toIndex(x, y)
+        if (idx < 0 || idx >= basis.size) return null
+        val b = basis[idx]
+        val t = tiles[b.toInt()]
+        return if ((t == null)) null else t.type
     }
 
-    public @Nullable Obj getObject(int x, int y) {
-        int idx = toIndex(x, y);
-        if (idx < 0 || idx >= objects.length) return null;
+    fun getObject(x: Pos, y: Pos): Obj? {
+        val idx = toIndex(x, y)
+        if (idx < 0 || idx >= objects.size) return null
 
-        var objTileId = objects[idx];
-        if (objTileId == 0) return null;
-        if (objTileId >= tiles.length) return null;
+        val objTileId = objects[idx]
+        if (objTileId.toInt() == 0) return null
+        if (objTileId >= tiles.size) return null
 
-        var t = tiles[objTileId];
-        if (t == null) return new Obj(idx, new Tile(objTileId, TileType.ITEM), x, y);
+        val t = tiles[objTileId.toInt()]
+            ?: return Obj(idx, Tile(objTileId.toInt(), TileType.ITEM), x, y)
 
-        return new Obj(idx, t, x, y);//todo id is hardcoded
+        return Obj(idx, t, x, y) //todo id is hardcoded
     }
 
-    public @Nullable Actor getActor(int uid) {
-        return actors.get(uid);
+    fun getActor(uid: Aid): Actor? {
+        return actors[uid]
     }
 
-    public @Nullable Actor getActor(int x, int y) {
-        if (!isValid(x, y)) return null;
+    fun getActor(x: Pos, y: Pos): Actor? {
+        if (!isValid(x, y)) return null
 
-        return _getActor(x, y);
+        return _getActor(x, y)
     }
 
-    @Nullable
-    private Actor _getActor(int x, int y) {
-        int crId = actorsXY[toIndex(x, y)];
-        return actors.get(crId);
+    private fun _getActor(x: Pos, y: Pos): Actor? {
+        val crId = actorsXY[toIndex(x, y)]
+        return actors[crId]
     }
 
-    public List<@NotNull Actor> getActors(int centerX, int centerY, int radius) {
+    fun getActors(centerX: Pos, centerY: Pos, radius: Int): List<Actor> {
+        val result = ArrayList<Actor>()
+        val minX = min(centerX + radius, width + offsetX)
+        val maxX = max(offsetX, centerX - radius)
+        val maxY = max(offsetY, centerY - radius)
+        val minY = min(centerY + radius, height + offsetY)
 
-        ArrayList<@NotNull Actor> result = new ArrayList<>();
+        for (x in maxX..minX) {
+            for (y in maxY..minY) {
+                if (x == centerX && y == centerY) continue
 
-        for (int x = max(offsetX, centerX - radius); x <= min(centerX + radius, width + offsetX); x++) {
-            for (int y = max(offsetY, centerY - radius); y <= min(centerY + radius, height + offsetY); y++) {
-                if (x == centerX && y == centerY) continue;
-
-                @Nullable Actor actor = _getActor(x, y);
+                val actor = _getActor(x, y)
                 if (actor != null) {
-                    result.add(actor);
+                    result.add(actor)
                 }
             }
         }
 
-        return result;
+        return result
     }
 
-    public void iterateAround(int centerX, int centerY, int radius, XYConsumer consumer) {
-        for (int x = max(offsetX, centerX - radius); x <= min(centerX + radius, width + offsetX); x++) {
-            for (int y = max(offsetY, centerY - radius); y <= min(centerY + radius, height + offsetY); y++) {
+    fun iterateAround(centerX: Pos, centerY: Pos, radius: Int, consumer: XYConsumer) {
+        for (x in max(offsetX, (centerX - radius))..min((centerX + radius), (width + offsetX))) {
+            for (y in max(offsetY, (centerY - radius))..min((centerY + radius), (height + offsetY))) {
 //                if (x == centerX && y == centerY) continue;
-                consumer.accept(x, y);
+                consumer.accept(x, y)
             }
         }
-
     }
 
-    public boolean isNoActor(int id) {
-        return !actors.containsKey(id);
+    fun isNoActor(id: Aid): Boolean {
+        return !actors.containsKey(id)
     }
 
-    void removeActor(int id) {
-        var a = actors.remove(id);
+    fun removeActor(id: Aid) {
+        val a = actors.remove(id)
         if (a == null) {
-            logger.warn(name + ": Not found actor" + id + " for removing");
-            return;
+            logger.warn("$name: Not found actor$id for removing")
+            return
         }
 
-        int idx = toIndex(a.getX(), a.getY());
+        val idx = toIndex(a.x, a.y)
 
         //todo debug
         if (actorsXY[idx] != id) {
-            throw new RuntimeException("Wrong position #" + id);
+            throw RuntimeException("Wrong position #$id")
         }
-        actorsXY[idx] = 0;
+        actorsXY[idx] = 0
     }
 
-    public void removeActorIf(Predicate<? super Actor> filter) {
-        actors.values().removeIf(a -> {
+    fun removeActorIf(filter: Predicate<in Actor>) {
+        actors.values.removeIf { a: Actor ->
             if (filter.test(a)) {
-                int idx = toIndex(a.getX(), a.getY());
-                actorsXY[idx] = 0;
-                return true;
+                val idx = toIndex(a.x, a.y)
+                actorsXY[idx] = 0
+                true
             } else {
-                return false;
+                false
             }
-        });
+        }
     }
 
-    public Actor place(Identity usr, int x, int y, int life, int maxDev) {
-
-        int idx = toIndex(x, y);
-        if (idx < 0 || idx >= basis.length) {
-            throw new NoSpaceException("Fail finding free place");
+    fun place(usr: Identity?, x: Pos, y: Pos, life: Int, maxDev: Int): Actor {
+        var idx = toIndex(x, y)
+        if (idx < 0 || idx >= basis.size) {
+            throw NoSpaceException("Fail finding free place")
         }
 
-        idx = findFreeIndex(x, y, maxDev);
+        idx = findFreeIndex(x, y, maxDev)
 
         if (idx >= 0) {
-            var coord = toCoord(idx);
-            var orient = new Orientation(0, coord.x(), coord.y(), 0, 0, SOUTH, null);
-            var a = new Actor(usr, orient, life);
-            actorsXY[idx] = a.getId();
-            actors.put(a.getId(), a);
-            logger.info(a, "placed");
-            return a;
+            val coord = toCoord(idx)
+            val orient = Orientation(0, coord.x, coord.y, 0, 0, Direction.SOUTH, null)
+            val a = Actor(usr!!, orient, life)
+            actorsXY[idx] = a.id
+            actors[a.id] = a
+            logger.info(a, "placed")
+            return a
         } else {
-            throw new NoSpaceException("Fail finding free place");
+            throw NoSpaceException("Fail finding free place")
         }
     }
 
-    public boolean hasActor(int x, int y) {
-        return !isNoActor(x, y);
+    fun hasActor(x: Pos, y: Pos): Boolean {
+        return !isNoActor(x, y)
     }
 
-    public boolean isNoActor(int x, int y) {
-        if (!isValid(x, y)) return false;
+    fun isNoActor(x: Pos, y: Pos): Boolean {
+        if (!isValid(x, y)) return false
 
-        return actorsXY[toIndex(x, y)] == 0;
+        return actorsXY[toIndex(x, y)] == 0
     }
 
-    public boolean isNoMovingActorIn(int x, int y) {
-        var crs = getActors(x, y, 1);
-        for (Orientable o : crs) {
-            if (o.getSpeed() > 0 && (MapUtil.INSTANCE.nextX(o) == x && MapUtil.INSTANCE.nextY(o) == y)) {
-                return false;
+    fun isNoMovingActorIn(x: Pos, y: Pos): Boolean {
+        val crs = getActors(x, y, 1)
+        for (o in crs) {
+            if (o.speed > 0 && (nextX(o) == x && nextY(o) == y)) {
+                return false
             }
         }
 
-        return true;
+        return true
     }
 
-    public boolean isFree(int x, int y) {
-        if (!isValid(x, y)) return false;
-        int idx = toIndex(x, y);
+    fun isFree(x: Pos, y: Pos): Boolean {
+        if (!isValid(x, y)) return false
+        val idx = toIndex(x, y)
 
-        var b = get(x, y);
-        if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
-        var o = getObject(x, y);
+        var b = get(x, y)
+        if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false
+        val o = getObject(x, y)
         if (o != null) {
-            b = o.getTile().type();
-            if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
+            b = o.tile.type
+            if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false
         }
 
-        return actorsXY[idx] == 0;
+        return actorsXY[idx] == 0
     }
 
-    public void move(Actor a, int toX, int toY) {
-        int from = toIndex(a.getX(), a.getY());
-        int to = toIndex(toX, toY);
-        int actorId = actorsXY[from];
+    fun move(a: Actor, toX: Pos, toY: Pos) {
+        val from = toIndex(a.x, a.y)
+        val to = toIndex(toX, toY)
+        val actorId = actorsXY[from]
 
         if (actorId == 0) {
-            logger.warn(name + ": Try moving from free place " + toX + ", " + toY);
+            logger.warn("$name: Try moving from free place $toX, $toY")
         }
         if (actorsXY[to] != 0) {
-            logger.warn(name + ": Try moving into occupied place " + toX + ", " + toY);
+            logger.warn("$name: Try moving into occupied place $toX, $toY")
         }
 
-        actorsXY[from] = 0;
-        actorsXY[to] = actorId;
-        a.setX(toX);
-        a.setY(toY);
+        actorsXY[from] = 0
+        actorsXY[to] = actorId
+        a.x = toX
+        a.y = toY
 
-////        logger.info(name + ": Actor #" + actorId + " set x=" + toX + ", y=" + toY);
+        ////        logger.info(name + ": Actor #" + actorId + " set x=" + toX + ", y=" + toY);
     }
 
-    public @Nullable Coord findFreePlace(int x, int y, int maxDev) {
-        int idx = findFreeIndex(x, y, maxDev);
-        if (idx == -1) {
-            return null;
+    fun findFreePlace(x: Pos, y: Pos, maxDev: Int): Coord? {
+        val idx = findFreeIndex(x, y, maxDev)
+        return if (idx == -1) {
+            null
         } else {
-            return toCoord(idx);
+            toCoord(idx)
         }
     }
 
@@ -292,86 +266,85 @@ public final class World {
      x ┗━┛┃x
      x ╍╍━┛x
      */
-    private int findFreeIndex(int x, int y, int maxDev) {
+    private fun findFreeIndex(x: Pos, y: Pos, maxDev: Int): Int {
+        var x = x
+        var y = y
+        if (!isValid(x, y)) return -1
 
-        if (!isValid(x, y)) return -1;
+        if (actorsXY[toIndex(x, y)] == 0) return toIndex(x, y)
 
-        if (actorsXY[toIndex(x, y)] == 0) return toIndex(x, y);
-
-        for (int i = 1; i <= maxDev; i++) {
-
+        for (i in 1..maxDev) {
             if (i % 2 == 1) {
-                for (int s = 0; s < i; s++) {
-                    x++;
-                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
+                for (s in 0 until i) {
+                    x++
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y)
                 }
 
-                for (int s = 0; s < i; s++) {
-                    y++;
-                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
+                for (s in 0 until i) {
+                    y++
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y)
                 }
             } else {
-                for (int s = 0; s < i; s++) {
-                    x--;
-                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
+                for (s in 0 until i) {
+                    x--
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y)
                 }
 
-                for (int s = 0; s < i; s++) {
-                    y--;
-                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y);
+                for (s in 0 until i) {
+                    y--
+                    if (isValid(x, y) && isFree(x, y)) return toIndex(x, y)
                 }
             }
         }
 
-        return -1;
+        return -1
     }
 
-    public String debugActors() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < actorsXY.length; i++) {
-
-            int it = actorsXY[i];
+    fun debugActors(): String {
+        val sb = StringBuilder()
+        for (i in actorsXY.indices) {
+            val it = actorsXY[i]
             if (i % width == 0) {
-                sb.append('\n');
-                sb.append(String.format("%1$-4s", i / width + offsetY));
+                sb.append('\n')
+                sb.append(String.format("%1$-4s", i / width + offsetY))
             }
 
             if (it == 0) {
-                sb.append('.');
+                sb.append('.')
             } else if (it >= 1000) {
-                sb.append('c');
+                sb.append('c')
             } else {
-                sb.append('p');
+                sb.append('p')
             }
-
         }
 
-        return sb.toString();
+        return sb.toString()
     }
 
     //    @Contract(pure = true)
-    private boolean isValid(int x, int y) {
-        return x >= offsetX && x < (offsetX + width) && y >= offsetY && y < (offsetY + height);
+    private fun isValid(x: Pos, y: Pos): Boolean {
+        return (x >= offsetX && x < offsetX + width && y >= offsetY) && y < (offsetY + height)
     }
 
-    private int toIndex(int x, int y) {
-        return x - offsetX + (y - offsetY) * width;
+    private fun toIndex(x: Pos, y: Pos): Int {
+        return x - offsetX + (y - offsetY) * width
     }
 
-    private Coord toCoord(int idx) {
-        return new Coord(idx % width + offsetX, idx / width + offsetY);
+    private fun toCoord(idx: Pos): Coord {
+        return Coord(idx % width + offsetX, idx / width + offsetY)
     }
 
-    @Override
-    public String toString() {
-        return debugActors();
+    override fun toString(): String {
+        return debugActors()
     }
 
-    public Collection<Actor> getAllActors() {
-        return actors.values();
-    }
+    val allActors: Collection<Actor>
+        get() = actors.values
 
-    public Collection<Actor> getAllPlayers() {
-        return actors.values();
+    val allPlayers: Collection<Actor>
+        get() = actors.values
+
+    companion object {
+        private val logger: Logger = Logger.get(World::class.java)
     }
 }

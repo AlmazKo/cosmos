@@ -3,7 +3,7 @@ package cos.olympus.game
 import cos.map.ActorType
 
 interface Agent : Orientable {
-    val id: Int
+    val id: Aid
     val type: ActorType
 }
 
