@@ -1,47 +1,52 @@
 package cos.olympus.game
 
+import cos.olympus.game.Movements.Companion.METER
 import cos.olympus.game.events.Damage
 import cos.olympus.game.events.Death
 import cos.olympus.game.strategy.SpellStrategy
 import cos.ops.Direction
+import cos.ops.Direction.EAST
+import cos.ops.Direction.NORTH
+import cos.ops.Direction.SOUTH
+import cos.ops.Direction.WEST
 
-class Creature(
-    val avatar: Avatar,
-    override var x: Int,
-    override var y: Int,
-    override var offset: Int,
-    override var speed: Int,
-    override var mv: Direction?,
-    override var sight: Direction,
+class Actor(
+    val identity: Identity,
+    o: Orientation,
     life: Int
 ) : Agent {
 
-    override val id get() = avatar.id
-    override val type get() = avatar.type
+    override var x: Int = o.x
+    override var y: Int = o.y
+    override var offset: Int = o.offset
+    override var speed: Int = o.speed
+    override var mv: Direction? = o.mv
+    override var sight: Direction = o.sight
+    override val id get() = identity.id
+    override val type get() = identity.type
 
     var lastSpellTick: Int = 0
-    val metrics = Metrics(avatar.id, life)
+    val metrics = Metrics(identity.id, life)
     val bag = Bag()
     val zoneObjects = HashMap<Int, Obj>()
-    val zoneCreatures = HashMap<Int, Orientation>()
+    val zoneActors = HashMap<Int, Orientation>()
     val zoneMetrics = HashMap<Int, Metrics>()
     val zoneSpells = HashMap<Int, SpellStrategy>()
 
     fun orientation(): Orientation {
-        return Orientation(avatar.id, x, y, speed, offset, sight, mv)
+        return Orientation(identity.id, x, y, speed, offset, sight, mv)
     }
 
     fun copyMetrics(): Metrics {
         return metrics.copy()
     }
 
-
     override fun toString(): String {
-        return "Creature{" +
-            "id=" + avatar.id +
+        return "Actor{" +
+            "type=" + type +
+            ", id=" + identity.id +
             ", lvl=" + metrics.lvl +
             ", life=" + metrics.life +
-            ", type=" + type +
             ", pos=[" + rx() + "; " + ry() + "]" +
             ", speed=" + speed +
             ", dir=" + mv +
@@ -49,15 +54,15 @@ class Creature(
             '}'
     }
 
-    fun ry(): Float {
-        if (mv == Direction.NORTH) return y - (offset.toFloat() / Movements.METER)
-        if (mv == Direction.SOUTH) return y + (offset.toFloat() / Movements.METER)
+    private fun ry(): Float {
+        if (mv == NORTH) return y - (offset.toFloat() / METER)
+        if (mv == SOUTH) return y + (offset.toFloat() / METER)
         return y.toFloat()
     }
 
-    fun rx(): Float {
-        if (mv == Direction.WEST) return x - (offset.toFloat() / Movements.METER)
-        if (mv == Direction.EAST) return x + (offset.toFloat() / Movements.METER)
+    private fun rx(): Float {
+        if (mv == WEST) return x - (offset.toFloat() / METER)
+        if (mv == EAST) return x + (offset.toFloat() / METER)
         return x.toFloat()
     }
 

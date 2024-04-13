@@ -91,7 +91,7 @@ export class Game implements MovingListener {
                 case 'metrics':
                     this.onMetrics(msg);
                     break;
-                case 'creature_hid':
+                case 'actor_hid':
                     this.onCreatureHid(msg);
                     break
                 case 'damage':
@@ -109,7 +109,7 @@ export class Game implements MovingListener {
                 case 'melee_attacked':
                     this.onMeleeAttacked(msg)
                     break;
-                case 'creature_moved':
+                case 'actor_moved':
                     this.onCreatureMove(msg)
                     break;
             }

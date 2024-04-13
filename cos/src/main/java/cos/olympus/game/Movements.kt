@@ -13,56 +13,56 @@ class Movements internal constructor(private val world: World) : TickAware {
     private val mvs = HashMap<Int, Mv>()
 
     fun onMove(op: Move) {
-        val cr = world.getCreature(op.userId) ?: return
+        val actor = world.getActor(op.userId) ?: return
 
-        change(cr, op)
+        change(actor, op)
     }
 
     fun onStopMove(op: StopMove) {
-        val cr = world.getCreature(op.userId) ?: return
+        val actor = world.getActor(op.userId) ?: return
 
-        stop(cr, op.sight)
+        stop(actor, op.sight)
     }
 
-    private class Mv(val cr: Creature) {
+    private class Mv(val actor: Actor) {
         var next: Move? = null
         var stop: Boolean = false
     }
 
-    fun changeSight(cr: Creature, sight: Direction?) {
-        val mv = mvs[cr.id]
+    fun changeSight(actor: Actor, sight: Direction?) {
+        val mv = mvs[actor.id]
         if (mv != null) {
             //fixme this is simulation
-            mv.next = Move(-1, -1, cr.x, cr.y, null, sight)
+            mv.next = Move(-1, -1, actor.x, actor.y, null, sight)
         } else {
-            cr.sight = sight!!
+            actor.sight = sight!!
         }
     }
 
-    fun change(cr: Creature, op: Move) {
-        val mv = mvs[cr.id]
+    fun change(actor: Actor, op: Move) {
+        val mv = mvs[actor.id]
         if (mv != null) {
             mv.next = op
         } else {
             if (op.dir == null) {
-                cr.sight = op.sight
+                actor.sight = op.sight
                 return
             }
 
-            mvs[cr.id] = Mv(cr)
-            cr.mv = op.dir
-            cr.sight = op.sight
+            mvs[actor.id] = Mv(actor)
+            actor.mv = op.dir
+            actor.sight = op.sight
         }
 
-        val currentTile: TileType? = world[cr.x, cr.y]
-        cr.speed = TimeUtil.toTickSpeed(getSpeed(currentTile))
+        val currentTile: TileType? = world[actor.x, actor.y]
+        actor.speed = TimeUtil.toTickSpeed(getSpeed(currentTile))
     }
 
-    fun interrupt(cr: Creature) {
-        mvs.remove(cr.id)
+    fun interrupt(actor: Actor) {
+        mvs.remove(actor.id)
     }
 
-    fun stop(cr: Creature, sight: Direction?) {
+    fun stop(cr: Actor, sight: Direction?) {
         val mv = mvs[cr.id]
         if (mv != null) {
             mv.stop = true
@@ -79,51 +79,51 @@ class Movements internal constructor(private val world: World) : TickAware {
     }
 
     private fun onTick(mv: Mv): Boolean {
-        val cr = mv.cr
-        val newOffset = cr.offset + cr.speed
+        val a = mv.actor
+        val newOffset = a.offset + a.speed
         if (newOffset < METER) {
-            cr.offset = newOffset
+            a.offset = newOffset
             return false
         }
 
         //next cell
-        val x = nextX(cr)
-        val y = nextY(cr)
+        val x = nextX(a)
+        val y = nextY(a)
 
-        if (cannotStep(cr, x, y) || world.hasCreature(x, y)) {
-            cr.offset = 0
+        if (cannotStep(a, x, y) || world.hasActor(x, y)) {
+            a.offset = 0
 
             ///            logger.info(cr, "reset");
             if (mv.stop) {
-                cr.stop()
+                a.stop()
                 ///                logger.info(cr, "finish");
                 return true
             }
             return false
         }
 
-        world.moveCreature(cr, x, y)
+        world.move(a, x, y)
 
         if (mv.stop) {
-            cr.stop()
+            a.stop()
             ///            logger.info(cr, "finish");
             return true
         } else {
             if (mv.next != null) {
-                cr.mv = mv.next!!.dir
-                cr.sight = mv.next!!.sight
+                a.mv = mv.next!!.dir
+                a.sight = mv.next!!.sight
                 mv.next = null
             }
 
-            cr.offset = newOffset - METER
+            a.offset = newOffset - METER
             val tile = world[x, y]
-            cr.speed = TimeUtil.toTickSpeed(getSpeed(tile))
-            logger.info(cr, "")
+            a.speed = TimeUtil.toTickSpeed(getSpeed(tile))
+            logger.info(a, "")
             return false
         }
     }
 
-    private fun cannotStep(cr: Creature, x: Int, y: Int): Boolean {
+    private fun cannotStep(actor: Actor, x: Int, y: Int): Boolean {
         val obj = world.getObject(x, y)
         if (obj != null && obj.tile.type == TileType.WALL) {
             return true

@@ -1,7 +1,7 @@
 package cos.olympus.game.strategy
 
 import cos.olympus.Util
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 import cos.olympus.game.Damages
 import cos.olympus.game.MapUtil.inZone
 import cos.olympus.game.MapUtil.nextX
@@ -19,16 +19,16 @@ class MeleeAttackStrategy(
     override var finished = false
 
     init {
-        val cr = spell.source
-        this.targetX = nextX(cr, cr.sight)
-        this.targetY = nextY(cr, cr.sight)
+        val actor = spell.source
+        this.targetX = nextX(actor, actor.sight)
+        this.targetY = nextY(actor, actor.sight)
     }
 
     override val id = spell.id
 
 
     override fun onTick(tick: Int, damages: Damages): Boolean {
-        val victim = world.getCreature(targetX, targetY)
+        val victim = world.getActor(targetX, targetY)
         if (victim != null && spell.source.id != victim.id) {
             val crit = Util.rand(0, 10) == 1
             val amount = if (crit) Util.rand(40, 60) else Util.rand(10, 20)
@@ -39,8 +39,8 @@ class MeleeAttackStrategy(
         return true
     }
 
-    override fun inZone(cr: Creature): Boolean {
-        return inZone(cr, targetX, targetY, 8)
+    override fun inZone(actor: Actor): Boolean {
+        return inZone(actor, targetX, targetY, 8)
     }
 
 }

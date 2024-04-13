@@ -2,7 +2,7 @@ package cos.ops.out;
 
 import cos.ops.SomeOp;
 
-public record AllCreatures(
+public record AllActors(
         int width,
         int height,
         int offsetX,

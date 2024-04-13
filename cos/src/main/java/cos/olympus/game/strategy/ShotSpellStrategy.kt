@@ -2,7 +2,7 @@ package cos.olympus.game.strategy
 
 import cos.logging.Logger
 import cos.olympus.Util
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 import cos.olympus.game.Damages
 import cos.olympus.game.MapUtil.inZone
 import cos.olympus.game.World
@@ -34,7 +34,7 @@ class ShotSpellStrategy(
             Direction.SOUTH -> y += distance
             Direction.WEST -> x -= distance
         }
-        val victim = world.getCreature(x, y)
+        val victim = world.getActor(x, y)
         if (victim != null && spell.source.id != victim.id) {
             val crit = Util.rand(0, 5) == 1
             damages.on(victim, spell, if (crit) 200 else 100, crit)
@@ -52,8 +52,8 @@ class ShotSpellStrategy(
         return finished
     }
 
-    override fun inZone(cr: Creature): Boolean {
-        return inZone(cr, x, y, 8)
+    override fun inZone(actor: Actor): Boolean {
+        return inZone(actor, x, y, 8)
     }
 
 

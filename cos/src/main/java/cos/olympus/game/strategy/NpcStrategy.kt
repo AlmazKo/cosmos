@@ -2,7 +2,7 @@ package cos.olympus.game.strategy
 
 import cos.logging.Logger
 import cos.olympus.Util
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 import cos.olympus.game.MapUtil.direction
 import cos.olympus.game.MapUtil.nextX
 import cos.olympus.game.MapUtil.nextY
@@ -14,7 +14,7 @@ import cos.ops.Direction
 import cos.ops.`in`.Move
 
 class NpcStrategy(
-    private val npc: Creature,
+    private val npc: Actor,
     private val world: World,
     private val spells: Spells,
     private val movements: Movements
@@ -36,7 +36,7 @@ class NpcStrategy(
 
         val nextX = nextX(npc)
         val nextY = nextY(npc)
-        val near = world.getCreature(nextX, nextY)
+        val near = world.getActor(nextX, nextY)
         if (near != null && near.type != npc.type) {
 ///            logger.info("" + npc + " aggro-ed " + near);
             spells.onMeleeAttack(tick, npc)
@@ -53,7 +53,7 @@ class NpcStrategy(
     }
 
     private fun turnTo(): Direction? {
-        val nears = world.getCreatures(npc.x, npc.y, 1)
+        val nears = world.getActors(npc.x, npc.y, 1)
 
         for (near in nears) {
             if (near.type != npc.type) {
@@ -71,7 +71,7 @@ class NpcStrategy(
         val x = nextX(npc, dir)
         val y = nextY(npc, dir)
 
-        if (world.isFree(x, y) && world.isNoMovingCreaturesIn(x, y)) {
+        if (world.isFree(x, y) && world.isNoMovingActorIn(x, y)) {
             val mv = Move(0, npc.id, npc.x, npc.y, dir, dir)
             movements.change(npc, mv)
             movements.stop(npc, npc.sight)

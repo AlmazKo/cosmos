@@ -1,6 +1,7 @@
 package cos.olympus.game
 
 import cos.ops.Direction
+import cos.ops.Direction.*
 
 object MapUtil {
     fun nextX(cr: Orientable): Int {
@@ -15,17 +16,17 @@ object MapUtil {
 
     fun nextX(ort: Placeable, mv: Direction): Int {
         return when (mv) {
-            Direction.NORTH, Direction.SOUTH -> ort.x
-            Direction.WEST -> ort.x - 1
-            Direction.EAST -> ort.x + 1
+            NORTH, SOUTH -> ort.x
+            WEST -> ort.x - 1
+            EAST -> ort.x + 1
         }
     }
 
     fun nextY(ort: Placeable, mv: Direction): Int {
         return when (mv) {
-            Direction.NORTH -> ort.y - 1
-            Direction.SOUTH -> ort.y + 1
-            Direction.WEST, Direction.EAST -> ort.y
+            NORTH -> ort.y - 1
+            SOUTH -> ort.y + 1
+            WEST, EAST -> ort.y
         }
     }
 
@@ -38,15 +39,15 @@ object MapUtil {
     fun direction(from: Placeable, to: Placeable): Direction? {
         return if (from.y == to.y) {
             if (from.x < to.x) {
-                Direction.EAST
+                EAST
             } else {
-                Direction.WEST
+                WEST
             }
         } else if (from.x == to.x) {
             if (from.y < to.y) {
-                Direction.SOUTH
+                SOUTH
             } else {
-                Direction.NORTH
+                NORTH
             }
         } else {
             null

@@ -1,6 +1,6 @@
 package cos.olympus.game.events
 
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 import cos.ops.Direction
 
 //    public static final boolean finished = ;
@@ -12,5 +12,5 @@ data class Shot(
     val dir: Direction,
     val distance: Int,
     override val tick: Int,
-    override val source: Creature
+    override val source: Actor
 ) : Spell, Event

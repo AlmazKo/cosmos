@@ -53,10 +53,9 @@ class Game(@JvmField val world: World) {
 
         try {
             when (op) {
-                is Logout -> removeAvatar(op.userId())
+                is Logout -> removeIdentity(op.userId())
                 is Move -> movements.onMove(op)
                 is StopMove -> movements.onStopMove(op)
-
                 is FireballEmmit -> spells.onSpell(tickId, op)
                 is ShotEmmit -> spells.onShot(tickId, op)
                 is MeleeAttack -> spells.onMeleeAttack(tickId, op)
@@ -81,37 +80,37 @@ class Game(@JvmField val world: World) {
         spells.onTick(tick, damages, out)
         damages.forEach(::onDamage)
         npcRespawns.forEach { it.onTick(tick, out) }
-        world.allCreatures.forEach { zone.onTick(it, tick, out) }
-        world.allCreatures.forEach(::checkPortals)
+        world.allActors.forEach { zone.onTick(it, tick, out) }
+        world.allActors.forEach(::checkPortals)
         notifyAboutEvents()
 
         spells.onAfterTick()
-        world.removeCreatureIf(Creature::isDead)
+        world.removeActorIf(Actor::isDead)
         damages.clear()
         deaths.clear() //todo: optimize
     }
 
     private fun notifyAboutEvents() {
-        world.allCreatures.forEach { cr ->
+        world.allActors.forEach { actor ->
             damages.forEach {
-                if (cr.zoneCreatures.contains(it.victim.id)) {
-                    tickOuts.add(it.toUserOp(cr.id))
+                if (actor.zoneActors.contains(it.victim.id)) {
+                    tickOuts.add(it.toUserOp(actor.id))
                 }
             }
             deaths.forEach {
-                if (cr.zoneCreatures.contains(it.victim.id)) {
-                    tickOuts.add(it.toUserOp(cr.id))
+                if (actor.zoneActors.contains(it.victim.id)) {
+                    tickOuts.add(it.toUserOp(actor.id))
                 }
             }
         }
     }
 
 
-    private fun checkPortals(cr: Creature) {
-        if (cr.isPlayer) {
+    private fun checkPortals(actor: Actor) {
+        if (actor.isPlayer) {
             for (portal in world.portals) {
-                if (portal.x == cr.x && portal.y == cr.y) {
-                    strategies.add(TeleportOutStrategy(tickId, this, cr, portal))
+                if (portal.x == actor.x && portal.y == actor.y) {
+                    strategies.add(TeleportOutStrategy(tickId, this, actor, portal))
                 }
             }
         }
@@ -126,7 +125,7 @@ class Game(@JvmField val world: World) {
             movements.interrupt(dmg.victim)
 
             if (dmg.victim.isPlayer) {
-                playersRespawns.add(RespawnPlayerStrategy(tickId, world, (dmg.victim.avatar as Player)))
+                playersRespawns.add(RespawnPlayerStrategy(tickId, world, (dmg.victim.identity as Player)))
             }
 
             dmg.spell.source.onKill(death)
@@ -134,12 +133,12 @@ class Game(@JvmField val world: World) {
     }
 
 
-    fun removeAvatar(userId: Int) {
-        val cr = world.getCreature(userId) ?: return
+    fun removeIdentity(userId: Int) {
+        val actor = world.getActor(userId) ?: return
 
         //todo allow finish step
-        movements.interrupt(cr)
-        world.removeCreature(cr.id)
+        movements.interrupt(actor)
+        world.removeActor(actor.id)
     }
 
     companion object {

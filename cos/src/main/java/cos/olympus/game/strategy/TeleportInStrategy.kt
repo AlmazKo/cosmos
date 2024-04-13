@@ -15,8 +15,8 @@ class TeleportInStrategy(
     override fun onTick(tick: Int, out: OpConsumer): Boolean {
         if (tick >= respawnTime) {
             val avatar = Player(t.userId, "user:" + t.id)
-            val cr = to.world.place(avatar, t.x, t.y, 100, 4) //move metrics
-            val op = ProtoAppear(1, tick, avatar.id, to.world.name, cr.x, cr.y, cr.sight)
+            val a = to.world.place(avatar, t.x, t.y, 100, 4) //move metrics
+            val op = ProtoAppear(1, tick, avatar.id, to.world.name, a.x, a.y, a.sight)
             out.add(op)
             return true
         }

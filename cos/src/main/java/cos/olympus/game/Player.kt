@@ -1,11 +1,10 @@
 package cos.olympus.game
 
-import cos.map.CreatureType
-
+import cos.map.ActorType
 
 class Player(
     override val id: Int,
     override val name: String
-) : Avatar {
-    override val type = CreatureType.PLAYER
+) : Identity {
+    override val type = ActorType.PLAYER
 }

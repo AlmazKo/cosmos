@@ -1,13 +1,13 @@
 package cos.olympus.game
 
 class Metrics(
-    val creatureId: Int,
+    val actorId: Int,
     var lvl: Int,
     var life: Int,
     var maxLife: Int,
     var exp: Int
 ) {
-    constructor(creatureId: Int, life: Int) : this(creatureId, 1, life, life, 0)
+    constructor(actorId: Int, life: Int) : this(actorId, 1, life, life, 0)
 
     fun maxLife(): Int {
         return maxLife
@@ -32,6 +32,6 @@ class Metrics(
 
 
     fun copy(): Metrics {
-        return Metrics(creatureId, lvl, life, maxLife, exp)
+        return Metrics(actorId, lvl, life, maxLife, exp)
     }
 }

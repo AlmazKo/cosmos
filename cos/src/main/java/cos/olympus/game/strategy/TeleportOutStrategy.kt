@@ -20,7 +20,7 @@ class TeleportOutStrategy(
 
     override fun onTick(tick: Int, out: OpConsumer): Boolean {
         if (state == 0) {
-            game.removeAvatar(avatar.id)
+            game.removeIdentity(avatar.id)
             //todo: add event
             state = 1
             return false

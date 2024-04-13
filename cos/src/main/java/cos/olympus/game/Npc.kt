@@ -1,9 +1,9 @@
 package cos.olympus.game
 
-import cos.map.CreatureType
+import cos.map.ActorType
 
 data class Npc(
     override val id: Int,
-    override val type: CreatureType,
+    override val type: ActorType,
     override val name: String
-) : Avatar
+) : Identity

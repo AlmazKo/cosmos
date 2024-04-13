@@ -1,6 +1,6 @@
 package cos.olympus.game.events
 
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 import cos.ops.Direction
 
 @JvmRecord
@@ -10,5 +10,5 @@ data class MeleeAttack(
     val x: Int,
     val y: Int,
     val dir: Direction,
-    override val source: Creature
+    override val source: Actor
 ) : Spell, Event

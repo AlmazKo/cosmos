@@ -1,6 +1,6 @@
 package cos.olympus.game.strategy
 
-import cos.map.CreatureType.PLAYER
+import cos.map.ActorType.PLAYER
 import cos.olympus.NoSpaceException
 import cos.olympus.Util
 import cos.olympus.game.Npc
@@ -21,8 +21,8 @@ class RespawnPlayerStrategy(
         if (tick < respawnTime) return false
 
         try {
-            val cr = world.place(Npc(player.id, PLAYER, player.name), 34, -24, 100, 1)
-            outOps.add(Appear(0, tick, cr.id, cr.x, cr.y, cr.mv, cr.sight, cr.metrics.lvl, cr.life))
+            val a = world.place(Npc(player.id, PLAYER, player.name), 34, -24, 100, 1)
+            outOps.add(Appear(0, tick, a.id, a.x, a.y, a.mv, a.sight, a.metrics.lvl, a.life))
         } catch (e: NoSpaceException) {
             return false
         }

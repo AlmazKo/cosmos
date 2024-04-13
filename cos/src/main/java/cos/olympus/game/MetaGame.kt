@@ -8,7 +8,7 @@ import cos.olympus.util.OpConsumer
 import cos.ops.ServiceOp
 import cos.ops.UserOp
 import cos.ops.`in`.Login
-import cos.ops.out.AllCreatures
+import cos.ops.out.AllActors
 import cos.ops.out.TeleportIn
 import java.util.function.Consumer
 
@@ -42,18 +42,18 @@ class MetaGame(private val games: Map<String, Game>) {
     }
 
     private fun collectMetrics(out: OpConsumer, game: Game) {
-        val crs = game.world.allCreatures
-        if (crs.isEmpty()) return
+        val actors = game.world.allActors
+        if (actors.isEmpty()) return
 
         var i = 0
-        val data = IntArray(crs.size * 3)
-        for (cr in crs) {
-            data[i++] = cr.y
-            data[i++] = cr.y
-            data[i++] = cr.type.ordinal
+        val data = IntArray(actors.size * 3)
+        for (a in actors) {
+            data[i++] = a.y
+            data[i++] = a.y
+            data[i++] = a.type.ordinal
         }
         val w = game.world
-        val op = AllCreatures(w.width, w.height, w.offsetX, w.offsetY, data)
+        val op = AllActors(w.width, w.height, w.offsetX, w.offsetY, data)
         out.add(op)
     }
 

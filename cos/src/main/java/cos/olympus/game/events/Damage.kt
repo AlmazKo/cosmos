@@ -1,12 +1,12 @@
 package cos.olympus.game.events
 
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 import cos.ops.out.Damage
 
 data class Damage(
     override val id: Int,
     override val tick: Int,
-    val victim: Creature,
+    val victim: Actor,
     val spell: Spell,
     val amount: Int,
     val crit: Boolean

@@ -31,9 +31,9 @@ public final class World {
     private final short[] objects;
     private final String name;
     private final Tile[] tiles;
-    private final int[] creatures;
+    private final int[] actorsXY;
 
-    private final HashMap<Integer, Creature> creatureObjects = new HashMap<>();
+    private final HashMap<Integer, Actor> actors = new HashMap<>();
 
     final int offsetX;
     final int offsetY;
@@ -48,7 +48,7 @@ public final class World {
         this.basis = lands.basis();
         this.objects = lands.objects();
         this.name = name;
-        this.creatures = new int[basis.length];
+        this.actorsXY = new int[basis.length];
         this.tiles = lands.tiles();
         this.respawns = lands.respawns();
         this.portals = lands.portals();
@@ -121,33 +121,33 @@ public final class World {
         return new Obj(idx, t, x, y);//todo id is hardcoded
     }
 
-    public @Nullable Creature getCreature(int uid) {
-        return creatureObjects.get(uid);
+    public @Nullable Actor getActor(int uid) {
+        return actors.get(uid);
     }
 
-    public @Nullable Creature getCreature(int x, int y) {
+    public @Nullable Actor getActor(int x, int y) {
         if (!isValid(x, y)) return null;
 
-        return _getCreature(x, y);
+        return _getActor(x, y);
     }
 
     @Nullable
-    private Creature _getCreature(int x, int y) {
-        int crId = creatures[toIndex(x, y)];
-        return creatureObjects.get(crId);
+    private Actor _getActor(int x, int y) {
+        int crId = actorsXY[toIndex(x, y)];
+        return actors.get(crId);
     }
 
-    public List<@NotNull Creature> getCreatures(int centerX, int centerY, int radius) {
+    public List<@NotNull Actor> getActors(int centerX, int centerY, int radius) {
 
-        ArrayList<@NotNull Creature> result = new ArrayList<>();
+        ArrayList<@NotNull Actor> result = new ArrayList<>();
 
         for (int x = max(offsetX, centerX - radius); x <= min(centerX + radius, width + offsetX); x++) {
             for (int y = max(offsetY, centerY - radius); y <= min(centerY + radius, height + offsetY); y++) {
                 if (x == centerX && y == centerY) continue;
 
-                @Nullable Creature cr = _getCreature(x, y);
-                if (cr != null) {
-                    result.add(cr);
+                @Nullable Actor actor = _getActor(x, y);
+                if (actor != null) {
+                    result.add(actor);
                 }
             }
         }
@@ -165,32 +165,31 @@ public final class World {
 
     }
 
-    public boolean isNoCreature(int id) {
-        return !creatureObjects.containsKey(id);
+    public boolean isNoActor(int id) {
+        return !actors.containsKey(id);
     }
 
-    void removeCreature(int id) {
-        var cr = creatureObjects.remove(id);
-        if (cr == null) {
-            logger.warn(name + ": Not found creature" + id + " for removing");
+    void removeActor(int id) {
+        var a = actors.remove(id);
+        if (a == null) {
+            logger.warn(name + ": Not found actor" + id + " for removing");
             return;
         }
 
-        int idx = toIndex(cr.getX(), cr.getY());
+        int idx = toIndex(a.getX(), a.getY());
 
         //todo debug
-        if (creatures[idx] != id) {
+        if (actorsXY[idx] != id) {
             throw new RuntimeException("Wrong position #" + id);
         }
-        creatures[idx] = 0;
+        actorsXY[idx] = 0;
     }
 
-
-    public void removeCreatureIf(Predicate<? super Creature> filter) {
-        creatureObjects.values().removeIf(cr -> {
-            if (filter.test(cr)) {
-                int idx = toIndex(cr.getX(), cr.getY());
-                creatures[idx] = 0;
+    public void removeActorIf(Predicate<? super Actor> filter) {
+        actors.values().removeIf(a -> {
+            if (filter.test(a)) {
+                int idx = toIndex(a.getX(), a.getY());
+                actorsXY[idx] = 0;
                 return true;
             } else {
                 return false;
@@ -198,7 +197,7 @@ public final class World {
         });
     }
 
-    public Creature place(Avatar usr, int x, int y, int life, int maxDev) {
+    public Actor place(Identity usr, int x, int y, int life, int maxDev) {
 
         int idx = toIndex(x, y);
         if (idx < 0 || idx >= basis.length) {
@@ -209,28 +208,29 @@ public final class World {
 
         if (idx >= 0) {
             var coord = toCoord(idx);
-            var cr = new Creature(usr, coord.x(), coord.y(), (byte) 0, (byte) 0, null, SOUTH, life);
-            creatures[idx] = cr.getId();
-            creatureObjects.put(cr.getId(), cr);
-            logger.info(cr, "placed");
-            return cr;
+            var orient = new Orientation(0, coord.x(), coord.y(), 0, 0, SOUTH, null);
+            var a = new Actor(usr, orient, life);
+            actorsXY[idx] = a.getId();
+            actors.put(a.getId(), a);
+            logger.info(a, "placed");
+            return a;
         } else {
             throw new NoSpaceException("Fail finding free place");
         }
     }
 
-    public boolean hasCreature(int x, int y) {
-        return !isNoCreatures(x, y);
+    public boolean hasActor(int x, int y) {
+        return !isNoActor(x, y);
     }
 
-    public boolean isNoCreatures(int x, int y) {
+    public boolean isNoActor(int x, int y) {
         if (!isValid(x, y)) return false;
 
-        return creatures[toIndex(x, y)] == 0;
+        return actorsXY[toIndex(x, y)] == 0;
     }
 
-    public boolean isNoMovingCreaturesIn(int x, int y) {
-        var crs = getCreatures(x, y, 1);
+    public boolean isNoMovingActorIn(int x, int y) {
+        var crs = getActors(x, y, 1);
         for (Orientable o : crs) {
             if (o.getSpeed() > 0 && (MapUtil.INSTANCE.nextX(o) == x && MapUtil.INSTANCE.nextY(o) == y)) {
                 return false;
@@ -252,27 +252,27 @@ public final class World {
             if (b == null || b == TileType.WALL || b == TileType.DEEP_WATER || b == TileType.NOTHING) return false;
         }
 
-        return creatures[idx] == 0;
+        return actorsXY[idx] == 0;
     }
 
-    public void moveCreature(Creature cr, int toX, int toY) {
-        int from = toIndex(cr.getX(), cr.getY());
+    public void move(Actor a, int toX, int toY) {
+        int from = toIndex(a.getX(), a.getY());
         int to = toIndex(toX, toY);
-        int creatureId = creatures[from];
+        int actorId = actorsXY[from];
 
-        if (creatureId == 0) {
+        if (actorId == 0) {
             logger.warn(name + ": Try moving from free place " + toX + ", " + toY);
         }
-        if (creatures[to] != 0) {
+        if (actorsXY[to] != 0) {
             logger.warn(name + ": Try moving into occupied place " + toX + ", " + toY);
         }
 
-        creatures[from] = 0;
-        creatures[to] = creatureId;
-        cr.setX(toX);
-        cr.setY(toY);
+        actorsXY[from] = 0;
+        actorsXY[to] = actorId;
+        a.setX(toX);
+        a.setY(toY);
 
-////        logger.info(name + ": Creature #" + creatureId + " set x=" + toX + ", y=" + toY);
+////        logger.info(name + ": Actor #" + actorId + " set x=" + toX + ", y=" + toY);
     }
 
     public @Nullable Coord findFreePlace(int x, int y, int maxDev) {
@@ -296,7 +296,7 @@ public final class World {
 
         if (!isValid(x, y)) return -1;
 
-        if (creatures[toIndex(x, y)] == 0) return toIndex(x, y);
+        if (actorsXY[toIndex(x, y)] == 0) return toIndex(x, y);
 
         for (int i = 1; i <= maxDev; i++) {
 
@@ -326,11 +326,11 @@ public final class World {
         return -1;
     }
 
-    public String debugCreatures() {
+    public String debugActors() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < creatures.length; i++) {
+        for (int i = 0; i < actorsXY.length; i++) {
 
-            int it = creatures[i];
+            int it = actorsXY[i];
             if (i % width == 0) {
                 sb.append('\n');
                 sb.append(String.format("%1$-4s", i / width + offsetY));
@@ -364,14 +364,14 @@ public final class World {
 
     @Override
     public String toString() {
-        return debugCreatures();
+        return debugActors();
     }
 
-    public Collection<Creature> getAllCreatures() {
-        return creatureObjects.values();
+    public Collection<Actor> getAllActors() {
+        return actors.values();
     }
 
-    public Collection<Creature> getAllPlayers() {
-        return creatureObjects.values();
+    public Collection<Actor> getAllPlayers() {
+        return actors.values();
     }
 }

@@ -2,7 +2,7 @@ package cos.olympus.game.strategy
 
 import cos.logging.Logger
 import cos.map.Coord
-import cos.map.CreatureType
+import cos.map.ActorType
 import cos.olympus.NoSpaceException
 import cos.olympus.Util
 import cos.olympus.game.Movements
@@ -16,7 +16,7 @@ class RespawnStrategy(
     private val spells: Spells,
     private val movements: Movements,
     private val spot: Coord,
-    private val type: CreatureType
+    private val type: ActorType
 ) : Strategy {
     private var live: NpcStrategy? = null
     private var isDead = false

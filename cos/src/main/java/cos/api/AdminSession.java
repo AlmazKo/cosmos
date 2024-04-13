@@ -2,7 +2,7 @@ package cos.api;
 
 import cos.logging.Logger;
 import cos.map.Lands;
-import cos.ops.out.AllCreatures;
+import cos.ops.out.AllActors;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -38,7 +38,7 @@ class AdminSession {
     }
 
     void onOp(Record op) {
-        if (op instanceof AllCreatures aop) {
+        if (op instanceof AllActors aop) {
             ws.writeTextMessage(toJson(aop).toString());
         } else {
             ws.writeTextMessage("{}");
@@ -66,7 +66,7 @@ class AdminSession {
                 .put("data", new JsonArray(result));
     }
 
-    private static JsonObject toJson(AllCreatures op) {
+    private static JsonObject toJson(AllActors op) {
         return new JsonObject()
                 .put("action", "all-creatures")
                 .put("width", op.width())

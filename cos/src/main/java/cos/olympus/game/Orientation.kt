@@ -3,7 +3,7 @@ package cos.olympus.game
 import cos.ops.Direction
 
 class Orientation(
-    val creatureId: Int,
+    val actorId: Int,
     override val x: Int,
     override val y: Int,
     override val speed: Int,

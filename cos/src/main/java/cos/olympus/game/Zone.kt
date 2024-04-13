@@ -2,52 +2,52 @@ package cos.olympus.game
 
 import cos.logging.Logger
 import cos.olympus.util.OpConsumer
-import cos.ops.out.CreatureHid
-import cos.ops.out.CreatureMoved
+import cos.ops.out.ActorHid
+import cos.ops.out.ActorMoved
 import cos.ops.out.Metrics
 import cos.ops.out.ObjAppear
 import kotlin.math.abs
 
 class Zone(private val world: World) {
-    fun onTick(target: Creature, tick: Int, consumer: OpConsumer) {
+    fun onTick(target: Actor, tick: Int, consumer: OpConsumer) {
         //todo hardcode radius
         world.iterateAround(target.x, target.y, VIEW_RADIUS) { x, y ->
             val obj = world.getObject(x, y)
-            if (obj != null && !target.zoneObjects.containsKey(obj.id)) {
+            if (obj != null && !target.zoneObjects.contains(obj.id)) {
                 target.zoneObjects[obj.id] = obj
                 consumer.add(ObjAppear(obj.id, tick, target.id, x, y, obj.tile.id))
             }
 
             //            if (target.getX() == x && target.getY() == y) return; // avoid self-detection
-            val cr = if (target.x == x && target.y == y) {
+            val a = if (target.x == x && target.y == y) {
                 target
             } else {
-                world.getCreature(x, y)
+                world.getActor(x, y)
             }
-            if (cr == null) {
+            if (a == null) {
                 //disappear or /nothing
             } else {
-                val ort = target.zoneCreatures[cr.id]
-                if (ort == null || (ort.x != cr.x || ort.y != cr.y) || ort.speed != cr.speed || ort.sight != cr.sight) {
-                    target.zoneCreatures[cr.id] = cr.orientation()
-                    consumer.add(CreatureMoved(1, tick, target.id, cr.id, x, y, cr.offset, cr.speed, cr.mv, cr.sight))
+                val ort = target.zoneActors[a.id]
+                if (ort == null || (ort.x != a.x || ort.y != a.y) || ort.speed != a.speed || ort.sight != a.sight) {
+                    target.zoneActors[a.id] = a.orientation()
+                    consumer.add(ActorMoved(1, tick, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
                 }
 
-                val met = target.zoneMetrics[cr.id]
-                if (met == null || (met.life() != cr.life || met.maxLife() != cr.metrics.maxLife() || met.exp != cr.metrics.exp)) {
-                    val n = cr.copyMetrics()
-                    target.zoneMetrics[cr.id] = n
-                    consumer.add(Metrics(1, tick, target.id, cr.id, cr.metrics.lvl, cr.metrics.exp, n.life(), n.maxLife()))
+                val met = target.zoneMetrics[a.id]
+                if (met == null || (met.life() != a.life || met.maxLife() != a.metrics.maxLife() || met.exp != a.metrics.exp)) {
+                    val n = a.copyMetrics()
+                    target.zoneMetrics[a.id] = n
+                    consumer.add(Metrics(1, tick, target.id, a.id, a.metrics.lvl, a.metrics.exp, n.life(), n.maxLife()))
                 }
             }
         }
 
-        target.zoneCreatures.values.removeIf { ort: Orientation ->
-            if (ort.creatureId == target.id) return@removeIf false
-            val cr = world.getCreature(ort.creatureId)
-            if (cr == null || inNotFov(target, cr)) {
-                consumer.add(CreatureHid(1, tick, target.id, ort.creatureId))
-                target.zoneMetrics.remove(ort.creatureId)
+        target.zoneActors.values.removeIf { ort: Orientation ->
+            if (ort.actorId == target.id) return@removeIf false
+            val a = world.getActor(ort.actorId)
+            if (a == null || inNotFov(target, a)) {
+                consumer.add(ActorHid(1, tick, target.id, ort.actorId))
+                target.zoneMetrics.remove(ort.actorId)
                 return@removeIf true
             } else {
                 return@removeIf false
@@ -59,7 +59,7 @@ class Zone(private val world: World) {
         private val logger: Logger = Logger.get(Zone::class.java)
         private const val VIEW_RADIUS = 8
 
-        fun inNotFov(target: Creature, o: Creature): Boolean {
+        fun inNotFov(target: Actor, o: Actor): Boolean {
             return abs((target.x - o.x).toDouble()) > VIEW_RADIUS || abs((target.y - o.y).toDouble()) > VIEW_RADIUS
         }
     }

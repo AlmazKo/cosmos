@@ -1,8 +1,8 @@
 package cos.olympus.game.events
 
-import cos.olympus.game.Creature
+import cos.olympus.game.Actor
 
 interface Spell {
     val id: Int
-    val source: Creature
+    val source: Actor
 }

@@ -1,6 +1,5 @@
 package cos.olympus.game
 
-import cos.logging.Logger
 import cos.olympus.game.events.Damage
 import cos.olympus.game.events.Spell
 import java.util.function.Consumer
@@ -13,7 +12,7 @@ class Damages : TickAware {
         this.tick = tick
     }
 
-    fun on(victim: Creature, spell: Spell, amount: Int, crit: Boolean) {
+    fun on(victim: Actor, spell: Spell, amount: Int, crit: Boolean) {
         val dmg = Damage(++DAMAGES_IDS, tick, victim, spell, amount, crit)
         ///        logger.info(dmg);
         data.add(dmg)

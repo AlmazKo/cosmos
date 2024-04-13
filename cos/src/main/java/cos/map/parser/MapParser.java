@@ -2,7 +2,7 @@ package cos.map.parser;
 
 import almazko.microjson.JsArray;
 import almazko.microjson.JsObject;
-import cos.map.CreatureType;
+import cos.map.ActorType;
 import cos.map.Lands;
 import cos.map.PortalSpot;
 import cos.map.RespawnSpot;
@@ -107,7 +107,7 @@ public class MapParser {
             var props = obj.getArray("properties");
             int size = findIntProp(props, "size");
             String type = findStringProp(props, "npc_type");
-            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size, CreatureType.valueOf(type.toUpperCase()));
+            var spot = new RespawnSpot(obj.getInt("x") / 32, obj.getInt("y") / 32, size, ActorType.valueOf(type.toUpperCase()));
             result.add(spot);
         }
         return result;
