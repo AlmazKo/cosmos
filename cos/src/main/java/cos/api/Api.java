@@ -68,8 +68,8 @@ class Api {
 
         //https://www.process-one.net/blog/using-a-local-development-trusted-ca-on-macos/
         var sertOpts = new PemKeyCertOptions();
-        sertOpts.setKeyValue(readRescourceToBuffer("/localhost+2-key.pem"));
-        sertOpts.setCertValue(readRescourceToBuffer("/localhost+2.pem"));
+        sertOpts.setKeyValue(readRescourceToBuffer("/server.key"));
+        sertOpts.setCertValue(readRescourceToBuffer("/server.crt"));
         opts.setKeyCertOptions(sertOpts);
 
         return vertx.createHttpServer(opts);
@@ -100,7 +100,8 @@ class Api {
         lands.forEach((n, l) -> initMapApi(router, l, n));
 
         var dir = System.getProperty("CosResourcesDir");
-        router.route("/res/*").handler(StaticHandler.create(dir));
+        log.info("Set /res/* to " + dir);
+        router.route("/res/*").handler(StaticHandler.create(dir).setCachingEnabled(false));
         router.route("/ws").handler(ctx ->
                 ctx.request().toWebSocket(wsAr -> {
                     if (wsAr.failed()) {

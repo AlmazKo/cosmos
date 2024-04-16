@@ -22,7 +22,7 @@ import cos.ops.out.Disconnect
 class Game(@JvmField val world: World) {
     data class Config(val settleMobs: Boolean)
 
-    private val cfg = Config(false)
+    private val cfg = Config(true)
 
     private val movements = Movements(world)
     private val spells = Spells(world)

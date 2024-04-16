@@ -137,7 +137,7 @@ final class Util {
 
         for (int i = 1; i < st.length; i++) {
             ste = st[i];
-            if (!ste.getClassName().startsWith("cos.logging") && !ste.getClassName().endsWith("Logger")) {
+            if (!ste.getClassName().startsWith("cos.logging") && !ste.getClassName().contains("Logger") && !ste.getClassName().endsWith("SLF4JLogDelegate")) {
                 line = ste.getLineNumber();
                 file = ste.getFileName();
                 break;

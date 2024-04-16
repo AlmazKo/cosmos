@@ -1,9 +1,7 @@
 import {
     ActorMoved,
     API_MAPPER,
-    Appear,
-    CreatureHid2,
-    CreatureMoved2,
+    Appear, ActorHid,
     Damage,
     Death,
     FireballMoved, MeleeAttacked, ObjAppear, OpMetrics, ProtoAppear,
@@ -121,7 +119,7 @@ export class Game implements MovingListener {
         // this.actions.push(new OnDamage(ID++, proto, Date.now(), e))
     }
 
-    private onCreatureHid(e: CreatureHid2) {
+    private onCreatureHid(e: ActorHid) {
         const proto = this.proto!!;
         this.movements.interrupt(e.creatureId)
         proto.zoneCreatures.delete(e.creatureId);
@@ -200,7 +198,7 @@ export class Game implements MovingListener {
     }
 
     onFrame(time: DOMHighResTimeStamp) {
-        this.movements.onFrame(time)
+        this.movements.onFrame(time, 0) // todo: hardcode
         this.spells.onFrame(time);
     }
 
@@ -264,27 +262,27 @@ export class Game implements MovingListener {
     }
 
     private onAppear(e: Appear) {
-        // if (!this.proto) {
-        //     const arrival: ApiCreature = {
-        //         id: e.userId,
-        //         isPlayer: true,
-        //         x: e.x,
-        //         y: e.y,
-        //         sight: e.sight,
-        //         direction: e.mv,
-        //         metrics: new Metrics(e.lvl, -1, e.life, e.life, "Player#" + e.userId),
-        //         viewDistance: 10
-        //     };
-        //     console.log("World", e.map)
-        //     this.world.name = e.map;
-        //     this.proto = this.addPlayer(arrival) as Player;
-        //     this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
-        // } else {
-        //
-        //     this.proto.metrics.life = this.proto.metrics.maxLife;
-        //     this.proto.orientation.x = e.x;
-        //     this.proto.orientation.y = e.y;
-        // }
+        if (!this.proto) {
+            const arrival: ApiCreature = {
+                id: e.userId,
+                isPlayer: true,
+                x: e.x,
+                y: e.y,
+                sight: e.sight,
+                direction: e.mv,
+                metrics: new Metrics(e.lvl, -1, e.life, e.life, "Player#" + e.userId),
+                viewDistance: 10
+            };
+            console.log("World", e.map)
+            this.world.name = e.map;
+            this.proto = this.addPlayer(arrival) as Player;
+            this.actions.push(new ProtoArrival(ID++, this.proto, Date.now()))
+        } else {
+
+            this.proto.metrics.life = this.proto.metrics.maxLife;
+            this.proto.orientation.x = e.x;
+            this.proto.orientation.y = e.y;
+        }
     }
 
     private onFireballMoved(e: FireballMoved) {
