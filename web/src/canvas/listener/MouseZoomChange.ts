@@ -1,6 +1,6 @@
-import { ZoomChange } from '../CanvasComposer';
-import { HtmlListener } from './HtmlListener';
-import { listen } from './util';
+import {ZoomChange} from '../CanvasComposer';
+import {HtmlListener} from './HtmlListener';
+import {listen} from './util';
 
 export class MouseZoomChange implements HtmlListener {
   private readonly closeCallback: () => any;

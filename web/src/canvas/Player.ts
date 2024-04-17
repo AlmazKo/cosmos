@@ -1,13 +1,13 @@
-import { CanvasComposer, Support } from './CanvasComposer';
-import { CanvasHolder } from './CanvasHolder';
-import { HtmlListener } from './listener/HtmlListener';
-import { MouseYZoom } from './listener/MouseYZoom';
-import { MouseZoomChange } from './listener/MouseZoomChange';
-import { PositionChange } from './listener/PositionChange';
-import { TouchPositionChange } from './listener/TouchPositionChange';
-import { TouchShift } from './listener/TouchShift';
-import { TouchZoomChange } from './listener/TouchZoomChange';
-import { isTouchDevice } from './utils';
+import {CanvasComposer, Support} from './CanvasComposer';
+import {CanvasHolder} from './CanvasHolder';
+import {HtmlListener} from './listener/HtmlListener';
+import {MouseYZoom} from './listener/MouseYZoom';
+import {MouseZoomChange} from './listener/MouseZoomChange';
+import {PositionChange} from './listener/PositionChange';
+import {TouchPositionChange} from './listener/TouchPositionChange';
+import {TouchShift} from './listener/TouchShift';
+import {TouchZoomChange} from './listener/TouchZoomChange';
+import {isTouchDevice} from './utils';
 
 class FpsMeter {
   times = 0;
@@ -29,7 +29,6 @@ let logMsg: string = '';
 let logMsg2        = '';
 let INC: uint      = 0;
 
-export const log2 = (msg: any) => (logMsg2 = msg);
 export const log  = (msg: any) => (logMsg = msg);
 
 export class Player {

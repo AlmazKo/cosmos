@@ -1,5 +1,5 @@
-import { Dir } from '../../game2/constants';
-import { Metrics } from '../Metrics';
+import {Dir} from '../constants';
+import {Metrics} from '../engine/Metrics';
 
 export interface ApiCreature {
   id: uint;

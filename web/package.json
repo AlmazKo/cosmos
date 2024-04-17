@@ -18,7 +18,8 @@
   },
   "scripts": {
     "start": "./node_modules/parcel/lib/bin.js serve src/admin.html src/index.html",
-    "test": "jest"
+    "test": "jest",
+    "check": "tsc --noEmit"
   },
   "dependencies": {
     "npm": "^9.6.6"

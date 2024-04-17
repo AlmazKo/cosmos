@@ -1,6 +1,6 @@
-import { Shifted, ZOOM_Y_AREA_WIDTH } from '../CanvasComposer';
-import { HtmlListener } from './HtmlListener';
-import { DocEvents, Gesture, getTouchPosition } from './util';
+import {Shifted, ZOOM_Y_AREA_WIDTH} from '../CanvasComposer';
+import {HtmlListener} from './HtmlListener';
+import {DocEvents, Gesture, getTouchPosition} from './util';
 
 export class TouchShift implements HtmlListener {
   private events: DocEvents;

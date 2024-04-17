@@ -1,8 +1,8 @@
-import { hround, round } from '../canvas/utils';
-import { FillStyle } from './FillStyle';
-import { FontStyle, FontStyleAcceptor } from './FontStyleAcceptor';
-import { StringStokeStyle } from './Painter';
-import { StrokeStyleAcceptor } from './StrokeStyleAcceptor';
+import {hround, round} from '../canvas/utils';
+import {FillStyle} from './FillStyle';
+import {FontStyle, FontStyleAcceptor} from './FontStyleAcceptor';
+import {StringStokeStyle} from './Painter';
+import {StrokeStyleAcceptor} from './StrokeStyleAcceptor';
 
 export class CanvasContext {
   readonly ctx: CanvasRenderingContext2D;

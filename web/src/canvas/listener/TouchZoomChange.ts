@@ -1,6 +1,6 @@
-import { log } from '../Player';
-import { HtmlListener } from './HtmlListener';
-import { DocEvents, Gesture } from './util';
+import {log} from '../Player';
+import {HtmlListener} from './HtmlListener';
+import {DocEvents, Gesture} from './util';
 
 interface TouchEvent {
   readonly id: number;

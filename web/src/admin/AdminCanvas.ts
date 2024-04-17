@@ -1,10 +1,10 @@
 import {CanvasComposer} from '../canvas/CanvasComposer';
 import {BasePainter} from '../draw/BasePainter';
-import {coord} from '../game2/render/constants';
-import {Api} from '../game2/server/Api';
-import {TileType} from "../game2/constants";
-import {floor} from "../game2/world/World";
-import {getColor} from "../game2/render/layers/MiniMapCanvas";
+import {coord} from '../game/render/constants';
+import {Api} from '../game/server/Api';
+import {TileType} from "../game/constants";
+import {floor} from "../game/world/World";
+import {getColor} from "../game/render/layers/MiniMapCanvas";
 
 const PAD = 16;
 
@@ -33,7 +33,7 @@ export class AdminCanvas implements CanvasComposer {
     // @ts-ignore
     private p: BasePainter;
     private crs: int[] = [];
-    private map: MapSpec = undefined;
+    private map: MapSpec | undefined = undefined;
 
     constructor(api: Api) {
         api.listen(p => this.onRawData(p))

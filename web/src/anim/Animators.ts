@@ -1,4 +1,4 @@
-import { Animated } from './Animator';
+import {Animated} from './Animator';
 
 export class Animators {
   private animators: { [name: string]: Animated; }         = {};

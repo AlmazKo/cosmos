@@ -1,17 +1,17 @@
-import { Audios } from './game2/audio/Audios';
-import { GamePad } from './game2/controller/GamePad';
-import { Keyboard } from './game2/controller/Keyboard';
-import { Game } from './game2/engine/Game';
-import { Moving } from './game2/engine/Moving';
-import { Spells } from './game2/engine/Spells';
-import { GameCanvas } from './game2/render/GameCanvas';
-import { LandsLayer } from './game2/render/LandsLayer';
-import { Render } from './game2/render/Render';
-import { AudioAssets } from './game2/server/AudioAssets';
-import { ImageAssets } from './game2/server/ImageAssets';
-import { ResourcesServer } from './game2/server/ResourcesServer';
-import { WsServer } from './game2/server/WsServer';
-import { World } from './game2/world/World';
+import {Audios} from './game/audio/Audios';
+import {GamePad} from './game/controller/GamePad';
+import {Keyboard} from './game/controller/Keyboard';
+import {Game} from './game/engine/Game';
+import {Moving} from './game/engine/Moving';
+import {Spells} from './game/engine/Spells';
+import {GameCanvas} from './game/render/GameCanvas';
+import {LandsLayer} from './game/render/LandsLayer';
+import {Render} from './game/render/Render';
+import {AudioAssets} from './game/server/AudioAssets';
+import {ImageAssets} from './game/server/ImageAssets';
+import {ResourcesServer} from './game/server/ResourcesServer';
+import {WsServer} from './game/server/WsServer';
+import {World} from './game/world/World';
 import {AdminCanvas} from "./admin/AdminCanvas";
 
 

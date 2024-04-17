@@ -1,5 +1,5 @@
-import { HtmlListener } from './HtmlListener';
-import { DocEvents } from './util';
+import {HtmlListener} from './HtmlListener';
+import {DocEvents} from './util';
 
 export class PositionChange implements HtmlListener {
   private events: DocEvents;

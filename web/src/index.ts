@@ -1,14 +1,13 @@
-import { Player } from './canvas/Player';
+import {Player} from './canvas/Player';
 import './ext/array/ext';
 import './ext/promiser/ext';
-import { GamePad, gamepadSchema } from './game2/controller/GamePad';
-import { Keyboard, keyboardSchema } from './game2/controller/Keyboard';
-import { GameCanvas } from './game2/render/GameCanvas';
-import { MiniMapCanvas } from './game2/render/layers/MiniMapCanvas';
-import { TileInfoCanvas } from './game2/render/layers/TileInfoCanvas';
-import { Render } from './game2/render/Render';
-import { get } from './Module';
-
+import {GamePad, gamepadSchema} from './game/controller/GamePad';
+import {Keyboard, keyboardSchema} from './game/controller/Keyboard';
+import {GameCanvas} from './game/render/GameCanvas';
+import {MiniMapCanvas} from './game/render/layers/MiniMapCanvas';
+import {TileInfoCanvas} from './game/render/layers/TileInfoCanvas';
+import {Render} from './game/render/Render';
+import {get} from './Module';
 
 
 window.onload = () => {

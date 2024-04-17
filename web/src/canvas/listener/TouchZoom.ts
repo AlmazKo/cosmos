@@ -1,5 +1,5 @@
-import { HtmlListener } from './HtmlListener';
-import { DocEvents, Gesture } from './util';
+import {HtmlListener} from './HtmlListener';
+import {DocEvents, Gesture} from './util';
 
 interface TouchEvent {
   readonly id: number;

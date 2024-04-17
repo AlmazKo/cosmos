@@ -1,5 +1,5 @@
-import { HtmlListener } from './HtmlListener';
-import { listen } from './util';
+import {HtmlListener} from './HtmlListener';
+import {listen} from './util';
 
 export class MouseZoom implements HtmlListener {
   private readonly closeCallback: () => any;

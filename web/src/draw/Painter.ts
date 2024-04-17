@@ -1,5 +1,5 @@
-import { FontStyle } from './FontStyleAcceptor';
-import { StrokeStyle } from './StrokeStyleAcceptor';
+import {FontStyle} from './FontStyleAcceptor';
+import {StrokeStyle} from './StrokeStyleAcceptor';
 
 export type StringStokeStyle = color | Partial<StrokeStyle>;
 type FillStyle = color | CanvasGradient | CanvasPattern;

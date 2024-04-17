@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./static/js",
     "noImplicitAny": true,
-    "strict": false,
+    "strict": true,
     "module": "esnext",
     "skipLibCheck": true,
     "sourceMap": true,

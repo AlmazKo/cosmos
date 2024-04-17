@@ -1,5 +1,5 @@
-import { HtmlListener } from './HtmlListener';
-import { DocEvents, getTouchPosition } from './util';
+import {HtmlListener} from './HtmlListener';
+import {DocEvents, getTouchPosition} from './util';
 
 export class TouchPositionChange implements HtmlListener {
   private events: DocEvents;

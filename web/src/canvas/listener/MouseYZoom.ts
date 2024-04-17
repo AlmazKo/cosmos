@@ -1,6 +1,6 @@
-import { ZOOM_Y_AREA_WIDTH, ZoomYChange } from '../CanvasComposer';
-import { HtmlListener } from './HtmlListener';
-import { DocEvents } from './util';
+import {ZOOM_Y_AREA_WIDTH, ZoomYChange} from '../CanvasComposer';
+import {HtmlListener} from './HtmlListener';
+import {DocEvents} from './util';
 
 export class MouseYZoom implements HtmlListener {
   private events: DocEvents;
