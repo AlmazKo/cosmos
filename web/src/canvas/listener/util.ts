@@ -16,12 +16,12 @@ export interface Removable {
 }
 
 export function listen<K extends keyof HTMLElementEventMap>(
-  el: DocumentAndElementEventHandlers,
+  el: EventTarget,
   type: K,
   listener: handler<K>,
   options?: boolean | AddEventListenerOptions,
 ): Removable {
-  el.addEventListener(type, listener, options);
+  el.addEventListener(type, listener as EventListener, options);
   const id = ++INC;
   console.debug(`Add listener#${id}: ${type}`);
   return {
@@ -29,13 +29,13 @@ export function listen<K extends keyof HTMLElementEventMap>(
     type,
     listener,
     remove: () => {
-      el.removeEventListener(type, listener);
+      el.removeEventListener(type, listener as EventListener);
       console.debug('Remove listener: ' + type, el);
     },
   };
 }
 
-function isOnce(options: boolean | AddEventListenerOptions) {
+function isOnce(options:undefined | boolean | AddEventListenerOptions) {
   return options && typeof options != 'boolean' && options.once;
 }
 
@@ -54,10 +54,10 @@ export const getTouchPosition = (
 export class DocEvents {
   private data: Removable[] = [];
 
-  constructor(private readonly defaultEl: DocumentAndElementEventHandlers) {}
+  constructor(private readonly defaultEl: EventTarget) {}
 
   listen2<K extends keyof HTMLElementEventMap>(
-    el: DocumentAndElementEventHandlers,
+    el: EventTarget,
     type: K,
     listener: handler<K>,
     options?: boolean | AddEventListenerOptions,
@@ -84,7 +84,7 @@ export class DocEvents {
       type,
       remove: () => {
         this.data.removeIf((it) => it.id === id);
-        el.removeEventListener(type, listener);
+        el.removeEventListener(type, listener as EventListener);
         console.debug(
           `Remove listener#${id}(by demand): ${type}`,
           this.data.map((r) => r.type),
