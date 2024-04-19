@@ -85,11 +85,11 @@ class Spells(private val world: World) {
                             }
 
                             is MeleeAttack -> {
-                                outOps.add(cos.ops.out.MeleeAttack(SPELL_IDS++, tick, a.id, spell.id, spell.source.id))
+                                outOps.add(cos.ops.out.MeleeAttack(SPELL_IDS++, a.id, spell.id, spell.source.id))
                             }
 
                             is Shot -> {
-                                outOps.add(cos.ops.out.Shot(SPELL_IDS++, tick, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
+                                outOps.add(cos.ops.out.Shot(SPELL_IDS++, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
                             }
                         }
                     }

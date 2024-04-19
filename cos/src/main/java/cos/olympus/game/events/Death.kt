@@ -10,7 +10,7 @@ class Death(
     val victim: Actor
 ) : Event {
     fun toUserOp(userId: Int): Death {
-        return Death(id, id, userId, spell.source.id, victim.id)
+        return Death(id, userId, spell.source.id, victim.id)
     }
 
     override fun toString() = "Death{id=$id, tick=$tick, victim=${victim.id}, spell=${spell.id}}"

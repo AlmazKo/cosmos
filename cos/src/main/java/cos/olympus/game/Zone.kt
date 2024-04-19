@@ -15,7 +15,7 @@ class Zone(private val world: World) {
             val obj = world.getObject(x, y)
             if (obj != null && !target.inZone(obj)) {
                 target.addInZone(obj)
-                out(Obj(obj.id, tick, target.id, x, y, obj.tile.id))
+                out(Obj(obj.id, target.id, x, y, obj.tile.id))
             }
 
             val a = if (target.x == x && target.y == y) target else world.getActor(x, y)
@@ -26,14 +26,14 @@ class Zone(private val world: World) {
                 val ort = target.zoneActors[a.id]
                 if (ort == null || (ort.x != a.x || ort.y != a.y) || ort.speed != a.speed || ort.sight != a.sight) {
                     target.addInZone(a)
-                    out(Move(1, tick, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
+                    out(Move(1, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
                 }
 
                 val met = target.zoneMetrics[a.id]
                 if (a.metrics != met) {
                     val n = a.copyMetrics()
                     target.zoneMetrics[a.id] = n
-                    out(Metrics(1, tick, target.id, a.id, a.metrics.lvl, a.metrics.exp, n.life, n.maxLife))
+                    out(Metrics(1, target.id, a.id, a.metrics.lvl, a.metrics.exp, n.life, n.maxLife))
                 }
             }
         }
@@ -43,7 +43,7 @@ class Zone(private val world: World) {
 
             val a = world.getActor(ort.actorId)
             if (a == null || inNotFov(target, a)) {
-                out(ActorHid(1, tick, target.id, ort.actorId))
+                out(ActorHid(1, target.id, ort.actorId))
                 target.zoneMetrics.remove(ort.actorId)
                 return@removeIf true
             } else {

@@ -16,7 +16,7 @@ class TeleportInStrategy(
         if (tick >= respawnTime) {
             val avatar = Player(t.userId, "user:" + t.id)
             val a = to.world.place(avatar, t.x, t.y, 100, 4) //move metrics
-            val op = ProtoAppear(1, tick, avatar.id, to.world.name, a.x, a.y, a.sight)
+            val op = ProtoAppear(1, avatar.id, to.world.name, a.x, a.y, a.sight)
             out.add(op)
             return true
         }

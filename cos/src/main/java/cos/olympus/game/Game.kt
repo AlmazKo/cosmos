@@ -61,7 +61,7 @@ class Game(@JvmField val world: World) {
             }
         } catch (e: Exception) {
             LOG.warn("Error during processing $op", e)
-            tickOuts.add(Disconnect(op.id(), tickId, op.userId()))
+            tickOuts.add(Disconnect(op.id(), op.userId()))
         }
     }
 

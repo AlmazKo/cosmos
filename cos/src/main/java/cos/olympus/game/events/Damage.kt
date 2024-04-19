@@ -12,7 +12,7 @@ data class Damage(
     val crit: Boolean
 ) : Event {
     fun toUserOp(userId: Int): Damage {
-        return Damage(id, tick, userId, spell.source.id, victim.id, amount, spell.id, crit)
+        return Damage(id, userId, spell.source.id, victim.id, amount, spell.id, crit)
     }
 
     override fun toString(): String {

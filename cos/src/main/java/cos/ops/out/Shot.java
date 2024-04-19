@@ -5,7 +5,6 @@ import cos.ops.OutOp;
 
 public record Shot(
         @Override int id,
-        @Override int tick,
         @Override int userId,
         int spellId,
         int x,

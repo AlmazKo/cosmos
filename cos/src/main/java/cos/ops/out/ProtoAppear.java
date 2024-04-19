@@ -5,7 +5,6 @@ import cos.ops.OutOp;
 
 public record ProtoAppear(
         @Override int id,
-        @Override int tick,
         @Override int userId,
         String world,
         int x,

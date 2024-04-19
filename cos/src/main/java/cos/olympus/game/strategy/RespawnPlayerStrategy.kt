@@ -22,7 +22,7 @@ class RespawnPlayerStrategy(
 
         try {
             val a = world.place(Npc(player.id, PLAYER, player.name), 34, -24, 100, 1)
-            outOps.add(Appear(0, tick, a.id, a.x, a.y, a.mv, a.sight, a.metrics.lvl, a.life))
+            outOps.add(Appear(0,  a.id, a.x, a.y, a.mv, a.sight, a.metrics.lvl, a.life))
         } catch (e: NoSpaceException) {
             return false
         }
