@@ -96,8 +96,8 @@ export class Render {
 
       const x = camera.toX(obj.x);
       const y = camera.toY(obj.y);
-      const tileX = obj.tileId % TILESET_SIZE;
-      const tileY = Math.floor(obj.tileId / TILESET_SIZE);
+      const tileX = obj.tile % TILESET_SIZE;
+      const tileY = Math.floor(obj.tile / TILESET_SIZE);
       const sx = TILE_SIZE * tileX;
       const sy = TILE_SIZE * tileY;
 

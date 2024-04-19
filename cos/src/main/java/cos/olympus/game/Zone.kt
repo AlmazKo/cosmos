@@ -3,7 +3,7 @@ package cos.olympus.game
 import cos.logging.Logger
 import cos.olympus.util.OpConsumer
 import cos.ops.out.ActorHid
-import cos.ops.out.ActorMoved
+import cos.ops.out.Move
 import cos.ops.out.Metrics
 import cos.ops.out.ObjAppear
 import kotlin.math.abs
@@ -26,7 +26,7 @@ class Zone(private val world: World) {
                 val ort = target.zoneActors[a.id]
                 if (ort == null || (ort.x != a.x || ort.y != a.y) || ort.speed != a.speed || ort.sight != a.sight) {
                     target.addInZone(a)
-                    out(ActorMoved(1, tick, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
+                    out(Move(1, tick, target.id, a.id, x, y, a.offset, a.speed, a.mv, a.sight))
                 }
 
                 val met = target.zoneMetrics[a.id]

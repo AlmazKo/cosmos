@@ -79,7 +79,7 @@ export class TileInfoCanvas implements CanvasComposer {
 
     for (let [_, v] of proto.zoneObjects) {
       if (v.x === x && v.y === y) {
-        return v.tileId
+        return v.tile
       }
     }
     return null;

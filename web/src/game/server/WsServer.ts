@@ -40,25 +40,7 @@ export class WsServer implements Api {
   }
 
   sendAction(name: string, action: Action) {
-    console.log("%c⬆︎"+name, 'color:green', JSON.stringify(action));
     this.ws.send(JSON.stringify({op: name, ...action}))
-
-    // if (action instanceof Step) {
-    //   this.ws.send(JSON.stringify({
-    //     action: "STEP", id: action.id, data: {
-    //       x: action.fromPosX, y: action.fromPosY, direction: action.direction, duration: action.duration
-    //     }
-    //   }))
-    // } else if (action instanceof FireballSpell) {
-    //   this.ws.send(JSON.stringify({
-    //     action: "SPELL", id: action.id, type: "FIREBALL", data: {
-    //
-    //       x: action.posX, y: action.posY, direction: action.direction, distance: action.distance, speed: action.duration
-    //     }
-    //   }))
-    //
-    // }
-
   }
 
 }

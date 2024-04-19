@@ -6,7 +6,7 @@ import {Orientation} from './Orientation';
 
 export class Player implements Actor {
 
-  readonly zoneObjects = new Map<uint, { x: pos, y: pos, tileId: index }>()
+  readonly zoneObjects = new Map<uint, { x: pos, y: pos, tile: index }>()
   readonly zoneActors = new Map<uint, Actor>()
   readonly zoneSpells = new Map<uint, FireballSpell>()
 

@@ -17,7 +17,7 @@
     "url": "https://github.com/AlmazKo/cosmos"
   },
   "scripts": {
-    "start": "./node_modules/parcel/lib/bin.js serve src/admin.html src/index.html",
+    "start": "./node_modules/parcel/lib/bin.js serve --no-cache --no-hmr src/admin.html src/index.html",
     "test": "jest",
     "check": "tsc --noEmit"
   },

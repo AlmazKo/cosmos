@@ -6,7 +6,7 @@ public record Damage(
         @Override int id,
         @Override int tick,
         @Override int userId,
-        int creatureId,
+        int sourceId,
         int victimId,
         int amount,
         int spellId,

@@ -182,8 +182,6 @@ export class Movements {
     onMovingChanged(cr: Actor, status: StatusMoving, dir: Dir | null, sight: Dir): boolean {
         const o = cr.orientation;
         const mv = this.data.get(cr.id);
-
-        console.error(status, dir, sight, mv)
         if (mv) {
             mv.next = {mv: dir, sight}
         } else {
@@ -197,7 +195,7 @@ export class Movements {
             if (status !== StatusMoving.STOP) {
                 o.move = dir;
                 o.speed = 40;
-                console.log("MOVING START", {status, dir, sight})
+                // console.log("MOVING START", {status, dir, sight})
                 this.data.set(cr.id, {cr, start: 0})
             }
         }

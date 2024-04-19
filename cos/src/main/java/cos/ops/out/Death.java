@@ -6,7 +6,7 @@ public record Death(
         @Override int id,
         @Override int tick,
         @Override int userId,
-        int creatureId,
+        int sourceId,
         int victimId
 
 ) implements OutOp {

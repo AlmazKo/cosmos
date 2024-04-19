@@ -6,7 +6,7 @@ public record Metrics(
         @Override int id,
         @Override int tick,
         @Override int userId,
-        int creatureId,
+        int actorId,
         int lvl,
         int exp,
         int life,

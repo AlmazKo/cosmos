@@ -11,10 +11,7 @@ import cos.olympus.game.strategy.SpellStrategy
 import cos.olympus.util.OpConsumer
 import cos.olympus.util.TimeUtil
 import cos.ops.`in`.FireballEmmit
-import cos.ops.`in`.MeleeAttack
 import cos.ops.`in`.ShotEmmit
-import cos.ops.out.FireballMoved
-import cos.ops.out.MeleeAttacked
 import cos.ops.out.ShotMoved
 
 class Spells(private val world: World) {
@@ -54,7 +51,7 @@ class Spells(private val world: World) {
         spells.add(str)
     }
 
-    fun onMeleeAttack(tick: Int, op: MeleeAttack) {
+    fun onMeleeAttack(tick: Int, op: cos.ops.`in`.MeleeAttack) {
         val a = world.getActor(op.userId) ?: return
         if (tick - a.lastSpellTick < pause) {
             //too fast
@@ -84,11 +81,11 @@ class Spells(private val world: World) {
                     if (a.zoneSpells.put(strategy.id, strategy) == null) {
                         when (spell) {
                             is Fireball -> {
-                                outOps.add(FireballMoved(SPELL_IDS++, tick, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
+                                outOps.add(cos.ops.out.Fireball(SPELL_IDS++, tick, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
                             }
 
                             is cos.olympus.game.events.MeleeAttack -> {
-                                outOps.add(MeleeAttacked(SPELL_IDS++, tick, a.id, spell.id, spell.source.id))
+                                outOps.add(cos.ops.out.MeleeAttack(SPELL_IDS++, tick, a.id, spell.id, spell.source.id))
                             }
 
                             is Shot -> {

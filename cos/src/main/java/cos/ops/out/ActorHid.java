@@ -6,7 +6,7 @@ public record ActorHid(
         @Override int id,
         @Override int tick,
         @Override int userId,
-        int creatureId
+        int actorId
 ) implements OutOp {
 
 }
