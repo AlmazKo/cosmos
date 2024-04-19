@@ -28,10 +28,10 @@ import {OnDamage} from './actions/OnDamage';
 import {OnMeleeAttack} from './actions/OnMeleeAttack';
 import {ProtoArrival} from './actions/ProtoArrival';
 import {Spell} from './actions/Spell';
-import {Creature} from './Creature';
-import {CreatureObject} from './CreatureObject';
+import {Actor} from './Actor';
+import {ActorObject} from './ActorObject';
 import {Movements} from './Movements';
-import {Moving} from './Moving';
+import {MovingController} from './MovingController';
 import {StatusMoving} from './Moving2';
 import {MovingListener} from './MovingListener';
 import {Orientation} from './Orientation';
@@ -55,7 +55,7 @@ export class Game implements MovingListener {
     constructor(
         private readonly api: Api,
         readonly world: World,
-        private readonly mvg: Moving,
+        private readonly mvg: MovingController,
         private readonly spells: Spells,
         private readonly audio: Audios,
     ) {
@@ -76,7 +76,7 @@ export class Game implements MovingListener {
     private onData(pkg: Package) {
         this.serverTime = pkg.tickTimeMs;
         this.serverLatency = Date.now() - pkg.tickTimeMs;
-        console.debug("Server latency:", this.serverLatency, 'Server time(ms):', (this.serverTime % 1000))
+        /// console.debug("Server latency:", this.serverLatency, 'Server time(ms):', (this.serverTime % 1000))
         pkg.ops.forEach(msg => {
             const action = API_MAPPER[msg.action](msg);
             console.log("%c⬇︎" + msg.action, 'color:red', action);
@@ -150,7 +150,7 @@ export class Game implements MovingListener {
 
     onDamage(e: Damage) {
         const proto = this.proto!!;
-        let victim: Creature | undefined;
+        let victim: Actor | undefined;
         if (proto.id === e.victimId) {
             victim = proto;
         } else {
@@ -211,7 +211,7 @@ export class Game implements MovingListener {
         return this.actions.splice(0);
     }
 
-    private addPlayer(ac: ApiCreature): Creature {
+    private addPlayer(ac: ApiCreature): Actor {
         const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
         const m = ac.metrics;
         const mm = new Metrics(m.lvl, m.exp, m.maxLife, m.life, m.name);
@@ -220,17 +220,16 @@ export class Game implements MovingListener {
         return c;
     }
 
-    private addCreature(ac: ApiCreature): Creature {
+    private addCreature(ac: ApiCreature): Actor {
         const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
         const m = ac.metrics;
         const mm = new Metrics(m.lvl, m.exp, m.maxLife, m.life, m.name);
-        const c = new CreatureObject(ac.id, mm, o);
+        const c = new ActorObject(ac.id, mm, o);
         // this.creatures.set(c.id, c);
         return c;
     }
 
-    onMovingChanged(status: StatusMoving, dir: Dir | undefined, sight: Dir) {
-
+    onMovingChanged(status: StatusMoving, dir: Dir | null, sight: Dir) {
         const accepted = this.movements.onMovingChanged(this.proto!!, status, dir, sight);
 
         if (accepted) {
@@ -328,7 +327,7 @@ export class Game implements MovingListener {
 
     private onActorMoved(e: ActorMoved) {
         const proto = this.proto!!;
-        let cr: Creature | undefined;
+        let cr: Actor | undefined;
         if (e.actorId == proto.id) {
             cr = this.proto;
             this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset / 100, e.x, e.y);//shift hardcoded

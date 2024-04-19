@@ -5,7 +5,7 @@ import {style} from './styles';
 import {TileDrawable} from './TileDrawable';
 import {TilePainter} from './TilePainter';
 import {Dir} from '../constants';
-import {Creature} from '../engine/Creature';
+import {Actor} from '../engine/Actor';
 import {Orientation} from '../engine/Orientation';
 import {Player} from '../engine/Player';
 import {Camera} from './Camera';
@@ -46,7 +46,7 @@ enum State {
 export class DrawableCreature implements TileDrawable {
 
   readonly orientation: Orientation;
-  public readonly creature: Creature;
+  public readonly creature: Actor;
 
   private animators = new Animators();
   private showInstantSpell = false;
@@ -55,7 +55,7 @@ export class DrawableCreature implements TileDrawable {
   private damaged = false;
   private state: State = State.RUN;
 
-  constructor(c: Creature) {
+  constructor(c: Actor) {
     this.creature = c;
     this.orientation = c.orientation;
   }

@@ -1,12 +1,12 @@
 import {Act} from '../Act';
-import {Creature} from '../Creature';
+import {Actor} from '../Actor';
 
 export class OnDamage implements Act {
 
   constructor(readonly id: uint,
-              readonly creature: Creature,
+              readonly actor: Actor,
               readonly startTime: tsm,
-              readonly victim: Creature,
+              readonly victim: Actor,
               readonly amount: uint,
               readonly crit: boolean,
               readonly isProto: boolean

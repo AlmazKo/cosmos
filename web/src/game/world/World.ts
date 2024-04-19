@@ -1,5 +1,5 @@
 import {Dir, TileType} from '../constants';
-import {Creature} from '../engine/Creature';
+import {Actor} from '../engine/Actor';
 import {MapApi} from '../server/MapApi';
 import {Loading} from '../server/util';
 import {Land} from './Land';
@@ -144,7 +144,7 @@ export class World {
     return type !== TileType.NOTHING && type !== TileType.WALL;
   }
 
-  moveCreature(cr: Creature, toX: pos, toY: pos) {
+  moveCreature(cr: Actor, toX: pos, toY: pos) {
     cr.orientation.setPosition(toX, toY)
   }
 }

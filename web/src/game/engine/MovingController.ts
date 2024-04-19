@@ -3,7 +3,7 @@ import {MovingAggregator} from '../controller/MovingAggregator';
 import {Moving2} from './Moving2';
 import {MovingListener} from './MovingListener';
 
-export class Moving implements MovingAggregator {
+export class MovingController implements MovingAggregator {
   private listener: MovingListener = null!!;
   private mv: Moving2 = new Moving2();
 

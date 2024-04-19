@@ -1,7 +1,7 @@
-import {Creature} from './Creature';
+import {Actor} from './Actor';
 
 export interface Act {
   readonly id: uint,
-  readonly creature: Creature,
+  readonly actor: Actor,
   readonly startTime: tsm,
 }

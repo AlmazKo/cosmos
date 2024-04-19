@@ -1,13 +1,13 @@
 import {OpMetrics} from '../api/ApiMessage';
 import {FireballSpell} from '../api/FireballSpell';
 import {Metrics} from './Metrics';
-import {Creature} from './Creature';
+import {Actor} from './Actor';
 import {Orientation} from './Orientation';
 
-export class Player implements Creature {
+export class Player implements Actor {
 
   readonly zoneObjects = new Map<uint, { x: pos, y: pos, tileId: index }>()
-  readonly zoneCreatures = new Map<uint, Creature>()
+  readonly zoneCreatures = new Map<uint, Actor>()
   readonly zoneSpells = new Map<uint, FireballSpell>()
 
   constructor(

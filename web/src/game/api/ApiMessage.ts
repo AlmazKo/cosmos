@@ -5,7 +5,7 @@ export type Type = 'SPELL' | ''
 export type uid = uint;
 
 
-export type Appear = { userId: uid, x: pos, y: pos, mv: Dir | null, sight: Dir, lvl: uint, life: uint, map: string }
+export type Appear =      { userId: uid, x: pos, y: pos, mv: Dir | null, sight: Dir, lvl: uint, life: uint, map: string }
 export type ProtoAppear = { userId: uid, x: pos, y: pos, sight: Dir, world: string }
 export type ObjAppear = { id: uint, x: pos, y: pos, tileId: index }
 export type ActorMoved = { mv: Dir | null, sight: Dir, x: pos, y: pos, speed: speed, offset: uint, actorId: uid }

@@ -1,12 +1,12 @@
 import {Dir} from '../constants';
-import {Creature} from '../engine/Creature';
+import {Actor} from '../engine/Actor';
 import {Action} from './Action';
 
 export class ShotSpell implements Action {
   constructor(
     public readonly time: tsm,
     public readonly id: uint,
-    public readonly creature: Creature,
+    public readonly creature: Actor,
     public readonly speed: speed,
     // public readonly distance: uint,
     public readonly initX: pos,

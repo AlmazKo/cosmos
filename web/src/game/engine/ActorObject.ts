@@ -1,9 +1,9 @@
 import {OpMetrics} from '../api/ApiMessage';
 import {Metrics} from './Metrics';
-import {Creature} from './Creature';
+import {Actor} from './Actor';
 import {Orientation} from './Orientation';
 
-export class CreatureObject implements Creature {
+export class ActorObject implements Actor {
 
   constructor(
     public readonly id: uint,

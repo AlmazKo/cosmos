@@ -13,7 +13,7 @@ import {OnDamage} from '../engine/actions/OnDamage';
 import {OnMeleeAttack} from '../engine/actions/OnMeleeAttack';
 import {ProtoArrival} from '../engine/actions/ProtoArrival';
 import {Spell} from '../engine/actions/Spell';
-import {Creature} from '../engine/Creature';
+import {Actor} from '../engine/Actor';
 import {Game} from '../engine/Game';
 import {Player} from '../engine/Player';
 import {Spells} from '../engine/Spells';
@@ -136,8 +136,8 @@ export class Render {
       // console.log("Processing action", action)
 
       if (action instanceof ProtoArrival) {
-        camera.setTarget(action.creature.orientation);
-        this.player = new DrawableCreature(action.creature)
+        camera.setTarget(action.actor.orientation);
+        this.player = new DrawableCreature(action.actor)
       }
 
       if (action instanceof ActivateTrait) {
@@ -171,13 +171,13 @@ export class Render {
 
 
       if (action instanceof OnMeleeAttack) {
-        const dc = this.getDrawable(action.creature);
+        const dc = this.getDrawable(action.actor);
         dc.melee();
       }
     }
   }
 
-  private getDrawable(cr: Creature): DrawableCreature {
+  private getDrawable(cr: Actor): DrawableCreature {
     let dc = this.phantoms.get(cr.id);
     if (!dc) {
       dc = new DrawableCreature(cr);
