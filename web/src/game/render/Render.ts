@@ -89,7 +89,7 @@ export class Render {
     camera.absoluteY = this.height / 2;
     this.lands.draw(time, camera);
     const p = this.player!!;
-    const crp = p.creature as Player;
+    const crp = p.actor as Player;
     if (DEBUG) this.drawRealPosition();
 
     crp.zoneObjects.forEach((obj) => {
@@ -107,18 +107,18 @@ export class Render {
     })
 
     this.phantoms.forEach(dc => {
-      if (!crp.zoneCreatures.has(dc.creature.id)) {
-        this.phantoms.delete(dc.creature.id);
+      if (!crp.zoneActors.has(dc.actor.id)) {
+        this.phantoms.delete(dc.actor.id);
       }
     });
 
-    crp.zoneCreatures.forEach((cr) => {
+    crp.zoneActors.forEach((cr) => {
       const dc = this.getDrawable(cr);
       dc.draw(time, this.p!!, this.tp, camera);
     });
 
     p.draw(time, this.p!!, this.tp, camera);
-    if (p.creature.isDead()) {
+    if (p.actor.isDead()) {
       this.drawDeath(this.tp, camera);
     } else {
       this.drawFog(this.tp, camera);
@@ -151,7 +151,7 @@ export class Render {
       }
 
       if (action instanceof OnDamage) {
-        const victim = (this.player!!.creature as Player).zoneCreatures.get(action.victim.id);
+        const victim = (this.player!!.actor as Player).zoneActors.get(action.victim.id);
         if (victim) {
           const dc = this.getDrawable(victim);
           dc.damage()
@@ -324,7 +324,7 @@ export class Render {
   private debug() {
     if (!this.player) return;
 
-    const proto = this.player!!.creature as Player;
+    const proto = this.player!!.actor as Player;
     const o = proto.orientation;
     const debugStyle = {style: 'white', font: '9px monospace'};
     const p = this.p!!;
@@ -338,7 +338,7 @@ export class Render {
     p.text('     tile: ' + stringTiles[this.game.world.tileType(o.x, o.y)], x, y += 10, debugStyle);
     p.text('   cursor: ' + this.cursor, x, y += 10, debugStyle);
     p.text('   camera: ' + this.camera.absoluteX, x, y += 10, debugStyle);
-    p.text('creatures: ' + proto.zoneCreatures.size, x, y += 10, debugStyle);
+    p.text('creatures: ' + proto.zoneActors.size, x, y += 10, debugStyle);
     p.text('  objects: ' + proto.zoneObjects.size, x, y += 10, debugStyle);
   }
 

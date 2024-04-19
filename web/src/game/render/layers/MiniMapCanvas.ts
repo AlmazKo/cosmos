@@ -77,7 +77,7 @@ export class MiniMapCanvas implements CanvasComposer {
         p.fillRect((x - lx) * pixel, (y - ty) * pixel, pixel, pixel, color)
       }
 
-      proto.zoneCreatures.forEach((cr) => {
+      proto.zoneActors.forEach((cr) => {
         p.fillRect((cr.orientation.x - lx) * pixel, (cr.orientation.y - ty) * pixel, pixel, pixel, 'red')
       })
 

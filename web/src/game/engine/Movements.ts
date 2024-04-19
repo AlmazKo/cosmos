@@ -225,7 +225,7 @@ export class Movements {
         const nextY = Util.nextY(o, dir);
         const proto = this.game.getProto()!!;
 
-        for (let [_, v] of proto.zoneCreatures) {
+        for (let [_, v] of proto.zoneActors) {
             if (v.id === proto.id) continue;
 
             if (v.orientation.x == nextX && v.orientation.y === nextY) {

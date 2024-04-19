@@ -115,7 +115,7 @@ export class Game implements MovingListener {
         this.chat.post(`${msgSubject} kills ${msgVictim} ☠️`);
 
 
-        proto.zoneCreatures.delete(e.victimId);
+        proto.zoneActors.delete(e.victimId);
         //todo add effect
 
         // if (!victim) return;
@@ -127,7 +127,7 @@ export class Game implements MovingListener {
     private onCreatureHid(e: ActorHid) {
         const proto = this.proto!!;
         this.movements.interrupt(e.creatureId)
-        proto.zoneCreatures.delete(e.creatureId);
+        proto.zoneActors.delete(e.creatureId);
     }
 
     private onObjectAppear(e: ObjAppear) {
@@ -142,7 +142,7 @@ export class Game implements MovingListener {
             return;
         }
 
-        const cr = proto.zoneCreatures.get(e.creatureId);
+        const cr = proto.zoneActors.get(e.creatureId);
         if (cr) {
             cr.update(e)
         }
@@ -154,7 +154,7 @@ export class Game implements MovingListener {
         if (proto.id === e.victimId) {
             victim = proto;
         } else {
-            victim = proto.zoneCreatures.get(e.victimId);
+            victim = proto.zoneActors.get(e.victimId);
         }
         if (!victim) return;
 
@@ -220,7 +220,7 @@ export class Game implements MovingListener {
         return c;
     }
 
-    private addCreature(ac: ApiCreature): Actor {
+    private addActor(ac: ApiCreature): Actor {
         const o = new Orientation(null, ac.sight, 0, 0.0, ac.x, ac.y);
         const m = ac.metrics;
         const mm = new Metrics(m.lvl, m.exp, m.maxLife, m.life, m.name);
@@ -319,7 +319,7 @@ export class Game implements MovingListener {
         const proto = this.proto!!;
         if (e.sourceId === proto.id) return;
 
-        const source = proto.zoneCreatures.get(e.sourceId);
+        const source = proto.zoneActors.get(e.sourceId);
         if (!source) return;
 
         this.actions.push(new OnMeleeAttack(ID++, source, Date.now()))
@@ -327,9 +327,9 @@ export class Game implements MovingListener {
 
     private onActorMoved(e: ActorMoved) {
         const proto = this.proto!!;
-        let cr: Actor | undefined;
+        let actor: Actor | undefined;
         if (e.actorId == proto.id) {
-            cr = this.proto;
+            actor = this.proto;
             this.protoReal = new Orientation(e.mv, e.sight, e.speed, e.offset / 100, e.x, e.y);//shift hardcoded
 
             // fixme: now we ignore the server orientation
@@ -338,8 +338,8 @@ export class Game implements MovingListener {
             //     this.api.sendAction('stop_move', {sight: e.sight, x: e.x, y: e.y});
             // }
         } else {
-            cr = proto.zoneCreatures.get(e.actorId);
-            if (!cr) {
+            actor = proto.zoneActors.get(e.actorId);
+            if (!actor) {
                 const crr: ApiCreature = {
                     id: e.actorId,
                     isPlayer: true,
@@ -350,27 +350,14 @@ export class Game implements MovingListener {
                     metrics: new Metrics(-1, -1, 100, 100, "#" + e.actorId),
                     viewDistance: 10
                 };
-                cr = this.addCreature(crr);
-                proto.zoneCreatures.set(e.actorId, cr);
+                actor = this.addActor(crr);
+                proto.zoneActors.set(e.actorId, actor);
             }
-            const stop = this.movements.on(cr, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
+            const stop = this.movements.on(actor, e.x, e.y, e.speed, e.offset, e.mv, e.sight);
         }
 
-
-        // cr = proto.zoneCreatures.get(e.creatureId);
-        // if (cr) {
-        //
-        // } else {
-        //
-        //   proto.zoneCreatures.set(e.creatureId, this.proto);
-        // }
-
-
-        // proto.zoneCreatures.set(e.creatureId, cr);
-        // this.movements.on(cr, e.x, e.y, e.speed, e.mv, e.sight)
-
+        // TODO
         // this.movements.onMovingChanged(cr, StatusMoving.START, e.mv, e.sight)
-
         // this.actions.push(new StartMoving(ID++, cr, Date.now(), 400, e.mv))
     }
 }

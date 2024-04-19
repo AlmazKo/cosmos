@@ -46,7 +46,7 @@ enum State {
 export class DrawableCreature implements TileDrawable {
 
   readonly orientation: Orientation;
-  public readonly creature: Actor;
+  public readonly actor: Actor;
 
   private animators = new Animators();
   private showInstantSpell = false;
@@ -56,7 +56,7 @@ export class DrawableCreature implements TileDrawable {
   private state: State = State.RUN;
 
   constructor(c: Actor) {
-    this.creature = c;
+    this.actor = c;
     this.orientation = c.orientation;
   }
 
@@ -80,15 +80,15 @@ export class DrawableCreature implements TileDrawable {
       sx += 128;
     }
 
-    if (this.creature instanceof Player) {
+    if (this.actor instanceof Player) {
       x = camera.absoluteX;
       y = camera.absoluteY;
       let sw = 32, sh = 32;
       bp.drawTo("character", sx, sy, sw, sh, x, y, CELL, CELL);
-    } else if (this.creature.id < 10000) {
+    } else if (this.actor.id < 10000) {
       //another player
-      x = camera.toX2(this.creature.orientation);
-      y = camera.toY2(this.creature.orientation);
+      x = camera.toX2(this.actor.orientation);
+      y = camera.toY2(this.actor.orientation);
 
       let sw = 32, sh = 32;
       bp.drawTo("character_2", sx, sy, sw, sh, x, y, CELL, CELL);
@@ -105,8 +105,8 @@ export class DrawableCreature implements TileDrawable {
         asset = "NPC_test";
       }
 
-      x = camera.toX2(this.creature.orientation);
-      y = camera.toY2(this.creature.orientation);
+      x = camera.toX2(this.actor.orientation);
+      y = camera.toY2(this.actor.orientation);
 
       //64-16=48/2=24
       //64-32=32/2=16
@@ -119,7 +119,7 @@ export class DrawableCreature implements TileDrawable {
 
 
   private drawName(bp: TilePainter, x: number, y: number) {
-    const c = this.creature;
+    const c = this.actor;
     // bp.p.text(c.metrics.name + "", x, y, style.creatureNameBg);
     bp.p.text(c.metrics.name, x + HCELL, y, style.creatureNameBg)
     bp.p.text(c.metrics.name, x + HCELL - 1, y - 1, style.creatureName)
@@ -127,7 +127,7 @@ export class DrawableCreature implements TileDrawable {
 
   drawLifeLine(bp: CanvasContext, camera: Camera) {
 
-      const cr = this.creature;
+      const cr = this.actor;
       const x = camera.toX2(cr.orientation);
       const y = camera.toY2(cr.orientation);
       const m = cr.metrics;
