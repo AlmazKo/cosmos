@@ -1,6 +1,6 @@
 package cos.olympus.game
 
-class Metrics(
+data class Metrics(
     val actorId: Int,
     var lvl: Int,
     var life: Int,
@@ -24,9 +24,4 @@ class Metrics(
 
     val isDead: Boolean
         get() = life <= 0
-
-
-    fun copy(): Metrics {
-        return Metrics(actorId, lvl, life, maxLife, exp)
-    }
 }

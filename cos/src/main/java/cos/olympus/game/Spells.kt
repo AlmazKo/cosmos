@@ -2,6 +2,7 @@ package cos.olympus.game
 
 import cos.logging.Logger
 import cos.olympus.game.events.Fireball
+import cos.olympus.game.events.MeleeAttack
 import cos.olympus.game.events.Shot
 import cos.olympus.game.events.Spell
 import cos.olympus.game.strategy.FireballSpellStrategy
@@ -12,7 +13,6 @@ import cos.olympus.util.OpConsumer
 import cos.olympus.util.TimeUtil
 import cos.ops.`in`.FireballEmmit
 import cos.ops.`in`.ShotEmmit
-import cos.ops.out.ShotMoved
 
 class Spells(private val world: World) {
     private val pause = TimeUtil.toTicks(1)
@@ -84,12 +84,12 @@ class Spells(private val world: World) {
                                 outOps.add(cos.ops.out.Fireball(SPELL_IDS++, tick, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
                             }
 
-                            is cos.olympus.game.events.MeleeAttack -> {
+                            is MeleeAttack -> {
                                 outOps.add(cos.ops.out.MeleeAttack(SPELL_IDS++, tick, a.id, spell.id, spell.source.id))
                             }
 
                             is Shot -> {
-                                outOps.add(ShotMoved(SPELL_IDS++, tick, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
+                                outOps.add(cos.ops.out.Shot(SPELL_IDS++, tick, a.id, spell.id, spell.x, spell.y, spell.speed, spell.dir, strategy.finished))
                             }
                         }
                     }

@@ -5,12 +5,12 @@ import {
     Appear,
     Damage,
     Death,
-    FireballMoved,
+    Fireball,
     MeleeAttack,
-    ObjAppear,
+    Obj,
     OpMetrics,
     ProtoAppear,
-    ShotMoved
+    Shot
 } from '../api/ApiMessage';
 import {FireballSpell} from '../api/FireballSpell';
 import {Package} from '../api/Package';
@@ -87,7 +87,7 @@ export class Game implements MovingListener {
                     return this.onProtoAppear(action)
                 case 'appear':
                     return this.onAppear(action)
-                case 'obj_appear':
+                case 'obj':
                     return this.onObjectAppear(action);
                 case 'metrics':
                     return this.onMetrics(action);
@@ -99,13 +99,14 @@ export class Game implements MovingListener {
                     return this.onDeath(action)
                 case 'fireball':
                     return this.onFireballMoved(action)
-                case 'shot_moved':
+                case 'shot':
                     return this.onShotMoved(action)
-                case 'melee_attacked':
+                case 'melee_attack':
                     return this.onMeleeAttacked(action)
                 case 'move':
                     return this.onActorMoved(action)
             }
+            console.warn('Unhandled action', msg)
         })
     }
 
@@ -132,7 +133,7 @@ export class Game implements MovingListener {
         proto.zoneActors.delete(e.actor);
     }
 
-    private onObjectAppear(e: ObjAppear) {
+    private onObjectAppear(e: Obj) {
         const proto = this.proto!!;
         proto.zoneObjects.set(e.id, e);
     }
@@ -298,7 +299,7 @@ export class Game implements MovingListener {
         this.api.sendAction(action, data);
     }
 
-    private onFireballMoved(e: FireballMoved) {
+    private onFireballMoved(e: Fireball) {
         const proto = this.proto!!;
         if (e.finished) {
             proto.zoneSpells.delete(e.spell);
@@ -311,7 +312,7 @@ export class Game implements MovingListener {
         }
     }
 
-    private onShotMoved(e: ShotMoved) {
+    private onShotMoved(e: Shot) {
         const proto = this.proto!!;
         if (e.finished) {
             proto.zoneSpells.delete(e.spell);

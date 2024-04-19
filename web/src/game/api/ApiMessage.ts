@@ -6,12 +6,12 @@ export type uid = uint;
 export type ActorId = uint;
 
 
-export type Appear =      { userId: uid, x: pos, y: pos, mv: Dir | null, sight: Dir, lvl: uint, life: uint, map: string }
+export type Appear = { userId: uid, x: pos, y: pos, mv: Dir | null, sight: Dir, lvl: uint, life: uint, map: string }
 export type ProtoAppear = { userId: uid, x: pos, y: pos, sight: Dir, world: string }
-export type ObjAppear = { id: uint, x: pos, y: pos, tile: index }
+export type Obj = { id: uint, x: pos, y: pos, tile: index }
 export type ActorMoved = { mv: Dir | null, sight: Dir, x: pos, y: pos, speed: speed, offset: uint, actor: uid }
-export type FireballMoved = { spell: uint, dir: Dir, x: pos, y: pos, speed: speed, finished: boolean }
-export type ShotMoved = { spell: uint, dir: Dir, x: pos, y: pos, speed: speed, /*userId: uid,*/ finished: boolean }
+export type Fireball = { spell: uint, dir: Dir, x: pos, y: pos, speed: speed, finished: boolean }
+export type Shot = { spell: uint, dir: Dir, x: pos, y: pos, speed: speed, /*userId: uid,*/ finished: boolean }
 export type MeleeAttack = { spell: uint, source: uid }
 export type ActorHid = { actor: uid }
 export type Damage = { source: ActorId, victim: ActorId, amount: uint, spell: uint, crit: boolean }
@@ -38,9 +38,9 @@ export const API_MAPPER: ApiMapper = {
         {userId: m.userId, world: m.world, x: m.x, y: m.y, sight: m.sight}
     ),
     'appear': (m: any): Appear => (
-        {userId: m.userId, x: m.x, y: m.y, mv: m.dir ? m.dir: null, sight: m.sight, lvl: m.lvl, life: m.life, map: m.map}
+        {userId: m.userId, x: m.x, y: m.y, mv: m.dir ? m.dir : null, sight: m.sight, lvl: m.lvl, life: m.life, map: m.map}
     ),
-    'obj_appear': (m: any): ObjAppear => (
+    'obj': (m: any): Obj => (
         {id: m.id, x: m.x, y: m.y, tile: m.tileId}
     ),
     'metrics': (m: any): OpMetrics => (
@@ -55,10 +55,10 @@ export const API_MAPPER: ApiMapper = {
     'death': (m: any): Death => (
         {source: m.sourceId, victim: m.victimId}
     ),
-    'fireball': (m: any): FireballMoved => (
+    'fireball': (m: any): Fireball => (
         {spell: m.spellId, dir: m.dir, x: m.x, y: m.y, speed: m.speed, finished: m.finished}
     ),
-    'shot_moved': (m: any): ShotMoved => (
+    'shot': (m: any): Shot => (
         {spell: m.spellId, dir: m.dir, x: m.x, y: m.y, speed: m.speed, finished: m.finished}
     ),
     'melee_attack': (m: any): MeleeAttack => (

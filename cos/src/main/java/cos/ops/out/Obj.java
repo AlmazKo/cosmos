@@ -2,7 +2,7 @@ package cos.ops.out;
 
 import cos.ops.OutOp;
 
-public record ObjAppear(
+public record Obj(
         @Override int id,
         @Override int tick,
         @Override int userId,

@@ -3,7 +3,7 @@ package cos.ops.out;
 import cos.ops.Direction;
 import cos.ops.OutOp;
 
-public record ShotMoved(
+public record Shot(
         @Override int id,
         @Override int tick,
         @Override int userId,
