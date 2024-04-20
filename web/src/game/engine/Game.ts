@@ -1,5 +1,5 @@
 import {
-    ActorHid,
+    Disappear,
     ActorMoved,
     API_MAPPER,
     Appear,
@@ -127,7 +127,7 @@ export class Game implements MovingListener {
         // this.actions.push(new OnDamage(ID++, proto, Date.now(), e))
     }
 
-    private onCreatureHid(e: ActorHid) {
+    private onCreatureHid(e: Disappear) {
         const proto = this.proto!!;
         this.movements.interrupt(e.actor)
         proto.zoneActors.delete(e.actor);

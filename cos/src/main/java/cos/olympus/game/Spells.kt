@@ -14,12 +14,16 @@ import cos.olympus.util.TimeUtil
 import cos.ops.`in`.FireballEmmit
 import cos.ops.`in`.ShotEmmit
 
-class Spells(private val world: World) {
+class Spells(private val world: World) : TickAware {
+    private var tick: Int = 0
     private val pause = TimeUtil.toTicks(1)
-
     private val spells = ArrayList<SpellStrategy>()
 
-    fun onShot(tick: Int, op: ShotEmmit) {
+    override fun onTick(tick: Int) {
+        this.tick = tick
+    }
+
+    fun onShot(op: ShotEmmit) {
         val a = world.getActor(op.userId) ?: return
 
         //todo validate cooldown
@@ -35,7 +39,7 @@ class Spells(private val world: World) {
         spells.add(str)
     }
 
-    fun onSpell(tick: Int, op: FireballEmmit) {
+    fun onSpell(op: FireballEmmit) {
         val a = world.getActor(op.userId) ?: return
 
         //todo validate cooldown
@@ -51,7 +55,7 @@ class Spells(private val world: World) {
         spells.add(str)
     }
 
-    fun onMeleeAttack(tick: Int, op: cos.ops.`in`.MeleeAttack) {
+    fun onMeleeAttack(op: cos.ops.`in`.MeleeAttack) {
         val a = world.getActor(op.userId) ?: return
         if (tick - a.lastSpellTick < pause) {
             //too fast
@@ -59,18 +63,18 @@ class Spells(private val world: World) {
         }
 
 
-        val spell = cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, a.x, a.y, a.sight, a)
+        val spell = MeleeAttack(++SPELL_IDS, tick, a.x, a.y, a.sight, a)
         val str = MeleeAttackStrategy(spell, world)
         spells.add(str)
     }
 
-    fun onMeleeAttack(tick: Int, a: Actor) {
-        val spell = cos.olympus.game.events.MeleeAttack(++SPELL_IDS, tick, a.x, a.y, a.sight, a)
+    fun onMeleeAttack(a: Actor) {
+        val spell = MeleeAttack(++SPELL_IDS, tick, a.x, a.y, a.sight, a)
         val str = MeleeAttackStrategy(spell, world)
         spells.add(str)
     }
 
-    fun onTick(tick: Int, damages: Damages, outOps: OpConsumer) {
+    fun onTick(damages: Damages, outOps: OpConsumer) {
         spells.forEach { it.onTick(tick, damages) }
 
         //notify

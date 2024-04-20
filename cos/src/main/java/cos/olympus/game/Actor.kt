@@ -33,7 +33,6 @@ class Actor(
     val zoneMetrics = HashMap<Int, Metrics>()
     val zoneSpells = HashMap<Int, SpellStrategy>()
 
-
     fun inZone(obj: Obj): Boolean = zoneObjects.contains(obj.id)
 
     fun addInZone(obj: Obj) {

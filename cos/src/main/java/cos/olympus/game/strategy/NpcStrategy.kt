@@ -39,7 +39,7 @@ class NpcStrategy(
         val near = world.getActor(nextX, nextY)
         if (near != null && near.type != npc.type) {
 ///            logger.info("" + npc + " aggro-ed " + near);
-            spells.onMeleeAttack(tick, npc)
+            spells.onMeleeAttack(npc)
             nextPlannedTick = tick + Util.rand(4, 8)
             return true
         }

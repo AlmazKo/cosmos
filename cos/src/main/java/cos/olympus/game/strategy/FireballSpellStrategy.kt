@@ -6,6 +6,7 @@ import cos.olympus.game.Damages
 import cos.olympus.game.MapUtil.inZone
 import cos.olympus.game.World
 import cos.olympus.game.events.Fireball
+import cos.olympus.game.strategy.ShotSpellStrategy.Companion.LOG
 import cos.ops.Direction
 
 class FireballSpellStrategy(
@@ -46,7 +47,7 @@ class FireballSpellStrategy(
             passed = distance
         }
 
-        //logger.info("Spell distance: " + this);
+//        LOG.info("Spell distance: $this")
         return finished
     }
 
@@ -54,6 +55,6 @@ class FireballSpellStrategy(
         return inZone(actor, x, y, 8)
     }
 
-    override fun toString() = "FireballSpellStrategy{passed=$passed, x=$x, y=$y}"
+    override fun toString() = "FireballSpellStrategy{passed=$passed, spell=$spell}"
 }
 

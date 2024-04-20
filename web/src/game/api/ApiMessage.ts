@@ -13,7 +13,7 @@ export type ActorMoved = { mv: Dir | null, sight: Dir, x: pos, y: pos, speed: sp
 export type Fireball = { spell: uint, dir: Dir, x: pos, y: pos, speed: speed, finished: boolean }
 export type Shot = { spell: uint, dir: Dir, x: pos, y: pos, speed: speed, /*userId: uid,*/ finished: boolean }
 export type MeleeAttack = { spell: uint, source: uid }
-export type ActorHid = { actor: uid }
+export type Disappear = { actor: uid }
 export type Damage = { source: ActorId, victim: ActorId, amount: uint, spell: uint, crit: boolean }
 export type Death = { source: uid, victim: uid }
 export type OpMetrics = { actor: uid, lvl: uint, life: uint, maxLife: uint, exp: uint }
@@ -46,7 +46,7 @@ export const API_MAPPER: ApiMapper = {
     'metrics': (m: any): OpMetrics => (
         {actor: m.actorId, lvl: m.lvl, life: m.life, maxLife: m.maxLife, exp: m.exp}
     ),
-    'actor_hid': (m: any): ActorHid => (
+    'disappear': (m: any): Disappear => (
         {actor: m.actorId}
     ),
     'damage': (m: any): Damage => (

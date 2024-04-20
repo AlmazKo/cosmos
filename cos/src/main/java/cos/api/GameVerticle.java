@@ -64,7 +64,7 @@ public class GameVerticle extends AbstractVerticle {
 
     private void onMessage(Record record) {
         if (record instanceof UserOp u) {
-            log.info("<< " + record);
+//            log.info("<< " + record);
             userOps.add(u);
         } else {
             log.warn("Unknown op: " + record);

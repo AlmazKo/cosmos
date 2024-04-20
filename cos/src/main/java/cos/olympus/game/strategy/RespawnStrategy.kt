@@ -22,7 +22,6 @@ class RespawnStrategy(
     private var isDead = false
     private var respawnTime = Int.MAX_VALUE
 
-
     override fun onTick(tick: Int, out: OpConsumer): Boolean {
         if (live == null) {
             if (isDead && tick < respawnTime) {

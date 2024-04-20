@@ -85,7 +85,7 @@ public final class SharedLogger implements Logger {
         i = appendSubType(buf, i);
         buf[i++] = ' ';
         i = appendString(message, buf, i);
-        if (LogConfig.APPEND_CONTEXT) i = appendContext(buf, i);
+//        if (LogConfig.APPEND_CONTEXT) i = appendContext(buf, i);
         buf[i] = '\n';
         return i;
     }

@@ -76,6 +76,7 @@ class World(lands: Lands, val name: String) {
     operator fun get(x: Pos, y: Pos): TileType? {
         val idx = toIndex(x, y)
         if (idx < 0 || idx >= basis.size) return null
+
         val b = basis[idx]
         val t = tiles[b.toInt()]
         return if ((t == null)) null else t.type
@@ -172,7 +173,7 @@ class World(lands: Lands, val name: String) {
         }
     }
 
-    fun place(usr: Identity?, x: Pos, y: Pos, life: Int, maxDev: Int): Actor {
+    fun place(usr: Identity, x: Pos, y: Pos, life: Int, maxDev: Int): Actor {
         var idx = toIndex(x, y)
         if (idx < 0 || idx >= basis.size) {
             throw NoSpaceException("Fail finding free place")

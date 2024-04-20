@@ -43,7 +43,7 @@ class PlayerSession {
         ws.closeHandler(it -> {
             isClosed = true;
             send(new Logout(cid(), userId));
-            log.info("Client socket is closing ... ");
+            log.info("User closed socket");
         });
 
         ws.textMessageHandler(this::onRequest);
@@ -94,7 +94,7 @@ class PlayerSession {
 
     void onOp(UserPackage pkg) {
         var data = JSON.stringify(pkg);
-        System.out.println(data);
+       // System.out.println(data);
         ws.writeTextMessage(data);
     }
 

@@ -23,7 +23,6 @@ class Game(@JvmField val world: World) {
     data class Config(val settleMobs: Boolean)
 
     private val cfg = Config(true)
-
     private val movements = Movements(world)
     private val spells = Spells(world)
     private val npcRespawns = ArrayList<RespawnStrategy>()
@@ -32,9 +31,9 @@ class Game(@JvmField val world: World) {
     private val damages = Damages()
     private val deaths = ArrayList<Death>() //todo: channel
     private val zone = Zone(world)
-    private var tickOuts: OpConsumer = OpsAggregator()
+    private var out: OpConsumer = OpsAggregator()
 
-    private var tickId = 0
+    private var tick = 0
 
     init {
         if (cfg.settleMobs) settleMobs()
@@ -54,31 +53,33 @@ class Game(@JvmField val world: World) {
                 is Logout -> removeIdentity(op.userId())
                 is Move -> movements.onMove(op)
                 is StopMove -> movements.onStopMove(op)
-                is FireballEmmit -> spells.onSpell(tickId, op)
-                is ShotEmmit -> spells.onShot(tickId, op)
-                is MeleeAttack -> spells.onMeleeAttack(tickId, op)
+                is FireballEmmit -> spells.onSpell(op)
+                is ShotEmmit -> spells.onShot(op)
+                is MeleeAttack -> spells.onMeleeAttack(op)
                 else -> throw IllegalStateException("Unexpected user op: $op")
             }
         } catch (e: Exception) {
             LOG.warn("Error during processing $op", e)
-            tickOuts.add(Disconnect(op.id(), op.userId()))
+            out.add(Disconnect(op.id(), op.userId()))
         }
     }
 
-
     fun onTick(tick: Int, out: OpConsumer) {
-        tickId = tick
-        tickOuts = out
+        this.tick = tick
+        this.out = out
+        this.spells.onTick(tick)
+    }
 
-        strategies.removeIf { it: Strategy -> it.onTick(tick, out) }
-        playersRespawns.removeIf { it: RespawnPlayerStrategy -> it.onTick(tick, out) }
+    fun process() {
+        strategies.removeIf { it.onTick(tick, out) }
+        playersRespawns.removeIf { it.onTick(tick, out) }
         movements.onTick(tick)
         damages.onTick(tick)
 
-        spells.onTick(tick, damages, out)
+        spells.onTick(damages, out)
         damages.forEach(::onDamage)
         npcRespawns.forEach { it.onTick(tick, out) }
-        world.allActors.forEach { zone.onTick(it, tick, out) }
+        world.allActors.forEach { zone.onTick(it, out) }
         world.allActors.forEach(::checkPortals)
         notifyAboutEvents()
 
@@ -92,12 +93,12 @@ class Game(@JvmField val world: World) {
         world.allActors.forEach { actor ->
             damages.forEach {
                 if (actor.zoneActors.contains(it.victim.id)) {
-                    tickOuts.add(it.toUserOp(actor.id))
+                    out.add(it.toUserOp(actor.id))
                 }
             }
             deaths.forEach {
                 if (actor.zoneActors.contains(it.victim.id)) {
-                    tickOuts.add(it.toUserOp(actor.id))
+                    out.add(it.toUserOp(actor.id))
                 }
             }
         }
@@ -108,7 +109,7 @@ class Game(@JvmField val world: World) {
         if (actor.isPlayer) {
             for (portal in world.portals) {
                 if (portal.x == actor.x && portal.y == actor.y) {
-                    strategies.add(TeleportOutStrategy(tickId, this, actor, portal))
+                    strategies.add(TeleportOutStrategy(tick, this, actor, portal))
                 }
             }
         }
@@ -117,13 +118,13 @@ class Game(@JvmField val world: World) {
     private fun onDamage(dmg: Damage) {
         dmg.victim.damage(dmg)
         if (dmg.victim.isDead) {
-            val death = Death(0, tickId, dmg.spell, dmg.victim)
+            val death = Death(0, tick, dmg.spell, dmg.victim)
             LOG.info(death.toString())
             deaths.add(death)
             movements.interrupt(dmg.victim)
 
             if (dmg.victim.isPlayer) {
-                playersRespawns.add(RespawnPlayerStrategy(tickId, world, (dmg.victim.identity as Player)))
+                playersRespawns.add(RespawnPlayerStrategy(tick, world, (dmg.victim.identity as Player)))
             }
 
             dmg.spell.source.onKill(death)

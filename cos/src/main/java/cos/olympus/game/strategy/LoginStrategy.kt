@@ -2,13 +2,13 @@ package cos.olympus.game.strategy
 
 import cos.olympus.game.Game
 import cos.olympus.game.Player
-import cos.olympus.game.Usr
+import cos.olympus.game.User
 import cos.olympus.util.OpConsumer
 import cos.ops.out.ProtoAppear
 
 class LoginStrategy(
     private val games: Map<String, Game>,
-    private val usr: Usr
+    private val usr: User
 ) : Strategy {
 
     override fun onTick(tick: Int, out: OpConsumer): Boolean {

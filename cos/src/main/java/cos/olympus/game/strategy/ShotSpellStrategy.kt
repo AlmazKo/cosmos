@@ -48,7 +48,7 @@ class ShotSpellStrategy(
             passed = distance
         }
 
-        LOG.info("Spell distance: $this")
+        //LOG.info("Spell distance: $this")
         return finished
     }
 

@@ -2,14 +2,14 @@ package cos.olympus.game
 
 import cos.logging.Logger
 import cos.olympus.util.OpConsumer
-import cos.ops.out.ActorHid
+import cos.ops.out.Disappear
 import cos.ops.out.Metrics
 import cos.ops.out.Move
 import cos.ops.out.Obj
 import kotlin.math.abs
 
 class Zone(private val world: World) {
-    fun onTick(target: Actor, tick: Int, out: OpConsumer) {
+    fun onTick(target: Actor, out: OpConsumer) {
         //todo hardcode radius
         world.iterateAround(target.x, target.y, VIEW_RADIUS) { x, y ->
             val obj = world.getObject(x, y)
@@ -43,7 +43,7 @@ class Zone(private val world: World) {
 
             val a = world.getActor(ort.actorId)
             if (a == null || inNotFov(target, a)) {
-                out(ActorHid(1, target.id, ort.actorId))
+                out(Disappear(1, target.id, ort.actorId))
                 target.zoneMetrics.remove(ort.actorId)
                 return@removeIf true
             } else {

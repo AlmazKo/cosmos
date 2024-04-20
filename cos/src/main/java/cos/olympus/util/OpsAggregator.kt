@@ -1,6 +1,5 @@
 package cos.olympus.util
 
-import cos.logging.Logger
 import cos.ops.ServiceOp
 import cos.ops.SomeOp
 import cos.ops.UserOp
@@ -11,7 +10,9 @@ class OpsAggregator : OpConsumer {
     private var serviceOps = ArrayList<ServiceOp>()
 
     override fun add(op: SomeOp) {
-//        LOG.info(op, "new_op")
+        if (op is UserOp && op.userId() < 10000) {
+            Ops.LOGGER.info(op, "out")
+        }
 
         if (op is ServiceOp) {
             serviceOps.add(op)
@@ -71,7 +72,4 @@ class OpsAggregator : OpConsumer {
         return out
     }
 
-    companion object {
-        private val LOG: Logger = Logger.get(OpsAggregator::class.java)
-    }
 }

@@ -56,7 +56,7 @@ class Movements internal constructor(private val world: World) : TickAware {
 
         val currentTile = world[actor.x, actor.y]
         actor.speed = TimeUtil.toTickSpeed(getSpeed(currentTile))
-        logger.info(actor, "mv_change")
+       // logger.info(actor, "mv_change")
     }
 
     fun interrupt(actor: Actor) {

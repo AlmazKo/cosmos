@@ -12,7 +12,7 @@ public record AllActors(
 
     @Override
     public String toString() {
-        return "AllCreatures{" +
+        return "AllActors{" +
                 "width=" + width +
                 ", height=" + height +
                 ", offsetX=" + offsetX +

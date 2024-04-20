@@ -2,7 +2,7 @@ package cos.ops.out;
 
 import cos.ops.OutOp;
 
-public record ActorHid(
+public record Disappear(
         @Override int id,
         @Override int userId,
         int actorId

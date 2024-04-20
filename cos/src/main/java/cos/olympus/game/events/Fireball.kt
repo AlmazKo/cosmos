@@ -13,5 +13,4 @@ data class Fireball(
     val distance: Int,
     override val tick: Int,
     override val source: Actor
-
 ) : Spell, Event

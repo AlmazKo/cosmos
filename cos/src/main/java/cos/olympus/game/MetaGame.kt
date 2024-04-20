@@ -1,11 +1,11 @@
 package cos.olympus.game
 
 import cos.logging.Logger
-import cos.olympus.game.Game.Companion
 import cos.olympus.game.strategy.LoginStrategy
 import cos.olympus.game.strategy.Strategy
 import cos.olympus.game.strategy.TeleportInStrategy
 import cos.olympus.util.OpConsumer
+import cos.olympus.util.Ops
 import cos.ops.ServiceOp
 import cos.ops.UserOp
 import cos.ops.`in`.Login
@@ -13,11 +13,14 @@ import cos.ops.out.AllActors
 import cos.ops.out.TeleportIn
 
 class MetaGame(private val games: Map<String, Game>) {
-    private val users = HashMap<Int, Usr>()
+    private val users = HashMap<Int, User>()
     private val strategies = ArrayList<Strategy>()
     private val defaultWorld = "castle-island"
 
     fun onTick(tick: Int, userOps: List<UserOp>, serviceOps: List<ServiceOp>, out: OpConsumer) {
+
+        games.values.forEach { it.onTick(tick, out) }
+
         serviceOps.forEach { op ->
             if (op is TeleportIn) {
                 val target = games[op.world()]!!
@@ -26,7 +29,7 @@ class MetaGame(private val games: Map<String, Game>) {
         }
 
         userOps.forEach { op ->
-            LOG.info(op, "user_in")
+            Ops.LOGGER.info(op, "in")
             if (op is Login) {
                 onLogin(tick, op)
             } else {
@@ -34,9 +37,9 @@ class MetaGame(private val games: Map<String, Game>) {
             }
         }
 
-        games.values.forEach { game ->
-            game.onTick(tick, out)
-            collectMetrics(out, game)
+        games.values.forEach {
+            it.process()
+            collectMetrics(out, it)
         }
 
         strategies.removeIf { it.onTick(tick, out) }
@@ -61,9 +64,9 @@ class MetaGame(private val games: Map<String, Game>) {
     private fun onLogin(tick: Int, op: Login) {
         var usr = users[op.userId]
         if (usr == null) {
-            usr = Usr(op.userId, defaultWorld)
+            usr = User(op.userId, defaultWorld)
             users[op.userId] = usr
-            LOG.info("New User $usr")
+            LOG.info(usr, "new")
             strategies.add(LoginStrategy(games, usr))
         }
     }

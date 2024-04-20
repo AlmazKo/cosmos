@@ -11,18 +11,7 @@ data class Damage(
     val amount: Int,
     val crit: Boolean
 ) : Event {
-    fun toUserOp(userId: Int): Damage {
-        return Damage(id, userId, spell.source.id, victim.id, amount, spell.id, crit)
-    }
 
-    override fun toString(): String {
-        return "Damage{" +
-            "id=" + id +
-            ", tick=" + tick +
-            ", victim=" + victim.id +
-            ", spell=" + spell.id +
-            ", amount=" + amount +
-            '}'
-    }
+    fun toUserOp(userId: Int) = Damage(id, userId, spell.source.id, victim.id, amount, spell.id, crit)
 }
 
