@@ -194,7 +194,8 @@ export class Movements {
             }
             if (status !== StatusMoving.STOP) {
                 o.move = dir;
-                o.speed = 40;
+                const tile = this.world.tileType(o.x, o.y);
+                o.speed = Movements.getSpeed(tile, o.move, o.sight);
                 // console.log("MOVING START", {status, dir, sight})
                 this.data.set(cr.id, {cr, start: 0})
             }

@@ -4,7 +4,8 @@ import cos.logging.Logger
 import cos.map.TileType
 import cos.olympus.game.MapUtil.nextX
 import cos.olympus.game.MapUtil.nextY
-import cos.olympus.util.TimeUtil
+import cos.olympus.game.Units.METER
+import cos.olympus.util.TimeUtil.TICKS_PER_SECOND
 import cos.ops.Direction
 import cos.ops.`in`.Move
 import cos.ops.`in`.StopMove
@@ -54,9 +55,8 @@ class Movements internal constructor(private val world: World) : TickAware {
             actor.sight = op.sight
         }
 
-        val currentTile = world[actor.x, actor.y]
-        actor.speed = TimeUtil.toTickSpeed(getSpeed(currentTile))
-       // logger.info(actor, "mv_change")
+        actor.speed = tickSpeed(actor.x, actor.y)
+        // logger.info(actor, "mv_change")
     }
 
     fun interrupt(actor: Actor) {
@@ -117,8 +117,7 @@ class Movements internal constructor(private val world: World) : TickAware {
             }
 
             a.offset = newOffset - METER
-            val tile = world[x, y]
-            a.speed = TimeUtil.toTickSpeed(getSpeed(tile))
+            a.speed = tickSpeed(x, y)
             logger.info(a, "")
             return false
         }
@@ -133,10 +132,22 @@ class Movements internal constructor(private val world: World) : TickAware {
         return tile == TileType.NOTHING || tile == TileType.DEEP_WATER || tile == TileType.WALL
     }
 
+
+    private fun tickSpeed(x: Pos, y: Pos): Speed {
+        val tile = world[x, y]
+        return tile.tickSpeed()
+    }
+
+
     companion object {
         const val HALF: Int = 50
-        const val METER: Int = 100
         private val logger: Logger = Logger.get(Movements::class.java)
+
+        private fun TileType?.tickSpeed(): Speed {
+            val speed = getSpeed(this)
+            return speed / TICKS_PER_SECOND
+        }
+
         private fun getSpeed(currentTile: TileType?): Int {
             checkNotNull(currentTile) { "Null title" }
 

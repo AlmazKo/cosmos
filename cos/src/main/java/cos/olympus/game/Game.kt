@@ -64,7 +64,7 @@ class Game(@JvmField val world: World) {
         }
     }
 
-    fun onTick(tick: Int, out: OpConsumer) {
+    fun onTick(tick: TickId, out: OpConsumer) {
         this.tick = tick
         this.out = out
         this.spells.onTick(tick)

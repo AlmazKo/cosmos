@@ -8,6 +8,7 @@ import cos.olympus.game.MapUtil.nextX
 import cos.olympus.game.MapUtil.nextY
 import cos.olympus.game.Movements
 import cos.olympus.game.Spells
+import cos.olympus.game.TickId
 import cos.olympus.game.World
 import cos.olympus.util.OpConsumer
 import cos.ops.Direction
@@ -21,7 +22,7 @@ class NpcStrategy(
 ) : Strategy {
     private var nextPlannedTick = -1
 
-    override fun onTick(tick: Int, out: OpConsumer): Boolean {
+    override fun onTick(tick: TickId, out: OpConsumer): Boolean {
         if (tick <= nextPlannedTick) return false
 
         if (!tryToAttract(tick)) {

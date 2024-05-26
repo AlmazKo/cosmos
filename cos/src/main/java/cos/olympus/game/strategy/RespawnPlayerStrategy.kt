@@ -5,19 +5,20 @@ import cos.olympus.NoSpaceException
 import cos.olympus.Util
 import cos.olympus.game.Npc
 import cos.olympus.game.Player
+import cos.olympus.game.TickId
 import cos.olympus.game.World
 import cos.olympus.util.OpConsumer
 import cos.ops.out.Appear
 
 class RespawnPlayerStrategy(
-    tick: Int,
+    tick: TickId,
     private val world: World,
     private val player: Player
 ) : Strategy {
 
     private val respawnTime = tick + Util.rand(20, 40)
 
-    override fun onTick(tick: Int, outOps: OpConsumer): Boolean {
+    override fun onTick(tick: TickId, outOps: OpConsumer): Boolean {
         if (tick < respawnTime) return false
 
         try {

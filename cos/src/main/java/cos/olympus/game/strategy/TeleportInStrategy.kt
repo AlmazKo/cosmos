@@ -2,6 +2,7 @@ package cos.olympus.game.strategy
 
 import cos.olympus.game.Game
 import cos.olympus.game.Player
+import cos.olympus.game.TickId
 import cos.olympus.util.OpConsumer
 import cos.ops.out.ProtoAppear
 import cos.ops.out.TeleportIn
@@ -12,7 +13,7 @@ class TeleportInStrategy(
     private val to: Game
 ) : Strategy {
 
-    override fun onTick(tick: Int, out: OpConsumer): Boolean {
+    override fun onTick(tick: TickId, out: OpConsumer): Boolean {
         if (tick >= respawnTime) {
             val avatar = Player(t.userId, "user:" + t.id)
             val a = to.world.place(avatar, t.x, t.y, 100, 4) //move metrics

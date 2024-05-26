@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cos.logging.ThreadContext.TAG;
+import static cos.olympus.util.TimeUtil.REFRESH_TIME;
 
 public class GameThread implements Runnable {
 
@@ -31,7 +32,7 @@ public class GameThread implements Runnable {
     public void run() {
         try {
             var startMs = System.currentTimeMillis();
-            var nextMs = startMs + (100 - startMs % 100);
+            var nextMs = startMs + (REFRESH_TIME - startMs % REFRESH_TIME);
             waitUntil(nextMs);
 
             while (true) {
@@ -47,7 +48,7 @@ public class GameThread implements Runnable {
                 this.out = new OpsAggregator();
 
                 gameVerticle.onReady(events, adminEvents);
-                nextMs += 100L;
+                nextMs += REFRESH_TIME;
                 waitUntil(nextMs);
             }
         } catch (Exception e) {

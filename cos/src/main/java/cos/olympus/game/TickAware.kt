@@ -1,5 +1,5 @@
 package cos.olympus.game
 
 interface TickAware {
-    fun onTick(tickId: Int)
+    fun onTick(tickId: TickId)
 }

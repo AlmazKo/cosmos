@@ -8,7 +8,7 @@ class Damages : TickAware {
     private var data = ArrayList<Damage>()
     private var tick = 0
 
-    override fun onTick(tick: Int) {
+    override fun onTick(tick: TickId) {
         this.tick = tick
     }
 

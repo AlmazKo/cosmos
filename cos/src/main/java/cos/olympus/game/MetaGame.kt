@@ -17,7 +17,7 @@ class MetaGame(private val games: Map<String, Game>) {
     private val strategies = ArrayList<Strategy>()
     private val defaultWorld = "castle-island"
 
-    fun onTick(tick: Int, userOps: List<UserOp>, serviceOps: List<ServiceOp>, out: OpConsumer) {
+    fun onTick(tick: TickId, userOps: List<UserOp>, serviceOps: List<ServiceOp>, out: OpConsumer) {
 
         games.values.forEach { it.onTick(tick, out) }
 
@@ -61,7 +61,7 @@ class MetaGame(private val games: Map<String, Game>) {
         out.add(op)
     }
 
-    private fun onLogin(tick: Int, op: Login) {
+    private fun onLogin(tick: TickId, op: Login) {
         var usr = users[op.userId]
         if (usr == null) {
             usr = User(op.userId, defaultWorld)

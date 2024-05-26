@@ -5,6 +5,8 @@ import cos.olympus.Util
 import cos.olympus.game.Actor
 import cos.olympus.game.Damages
 import cos.olympus.game.MapUtil.inZone
+import cos.olympus.game.TickId
+import cos.olympus.game.Units.METER
 import cos.olympus.game.World
 import cos.olympus.game.events.Shot
 import cos.ops.Direction
@@ -22,8 +24,8 @@ class ShotSpellStrategy(
     override val id = spell.id
     override var finished = false
 
-    override fun onTick(tick: Int, damages: Damages): Boolean {
-        val distance = (tick - spell.tick) * spell.speed / 100
+    override fun onTick(tick: TickId, damages: Damages): Boolean {
+        val distance = (tick - spell.tick) * spell.speed / METER
 
         x = spell.x
         y = spell.y

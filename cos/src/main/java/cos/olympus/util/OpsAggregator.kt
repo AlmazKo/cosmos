@@ -1,5 +1,6 @@
 package cos.olympus.util
 
+import cos.olympus.game.TickId
 import cos.ops.ServiceOp
 import cos.ops.SomeOp
 import cos.ops.UserOp
@@ -61,7 +62,7 @@ class OpsAggregator : OpConsumer {
         return result
     }
 
-    fun groupByUser(tick: Int, tickTime: Long): java.util.ArrayList<UserPackage> {
+    fun groupByUser(tick: TickId, tickTime: Long): java.util.ArrayList<UserPackage> {
         val out = java.util.ArrayList<UserPackage>()
         data.forEach { userId, ops ->
             if (userId > 0 && userId < 10000) {

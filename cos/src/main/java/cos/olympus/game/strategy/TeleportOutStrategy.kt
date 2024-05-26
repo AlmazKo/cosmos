@@ -3,11 +3,12 @@ package cos.olympus.game.strategy
 import cos.map.PortalSpot
 import cos.olympus.game.Agent
 import cos.olympus.game.Game
+import cos.olympus.game.TickId
 import cos.olympus.util.OpConsumer
 import cos.ops.out.TeleportIn
 
 class TeleportOutStrategy(
-    tick: Int,
+    tick: TickId,
     private val game: Game,
     private val avatar: Agent,
     spot: PortalSpot
@@ -18,7 +19,7 @@ class TeleportOutStrategy(
     private val toY = spot.dstY
     private var state = 0
 
-    override fun onTick(tick: Int, out: OpConsumer): Boolean {
+    override fun onTick(tick: TickId, out: OpConsumer): Boolean {
         if (state == 0) {
             game.removeIdentity(avatar.id)
             //todo: add event

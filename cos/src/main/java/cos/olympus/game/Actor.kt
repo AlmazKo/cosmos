@@ -1,14 +1,9 @@
 package cos.olympus.game
 
-import cos.olympus.game.Movements.Companion.METER
 import cos.olympus.game.events.Damage
 import cos.olympus.game.events.Death
 import cos.olympus.game.strategy.SpellStrategy
 import cos.ops.Direction
-import cos.ops.Direction.EAST
-import cos.ops.Direction.NORTH
-import cos.ops.Direction.SOUTH
-import cos.ops.Direction.WEST
 
 class Actor(
     val identity: Identity,
@@ -25,7 +20,7 @@ class Actor(
     override val id get() = identity.id
     override val type get() = identity.type
 
-    var lastSpellTick: Int = 0
+    var lastSpellTick: TickId = 0
     val metrics = Metrics(identity.id, life)
     val bag = Bag()
     val zoneObjects = HashMap<Int, Obj>()
@@ -44,44 +39,11 @@ class Actor(
     }
 
     fun addMetricsInZone(actor: Actor) {
-        zoneMetrics[actor.id] = actor.copyMetrics()
+        zoneMetrics[actor.id] = actor.metrics.copy()
     }
 
     val isDead: Boolean get() = metrics.isDead
     val life: Int = metrics.life
-
-    fun orientation(): Orientation {
-        return Orientation(identity.id, x, y, speed, offset, sight, mv)
-    }
-
-    fun copyMetrics(): Metrics {
-        return metrics.copy()
-    }
-
-    override fun toString(): String {
-        return "Actor{" +
-            "type=" + type +
-            ", id=" + identity.id +
-            ", lvl=" + metrics.lvl +
-            ", life=" + metrics.life +
-            ", pos=[" + rx() + "; " + ry() + "]" +
-            ", speed=" + speed +
-            ", dir=" + mv +
-            ", sight=" + sight +
-            '}'
-    }
-
-    private fun ry(): Float {
-        if (mv == NORTH) return y - (offset.toFloat() / METER)
-        if (mv == SOUTH) return y + (offset.toFloat() / METER)
-        return y.toFloat()
-    }
-
-    private fun rx(): Float {
-        if (mv == WEST) return x - (offset.toFloat() / METER)
-        if (mv == EAST) return x + (offset.toFloat() / METER)
-        return x.toFloat()
-    }
 
     fun stop() {
         offset = 0
@@ -102,10 +64,23 @@ class Actor(
 
         if (metrics.exp >= 10) {
             metrics.lvl++
+            //todo levelup event
             metrics.exp = metrics.exp - 10
             metrics.maxLife = (metrics.maxLife + 1.2).toInt()
             metrics.life = metrics.maxLife
-            println("$this level up")
         }
+    }
+
+    override fun toString(): String {
+        return "Actor{" +
+            "type=" + type +
+            ", id=" + identity.id +
+            ", lvl=" + metrics.lvl +
+            ", life=" + metrics.life +
+            ", pos=[" + rx() + "; " + ry() + "]" +
+            ", speed=" + speed +
+            ", dir=" + mv +
+            ", sight=" + sight +
+            '}'
     }
 }

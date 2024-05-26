@@ -8,6 +8,7 @@ import cos.olympus.Util
 import cos.olympus.game.Movements
 import cos.olympus.game.Npc
 import cos.olympus.game.Spells
+import cos.olympus.game.TickId
 import cos.olympus.game.World
 import cos.olympus.util.OpConsumer
 
@@ -22,7 +23,7 @@ class RespawnStrategy(
     private var isDead = false
     private var respawnTime = Int.MAX_VALUE
 
-    override fun onTick(tick: Int, out: OpConsumer): Boolean {
+    override fun onTick(tick: TickId, out: OpConsumer): Boolean {
         if (live == null) {
             if (isDead && tick < respawnTime) {
                 return false

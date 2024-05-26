@@ -19,7 +19,7 @@ class Spells(private val world: World) : TickAware {
     private val pause = TimeUtil.toTicks(1)
     private val spells = ArrayList<SpellStrategy>()
 
-    override fun onTick(tick: Int) {
+    override fun onTick(tick: TickId) {
         this.tick = tick
     }
 

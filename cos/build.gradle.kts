@@ -2,7 +2,7 @@ plugins {
     java
     application
     `java-library`
-    kotlin("jvm") version "2.0.0-RC1"
+    kotlin("jvm") version "2.0.0"
 }
 
 group = "cos"

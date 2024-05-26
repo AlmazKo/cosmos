@@ -1,11 +1,12 @@
 package cos.olympus.game.events
 
 import cos.olympus.game.Actor
+import cos.olympus.game.TickId
 import cos.ops.out.Death
 
 data class Death(
     override val id: Int,
-    override val tick: Int,
+    override val tick: TickId,
     val spell: Spell,
     val victim: Actor
 ) : Event {

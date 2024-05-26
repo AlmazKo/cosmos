@@ -2,6 +2,7 @@ package cos.olympus.game.strategy
 
 import cos.olympus.game.Actor
 import cos.olympus.game.Damages
+import cos.olympus.game.TickId
 import cos.olympus.game.events.Spell
 
 interface SpellStrategy {
@@ -11,7 +12,7 @@ interface SpellStrategy {
 
     //        fun inZone(creature: Creature): Boolean
     //        fun handle(time: Tsm, actions: ActionConsumer, map: GameMap): Boolean
-    fun onTick(tick: Int, damages: Damages): Boolean
+    fun onTick(tick: TickId, damages: Damages): Boolean
 
     fun inZone(actor: Actor): Boolean
 

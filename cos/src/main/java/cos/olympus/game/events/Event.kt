@@ -1,6 +1,8 @@
 package cos.olympus.game.events
 
+import cos.olympus.game.TickId
+
 interface Event {
     val id: Int
-    val tick: Int
+    val tick: TickId
 }

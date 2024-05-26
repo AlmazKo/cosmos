@@ -7,6 +7,7 @@ import cos.olympus.game.MapUtil.inZone
 import cos.olympus.game.MapUtil.nextX
 import cos.olympus.game.MapUtil.nextY
 import cos.olympus.game.Pos
+import cos.olympus.game.TickId
 import cos.olympus.game.World
 import cos.olympus.game.events.MeleeAttack
 import kotlin.math.pow
@@ -28,7 +29,7 @@ class MeleeAttackStrategy(
     override val id = spell.id
 
 
-    override fun onTick(tick: Int, damages: Damages): Boolean {
+    override fun onTick(tick: TickId, damages: Damages): Boolean {
         val victim = world.getActor(targetX, targetY)
         if (victim != null && spell.source.id != victim.id) {
             val crit = Util.rand(0, 10) == 1

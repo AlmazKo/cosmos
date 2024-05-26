@@ -31,7 +31,7 @@ class Zone(private val world: World) {
 
                 val met = target.zoneMetrics[a.id]
                 if (a.metrics != met) {
-                    val n = a.copyMetrics()
+                    val n = a.metrics.copy()
                     target.zoneMetrics[a.id] = n
                     out(Metrics(1, target.id, a.id, a.metrics.lvl, a.metrics.exp, n.life, n.maxLife))
                 }
